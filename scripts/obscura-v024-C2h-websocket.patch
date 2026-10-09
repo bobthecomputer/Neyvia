@@ -1,0 +1,1510 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 24bc347..a491d70 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -2072,6 +2072,7 @@ dependencies = [
+  "ctr",
+  "deno_core",
+  "deno_error",
++ "futures-util",
+  "getrandom 0.2.17",
+  "hkdf",
+  "hmac",
+@@ -2088,6 +2089,7 @@ dependencies = [
+  "sha2",
+  "thiserror 2.0.18",
+  "tokio",
++ "tokio-tungstenite",
+  "tracing",
+  "url",
+ ]
+@@ -3618,8 +3620,12 @@ checksum = "7a9daff607c6d2bf6c16fd681ccb7eecc83e4e2cdc1ca067ffaadfca5de7f084"
+ dependencies = [
+  "futures-util",
+  "log",
++ "rustls",
++ "rustls-pki-types",
+  "tokio",
++ "tokio-rustls",
+  "tungstenite",
++ "webpki-roots 0.26.11",
+ ]
+ 
+ [[package]]
+@@ -3779,6 +3785,8 @@ dependencies = [
+  "httparse",
+  "log",
+  "rand 0.9.4",
++ "rustls",
++ "rustls-pki-types",
+  "sha1",
+  "thiserror 2.0.18",
+  "utf-8",
+diff --git a/crates/obscura-cdp/tests/page_websocket.rs b/crates/obscura-cdp/tests/page_websocket.rs
+new file mode 100644
+index 0000000..f1eaa7d
+--- /dev/null
++++ b/crates/obscura-cdp/tests/page_websocket.rs
+@@ -0,0 +1,556 @@
++//! The page `WebSocket` must be a real client: it opens only when a server
++//! accepts the handshake, carries messages both ways, and reports failures and
++//! closures through `error` / `close` the way browsers do.
++
++use std::net::SocketAddr;
++use std::sync::{Arc, Mutex};
++use std::time::Duration;
++
++use futures_util::{SinkExt, StreamExt};
++use obscura_browser::{BrowserContext, Page};
++use tokio_tungstenite::tungstenite::handshake::server::{Request, Response};
++use tokio_tungstenite::tungstenite::http::HeaderValue;
++use tokio_tungstenite::tungstenite::protocol::frame::coding::CloseCode;
++use tokio_tungstenite::tungstenite::protocol::CloseFrame;
++use tokio_tungstenite::tungstenite::Message;
++
++/// What the server observed, for assertions about what actually crossed the
++/// wire rather than what the page believes happened.
++#[derive(Default, Debug)]
++struct ServerLog {
++    connections: usize,
++    handshakes: Vec<Handshake>,
++    received: Vec<String>,
++    close_codes: Vec<Option<u16>>,
++}
++
++#[derive(Debug, Clone)]
++struct Handshake {
++    path: String,
++    origin: Option<String>,
++    cookie: Option<String>,
++    protocols: Option<String>,
++}
++
++fn header(req: &Request, name: &str) -> Option<String> {
++    req.headers()
++        .get(name)
++        .and_then(|v| v.to_str().ok())
++        .map(str::to_string)
++}
++
++/// A WebSocket server on its own thread and runtime, so it keeps serving
++/// while the page's runtime is parked inside `settle`.
++///
++/// Paths: `/echo` echoes every data message (a text `close-me` makes the
++/// server close with 4001), `/greet` sends a message as soon as it connects,
++/// `/drop` accepts and then drops the TCP connection without a Close frame.
++/// A client offering the `superchat` subprotocol has it selected.
++fn spawn_ws_server() -> (SocketAddr, Arc<Mutex<ServerLog>>) {
++    let log = Arc::new(Mutex::new(ServerLog::default()));
++    let (addr_tx, addr_rx) = std::sync::mpsc::channel();
++    let server_log = Arc::clone(&log);
++    std::thread::spawn(move || {
++        let runtime = tokio::runtime::Builder::new_current_thread()
++            .enable_all()
++            .build()
++            .unwrap();
++        runtime.block_on(async move {
++            let listener = tokio::net::TcpListener::bind("127.0.0.1:48735").await.unwrap();
++            addr_tx.send(listener.local_addr().unwrap()).unwrap();
++            loop {
++                let Ok((stream, _)) = listener.accept().await else {
++                    continue;
++                };
++                let log = Arc::clone(&server_log);
++                tokio::spawn(async move {
++                    log.lock().unwrap().connections += 1;
++                    let mut path = String::new();
++                    let callback = |req: &Request, mut resp: Response| {
++                        path = req.uri().path().to_string();
++                        let protocols = header(req, "sec-websocket-protocol");
++                        if protocols
++                            .as_deref()
++                            .is_some_and(|p| p.split(',').any(|p| p.trim() == "superchat"))
++                        {
++                            resp.headers_mut().insert(
++                                "sec-websocket-protocol",
++                                HeaderValue::from_static("superchat"),
++                            );
++                        }
++                        log.lock().unwrap().handshakes.push(Handshake {
++                            path: path.clone(),
++                            origin: header(req, "origin"),
++                            cookie: header(req, "cookie"),
++                            protocols,
++                        });
++                        Ok(resp)
++                    };
++                    let Ok(mut ws) = tokio_tungstenite::accept_hdr_async(stream, callback).await
++                    else {
++                        return;
++                    };
++                    match path.as_str() {
++                        "/drop" => {
++                            drop(ws);
++                        }
++                        "/greet" => {
++                            let _ = ws.send(Message::text("welcome")).await;
++                            while let Some(Ok(_)) = ws.next().await {}
++                        }
++                        _ => {
++                            while let Some(Ok(message)) = ws.next().await {
++                                match message {
++                                    Message::Text(text) if text.as_str() == "close-me" => {
++                                        log.lock().unwrap().received.push(text.to_string());
++                                        let _ = ws
++                                            .close(Some(CloseFrame {
++                                                code: CloseCode::from(4001),
++                                                reason: "server bye".into(),
++                                            }))
++                                            .await;
++                                    }
++                                    Message::Text(text) => {
++                                        log.lock().unwrap().received.push(text.to_string());
++                                        let _ = ws.send(Message::Text(text)).await;
++                                    }
++                                    Message::Binary(bytes) => {
++                                        log.lock()
++                                            .unwrap()
++                                            .received
++                                            .push(format!("binary:{:?}", bytes.as_ref()));
++                                        let _ = ws.send(Message::Binary(bytes)).await;
++                                    }
++                                    Message::Close(frame) => {
++                                        log.lock()
++                                            .unwrap()
++                                            .close_codes
++                                            .push(frame.map(|f| u16::from(f.code)));
++                                    }
++                                    _ => {}
++                                }
++                            }
++                        }
++                    }
++                });
++            }
++        });
++    });
++    (addr_rx.recv().unwrap(), log)
++}
++
++/// Serves one HTML page that sets a cookie, so the socket has an origin and a
++/// cookie to carry.
++fn spawn_http_page() -> String {
++    use std::io::{Read, Write};
++    let listener = std::net::TcpListener::bind("127.0.0.1:48734").unwrap();
++    let addr = listener.local_addr().unwrap();
++    std::thread::spawn(move || {
++        for stream in listener.incoming() {
++            let Ok(mut stream) = stream else { continue };
++            let mut buf = [0u8; 4096];
++            let _ = stream.read(&mut buf);
++            let body = "<!doctype html><html><body>websocket fixture</body></html>";
++            let _ = write!(
++                stream,
++                "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nSet-Cookie: session=abc123; Path=/\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
++                body.len(),
++                body
++            );
++        }
++    });
++    format!("http://{addr}/")
++}
++
++async fn page_on_fixture(allow_private_network: bool) -> Page {
++    let context = Arc::new(BrowserContext::with_storage_and_network(
++        "websocket".to_string(),
++        None,
++        false,
++        None,
++        None,
++        allow_private_network,
++    ));
++    let mut page = Page::new("websocket-page".to_string(), context);
++    if allow_private_network {
++        page.navigate(&spawn_http_page()).await.unwrap();
++    } else {
++        page.navigate("about:blank").await.unwrap();
++    }
++    page.evaluate("window.__log = []");
++    page
++}
++
++/// Settle until `condition` (a JS expression) is truthy or 10s pass.
++async fn settle_until(page: &mut Page, condition: &str) {
++    let deadline = std::time::Instant::now() + Duration::from_secs(10);
++    while std::time::Instant::now() < deadline {
++        if page.evaluate(condition) == serde_json::json!(true) {
++            return;
++        }
++        page.settle(100).await;
++        // An idle page settles immediately; give the server wall-clock time
++        // to answer before pumping again.
++        tokio::time::sleep(Duration::from_millis(20)).await;
++    }
++}
++
++/// Run `body` as a function body; `evaluate` alone treats input as a single
++/// expression.
++fn run(page: &mut Page, body: &str) -> serde_json::Value {
++    page.evaluate(&format!("(() => {{\n{body}\n}})()"))
++}
++
++fn log(page: &mut Page) -> serde_json::Value {
++    page.evaluate("JSON.stringify(window.__log)")
++        .as_str()
++        .map(|s| serde_json::from_str(s).unwrap())
++        .unwrap_or(serde_json::Value::Null)
++}
++
++/// Record every lifecycle event of `ws` into `window.__log`.
++const RECORD: &str = r#"
++    window.__record = (ws) => {
++        ws.addEventListener('open', () => __log.push(['open', ws.readyState, ws.protocol]));
++        ws.addEventListener('message', (e) => __log.push(['message', typeof e.data === 'string' ? e.data : Object.prototype.toString.call(e.data), e.origin]));
++        ws.addEventListener('error', () => __log.push(['error', ws.readyState]));
++        ws.addEventListener('close', (e) => __log.push(['close', e.code, e.reason, e.wasClean, ws.readyState]));
++        return ws;
++    };
++    return true;
++"#;
++
++#[tokio::test(flavor = "current_thread")]
++async fn open_fires_only_after_a_real_handshake_and_messages_round_trip() {
++    let (addr, server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    run(&mut page, RECORD);
++    run(
++        &mut page,
++        &format!(
++            r#"
++        window.__ws = __record(new WebSocket('ws://{addr}/echo'));
++        __log.push(['constructed', __ws.readyState]);
++        __ws.addEventListener('open', () => __ws.send('hello'));
++        return true;
++        "#
++        ),
++    );
++    settle_until(&mut page, "__log.some(e => e[0] === 'message')").await;
++
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([
++            ["constructed", 0],
++            ["open", 1, ""],
++            ["message", "hello", format!("ws://{addr}")],
++        ])
++    );
++    let server = server.lock().unwrap();
++    assert_eq!(server.connections, 1);
++    assert_eq!(server.received, vec!["hello".to_string()]);
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn connecting_to_a_closed_port_reports_error_then_abnormal_close() {
++    let dead = std::net::TcpListener::bind("127.0.0.1:48736").unwrap();
++    let dead_addr = dead.local_addr().unwrap();
++    drop(dead);
++
++    let mut page = page_on_fixture(true).await;
++    run(&mut page, RECORD);
++    run(
++        &mut page,
++        &format!("window.__ws = __record(new WebSocket('ws://{dead_addr}/')); return true;"),
++    );
++    settle_until(&mut page, "__log.some(e => e[0] === 'close')").await;
++
++    // Neyvia regression: a refused dial must never claim a successful open.
++    assert_eq!(run(&mut page, "return __log.some(e => e[0] === 'open');"), serde_json::json!(false));
++
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([["error", 3], ["close", 1006, "", false, 3]])
++    );
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn send_while_connecting_throws_invalid_state_error() {
++    let (addr, _server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    let result = page.evaluate(&format!(
++        r#"
++        (() => {{
++            const ws = new WebSocket('ws://{addr}/echo');
++            try {{ ws.send('too early'); return 'no throw'; }}
++            catch (e) {{ return e.name; }}
++        }})()
++        "#
++    ));
++    assert_eq!(result, serde_json::json!("InvalidStateError"));
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn server_initiated_message_is_delivered_without_client_traffic() {
++    let (addr, _server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    run(&mut page, RECORD);
++    run(
++        &mut page,
++        &format!("window.__ws = __record(new WebSocket('ws://{addr}/greet')); return true;"),
++    );
++    settle_until(&mut page, "__log.some(e => e[0] === 'message')").await;
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([
++            ["open", 1, ""],
++            ["message", "welcome", format!("ws://{addr}")]
++        ])
++    );
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn binary_messages_follow_binary_type() {
++    let (addr, server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    run(
++        &mut page,
++        &format!(
++            r#"
++        window.__ws = new WebSocket('ws://{addr}/echo');
++        __ws.binaryType = 'arraybuffer';
++        __ws.onopen = () => {{
++            const bytes = new Uint8Array([0, 128, 255, 16]);
++            __ws.send(bytes);
++            bytes[0] = 99; // mutation after send() must not change the frame
++        }};
++        __ws.onmessage = (e) => {{
++            __log.push([Object.prototype.toString.call(e.data), Array.from(new Uint8Array(e.data))]);
++            __ws.binaryType = 'blob';
++            __ws.send(new Blob([new Uint8Array([7, 8])]));
++            __ws.onmessage = (e2) => {{
++                __log.push([Object.prototype.toString.call(e2.data), e2.data.size]);
++            }};
++        }};
++        return true;
++        "#
++        ),
++    );
++    settle_until(&mut page, "__log.length >= 2").await;
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([
++            ["[object ArrayBuffer]", [0, 128, 255, 16]],
++            ["[object Blob]", 2]
++        ])
++    );
++    assert_eq!(
++        server.lock().unwrap().received,
++        vec![
++            "binary:[0, 128, 255, 16]".to_string(),
++            "binary:[7, 8]".to_string()
++        ]
++    );
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn client_close_performs_the_closing_handshake() {
++    let (addr, server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    run(&mut page, RECORD);
++    run(
++        &mut page,
++        &format!(
++            r#"
++        window.__ws = __record(new WebSocket('ws://{addr}/echo'));
++        __ws.onopen = () => {{
++            __ws.send('before close');
++            __ws.close(4000, 'done');
++            __log.push(['after close()', __ws.readyState]);
++            __ws.send('after close');
++            __log.push(['buffered', __ws.bufferedAmount > 0]);
++        }};
++        return true;
++        "#
++        ),
++    );
++    settle_until(&mut page, "__log.some(e => e[0] === 'close')").await;
++
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([
++            ["open", 1, ""],
++            ["after close()", 2],
++            ["buffered", true],
++            ["close", 4000, "done", true, 3],
++        ])
++    );
++    let server = server.lock().unwrap();
++    assert_eq!(server.received, vec!["before close".to_string()]);
++    assert_eq!(server.close_codes, vec![Some(4000)]);
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn server_close_code_and_reason_reach_the_page() {
++    let (addr, _server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    run(&mut page, RECORD);
++    run(
++        &mut page,
++        &format!(
++            r#"
++        window.__ws = __record(new WebSocket('ws://{addr}/echo'));
++        __ws.onopen = () => __ws.send('close-me');
++        return true;
++        "#
++        ),
++    );
++    settle_until(&mut page, "__log.some(e => e[0] === 'close')").await;
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([["open", 1, ""], ["close", 4001, "server bye", true, 3]])
++    );
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn dropped_connection_is_an_unclean_close() {
++    let (addr, _server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    run(&mut page, RECORD);
++    run(
++        &mut page,
++        &format!("window.__ws = __record(new WebSocket('ws://{addr}/drop')); return true;"),
++    );
++    settle_until(&mut page, "__log.some(e => e[0] === 'close')").await;
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([["open", 1, ""], ["error", 3], ["close", 1006, "", false, 3]])
++    );
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn handshake_carries_origin_cookies_and_subprotocols() {
++    let (addr, server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    run(&mut page, RECORD);
++    run(&mut page, &format!(
++        "window.__ws = __record(new WebSocket('ws://{addr}/echo', ['chat', 'superchat'])); return true;"
++    ));
++    settle_until(&mut page, "__log.some(e => e[0] === 'open')").await;
++
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([["open", 1, "superchat"]])
++    );
++    let page_origin = page.evaluate("location.origin");
++    let handshake = server.lock().unwrap().handshakes[0].clone();
++    assert_eq!(handshake.path, "/echo");
++    assert_eq!(handshake.origin.as_deref(), page_origin.as_str());
++    assert_eq!(handshake.cookie.as_deref(), Some("session=abc123"));
++    assert_eq!(handshake.protocols.as_deref(), Some("chat, superchat"));
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn relative_and_http_urls_resolve_to_ws_urls() {
++    let mut page = page_on_fixture(true).await;
++    let urls = page.evaluate(
++        r#"
++        (() => {
++            const a = new WebSocket('/socket?x=1');
++            const b = new WebSocket(location.origin + '/other');
++            const out = [a.url, b.url];
++            a.close(); b.close();
++            return out;
++        })()
++        "#,
++    );
++    let origin = page.evaluate("location.origin");
++    let ws_origin = origin.as_str().unwrap().replacen("http:", "ws:", 1);
++    assert_eq!(
++        urls,
++        serde_json::json!([
++            format!("{ws_origin}/socket?x=1"),
++            format!("{ws_origin}/other"),
++        ])
++    );
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn constructor_and_close_reject_invalid_arguments() {
++    let mut page = page_on_fixture(true).await;
++    let result = page.evaluate(
++        r#"
++        (() => {
++            const name = (fn) => { try { fn(); return 'ok'; } catch (e) { return e.name; } };
++            const ws = new WebSocket('ws://127.0.0.1:9/');
++            const out = [
++                name(() => new WebSocket('ftp://example.com/')),
++                name(() => new WebSocket('ws://example.com/#frag')),
++                name(() => new WebSocket('ws://example.com/', ['a', 'a'])),
++                name(() => new WebSocket('ws://example.com/', 'not a token')),
++                name(() => ws.close(1001)),
++                name(() => ws.close(1000, 'x'.repeat(124))),
++            ];
++            ws.close();
++            return out;
++        })()
++        "#,
++    );
++    assert_eq!(
++        result,
++        serde_json::json!([
++            "SyntaxError",
++            "SyntaxError",
++            "SyntaxError",
++            "SyntaxError",
++            "InvalidAccessError",
++            "SyntaxError",
++        ])
++    );
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn close_while_connecting_fails_the_connection() {
++    let (addr, _server) = spawn_ws_server();
++    let mut page = page_on_fixture(true).await;
++    run(&mut page, RECORD);
++    run(
++        &mut page,
++        &format!(
++            r#"
++        window.__ws = __record(new WebSocket('ws://{addr}/echo'));
++        __ws.close();
++        __log.push(['after close()', __ws.readyState]);
++        return true;
++        "#
++        ),
++    );
++    settle_until(&mut page, "__log.some(e => e[0] === 'close')").await;
++    page.settle(200).await;
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([
++            ["after close()", 2],
++            ["error", 3],
++            ["close", 1006, "", false, 3]
++        ])
++    );
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn private_network_policy_applies_to_websockets() {
++    let (addr, server) = spawn_ws_server();
++    let mut page = page_on_fixture(false).await;
++    run(&mut page, RECORD);
++    run(
++        &mut page,
++        &format!("window.__ws = __record(new WebSocket('ws://{addr}/echo')); return true;"),
++    );
++    settle_until(&mut page, "__log.some(e => e[0] === 'close')").await;
++    assert_eq!(
++        log(&mut page),
++        serde_json::json!([["error", 3], ["close", 1006, "", false, 3]])
++    );
++    std::thread::sleep(Duration::from_millis(50));
++    assert_eq!(server.lock().unwrap().connections, 0);
++}
+diff --git a/crates/obscura-js/Cargo.toml b/crates/obscura-js/Cargo.toml
+index c9350fb..814559a 100644
+--- a/crates/obscura-js/Cargo.toml
++++ b/crates/obscura-js/Cargo.toml
+@@ -35,6 +35,11 @@ tracing = { workspace = true }
+ thiserror = { workspace = true }
+ anyhow = { workspace = true }
+ reqwest = { workspace = true }
++# Client transport for the page `WebSocket` API. rustls with webpki roots
++# reuses the ring-backed rustls reqwest already links, so wss:// adds no new
++# TLS stack.
++tokio-tungstenite = { workspace = true, features = ["rustls-tls-webpki-roots"] }
++futures-util = { version = "0.3", default-features = false, features = ["sink"] }
+ html5ever = { workspace = true }
+ deno_error = "0.7"
+ base64 = { workspace = true }
+diff --git a/crates/obscura-js/js/bootstrap.js b/crates/obscura-js/js/bootstrap.js
+index fc412b5..13243ab 100644
+--- a/crates/obscura-js/js/bootstrap.js
++++ b/crates/obscura-js/js/bootstrap.js
+@@ -16347,16 +16347,11 @@ if (typeof FileReader === 'undefined') {
+   Object.assign(globalThis.FileReader.prototype, { EMPTY: 0, LOADING: 1, DONE: 2 });
+ }
+ 
+-// Real network sockets aren't implemented; we don't have a runtime WS / SSE
+-// client in V8. But pages that wait for an `open` event (Vite HMR clients
+-// embedded on docs sites, live-dashboards, anything calling
+-// `await new Promise(r => ws.addEventListener('open', r))`) silently hang
+-// forever otherwise. Fire `open` after a microtask so the consumer at least
+-// proceeds; subsequent messages never arrive, which is no worse than the
+-// current "no signal whatsoever" behaviour.
+-// Minimal EventTarget shared by socket-like classes. Real `EventTarget` is
+-// currently aliased to `Node`, which would drag DOM-tree assumptions into a
+-// `WebSocket`. Defining a private shim avoids that.
++// There is no EventSource transport yet. Pages that wait for an `open` event
++// (dev-server reload clients, live dashboards) would hang forever otherwise, so
++// fire `open` after a microtask; no messages ever arrive.
++// Minimal listener box for EventSource. Real `EventTarget` is currently
++// aliased to `Node`, which would drag DOM-tree assumptions into it.
+ function _makeListenerBox(self) {
+   const map = new Map();
+   self.addEventListener = function (type, fn) {
+@@ -16417,42 +16412,259 @@ globalThis.EventSource = class EventSource extends EventTarget {
+ 
+ 
+ if (typeof WebSocket === 'undefined') {
++  // The socket itself lives in Rust (src/websocket.rs); this class is the
++  // WHATWG WebSocket state machine around it. Connection failures surface the
++  // way browsers report them: `error`, then `close` with code 1006 and
++  // wasClean false, so callers' reconnect paths run.
++  const CONNECTING = 0, OPEN = 1, CLOSING = 2, CLOSED = 3;
++  const socketState = new WeakMap();
++  const stateFor = (socket) => {
++    const state = socketState.get(socket);
++    if (!state) throw new TypeError('Illegal invocation');
++    return state;
++  };
++  // RFC 7230 token: the grammar Sec-WebSocket-Protocol values must follow.
++  const PROTOCOL_TOKEN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
++  const syntaxError = (message) =>
++    new DOMException("Failed to construct 'WebSocket': " + message, 'SyntaxError');
++
++  if (typeof CloseEvent === 'undefined') {
++    globalThis.CloseEvent = class CloseEvent extends Event {
++      constructor(type, init) {
++        const i = init || {};
++        super(type, i);
++        this.wasClean = !!i.wasClean;
++        this.code = i.code === undefined ? 0 : (Number(i.code) & 0xffff);
++        this.reason = i.reason === undefined ? '' : String(i.reason);
++      }
++    };
++  }
++
++  const fire = (socket, event) => {
++    try { _eventTargetDispatch(socket, event); } catch (e) { console.error(e); }
++  };
++
++  const finish = (socket, state, code, reason, wasClean) => {
++    if (state.readyState === CLOSED) return;
++    state.readyState = CLOSED;
++    if (!wasClean) fire(socket, new Event('error'));
++    fire(socket, new CloseEvent('close', { code, reason, wasClean }));
++  };
++
++  const pump = (socket, state) => {
++    const pending = __obscuraCore.ops.op_ws_next(state.id);
++    // An idle open socket is not pending page work: without this a page with
++    // a live socket would never be reported idle by the event loop.
++    try { __obscuraCore.unrefOpPromise(pending); } catch (e) {}
++    pending.then((raw) => {
++      const event = JSON.parse(raw);
++      if (event.type === 'close') {
++        finish(socket, state, event.code, event.reason, event.clean);
++        return;
++      }
++      // Messages that arrive once close() has started are discarded.
++      if (state.readyState === OPEN) {
++        let data = event.data;
++        if (event.type === 'binary') {
++          const bytes = _base64ToUint8Array(data);
++          data = state.binaryType === 'arraybuffer' ? bytes.buffer : new Blob([bytes]);
++        }
++        fire(socket, new MessageEvent('message', { data, origin: state.origin }));
++      }
++      pump(socket, state);
++    });
++  };
++
++  // Snapshot outgoing data synchronously: the caller may mutate a buffer
++  // right after send() returns.
++  const encodeOutgoing = (data) => {
++    if (data instanceof ArrayBuffer) return { bytes: new Uint8Array(data.slice(0)), text: false };
++    if (ArrayBuffer.isView(data)) {
++      return { bytes: new Uint8Array(data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)), text: false };
++    }
++    if (typeof Blob === 'function' && data instanceof Blob) {
++      return { bytes: (data._bytes || new Uint8Array()).slice(), text: false };
++    }
++    return { bytes: new TextEncoder().encode(String(data)), text: true };
++  };
++
++  const handlerSlots = ['open', 'message', 'error', 'close'];
++
+   globalThis.WebSocket = class WebSocket {
+     constructor(url, protocols) {
+-      // Validate URL scheme per spec — Chrome throws SyntaxError for non-ws/wss URLs
+-      if (typeof url !== 'string' || !/^wss?:\/\//i.test(url)) {
+-        throw new DOMException(
+-          "Failed to construct 'WebSocket': The URL '" + url + "' is invalid.",
+-          'SyntaxError'
+-        );
++      if (arguments.length < 1) {
++        throw new TypeError("Failed to construct 'WebSocket': 1 argument required, but only 0 present.");
+       }
+-      this.url = url;
+-      this.readyState = 0; // CONNECTING
+-      this.bufferedAmount = 0;
+-      this.binaryType = 'blob';
+-      this.extensions = '';
+-      this.protocol = Array.isArray(protocols) ? (protocols[0] || '') : (protocols || '');
+-      this.onopen = null; this.onmessage = null; this.onerror = null; this.onclose = null;
+-      _makeListenerBox(this);
+-      Promise.resolve().then(() => {
+-        if (this.readyState !== 0) return;
+-        this.readyState = 1; // OPEN
+-        const ev = new Event('open');
+-        if (typeof this.onopen === 'function') { try { this.onopen(ev); } catch (e) {} }
+-        try { this.dispatchEvent(ev); } catch (e) {}
+-      });
++      let parsed;
++      try {
++        parsed = new URL(String(url), document.baseURI);
++      } catch (e) {
++        throw syntaxError("The URL '" + url + "' is invalid.");
++      }
++      if (parsed.protocol === 'http:') parsed.protocol = 'ws:';
++      else if (parsed.protocol === 'https:') parsed.protocol = 'wss:';
++      if (parsed.protocol !== 'ws:' && parsed.protocol !== 'wss:') {
++        throw syntaxError("The URL's scheme must be either 'http', 'https', 'ws', or 'wss'. '" + parsed.protocol.slice(0, -1) + "' is not allowed.");
++      }
++      if (parsed.hash || parsed.href.endsWith('#')) {
++        throw syntaxError("The URL contains a fragment identifier ('" + parsed.hash + "'). Fragment identifiers are not allowed in WebSocket URLs.");
++      }
++      let list = [];
++      if (protocols !== undefined) {
++        list = typeof protocols === 'string' || typeof protocols?.[Symbol.iterator] !== 'function'
++          ? [String(protocols)]
++          : Array.from(protocols, String);
++      }
++      const seen = new Set();
++      for (const protocol of list) {
++        if (!PROTOCOL_TOKEN.test(protocol)) {
++          throw syntaxError("The subprotocol '" + protocol + "' is invalid.");
++        }
++        if (seen.has(protocol)) {
++          throw syntaxError("The subprotocol '" + protocol + "' is duplicated.");
++        }
++        seen.add(protocol);
++      }
++
++      const state = {
++        url: parsed.href,
++        origin: parsed.origin,
++        readyState: CONNECTING,
++        bufferedAmount: 0,
++        binaryType: 'blob',
++        protocol: '',
++        extensions: '',
++        handlers: {},
++        wrappers: {},
++        sendChain: Promise.resolve(),
++        id: __obscuraCore.ops.op_ws_create(),
++      };
++      socketState.set(this, state);
++
++      const pageOrigin = globalThis.location?.origin || 'null';
++      __obscuraCore.ops.op_ws_connect(state.id, state.url, list.join(', '), pageOrigin)
++        .then((raw) => {
++          const result = JSON.parse(raw);
++          // close() during CONNECTING already reported the failure.
++          if (state.readyState !== CONNECTING) return;
++          if (!result.ok) {
++            finish(this, state, 1006, '', false);
++            return;
++          }
++          state.readyState = OPEN;
++          state.protocol = result.protocol || '';
++          state.extensions = result.extensions || '';
++          fire(this, new Event('open'));
++          pump(this, state);
++        });
++    }
++
++    get url() { return stateFor(this).url; }
++    get readyState() { return stateFor(this).readyState; }
++    get bufferedAmount() { return stateFor(this).bufferedAmount; }
++    get protocol() { return stateFor(this).protocol; }
++    get extensions() { return stateFor(this).extensions; }
++    get binaryType() { return stateFor(this).binaryType; }
++    set binaryType(value) {
++      const state = stateFor(this);
++      // An unknown value is ignored, not an error (WebIDL enum attribute).
++      if (value === 'blob' || value === 'arraybuffer') state.binaryType = value;
++    }
++
++    send(data) {
++      const state = stateFor(this);
++      if (arguments.length < 1) {
++        throw new TypeError("Failed to execute 'send' on 'WebSocket': 1 argument required, but only 0 present.");
++      }
++      if (state.readyState === CONNECTING) {
++        throw new DOMException("Failed to execute 'send' on 'WebSocket': Still in CONNECTING state.", 'InvalidStateError');
++      }
++      const { bytes, text } = encodeOutgoing(data);
++      // After close() the data is not sent, but bufferedAmount still grows,
++      // as the spec requires.
++      state.bufferedAmount += bytes.length;
++      if (state.readyState !== OPEN) return;
++      state.sendChain = state.sendChain
++        .then(() => __obscuraCore.ops.op_ws_send(state.id, bytes, text))
++        .then(() => { state.bufferedAmount -= bytes.length; }, () => {});
+     }
+-    send(data) { /* drop; no real socket */ }
++
+     close(code, reason) {
+-      if (this.readyState >= 2) return;
+-      this.readyState = 3; // CLOSED
+-      const ev = new Event('close');
+-      ev.code = code || 1000; ev.reason = reason || ''; ev.wasClean = true;
+-      if (typeof this.onclose === 'function') { try { this.onclose(ev); } catch (e) {} }
+-      try { this.dispatchEvent(ev); } catch (e) {}
+-    }
+-    static CONNECTING = 0; static OPEN = 1; static CLOSING = 2; static CLOSED = 3;
++      const state = stateFor(this);
++      if (code !== undefined) {
++        code = Math.min(Math.max(Math.round(Number(code)) || 0, 0), 0xffff);
++        if (code !== 1000 && (code < 3000 || code > 4999)) {
++          throw new DOMException("Failed to execute 'close' on 'WebSocket': The close code must be either 1000, or between 3000 and 4999. " + code + " is neither.", 'InvalidAccessError');
++        }
++      }
++      reason = reason === undefined ? '' : String(reason);
++      if (new TextEncoder().encode(reason).length > 123) {
++        throw new DOMException("Failed to execute 'close' on 'WebSocket': The close reason must not be greater than 123 UTF-8 bytes.", 'SyntaxError');
++      }
++      if (state.readyState === CLOSING || state.readyState === CLOSED) return;
++      if (state.readyState === CONNECTING) {
++        state.readyState = CLOSING;
++        __obscuraCore.ops.op_ws_close(state.id, 0, '');
++        // Reported as a failed connection, from a later task.
++        _scheduleAfter(0, () => finish(this, state, 1006, '', false));
++        return;
++      }
++      state.readyState = CLOSING;
++      // Queued behind earlier send() calls so they reach the peer first.
++      const frameCode = code === undefined ? 0 : code;
++      const frameReason = code === undefined ? '' : reason;
++      state.sendChain = state.sendChain
++        .then(() => __obscuraCore.ops.op_ws_close(state.id, frameCode, frameReason));
++    }
++
++    addEventListener(type, callback, options) {
++      stateFor(this);
++      _eventTargetAdd(this, type, callback, options);
++    }
++    removeEventListener(type, callback, options) {
++      stateFor(this);
++      _eventTargetRemove(this, type, callback, options);
++    }
++    dispatchEvent(event) {
++      stateFor(this);
++      return _eventTargetDispatch(this, event);
++    }
++    get [Symbol.toStringTag]() { return 'WebSocket'; }
+   };
++
++  // on<event> handler attributes are listeners in registration order, like
++  // any other EventTarget: installed once, retargeted on reassignment.
++  for (const type of handlerSlots) {
++    Object.defineProperty(globalThis.WebSocket.prototype, 'on' + type, {
++      configurable: true,
++      enumerable: true,
++      get() { return stateFor(this).handlers[type] || null; },
++      set(callback) {
++        const state = stateFor(this);
++        callback = typeof callback === 'function'
++          || (callback && typeof callback.handleEvent === 'function') ? callback : null;
++        const hadHandler = !!state.handlers[type];
++        state.handlers[type] = callback;
++        if (callback && !hadHandler) {
++          state.wrappers[type] = (event) => {
++            const current = state.handlers[type];
++            if (!current) return;
++            if (typeof current === 'function') current.call(this, event);
++            else current.handleEvent.call(current, event);
++          };
++          _eventTargetAdd(this, type, state.wrappers[type]);
++        } else if (!callback && hadHandler) {
++          _eventTargetRemove(this, type, state.wrappers[type]);
++          state.wrappers[type] = null;
++        }
++      },
++    });
++  }
++  for (const [name, value] of Object.entries({ CONNECTING, OPEN, CLOSING, CLOSED })) {
++    Object.defineProperty(globalThis.WebSocket, name, { value, enumerable: true });
++    Object.defineProperty(globalThis.WebSocket.prototype, name, { value, enumerable: true });
++  }
++  Object.setPrototypeOf(globalThis.WebSocket.prototype, globalThis.EventTarget.prototype);
+ }
+ 
+ if (typeof BroadcastChannel === 'undefined') {
+diff --git a/crates/obscura-js/src/lib.rs b/crates/obscura-js/src/lib.rs
+index 061b89c..9a4d1f3 100644
+--- a/crates/obscura-js/src/lib.rs
++++ b/crates/obscura-js/src/lib.rs
+@@ -6,6 +6,7 @@ pub mod module_loader;
+ pub mod ops;
+ pub mod runtime;
+ pub mod v8_flags;
++mod websocket;
+ mod write_stream;
+ 
+ pub use markdown::HTML_TO_MARKDOWN_JS;
+diff --git a/crates/obscura-js/src/ops.rs b/crates/obscura-js/src/ops.rs
+index 25ea5ee..872b0b5 100644
+--- a/crates/obscura-js/src/ops.rs
++++ b/crates/obscura-js/src/ops.rs
+@@ -6955,6 +6955,11 @@ pub fn build_extension() -> Extension {
+         op_text_decode(),
+         op_url_encode_query(),
+         op_begin_render_task(),
++        crate::websocket::op_ws_create(),
++        crate::websocket::op_ws_connect(),
++        crate::websocket::op_ws_send(),
++        crate::websocket::op_ws_close(),
++        crate::websocket::op_ws_next(),
+     ];
+     // Only registered when the render feature is compiled in. bootstrap.js
+     // probes with typeof before calling, so the op's absence is a clean fallback.
+diff --git a/crates/obscura-js/src/websocket.rs b/crates/obscura-js/src/websocket.rs
+new file mode 100644
+index 0000000..2968bc6
+--- /dev/null
++++ b/crates/obscura-js/src/websocket.rs
+@@ -0,0 +1,525 @@
++//! Client transport behind the page-facing `WebSocket` interface.
++//!
++//! bootstrap.js owns the WHATWG state machine (readyState, events,
++//! bufferedAmount, argument validation). This module owns the sockets: it
++//! dials, performs the opening handshake with the page's cookies and origin,
++//! and moves frames between V8 and the network. Sockets live in a per-runtime
++//! table keyed by a small integer id, so a runtime teardown drops every
++//! connection with it.
++
++use std::cell::{Cell, RefCell};
++use std::collections::HashMap;
++use std::net::SocketAddr;
++use std::rc::Rc;
++use std::sync::atomic::{AtomicU32, Ordering};
++use std::sync::Arc;
++use std::time::Duration;
++
++use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
++use deno_core::{op2, JsBuffer, OpState};
++use futures_util::stream::{SplitSink, SplitStream};
++use futures_util::{SinkExt, StreamExt};
++use obscura_net::{same_site, SameSiteContext};
++use tokio::net::TcpStream;
++use tokio::sync::{Mutex, Notify};
++use tokio_tungstenite::tungstenite::client::IntoClientRequest;
++use tokio_tungstenite::tungstenite::http::HeaderValue;
++use tokio_tungstenite::tungstenite::protocol::CloseFrame;
++use tokio_tungstenite::tungstenite::Message;
++use tokio_tungstenite::{MaybeTlsStream, WebSocketStream};
++
++use crate::ops::{SharedState, InterceptedRequest, InterceptResolution};
++use tokio_tungstenite::tungstenite::protocol::WebSocketConfig;
++
++// Neyvia public-resource limits around the upstream Apache-2.0 transport.
++const MESSAGE_LIMIT: usize = 1024 * 1024;
++const TRANSFER_LIMIT: usize = 16 * MESSAGE_LIMIT;
++
++type Socket = WebSocketStream<MaybeTlsStream<TcpStream>>;
++
++/// Upper bound for TCP connect plus the opening handshake. A peer that accepts
++/// the TCP connection but never answers the upgrade must still surface as a
++/// failed connection instead of leaving the page in CONNECTING forever.
++const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(30);
++
++/// After the peer's Close frame arrives, keep reading briefly so the echoed
++/// Close frame tungstenite queues is flushed before the socket is dropped.
++const CLOSE_DRAIN_TIMEOUT: Duration = Duration::from_millis(500);
++
++struct Connection {
++    sink: Mutex<SplitSink<Socket, Message>>,
++    stream: Mutex<SplitStream<Socket>>,
++    transferred: Cell<usize>,
++}
++
++enum Slot {
++    /// Handshake in flight. Notified when the page aborts it with `close()`.
++    Connecting(Rc<Notify>),
++    Open(Rc<Connection>),
++}
++
++#[derive(Default)]
++struct WebSocketTable {
++    next_id: u32,
++    slots: HashMap<u32, Slot>,
++}
++
++fn with_table<R>(state: &mut OpState, f: impl FnOnce(&mut WebSocketTable) -> R) -> R {
++    if !state.has::<WebSocketTable>() {
++        state.put(WebSocketTable::default());
++    }
++    f(state.borrow_mut::<WebSocketTable>())
++}
++
++fn connection(state: &Rc<RefCell<OpState>>, id: u32) -> Option<Rc<Connection>> {
++    let mut state = state.borrow_mut();
++    with_table(&mut state, |table| match table.slots.get(&id) {
++        Some(Slot::Open(conn)) => Some(conn.clone()),
++        _ => None,
++    })
++}
++
++fn remove_slot(state: &Rc<RefCell<OpState>>, id: u32) -> Option<Slot> {
++    let mut state = state.borrow_mut();
++    with_table(&mut state, |table| table.slots.remove(&id))
++}
++
++/// Reserve an id for a new socket. The id exists before the handshake starts
++/// so `close()` during CONNECTING can abort the dial.
++#[op2(fast)]
++pub fn op_ws_create(state: &mut OpState) -> Result<u32, deno_error::JsErrorBox> {
++    with_table(state, |table| {
++        if table.slots.len() >= 8 { return Err(deno_error::JsErrorBox::generic("WebSocket resource limit reached")); }
++        table.next_id = table.next_id.wrapping_add(1).max(1);
++        let id = table.next_id;
++        table
++            .slots
++            .insert(id, Slot::Connecting(Rc::new(Notify::new())));
++        Ok(id)
++    })
++}
++
++/// What the handshake needs from the page, captured before the first await so
++/// no `RefCell` borrow is held across the network round trip.
++struct PageNetworkContext {
++    blocked_urls: Vec<String>,
++    cookie_jar: Option<Arc<obscura_net::CookieJar>>,
++    user_agent: Option<String>,
++    allow_private_network: bool,
++    proxy_configured: bool,
++    page_in_flight: Arc<AtomicU32>,
++    intercept_tx: Option<tokio::sync::mpsc::UnboundedSender<InterceptedRequest>>,
++    page_id: String,
++}
++
++fn page_network_context(state: &Rc<RefCell<OpState>>) -> PageNetworkContext {
++    let state = state.borrow();
++    let shared = state.borrow::<SharedState>().clone();
++    let page = shared.borrow();
++    let client = page.http_client.as_ref();
++    PageNetworkContext {
++        blocked_urls: page.blocked_urls.clone(),
++        cookie_jar: page.cookie_jar.clone(),
++        user_agent: client.and_then(|c| c.user_agent.try_read().ok().map(|ua| ua.clone())),
++        allow_private_network: client.is_some_and(|c| c.allow_private_network)
++            || obscura_net::env_allows_private_network(),
++        proxy_configured: client.is_some_and(|c| c.proxy_url().is_some()),
++        page_in_flight: Arc::clone(&page.page_in_flight),
++        intercept_tx: if page.intercept_enabled { page.intercept_tx.clone() } else { None },
++        page_id: page.intercept_page_id.clone(),
++    }
++}
++
++/// The http(s) URL a ws(s) URL shares cookies, SSRF policy and site with.
++fn http_equivalent(url: &url::Url) -> Option<url::Url> {
++    let scheme = match url.scheme() {
++        "ws" => "http",
++        "wss" => "https",
++        _ => return None,
++    };
++    let mut http = url.clone();
++    http.set_scheme(scheme).ok()?;
++    Some(http)
++}
++
++fn is_blocked(patterns: &[String], url: &str) -> bool {
++    patterns.iter().any(|pattern| {
++        pattern == "*" || url.contains(pattern.as_str()) || crate::ops::glob_match(pattern, url)
++    })
++}
++
++/// Resolve the target and apply the same private-network policy scripted
++/// fetch() uses. Checking resolved addresses (not only the host string) keeps
++/// a public name that resolves to 127.0.0.1 or a metadata address out.
++async fn resolve_allowed(url: &url::Url, allow_private: bool) -> Result<Vec<SocketAddr>, String> {
++    let host = url
++        .host_str()
++        .ok_or_else(|| "WebSocket URL has no host".to_string())?;
++    let host = host.trim_start_matches('[').trim_end_matches(']');
++    let port = url
++        .port_or_known_default()
++        .ok_or_else(|| "WebSocket URL has no port".to_string())?;
++    let addrs: Vec<SocketAddr> = tokio::net::lookup_host((host, port))
++        .await
++        .map_err(|e| format!("DNS resolution failed for {host}: {e}"))?
++        .collect();
++    let allowed: Vec<SocketAddr> = addrs
++        .into_iter()
++        .filter(|addr| allow_private || !obscura_net::is_forbidden_ip(addr.ip()))
++        .collect();
++    if allowed.is_empty() {
++        return Err(format!(
++            "Access to private/internal address for {host} is not allowed"
++        ));
++    }
++    Ok(allowed)
++}
++
++async fn dial(addrs: &[SocketAddr]) -> Result<TcpStream, String> {
++    let mut last_error = String::from("no address to connect to");
++    for addr in addrs {
++        match TcpStream::connect(addr).await {
++            Ok(stream) => return Ok(stream),
++            Err(e) => last_error = format!("connect to {addr} failed: {e}"),
++        }
++    }
++    Err(last_error)
++}
++
++struct Handshake {
++    socket: Socket,
++    protocol: String,
++}
++
++async fn handshake(
++    url: &url::Url,
++    http_url: &url::Url,
++    protocols: &str,
++    origin: &str,
++    ctx: &PageNetworkContext,
++) -> Result<Handshake, String> {
++    let host = url.host_str().unwrap_or_default().trim_matches(['[', ']']);
++    let fixture = ctx.allow_private_network && matches!(host, "localhost" | "127.0.0.1" | "::1");
++    let addrs = resolve_allowed(url, fixture).await?;
++    let tcp = dial(&addrs).await?;
++
++    let mut request = url
++        .as_str()
++        .into_client_request()
++        .map_err(|e| format!("invalid WebSocket request: {e}"))?;
++    let headers = request.headers_mut();
++    let mut set = |name: &'static str, value: &str| {
++        if value.is_empty() {
++            return;
++        }
++        if let Ok(value) = HeaderValue::from_str(value) {
++            headers.insert(name, value);
++        }
++    };
++    set("Origin", origin);
++    set("Sec-WebSocket-Protocol", protocols);
++    if let Some(ua) = &ctx.user_agent {
++        set("User-Agent", ua);
++    }
++    if let Some(jar) = &ctx.cookie_jar {
++        let context = match url::Url::parse(origin) {
++            Ok(initiator) if same_site(&initiator, http_url) => SameSiteContext::SameSite,
++            Ok(_) => SameSiteContext::CrossSite,
++            // An opaque origin (about:blank, data:) has no site to share.
++            Err(_) => SameSiteContext::CrossSite,
++        };
++        set(
++            "Cookie",
++            &jar.get_cookie_header_in_context(http_url, context),
++        );
++    }
++
++    let (socket, response) =
++        tokio_tungstenite::client_async_tls_with_config(request, tcp,
++            Some(WebSocketConfig::default().max_message_size(Some(MESSAGE_LIMIT)).max_frame_size(Some(MESSAGE_LIMIT))), None)
++            .await
++            .map_err(|e| format!("WebSocket handshake failed: {e}"))?;
++
++    if let Some(jar) = &ctx.cookie_jar {
++        for value in response.headers().get_all("set-cookie") {
++            if let Ok(value) = value.to_str() {
++                jar.set_cookie(value, http_url);
++            }
++        }
++    }
++    let protocol = response
++        .headers()
++        .get("sec-websocket-protocol")
++        .and_then(|v| v.to_str().ok())
++        .unwrap_or("")
++        .to_string();
++    Ok(Handshake { socket, protocol })
++}
++
++fn failure(error: impl Into<String>) -> String {
++    serde_json::json!({ "ok": false, "error": error.into() }).to_string()
++}
++
++/// Dial `url` and run the opening handshake. Resolves to JSON:
++/// `{"ok":true,"protocol":..,"extensions":..}` or `{"ok":false,"error":..}`.
++/// A failure is a normal result, not an exception: the page reports it as an
++/// `error` event followed by `close` with code 1006.
++#[op2]
++#[string]
++pub async fn op_ws_connect(
++    state: Rc<RefCell<OpState>>,
++    id: u32,
++    #[string] url: String,
++    #[string] protocols: String,
++    #[string] origin: String,
++) -> String {
++    let cancel = {
++        let mut s = state.borrow_mut();
++        with_table(&mut s, |table| match table.slots.get(&id) {
++            Some(Slot::Connecting(cancel)) => Some(cancel.clone()),
++            _ => None,
++        })
++    };
++    let Some(cancel) = cancel else {
++        return failure("WebSocket was closed before connecting");
++    };
++
++    let parsed = match url::Url::parse(&url) {
++        Ok(parsed) => parsed,
++        Err(e) => {
++            remove_slot(&state, id);
++            return failure(format!("invalid WebSocket URL: {e}"));
++        }
++    };
++    let Some(http_url) = http_equivalent(&parsed) else {
++        remove_slot(&state, id);
++        return failure("WebSocket URL scheme must be ws or wss");
++    };
++    let ctx = page_network_context(&state);
++    if is_blocked(&ctx.blocked_urls, &url) {
++        remove_slot(&state, id);
++        return failure("WebSocket URL is blocked");
++    }
++    // Proxy tunnelling (HTTP CONNECT / SOCKS) is not implemented. Failing closed
++    // keeps a proxied context from leaking its real address over a socket.
++    if ctx.proxy_configured {
++        remove_slot(&state, id);
++        return failure("WebSocket connections through a proxy are not supported");
++    }
++    // The same host route that limits fetch/XHR must authorize a WebSocket
++    // before DNS or TCP. HTTP-shaped URL keeps one canonical origin policy.
++    if let Some(tx) = &ctx.intercept_tx {
++        let (resolver, response) = tokio::sync::oneshot::channel();
++        let request = InterceptedRequest { request_id: format!("websocket-{id}"),
++            page_id: ctx.page_id.clone(), url: http_url.to_string(), method: "GET".into(),
++            headers: HashMap::new(), resource_type: "WebSocket".into(), resolver };
++        let approved = tx.send(request).is_ok() && matches!(
++            tokio::time::timeout(Duration::from_secs(10), response).await,
++            Ok(Ok(InterceptResolution::Continue { url: None, method: None, headers: None, body: None })));
++        if !approved { remove_slot(&state, id); return failure("WebSocket refused by owning public-resource policy"); }
++    } else if !ctx.allow_private_network {
++        remove_slot(&state, id); return failure("WebSocket requires an owning public-resource policy");
++    }
++
++    // Count the handshake as page network activity so load/settle waits for
++    // the socket to open the way it waits for an in-flight fetch().
++    struct InFlight(Arc<AtomicU32>);
++    impl Drop for InFlight {
++        fn drop(&mut self) {
++            self.0.fetch_sub(1, Ordering::Relaxed);
++        }
++    }
++    ctx.page_in_flight.fetch_add(1, Ordering::Relaxed);
++    let _in_flight = InFlight(Arc::clone(&ctx.page_in_flight));
++
++    let outcome = tokio::select! {
++        result = tokio::time::timeout(
++            HANDSHAKE_TIMEOUT,
++            handshake(&parsed, &http_url, &protocols, &origin, &ctx),
++        ) => match result {
++            Ok(result) => result,
++            Err(_) => Err("WebSocket opening handshake timed out".to_string()),
++        },
++        _ = cancel.notified() => Err("WebSocket was closed before connecting".to_string()),
++    };
++
++    let handshake = match outcome {
++        Ok(handshake) => handshake,
++        Err(error) => {
++            remove_slot(&state, id);
++            tracing::debug!("WebSocket {url}: {error}");
++            return failure(error);
++        }
++    };
++
++    let (sink, stream) = handshake.socket.split();
++    let conn = Rc::new(Connection {
++        sink: Mutex::new(sink),
++        stream: Mutex::new(stream),
++        transferred: Cell::new(0),
++    });
++    let still_wanted = {
++        let mut s = state.borrow_mut();
++        with_table(&mut s, |table| match table.slots.get_mut(&id) {
++            Some(slot @ Slot::Connecting(_)) => {
++                *slot = Slot::Open(conn);
++                true
++            }
++            _ => false,
++        })
++    };
++    if !still_wanted {
++        return failure("WebSocket was closed before connecting");
++    }
++    serde_json::json!({
++        "ok": true,
++        "protocol": handshake.protocol,
++        // No extension is negotiated: permessage-deflate is not offered.
++        "extensions": "",
++    })
++    .to_string()
++}
++
++/// Send one message. Text arrives as UTF-8 bytes (the page encodes with
++/// TextEncoder, which already replaced lone surrogates). Resolves to false
++/// when the socket is gone or the write failed; the read side reports the
++/// resulting closure.
++#[op2]
++pub async fn op_ws_send(
++    state: Rc<RefCell<OpState>>,
++    id: u32,
++    #[buffer] data: JsBuffer,
++    is_text: bool,
++) -> bool {
++    let Some(conn) = connection(&state, id) else {
++        return false;
++    };
++    let total = conn.transferred.get().saturating_add(data.len());
++    if data.len() > MESSAGE_LIMIT || total > TRANSFER_LIMIT { remove_slot(&state, id); return false; }
++    conn.transferred.set(total);
++    let message = if is_text {
++        match String::from_utf8(data.to_vec()) {
++            Ok(text) => Message::text(text),
++            Err(_) => return false,
++        }
++    } else {
++        Message::binary(data.to_vec())
++    };
++    let mut sink = conn.sink.lock().await;
++    sink.send(message).await.is_ok()
++}
++
++/// Start the closing handshake, or abort a handshake still in flight.
++/// `code == 0` sends a Close frame without a status code.
++#[op2]
++pub async fn op_ws_close(
++    state: Rc<RefCell<OpState>>,
++    id: u32,
++    code: u32,
++    #[string] reason: String,
++) {
++    let conn = {
++        let mut s = state.borrow_mut();
++        with_table(&mut s, |table| match table.slots.get(&id) {
++            Some(Slot::Connecting(cancel)) => {
++                cancel.notify_one();
++                table.slots.remove(&id);
++                None
++            }
++            Some(Slot::Open(conn)) => Some(conn.clone()),
++            None => None,
++        })
++    };
++    let Some(conn) = conn else {
++        return;
++    };
++    let frame = (code != 0).then(|| CloseFrame {
++        code: (code as u16).into(),
++        reason: reason.into(),
++    });
++    let mut sink = conn.sink.lock().await;
++    let _ = sink.send(Message::Close(frame)).await;
++}
++
++/// Wait for the next event on an open socket. Resolves to JSON:
++/// `{"type":"text","data":..}`, `{"type":"binary","data":<base64>}`, or
++/// `{"type":"close","code":..,"reason":..,"clean":bool}` as the final event.
++#[op2]
++#[string]
++pub async fn op_ws_next(state: Rc<RefCell<OpState>>, id: u32) -> String {
++    let Some(conn) = connection(&state, id) else {
++        return close_event(1006, "", false);
++    };
++    let mut stream = conn.stream.lock().await;
++    loop {
++        match stream.next().await {
++            Some(Ok(Message::Text(text))) => {
++                let total = conn.transferred.get().saturating_add(text.len());
++                if total > TRANSFER_LIMIT { remove_slot(&state, id); return close_event(1006, "Socket transfer limit", false); }
++                conn.transferred.set(total);
++                return serde_json::json!({ "type": "text", "data": text.as_str() }).to_string();
++            }
++            Some(Ok(Message::Binary(bytes))) => {
++                let total = conn.transferred.get().saturating_add(bytes.len());
++                if total > TRANSFER_LIMIT { remove_slot(&state, id); return close_event(1006, "Socket transfer limit", false); }
++                conn.transferred.set(total);
++                return serde_json::json!({ "type": "binary", "data": BASE64.encode(&bytes) })
++                    .to_string();
++            }
++            Some(Ok(Message::Close(frame))) => {
++                // Reading on flushes the Close echo tungstenite queued.
++                let _ = tokio::time::timeout(CLOSE_DRAIN_TIMEOUT, async {
++                    while stream.next().await.is_some() {}
++                })
++                .await;
++                remove_slot(&state, id);
++                let (code, reason) = match frame {
++                    Some(frame) => (u16::from(frame.code), frame.reason.to_string()),
++                    // RFC 6455 §7.1.5: no status code present.
++                    None => (1005, String::new()),
++                };
++                return close_event(code, &reason, true);
++            }
++            // Ping/Pong are answered by tungstenite; raw frames never surface
++            // from a client stream.
++            Some(Ok(_)) => continue,
++            Some(Err(_)) | None => {
++                remove_slot(&state, id);
++                return close_event(1006, "", false);
++            }
++        }
++    }
++}
++
++fn close_event(code: u16, reason: &str, clean: bool) -> String {
++    serde_json::json!({ "type": "close", "code": code, "reason": reason, "clean": clean })
++        .to_string()
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn ws_urls_map_to_their_http_equivalent() {
++        let ws = url::Url::parse("ws://example.com:8080/chat?x=1").unwrap();
++        assert_eq!(
++            http_equivalent(&ws).unwrap().as_str(),
++            "http://example.com:8080/chat?x=1"
++        );
++        let wss = url::Url::parse("wss://example.com/").unwrap();
++        assert_eq!(
++            http_equivalent(&wss).unwrap().as_str(),
++            "https://example.com/"
++        );
++        let http = url::Url::parse("http://example.com/").unwrap();
++        assert!(http_equivalent(&http).is_none());
++    }
++
++    #[tokio::test]
++    async fn loopback_is_refused_without_private_network_opt_in() {
++        let url = url::Url::parse("ws://127.0.0.1:48736/").unwrap();
++        assert!(resolve_allowed(&url, false).await.is_err());
++        assert!(resolve_allowed(&url, true).await.is_ok());
++    }
++}
+diff --git a/crates/obscura-cdp/Cargo.toml b/crates/obscura-cdp/Cargo.toml
+index af64673..d45b802 100644
+--- a/crates/obscura-cdp/Cargo.toml
++++ b/crates/obscura-cdp/Cargo.toml
+@@ -9,6 +9,10 @@ autotests = false
+ [[test]]
+ name = "integration"
+ 
++[[test]]
++name = "page_websocket"
++path = "tests/page_websocket.rs"
++
+ [features]
+ default = []
+ stealth = ["obscura-browser/stealth"]

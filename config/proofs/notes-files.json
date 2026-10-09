@@ -1,0 +1,294 @@
+{
+  "area": "notes-files",
+  "module": "grant_agent.proofs_notes_files",
+  "self_check": "self_check",
+  "manuals": [
+    "notes",
+    "files"
+  ],
+  "contracts": [
+    {
+      "id": "notes.path-jail",
+      "phase": "pre",
+      "claim": "Every explicit note path resolves under the selected notes folder with .md, .markdown or .txt extension.",
+      "checkedAt": [
+        "neyvia_notes_tools.call_notes -> proofs_notes_files.before",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "notes bytes",
+        "Notes UI",
+        "note tools"
+      ]
+    },
+    {
+      "id": "notes.prose-metadata",
+      "phase": "invariant",
+      "claim": "Tags are unique ordered case-folded prose tags excluding code, anchors and digit-containing hex colours; title uses first-six-line heading or filename stem.",
+      "checkedAt": [
+        "neyvia_notes_tools.tags_of/title_of -> proofs_notes_files.check_tags/check_title",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Notes list/read/write/search summaries"
+      ]
+    },
+    {
+      "id": "notes.body-durable",
+      "phase": "post",
+      "claim": "Creation, replacement and append persist the exact requested UTF-8 body and return its filesystem modification stamp.",
+      "checkedAt": [
+        "neyvia_notes_tools.call_notes -> proofs_notes_files.after",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Notes bytes",
+        "Notes editor",
+        "downstream readers"
+      ]
+    },
+    {
+      "id": "notes.stale-preserves",
+      "phase": "post",
+      "claim": "A stale expectedModified write returns conflict and preserves the original bytes.",
+      "checkedAt": [
+        "neyvia_notes_tools.call_notes -> proofs_notes_files.before/after",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Concurrent note writers",
+        "Notes editor"
+      ]
+    },
+    {
+      "id": "notes.pin-durable",
+      "phase": "post",
+      "claim": "Pin result equals the requested state and persisted .neyvia-notes.json membership.",
+      "checkedAt": [
+        "neyvia_notes_tools.call_notes -> proofs_notes_files.after",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Notes ordering",
+        "metadata"
+      ]
+    },
+    {
+      "id": "files.no-overwrite",
+      "phase": "pre",
+      "claim": "Move and move-undo refuse an occupied target without changing either item's bytes.",
+      "checkedAt": [
+        "neyvia_files_tools.call_files -> proofs_notes_files.before",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Files UI",
+        "file bytes",
+        "original paths"
+      ]
+    },
+    {
+      "id": "files.move-conservation",
+      "phase": "post",
+      "claim": "Move and undo preserve the exact item bytes or directory tree and vacate the previous path.",
+      "checkedAt": [
+        "neyvia_files_tools.call_files -> proofs_notes_files.before/after",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Filesystem paths",
+        "Notes references",
+        "Files UI"
+      ]
+    },
+    {
+      "id": "files.mkdir-durable",
+      "phase": "post",
+      "claim": "Mkdir creates a previously absent directory.",
+      "checkedAt": [
+        "neyvia_files_tools.call_files -> proofs_notes_files.before/after",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Filesystem directory",
+        "Files undo receipt"
+      ]
+    },
+    {
+      "id": "files.undo-once",
+      "phase": "post",
+      "claim": "A successful action saves one undo receipt; undo restores that action and consumes the receipt, refusing a second undo.",
+      "checkedAt": [
+        "neyvia_files_tools.call_files -> proofs_notes_files.before/after",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Files UI and model undo state"
+      ]
+    },
+    {
+      "id": "files.recycle-record",
+      "phase": "invariant",
+      "claim": "Every decoded v1/v2 OS recycle record agrees with binary original path, size and deletion time; v2 length is bounded.",
+      "checkedAt": [
+        "neyvia_files_tools.parse_recycle_info -> proofs_notes_files.check_recycle_record",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Recycle Bin lookup",
+        "file restoration"
+      ]
+    },
+    {
+      "id": "files.trash-recoverable",
+      "phase": "post",
+      "claim": "Trash removes the source and records recoverable equal bytes/tree in the Windows Recycle Bin; undo restores exact bytes/tree.",
+      "checkedAt": [
+        "neyvia_files_tools.call_files -> proofs_notes_files.before/after",
+        "proofs_notes_files.self_check"
+      ],
+      "impact": [
+        "Recycle Bin",
+        "original item",
+        "Files undo"
+      ]
+    },
+    {
+      "id": "notes.write-bounded",
+      "phase": "post",
+      "claim": "Accepted Notes replacement and append are at most 2 MiB in UTF-8; oversized requests preserve existing bytes.",
+      "checkedAt": [
+        "grant_agent.edge_notes.run",
+        "neyvia_notes_tools.call_notes -> proofs_notes_files.after"
+      ],
+      "impact": [
+        "Notes bytes",
+        "Notes UI/model writers"
+      ]
+    },
+    {
+      "id": "notes.concurrent-writes",
+      "phase": "invariant",
+      "claim": "Cooperating Notes UI/model/direct writers with the same read stamp serialize across processes; exactly one replaces existing bytes and the other reports conflict.",
+      "checkedAt": [
+        "grant_agent.edge_notes.run"
+      ],
+      "impact": [
+        "Notes bytes",
+        "Notes UI/model writers"
+      ]
+    },
+    {
+      "id": "notes.atomic-interruption",
+      "phase": "invariant",
+      "claim": "A caught interruption before atomic replacement preserves the original bytes, removes temporary files and permits retry.",
+      "checkedAt": [
+        "grant_agent.edge_notes.run"
+      ],
+      "impact": [
+        "Notes bytes",
+        "Notes UI/model writers"
+      ]
+    },
+    {
+      "id": "notes.permission-preserves",
+      "phase": "invariant",
+      "claim": "An OS permission denial of target replacement preserves original bytes, removes temporary files and permits retry after access returns.",
+      "checkedAt": [
+        "grant_agent.edge_notes.run"
+      ],
+      "impact": [
+        "Notes bytes",
+        "Notes UI/model writers"
+      ]
+    },
+    {
+      "id": "notes.local-offline",
+      "phase": "invariant",
+      "claim": "Local Notes creation/read/search and Files listing succeed without network access.",
+      "checkedAt": [
+        "grant_agent.edge_notes.run"
+      ],
+      "impact": [
+        "Notes bytes",
+        "Notes UI/model writers"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_neyvia_notes_files.py",
+      "case": "test_tags_skip_headings_code_links_and_hex_colours",
+      "contracts": [
+        "notes.prose-metadata"
+      ],
+      "checkedAt": [
+        "neyvia_notes_tools.tags_of/title_of -> proofs_notes_files.check_tags/check_title",
+        "proofs_notes_files.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_neyvia_notes_files.py",
+      "case": "test_recycle_info_v2_and_v1",
+      "contracts": [
+        "files.recycle-record"
+      ],
+      "checkedAt": [
+        "neyvia_files_tools.parse_recycle_info -> proofs_notes_files.check_recycle_record",
+        "proofs_notes_files.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_neyvia_notes_files.py",
+      "case": "test_note_write_refuses_a_stale_overwrite_and_appends",
+      "contracts": [
+        "notes.path-jail",
+        "notes.body-durable",
+        "notes.stale-preserves",
+        "notes.prose-metadata"
+      ],
+      "checkedAt": [
+        "neyvia_notes_tools.call_notes -> proofs_notes_files.before",
+        "proofs_notes_files.self_check",
+        "neyvia_notes_tools.tags_of/title_of -> proofs_notes_files.check_tags/check_title",
+        "proofs_notes_files.self_check",
+        "neyvia_notes_tools.call_notes -> proofs_notes_files.after",
+        "proofs_notes_files.self_check",
+        "neyvia_notes_tools.call_notes -> proofs_notes_files.before/after",
+        "proofs_notes_files.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_neyvia_notes_files.py",
+      "case": "test_move_never_overwrites_and_undo_moves_back",
+      "contracts": [
+        "files.no-overwrite",
+        "files.move-conservation",
+        "files.undo-once"
+      ],
+      "checkedAt": [
+        "neyvia_files_tools.call_files -> proofs_notes_files.before",
+        "proofs_notes_files.self_check",
+        "neyvia_files_tools.call_files -> proofs_notes_files.before/after",
+        "proofs_notes_files.self_check",
+        "neyvia_files_tools.call_files -> proofs_notes_files.before/after",
+        "proofs_notes_files.self_check"
+      ]
+    }
+  ],
+  "edgeCases": {
+    "module": "grant_agent.edge_notes",
+    "entrypoint": "run",
+    "categories": [
+      "empty",
+      "huge",
+      "unicode",
+      "concurrency",
+      "interrupted",
+      "permissions",
+      "offline",
+      "stale"
+    ],
+    "proof": "Disposable production Notes/Files actions; two real worker processes; native target sharing denial; explicit interruption fault and socket audit."
+  }
+}

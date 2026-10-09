@@ -1,0 +1,1637 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "onboarding",
+  "kind": "environment",
+  "proofs": {
+    "area": "a-cli, d-onboarding, proofs-e-models",
+    "manifests": [
+      "config/proofs/a-cli.json",
+      "config/proofs/d-onboarding.json",
+      "config/proofs/proofs-e-models.json"
+    ],
+    "startup": {
+      "procedures": [
+        "grant_agent.proofs_a_cli.self_check",
+        "resume-and-verify",
+        "pause-and-resume",
+        "stage-detached-addon",
+        "reject-and-repair-addon",
+        "signed-manifest-admission",
+        "save-setup-choices",
+        "manual-save-and-observe"
+      ],
+      "runner": "grant_agent.proof_verifier.run_verification",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.cli_catalog.classify",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "CLI state follows platform, detection, verified install route, authentication issues and update metadata; unknown readiness is never invented.",
+        "id": "a-cli.catalog.classify",
+        "impact": [
+          "optional runtime readiness"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli_catalog._fact",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Unknown declared facts stay null with unverified confidence; present facts retain their supplied confidence.",
+        "id": "a-cli.catalog.fact",
+        "impact": [
+          "publisher/source confidence"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli_catalog.resolve_package_size",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "A runtime without a declared npm package has no fabricated package size and explains the missing measurement.",
+        "id": "a-cli.catalog.size",
+        "impact": [
+          "download size approval"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli_catalog._actions_for",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Actions match readiness state and managed install ownership; unsupported or unavailable runtimes offer skip.",
+        "id": "a-cli.catalog.actions",
+        "impact": [
+          "managed runtime controls"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli_catalog.recommend",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Recommendations follow goal affinity order, exclude unsupported/unavailable entries, deduplicate and explain each result within the requested bound.",
+        "id": "a-cli.catalog.recommend",
+        "impact": [
+          "setup recommendations"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli_installer._installer_locked",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Managed runtime actions require current approval, persist receipts, preserve existing launcher and manifest on failure/collision, retain previous install on repair and remove only owned paths on uninstall.",
+        "id": "a-cli.installer.action",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli_installer._verified_package_archive",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Package archive must remain inside staging and equal the declared SHA-512 before install or promotion.",
+        "id": "a-cli.installer.integrity",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.progressive_setup.update_first_run_state",
+          "grant_agent.proofs_a_cli_lifecycle"
+        ],
+        "claim": "First-run goals, reviewed permissions and skipped runtimes persist exactly across reload.",
+        "id": "a-cli.setup.state",
+        "impact": [
+          "First-run goals, reviewed permissions and skipped runtimes persist exactly across reload."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.progressive_setup.build_progressive_setup",
+          "grant_agent.proofs_a_cli_lifecycle"
+        ],
+        "claim": "The shell opens before optional CLI setup; essential readiness and skipped runtime selections determine resumable mission setup.",
+        "id": "a-cli.setup.view",
+        "impact": [
+          "The shell opens before optional CLI setup; essential readiness and skipped runtime selections determine resumable mission setup."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli_catalog.build_catalog",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Catalog size lookup is restricted to explicitly selected runtimes; the optional catalog permits continuing without a CLI.",
+        "id": "a-cli.catalog.selection",
+        "impact": [
+          "Catalog size lookup is restricted to explicitly selected runtimes; the optional catalog permits continuing without a CLI."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli.cmd_workspace_save before output",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Workspace preferences persist before output and selected full snapshots reflect saved values; skip snapshot avoids its expensive producer.",
+        "id": "a-cli.preferences.workspace",
+        "impact": [
+          "Workspace preferences persist before output and selected full snapshots reflect saved values; skip snapshot avoids its expensive producer."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.parse_manifest -> proofs_d_onboarding.check_manifest",
+          "neyvia_onboarding.run_download -> proofs_d_onboarding.check_manifest/safe_destination",
+          "neyvia_onboarding._safe_relative/_check_source",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Manifests use plain pack/version IDs, unique safe paths, bounded integer sizes and SHA256; only HTTPS/local file/loopback HTTP are allowed, totals match, throttling is local, and staged paths stay inside the pack folder.",
+        "id": "onboarding.manifest-safety",
+        "impact": [
+          "base/add-on manifest admission",
+          "staged filesystem"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.parse_manifest -> neyvia_onboarding._verify_manifest_signature",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Remote non-test payload manifests require a provisioned known Ed25519 key, matching fingerprint and valid canonical Unicode signature. Unsigned admission requires test channel or both local manifest and local payloads.",
+        "id": "onboarding.signature-authority",
+        "impact": [
+          "release trust",
+          "remote manifest bytes"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file/check_download_result",
+          "neyvia_onboarding._fetch",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Every committed and reused file has its declared size and actual SHA256; only all-verified bytes earn a complete receipt and exact completion counters. Corrupt hashes retry once then discard corrupt partial bytes; oversized sources and errors are durably failed.",
+        "id": "onboarding.verified-staging",
+        "impact": [
+          "payload bytes",
+          "install receipt",
+          "download progress"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file",
+          "neyvia_onboarding._fetch",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Partial bytes are resumed with HTTP Range or local seeking; completed files with matching receipt identity, size, timestamp and actual SHA256 are reused without another download.",
+        "id": "onboarding.resume-reuse",
+        "impact": [
+          "CDN requests",
+          "resume byte progress",
+          "staging cache"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.run_download -> proofs_d_onboarding.check_download_result",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "A consumed pause request stops at a progress boundary, persists paused status and retains resumable partial bytes; another run finishes verified staging.",
+        "id": "onboarding.pause",
+        "impact": [
+          "worker status",
+          "partial bytes"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.pack_status -> neyvia_onboarding._installed_pack_error",
+          "neyvia_onboarding.pack_status -> proofs_d_onboarding.check_pack_status",
+          "neyvia_onboarding.install_pack -> neyvia_onboarding._spawn_worker",
+          "neyvia_onboarding.install_pack/run_download -> proofs_d_onboarding.check_staging_scope",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Add-on installs run in detached workers, keep separate per-pack status and receipts, expose stagedOnly=true, and never change base-pack status. Installed means every staged file still verifies.",
+        "id": "onboarding.addon-isolation",
+        "impact": [
+          "add-on staging",
+          "base staging",
+          "system activation boundary"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.load_pack_manifest",
+          "neyvia_onboarding.install_pack/pack_status -> proofs_d_onboarding.check_pack_status",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Unknown IDs are rejected; unavailable payloads disclose their gap. Mismatched, broken or missing manifests fail without a target; repairing the manifest clears errors and permits staging.",
+        "id": "onboarding.addon-recovery",
+        "impact": [
+          "add-on catalog",
+          "staging retries"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.load_catalog -> proofs_d_onboarding.check_catalog",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Every catalog interest references existing registered apps and optional packs.",
+        "id": "onboarding.catalog-integrity",
+        "impact": [
+          "onboarding recommendations",
+          "app/pack registry"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.recommend -> proofs_d_onboarding.check_recommendation",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Recommendations form unique unions in catalog order, filter tour chapters by chosen interests while retaining universal chapters, and keep nonempty tours between 60 and 90 seconds.",
+        "id": "onboarding.ordered-recommendations",
+        "impact": [
+          "tier choices",
+          "tour playback"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "neyvia_onboarding.save_state -> proofs_d_onboarding.check_saved",
+          "proofs_d_onboarding.self_check"
+        ],
+        "claim": "Invalid app/interest/pack choices are rejected before writing. Accepted normalized setup choices persist exactly and firstRun becomes false.",
+        "id": "onboarding.choices-durable",
+        "impact": [
+          "setup state",
+          "completed setup"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOnboardingModel.js:interestsFor -> checkedProofsEModel"
+        ],
+        "claim": "Direct interests win over tiers; unknown/missing tiers select nothing",
+        "id": "onboarding.interestsFor",
+        "impact": [
+          "onboarding frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOnboardingModel.js:recommend -> checkedProofsEModel"
+        ],
+        "claim": "Recommendations union selected interest resources in catalog order and preserve unconditional tour chapters",
+        "id": "onboarding.recommend",
+        "impact": [
+          "onboarding frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOnboardingModel.js:timeline -> checkedProofsEModel"
+        ],
+        "claim": "Tour duration is 60â€“90 seconds when nonempty, proportional chapters are contiguous and last chapter consumes rounding remainder",
+        "id": "onboarding.timeline",
+        "impact": [
+          "onboarding frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOnboardingModel.js:locate -> checkedProofsEModel"
+        ],
+        "claim": "Every playhead maps to its containing chapter with clamped progress; empty tours have no chapter",
+        "id": "onboarding.locate",
+        "impact": [
+          "onboarding frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOnboardingModel.js:downloadView -> checkedProofsEModel"
+        ],
+        "claim": "Download percent uses measured bytes; busy/end/error words reflect state and measured ETA",
+        "id": "onboarding.downloadView",
+        "impact": [
+          "onboarding frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOnboardingModel.js:packView -> checkedProofsEModel"
+        ],
+        "claim": "Pack installation controls reflect actual availability and copying state; receipt detail names verified file count/bytes",
+        "id": "onboarding.packView",
+        "impact": [
+          "onboarding frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOnboardingModel.js:plainMissing -> checkedProofsEModel"
+        ],
+        "claim": "Catalog gaps use plain tool names without hiding unavailable payloads",
+        "id": "onboarding.plainMissing",
+        "impact": [
+          "onboarding frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOnboardingModel.js:runtimeHeadline -> checkedProofsEModel"
+        ],
+        "claim": "Only observed found runtimes produce set-to-start wording and names; no result stays checking",
+        "id": "onboarding.runtimeHeadline",
+        "impact": [
+          "onboarding frontend model consumers"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.onboarding.base_pack": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "status",
+            "start",
+            "pause"
+          ]
+        }
+      },
+      "required": []
+    },
+    "neyvia.onboarding.open": {
+      "type": "object",
+      "properties": {
+        "step": {
+          "type": "string",
+          "enum": [
+            "welcome",
+            "runtimes",
+            "interests",
+            "tour"
+          ]
+        }
+      },
+      "required": []
+    },
+    "neyvia.onboarding.pack": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "status",
+            "install"
+          ]
+        },
+        "packId": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.onboarding.recommend": {
+      "type": "object",
+      "properties": {
+        "interests": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tier": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.onboarding.runtimes": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.onboarding.save": {
+      "type": "object",
+      "properties": {
+        "interests": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tier": {
+          "type": "string"
+        },
+        "apps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "packs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime": {
+          "type": "string"
+        },
+        "completed": {
+          "type": "boolean"
+        }
+      },
+      "required": []
+    },
+    "neyvia.onboarding.state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "proofs-e-models.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "rel_view_state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "First run: base pack download, agents found on this PC, interests, add-on packs and the tour",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "object",
+                "properties": {
+                  "completed": {
+                    "type": "boolean"
+                  },
+                  "interests": {
+                    "type": "array"
+                  },
+                  "apps": {
+                    "type": "array"
+                  },
+                  "packs": {
+                    "type": "array"
+                  },
+                  "tier": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "completed",
+                  "interests",
+                  "apps",
+                  "packs",
+                  "tier"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "tool": "neyvia.onboarding.state"
+        }
+      },
+      "actions": {
+        "onboarding.state": {
+          "effect": "Return persisted setup choices, catalog, tour and base-pack status",
+          "pre": "Selected root readable; no saved choices required",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "object",
+                "properties": {
+                  "completed": {
+                    "type": "boolean"
+                  },
+                  "interests": {
+                    "type": "array"
+                  },
+                  "apps": {
+                    "type": "array"
+                  },
+                  "packs": {
+                    "type": "array"
+                  },
+                  "tier": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "completed",
+                  "interests",
+                  "apps",
+                  "packs",
+                  "tier"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.state",
+          "tool": "neyvia.onboarding.state"
+        },
+        "onboarding.base_pack": {
+          "effect": "Read status, resume detached downloader or request pause; checksum-verified bytes staged locally",
+          "pre": "action=status/start/pause; start requires valid size/hash/path manifest and remote signature when applicable",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.base_pack",
+          "tool": "neyvia.onboarding.base_pack"
+        },
+        "onboarding.open": {
+          "effect": "Emit setup-screen request with uiVerified=false; saved completion unchanged",
+          "pre": "step welcome/runtimes/interests/tour",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.open",
+          "tool": "neyvia.onboarding.open"
+        },
+        "onboarding.pack": {
+          "effect": "Read pack statuses or stage verified add-on in detached worker; no system install or activation",
+          "pre": "Known pack ID; install requires available packaged manifest with matching packId and safe signed/hashed sources",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.onboarding.pack",
+          "tool": "neyvia.onboarding.pack"
+        },
+        "onboarding.recommend": {
+          "effect": "Compute recommended apps/packs/tour chapters; save nothing",
+          "pre": "Interests are catalog IDs; optional tier beginner/intermediate/advanced",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.recommend",
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "onboarding.runtimes": {
+          "effect": "Detect local CLI availability and return setup steps; does not install runtimes",
+          "pre": "Selected root and runtime detection available",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.runtimes",
+          "tool": "neyvia.onboarding.runtimes"
+        },
+        "onboarding.save": {
+          "effect": "Merge supplied fields into persistent setup state; omitted choices retained",
+          "pre": "Only catalog interest/app/pack IDs, valid tier/runtime and boolean completed; choices belong to person",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.save",
+          "tool": "neyvia.onboarding.save"
+        }
+      },
+      "checks": {
+        "interests-saved": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.interests",
+            "value": {
+              "$input": "interests"
+            }
+          },
+          "tool": "neyvia.onboarding.state"
+        },
+        "completed-saved": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.completed",
+            "value": {
+              "$input": "completed"
+            }
+          },
+          "tool": "neyvia.onboarding.state"
+        }
+      },
+      "procedures": {
+        "save-choices": {
+          "goal": "Recommend from selected interests, review and persist the chosen setup",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "interests": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "completed": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "interests",
+              "completed"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": {
+                  "$input": "interests"
+                }
+              },
+              "save": "recommended"
+            },
+            {
+              "judge": "setup-choices"
+            },
+            {
+              "action": "onboarding.save",
+              "args": {
+                "completed": {
+                  "$input": "completed"
+                },
+                "interests": {
+                  "$input": "interests"
+                }
+              },
+              "check": "interests-saved",
+              "save": "saved",
+              "when": {
+                "judge": "setup-choices",
+                "option": "save"
+              }
+            },
+            {
+              "action": "onboarding.state",
+              "args": {},
+              "check": "completed-saved",
+              "save": "state",
+              "when": {
+                "judge": "setup-choices",
+                "option": "save"
+              }
+            }
+          ]
+        },
+        "stage-chosen-pack": {
+          "goal": "Check availability and stage an explicitly selected add-on",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "packId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "onboarding.pack",
+              "args": {
+                "action": "status",
+                "packId": {
+                  "$input": "packId"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "pack-download"
+            },
+            {
+              "action": "onboarding.pack",
+              "args": {
+                "action": "install",
+                "packId": {
+                  "$input": "packId"
+                }
+              },
+              "save": "job",
+              "when": {
+                "judge": "pack-download",
+                "option": "install"
+              }
+            },
+            {
+              "action": "onboarding.pack",
+              "args": {
+                "action": "status",
+                "packId": {
+                  "$input": "packId"
+                }
+              },
+              "save": "progress",
+              "when": {
+                "judge": "pack-download",
+                "option": "install"
+              }
+            }
+          ]
+        },
+        "save-local-choices": {
+          "goal": "Save reviewed catalog choices and verify exact persisted state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "apps": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "completed": {
+                "type": "boolean"
+              },
+              "interests": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "packs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "runtime": {
+                "type": "string"
+              },
+              "tier": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "apps",
+              "completed",
+              "interests",
+              "packs",
+              "runtime",
+              "tier"
+            ]
+          },
+          "steps": [
+            {
+              "action": "onboarding.save",
+              "args": {
+                "apps": {
+                  "$input": "apps"
+                },
+                "completed": {
+                  "$input": "completed"
+                },
+                "interests": {
+                  "$input": "interests"
+                },
+                "packs": {
+                  "$input": "packs"
+                },
+                "runtime": {
+                  "$input": "runtime"
+                },
+                "tier": {
+                  "$input": "tier"
+                }
+              },
+              "save": "observed"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "setup-choices": {
+          "constraints": "Recommendations are suggestions; save only the person-selected catalog IDs. completed means person finished setup, not that every optional pack is installed.",
+          "options": [
+            "save",
+            "leave"
+          ],
+          "question": "Accept the recommended setup or keep current choices?"
+        },
+        "pack-download": {
+          "constraints": "Read pack availability first; unavailable/no manifest is a stop. Staging does not activate anything. Remote downloads require chosen scope, signed manifest and size within authorized budget.",
+          "options": [
+            "install",
+            "leave"
+          ],
+          "question": "Stage this separately packaged add-on?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Unknown interest/app/pack/runtime ID",
+          "recovery": "Read onboarding.state catalog and use exact IDs; never save display labels"
+        },
+        {
+          "failure": "Pack says unavailable or no packaged manifest",
+          "recovery": "Report catalog gap; selection alone does not install pack"
+        },
+        {
+          "failure": "Checksum fails twice",
+          "recovery": "Stop downloader, verify original source/manifest; do not replace expected hash"
+        },
+        {
+          "failure": "Worker interrupted or pause requested",
+          "recovery": "Read base_pack status; start resumes verified partial bytes; running is not complete"
+        },
+        {
+          "failure": "Remote manifest missing signature",
+          "recovery": "Provision trusted signing key through release owner; never downgrade signature verification"
+        },
+        {
+          "failure": "Person thinks an installed pack is running or on PATH",
+          "recovery": "Installed means every file was copied into Neyvia's add-on folder and passed its checksum, with a receipt (onboarding.pack status → receipt); nothing is activated or added to the system"
+        }
+      ],
+      "frontier": [
+        "Public base-pack release promotion and activation are outside local staging",
+        "Setup/tour command uiVerified=false needs actual user-side acknowledgement",
+        "The tour plays Neyvia's own screens (chat, checklist, launcher, missions, workspace, PDF, dictation, phone frame) on example data; it never shows or changes the person's chats"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_onboarding.py (save_state, parse_manifest, install_pack, run_download); tests/test_neyvia_onboarding.py."
+      ]
+    },
+    "proofs-d-downloader": {
+      "title": "PROOFS-d: verified download staging and durable setup choices",
+      "state": {
+        "base-staging": {
+          "args": {
+            "action": "status"
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "tool": "neyvia.onboarding.base_pack"
+        },
+        "choices": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "object",
+                "properties": {
+                  "completed": {
+                    "type": "boolean"
+                  },
+                  "interests": {
+                    "type": "array"
+                  },
+                  "apps": {
+                    "type": "array"
+                  },
+                  "packs": {
+                    "type": "array"
+                  },
+                  "tier": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "completed",
+                  "interests",
+                  "apps",
+                  "packs",
+                  "tier"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "tool": "neyvia.onboarding.state"
+        }
+      },
+      "actions": {
+        "onboarding.base_pack": {
+          "effect": "Read status, resume detached downloader or request pause; checksum-verified bytes staged locally",
+          "pre": "action=status/start/pause; start requires valid size/hash/path manifest and remote signature when applicable",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.base_pack",
+          "tool": "neyvia.onboarding.base_pack"
+        },
+        "onboarding.pack": {
+          "effect": "Read pack statuses or stage verified add-on in detached worker; no system install or activation",
+          "pre": "Known pack ID; install requires available packaged manifest with matching packId and safe signed/hashed sources",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.onboarding.pack",
+          "tool": "neyvia.onboarding.pack"
+        },
+        "onboarding.save": {
+          "effect": "Merge supplied fields into persistent setup state; omitted choices retained",
+          "pre": "Only catalog interest/app/pack IDs, valid tier/runtime and boolean completed; choices belong to person",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.save",
+          "tool": "neyvia.onboarding.save"
+        },
+        "onboarding.state": {
+          "effect": "Return persisted setup choices, catalog, tour and base-pack status",
+          "pre": "Selected root readable; no saved choices required",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "object",
+                "properties": {
+                  "completed": {
+                    "type": "boolean"
+                  },
+                  "interests": {
+                    "type": "array"
+                  },
+                  "apps": {
+                    "type": "array"
+                  },
+                  "packs": {
+                    "type": "array"
+                  },
+                  "tier": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "completed",
+                  "interests",
+                  "apps",
+                  "packs",
+                  "tier"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.state",
+          "tool": "neyvia.onboarding.state"
+        }
+      },
+      "checks": {
+        "completed-saved": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.completed",
+            "value": {
+              "$input": "completed"
+            }
+          },
+          "tool": "neyvia.onboarding.state"
+        },
+        "interests-saved": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.interests",
+            "value": {
+              "$input": "interests"
+            }
+          },
+          "tool": "neyvia.onboarding.state"
+        }
+      },
+      "procedures": {
+        "save-and-observe": {
+          "goal": "Persist explicitly selected scratch setup choices and observe matching completion and interests",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "interests": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "completed": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "interests",
+              "completed"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "onboarding.save",
+              "args": {
+                "completed": {
+                  "$input": "completed"
+                },
+                "interests": {
+                  "$input": "interests"
+                }
+              },
+              "check": "completed-saved",
+              "save": "saved"
+            },
+            {
+              "action": "onboarding.state",
+              "args": {},
+              "check": "interests-saved",
+              "save": "observed"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Timestamp unchanged after payload corruption",
+          "recovery": "Hash real bytes before reuse; re-download corrupt staging"
+        },
+        {
+          "failure": "Self-check fixture port 48496 is occupied",
+          "recovery": "Stop only the owned fixture or report conflict; do not select a forbidden or implicit port"
+        }
+      ],
+      "frontier": [
+        "Self-checks use a 230400-byte loopback CDN and generated Ed25519 fixture keys; they do not prove a remote CDN, public installer or real release activation",
+        "Optional packs with missing delivery manifests remain unavailable; no system installs or activation occur"
+      ],
+      "guidance": [
+        "Production contracts: src/grant_agent/proofs_d_onboarding.py; declarations: config/proofs/d-onboarding.json",
+        "Startup uses a fresh scratch root, real HTTP range requests, a real detached add-on worker, adverse manifest/checksum/signature paths, and the grounded manual runner"
+      ]
+    },
+    "proofs-e-models": {
+      "title": "PROOFS-e: production model contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the most recent verification receipt without invoking production actions again",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-models.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-model-proof-receipt": {
+          "goal": "Read the latest receipt after the production model self-check runner",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Model transforms are reported as proof of a native app/provider/device effect",
+          "recovery": "Use the real owning feature procedure and its observed runtime"
+        }
+      ],
+      "frontier": [
+        "Rendered browser/desktop journeys are separate from pure model proof",
+        "Remote device, game editor and provider behavior require their real runtimes"
+      ],
+      "guidance": [
+        "onboarding.interestsFor: Direct interests win over tiers; unknown/missing tiers select nothing",
+        "onboarding.recommend: Recommendations union selected interest resources in catalog order and preserve unconditional tour chapters",
+        "onboarding.timeline: Tour duration is 60â€“90 seconds when nonempty, proportional chapters are contiguous and last chapter consumes rounding remainder",
+        "onboarding.locate: Every playhead maps to its containing chapter with clamped progress; empty tours have no chapter",
+        "onboarding.downloadView: Download percent uses measured bytes; busy/end/error words reflect state and measured ETA",
+        "onboarding.packView: Pack installation controls reflect actual availability and copying state; receipt detail names verified file count/bytes",
+        "onboarding.plainMissing: Catalog gaps use plain tool names without hiding unavailable payloads",
+        "onboarding.runtimeHeadline: Only observed found runtimes produce set-to-start wording and names; no result stays checking",
+        "Startup runner: scripts/proofs-e-models.mjs --root <owned-scratch>; area proofs-e-models checks real model actions and corrupted output refusals"
+      ]
+    },
+    "proofs_a_cli": {
+      "title": "PROOFS-a CLI and durable coordination contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Provider runtime absent in scratch",
+          "recovery": "Require separate provider journey; local parser and database proofs remain valid within scratch."
+        }
+      ],
+      "frontier": [
+        "tests/test_codex_completion_contracts.py::RuntimeUiContractTests.test_managed_cli_surface_uses_the_durable_runtime_turn: Original source-string checks for the classic managed CLI surface require a rendered durable runtime turn and awaited action journey before deletion; no rendered legacy UI proof is claimed in this area.",
+        "Controlled provider/installer transports prove orchestration and durable state, not authenticated provider service execution.",
+        "POSIX detach option is exercised through production dispatch with an inert child transport on Windows; native POSIX session semantics are outside this receipt."
+      ],
+      "guidance": [
+        "Contracts listed in this chapter execute at the real production boundaries named in checkedAt.",
+        "Startup uses isolated scratch state and finite controlled transport boundaries; examine the receipt before claiming external provider readiness.",
+        "a-cli.catalog.classify: CLI state follows platform, detection, verified install route, authentication issues and update metadata; unknown readiness is never invented.",
+        "a-cli.catalog.fact: Unknown declared facts stay null with unverified confidence; present facts retain their supplied confidence.",
+        "a-cli.catalog.size: A runtime without a declared npm package has no fabricated package size and explains the missing measurement.",
+        "a-cli.catalog.actions: Actions match readiness state and managed install ownership; unsupported or unavailable runtimes offer skip.",
+        "a-cli.catalog.recommend: Recommendations follow goal affinity order, exclude unsupported/unavailable entries, deduplicate and explain each result within the requested bound.",
+        "a-cli.installer.action: Managed runtime actions require current approval, persist receipts, preserve existing launcher and manifest on failure/collision, retain previous install on repair and remove only owned paths on uninstall.",
+        "a-cli.installer.integrity: Package archive must remain inside staging and equal the declared SHA-512 before install or promotion.",
+        "a-cli.setup.state: First-run goals, reviewed permissions and skipped runtimes persist exactly across reload.",
+        "a-cli.setup.view: The shell opens before optional CLI setup; essential readiness and skipped runtime selections determine resumable mission setup.",
+        "a-cli.catalog.selection: Catalog size lookup is restricted to explicitly selected runtimes; the optional catalog permits continuing without a CLI.",
+        "a-cli.preferences.workspace: Workspace preferences persist before output and selected full snapshots reflect saved values; skip snapshot avoids its expensive producer."
+      ]
+    },
+    "release-tour": {
+      "title": "Release tour: every universal feature and the mounted player",
+      "state": {},
+      "actions": {
+        "onboarding.recommend": {
+          "effect": "Compute recommended apps/packs/tour chapters; save nothing",
+          "pre": "Interests are catalog IDs; optional tier beginner/intermediate/advanced",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.recommend",
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "onboarding.open": {
+          "effect": "Emit setup-screen request with uiVerified=false; saved completion unchanged",
+          "pre": "step welcome/runtimes/interests/tour",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.open",
+          "tool": "neyvia.onboarding.open"
+        },
+        "view.state": {
+          "effect": "Read current windows, ids, placements, mounted DOM geometry and delivered events.",
+          "pre": "The shell reports state after React commits; fresh=false means unavailable.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "rel_view_state",
+          "tool": "neyvia.view.state"
+        }
+      },
+      "checks": {
+        "tour-mounted": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.dom.setup.mounted",
+            "value": true
+          },
+          "tool": "neyvia.view.state"
+        },
+        "includes-basics": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "basics"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-runtimes": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "runtimes"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-notes": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "notes"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-studio": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "studio"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-laya": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "laya"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-look": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "look"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-placement": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "placement"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-watching": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "watching"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-factory": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "factory"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-connectors": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "connectors"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "includes-images": {
+          "args": {
+            "interests": []
+          },
+          "expect": {
+            "op": "contains",
+            "path": "chapters",
+            "value": "images"
+          },
+          "tool": "neyvia.onboarding.recommend"
+        },
+        "workspace-mounted": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.dom.mounted",
+            "value": true
+          },
+          "tool": "neyvia.view.state"
+        },
+        "storage-warning-visible": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.dom.storage.warningVisible",
+            "value": true
+          },
+          "tool": "neyvia.view.state"
+        },
+        "storage-warning-honest": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.dom.storage.text",
+            "value": "Large local saves are unavailable. Saved data has been kept. Keep this window open until server sync completes, then reload to retry."
+          },
+          "tool": "neyvia.view.state"
+        }
+      },
+      "procedures": {
+        "open-release-tour": {
+          "goal": "Open the real tour player and observe the mounted setup view.",
+          "inputs": {
+            "type": "object",
+            "properties": {}
+          },
+          "steps": [
+            {
+              "action": "onboarding.open",
+              "args": {
+                "step": "tour"
+              },
+              "check": "tour-mounted",
+              "save": "opened"
+            }
+          ]
+        },
+        "verify-universal-features": {
+          "goal": "Ensure every new feature is shown even when no interest is selected.",
+          "inputs": {
+            "type": "object",
+            "properties": {}
+          },
+          "steps": [
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-basics",
+              "save": "basics"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-runtimes",
+              "save": "runtimes"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-notes",
+              "save": "notes"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-studio",
+              "save": "studio"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-laya",
+              "save": "laya"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-look",
+              "save": "look"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-placement",
+              "save": "placement"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-watching",
+              "save": "watching"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-factory",
+              "save": "factory"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-connectors",
+              "save": "connectors"
+            },
+            {
+              "action": "onboarding.recommend",
+              "args": {
+                "interests": []
+              },
+              "check": "includes-images",
+              "save": "images"
+            }
+          ]
+        },
+        "verify-storage-warning": {
+          "goal": "Verify the mounted workspace remains usable when large local storage fails, with a visible retained-data warning. This is a disposable failure-path contract.",
+          "inputs": {
+            "type": "object",
+            "properties": {}
+          },
+          "steps": [
+            {
+              "action": "view.state",
+              "args": {},
+              "check": "workspace-mounted",
+              "save": "workspace-mounted"
+            },
+            {
+              "action": "view.state",
+              "args": {},
+              "check": "storage-warning-visible",
+              "save": "storage-warning-visible"
+            },
+            {
+              "action": "view.state",
+              "args": {},
+              "check": "storage-warning-honest",
+              "save": "storage-warning-honest"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [
+        "No tour scene proves a microphone, paid generation, connector or recorded agent run is available."
+      ],
+      "guidance": [
+        "The player uses shipped entry components and explicitly labelled examples. Availability still depends on this PC, provider sign-in and installed toolchains. These catalog checks prove coverage; inspect the rendered player separately."
+      ]
+    }
+  }
+}

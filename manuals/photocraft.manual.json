@@ -1,0 +1,244 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "photocraft",
+  "kind": "environment",
+  "schemas": {
+    "neyvia.mod.photocraft.commands": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      "required": []
+    },
+    "neyvia.mod.photocraft.convert": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "out": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "input",
+        "out"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "input": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "out": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mod.photocraft.info": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "file": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mod.photocraft.run": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "steps": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "params": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "out": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "file",
+        "steps",
+        "out"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "file": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "out": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mod.photocraft.verify": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Agent-usable PhotoCraft (ArtCraft/storytold, a Photoshop-style editor in Rust) for video frames: inspect, run engine commands, convert.",
+      "state": {},
+      "actions": {
+        "mod.photocraft.commands": {
+          "effect": "List PhotoCraft engine commands matching a filter.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mod.photocraft.commands",
+          "tool": "neyvia.mod.photocraft.commands"
+        },
+        "mod.photocraft.info": {
+          "effect": "Observe an image document (size, mode, layer tree) as a CL Scene.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mod.photocraft.info",
+          "tool": "neyvia.mod.photocraft.info"
+        },
+        "mod.photocraft.run": {
+          "effect": "Open an image, run engine commands in order and save the result.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mod.photocraft.run",
+          "tool": "neyvia.mod.photocraft.run"
+        },
+        "mod.photocraft.convert": {
+          "effect": "Convert an image between formats.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mod.photocraft.convert",
+          "tool": "neyvia.mod.photocraft.convert"
+        },
+        "mod.photocraft.verify": {
+          "effect": "Real round trip on a Neyvia capture: inspect, convert, and compare the decoded pixels.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "passed": {
+                "const": true
+              }
+            },
+            "required": [
+              "passed"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.mod.photocraft.verify",
+          "tool": "neyvia.mod.photocraft.verify"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "verify-photocraft": {
+          "goal": "Run the real round trip and check its outcome contracts",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mod.photocraft.verify",
+              "args": {},
+              "save": "verified"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "The local tool is missing",
+          "recovery": "Build or point the NEYVIA_* path at it; the action refuses rather than downloading anything."
+        },
+        {
+          "failure": "A render exists but is wrong",
+          "recovery": "Read the outcome block (duration, frames, black/frozen runs, clipping); never call a render good from its exit code."
+        }
+      ],
+      "frontier": [
+        "Built from source with the local Rust toolchain into D:/NeyviaRuns/video/track-video/target; set NEYVIA_PHOTOCRAFT_CLI to use another build.",
+        "Adapted, not forked: every action runs the unmodified upstream program. PhotoCraft by the ArtCraft team, MIT OR Apache-2.0, https://github.com/storytold/photocraft."
+      ],
+      "guidance": [
+        "Use PhotoCraft for frame work (grades, crops, exports) before a frame goes into a cut.",
+        "Installs switched off from Marketplace > Apps & mods; read this manual and the declared permissions, then enable it."
+      ]
+    }
+  }
+}

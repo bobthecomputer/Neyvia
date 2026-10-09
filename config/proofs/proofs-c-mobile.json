@@ -1,0 +1,317 @@
+{
+  "area": "proofs-c-mobile",
+  "module": "grant_agent.proofs_c_mobile",
+  "self_check": "self_check",
+  "manuals": [
+    "mobile-studio"
+  ],
+  "contracts": [
+    {
+      "id": "proofs-c.mobile.project",
+      "phase": "post",
+      "claim": "Created Expo authoring files retain requested identity, entrypoint and supported dependency versions.",
+      "checkedAt": [
+        "ios_studio.create_ios_app -> proofs_c_mobile.check_project"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.scope",
+      "phase": "pre",
+      "claim": "Creation rejects paths outside selected root before any effects.",
+      "checkedAt": [
+        "ios_studio._safe_child"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.bundle-id",
+      "phase": "pre",
+      "claim": "Creation requires a valid reverse-domain bundle identifier before writing.",
+      "checkedAt": [
+        "ios_studio.create_ios_app"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.capsule",
+      "phase": "post",
+      "claim": "Each capsule retains its source root and exact manifest, excluding generated paths, confidential suffixes and links.",
+      "checkedAt": [
+        "ios_studio.create_ios_build_capsule -> proofs_c_mobile.check_capsule"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.builder-config",
+      "phase": "post",
+      "claim": "Builder metadata persists only the allowed fields and signing references, without passwords.",
+      "checkedAt": [
+        "ios_studio.save_ios_builder -> proofs_c_mobile.check_config"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.compiler-config",
+      "phase": "post",
+      "claim": "Compiler preferences validate before writing and persist exactly, without signing passwords.",
+      "checkedAt": [
+        "windows_ios_compiler.save_windows_ios_config -> proofs_c_mobile.check_config"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.download-digest",
+      "phase": "post",
+      "claim": "Downloaded bytes match the expected digest before atomic promotion; mismatch never promotes a destination.",
+      "checkedAt": [
+        "windows_ios_compiler._download_verified"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.metadata",
+      "phase": "post",
+      "claim": "Persisted plist exactly matches identity and iPhoneOS platform metadata.",
+      "checkedAt": [
+        "windows_ios_compiler._write_info_plist -> proofs_c_mobile.check_plist"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.package",
+      "phase": "post",
+      "claim": "IPA archive contains exactly the app files under Payload with unchanged bytes.",
+      "checkedAt": [
+        "windows_ios_compiler._zip_payload -> proofs_c_mobile.check_package"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.web-assets",
+      "phase": "post",
+      "claim": "Assets stage inside the app www directory and root-relative links become local links.",
+      "checkedAt": [
+        "windows_ios_compiler._safe_copy_web_assets -> proofs_c_mobile.check_web_assets"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.error-text",
+      "phase": "post",
+      "claim": "Failure receipts strip terminal control codes and retain bounded useful text.",
+      "checkedAt": [
+        "windows_ios_compiler._clean_error"
+      ],
+      "impact": [
+        "local app source",
+        "Mobile Studio authoring",
+        "build capsule",
+        "package receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.mobile.backend-wiring",
+      "phase": "post",
+      "claim": "Mobile authoring, status and compiler configuration commands retain requested workspace, app identity, current recognition and preferences.",
+      "checkedAt": [
+        "web_backend.FluxioWebBackend.dispatch -> proofs_c_mobile.check_backend"
+      ],
+      "impact": [
+        "authenticated command API",
+        "Mobile Studio source and status",
+        "compiler preferences"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_create_ios_app_writes_a_real_expo_workspace",
+      "contracts": [
+        "proofs-c.mobile.project"
+      ],
+      "checkedAt": [
+        "ios_studio.create_ios_app -> proofs_c_mobile.check_project"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_create_ios_app_writes_a_real_expo_workspace"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_create_ios_app_refuses_to_escape_the_workspace",
+      "contracts": [
+        "proofs-c.mobile.scope"
+      ],
+      "checkedAt": [
+        "ios_studio._safe_child"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_create_ios_app_refuses_to_escape_the_workspace"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_ios_capsule_excludes_secrets_and_heavy_generated_folders",
+      "contracts": [
+        "proofs-c.mobile.capsule"
+      ],
+      "checkedAt": [
+        "ios_studio.create_ios_build_capsule -> proofs_c_mobile.check_capsule"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_ios_capsule_excludes_secrets_and_heavy_generated_folders"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_builder_config_never_requires_apple_passwords",
+      "contracts": [
+        "proofs-c.mobile.builder-config"
+      ],
+      "checkedAt": [
+        "ios_studio.save_ios_builder -> proofs_c_mobile.check_config"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_builder_config_never_requires_apple_passwords"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_create_ios_app_validates_bundle_identifier",
+      "contracts": [
+        "proofs-c.mobile.bundle-id"
+      ],
+      "checkedAt": [
+        "ios_studio.create_ios_app"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_create_ios_app_validates_bundle_identifier"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_windows_ios_config_stores_paths_but_never_a_signing_password",
+      "contracts": [
+        "proofs-c.mobile.compiler-config"
+      ],
+      "checkedAt": [
+        "windows_ios_compiler.save_windows_ios_config -> proofs_c_mobile.check_config"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_windows_ios_config_stores_paths_but_never_a_signing_password"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_verified_toolchain_download_rejects_changed_bytes",
+      "contracts": [
+        "proofs-c.mobile.download-digest"
+      ],
+      "checkedAt": [
+        "windows_ios_compiler._download_verified"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_verified_toolchain_download_rejects_changed_bytes"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_windows_ios_bundle_metadata_and_ipa_layout_are_real",
+      "contracts": [
+        "proofs-c.mobile.metadata",
+        "proofs-c.mobile.package"
+      ],
+      "checkedAt": [
+        "windows_ios_compiler._write_info_plist -> proofs_c_mobile.check_plist",
+        "windows_ios_compiler._zip_payload -> proofs_c_mobile.check_package"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_windows_ios_bundle_metadata_and_ipa_layout_are_real"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_windows_ios_web_assets_are_staged_inside_the_app_bundle",
+      "contracts": [
+        "proofs-c.mobile.web-assets"
+      ],
+      "checkedAt": [
+        "windows_ios_compiler._safe_copy_web_assets -> proofs_c_mobile.check_web_assets"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_windows_ios_web_assets_are_staged_inside_the_app_bundle"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_windows_ios_receipt_errors_remove_terminal_color_codes",
+      "contracts": [
+        "proofs-c.mobile.error-text"
+      ],
+      "checkedAt": [
+        "windows_ios_compiler._clean_error"
+      ],
+      "procedure": "author-configure-package-reload-reject",
+      "case_id": "tests/test_ios_studio.py::test_windows_ios_receipt_errors_remove_terminal_color_codes"
+    },
+    {
+      "test": "tests/test_ios_studio.py",
+      "case": "test_web_backend_exposes_ios_studio_create_and_status_commands",
+      "contracts": [
+        "proofs-c.mobile.backend-wiring"
+      ],
+      "checkedAt": [
+        "web_backend.FluxioWebBackend.dispatch -> proofs_c_mobile.check_backend"
+      ],
+      "procedure": "actual-backend-dispatch-author-observe-configure",
+      "case_id": "tests/test_ios_studio.py::test_web_backend_exposes_ios_studio_create_and_status_commands"
+    }
+  ],
+  "frontier": [
+    "Remote builder deployment and native signed-build journeys need their real hosts."
+  ],
+  "portRoles": [48489]
+}

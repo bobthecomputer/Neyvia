@@ -1,0 +1,64 @@
+diff --git a/crates/obscura-render/src/paint.rs b/crates/obscura-render/src/paint.rs
+index 70bf2b5cc..63fafea26 100644
+--- a/crates/obscura-render/src/paint.rs
++++ b/crates/obscura-render/src/paint.rs
+@@ -3697,6 +3697,43 @@ fn transform_subtree_source_bounds(
+     })
+ }
+ 
++/// True only when every box in an opacity group, including shadow and outline
++/// ink, is more than `OPACITY_CULL_MARGIN` CSS pixels outside the paint
++/// surface. Anything uncertain (an authored transform in the subtree, which
++/// can move ink anywhere) keeps the group.
++const OPACITY_CULL_MARGIN: f32 = 192.0;
++
++fn opacity_group_is_far_offscreen(
++    tree: &DomTree,
++    laid: &crate::DomLayout,
++    scroll_state: &ScrollPaintState<'_>,
++    root: obscura_dom::tree::NodeId,
++    pixmap: &Pixmap,
++    raster_scale: f32,
++) -> bool {
++    let nodes: Vec<_> = std::iter::once(root)
++        .chain(crate::dom::rendered_descendants(tree, root))
++        .collect();
++    if nodes.iter().any(|id| {
++        laid.styles
++            .get(id)
++            .is_some_and(|style| has_authored_transform(style))
++    }) {
++        return false;
++    }
++    let Some(bounds) = transform_subtree_source_bounds(tree, laid, scroll_state, root) else {
++        return false;
++    };
++    let surface = paint_surface_rect(pixmap, raster_scale);
++    let guarded = crate::Rect {
++        x: surface.x - OPACITY_CULL_MARGIN,
++        y: surface.y - OPACITY_CULL_MARGIN,
++        width: surface.width + 2.0 * OPACITY_CULL_MARGIN,
++        height: surface.height + 2.0 * OPACITY_CULL_MARGIN,
++    };
++    bounds.intersect(&guarded).is_none()
++}
++
+ /// Paint an already prepared layout without changing its document-space
+ /// geometry. Root scrolling and sticky positioning are per-shot visual state,
+ /// so alternating captures can safely reuse the same layout.
+@@ -4434,6 +4471,15 @@ fn paint_laid_dom_scrolled(
+             // Opacity is applied to the finished stacking context, never to
+             // each primitive. Otherwise two opaque overlapping children at
+             // opacity:.5 incorrectly become .75 alpha in their overlap.
++            // A group whose whole subtree lies well outside the paint surface
++            // cannot change a pixel. Without this test every off-screen
++            // opacity<1 element allocated a surface-sized layer and re-walked
++            // the entire paint order, which made one capture of a long list
++            // cost seconds (quadratic in nodes with opacity).
++            if opacity_group_is_far_offscreen(tree, laid, &scroll_state, nid, &pixmap, raster_scale)
++            {
++                continue;
++            }
+             let layer = Pixmap::new(pixmap.width(), pixmap.height())?;
+             let layer = paint_laid_dom_scrolled(
+                 tree,

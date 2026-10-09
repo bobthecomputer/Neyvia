@@ -1,0 +1,191 @@
+{
+  "requires": {"neyviaApi": ">=1.0 <2"},
+ "schema": "neyvia.module.v1",
+ "id": "filmcraft",
+ "name": "FilmCraft",
+ "purpose": "Agent-usable FilmCraft (ArtCraft/storytold, MIT or Apache-2.0; a Premiere-style editor in Rust) through its headless CLI: commands, the sequence as a CL Scene, scripted edits, export and frames.",
+ "files": [
+  "apps/filmcraft/filmcraft_mod.py",
+  "apps/filmcraft/manual.cl",
+  "apps/filmcraft/host-contract.json",
+  "apps/filmcraft/README.md"
+ ],
+ "manual": "filmcraft",
+ "sourceManual": "manual.cl",
+ "contract": "host-contract.json",
+ "ownerSurface": "Marketplace / Mods",
+ "settings": [
+  "enabled"
+ ],
+ "events": [],
+ "dependencies": [],
+ "permissions": [
+  "Runs the locally built filmcraft-cli headless (no window, no bridge to a desktop app)",
+  "Reads the media you name and writes the .fcproj and exports you name",
+  "No network"
+ ],
+ "actions": [
+  {
+   "name": "neyvia.mod.filmcraft.commands",
+   "description": "List FilmCraft engine commands (id, label, params) matching a filter.",
+   "file": "apps/filmcraft/filmcraft_mod.py",
+   "function": "commands",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "filter": {
+      "type": "string",
+      "maxLength": 200
+     }
+    },
+    "required": [],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.filmcraft.inspect",
+   "description": "Observe a project's active sequence as a CL Scene: tracks, clips, in/out, effects, transitions, markers.",
+   "file": "apps/filmcraft/filmcraft_mod.py",
+   "function": "inspect",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "project"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.filmcraft.run",
+   "description": "Run engine commands in order on a project (a new project when omitted) and save it.",
+   "file": "apps/filmcraft/filmcraft_mod.py",
+   "function": "run",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "steps": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string",
+         "maxLength": 200
+        },
+        "params": {
+         "type": "object"
+        }
+       },
+       "required": [
+        "id"
+       ]
+      }
+     },
+     "saveAs": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "steps",
+     "saveAs"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.filmcraft.export",
+   "description": "Export the active sequence and check the outcome contracts on the file.",
+   "file": "apps/filmcraft/filmcraft_mod.py",
+   "function": "export",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "format": {
+      "type": "string",
+      "maxLength": 20
+     }
+    },
+    "required": [
+     "project",
+     "out"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.filmcraft.frame",
+   "description": "Render one Program frame to PNG.",
+   "file": "apps/filmcraft/filmcraft_mod.py",
+   "function": "frame",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "seconds": {
+      "type": "number",
+      "minimum": 0
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "project",
+     "seconds",
+     "out"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.filmcraft.verify",
+   "description": "Real round trip: import real Neyvia captures, place clips, export, then the outcome contracts.",
+   "file": "apps/filmcraft/filmcraft_mod.py",
+   "function": "verify",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+   }
+  }
+ ],
+ "upstream": {
+  "repository": "https://github.com/storytold/filmcraft",
+  "license": "MIT OR Apache-2.0",
+  "version": "0.2.1"
+ },
+ "sourceRepository": "https://github.com/storytold/filmcraft",
+ "license": "Apache-2.0",
+ "credit": "storytold/filmcraft (ArtCraft team), dual-licensed MIT OR Apache-2.0; used here under Apache-2.0. Mod written by the two Neyvia video tracks (track/video and track/laya-video), reconciled on 7 Oct."
+}

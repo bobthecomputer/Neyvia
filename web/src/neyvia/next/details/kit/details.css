@@ -1,0 +1,125 @@
+/* Neyvia details for generated apps (details.js). Self-contained: the tokens below are
+   Neyvia's (Forest at night, Morning by day) and an app may override any of them on
+   :root. Motion stays in Neyvia's 180-320 ms band and becomes a cut with reduced motion. */
+
+:root {
+  --nxd-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nxd-spring-snappy: linear(0, 0.058, 0.179, 0.322, 0.446, 0.575, 0.685, 0.774, 0.843, 0.895, 0.933, 0.957, 0.976, 0.988, 0.996, 1.001, 1.003, 1.004, 1.004, 1.003, 1.002, 1.001, 1);
+  --nxd-spring-settle: linear(0, 0.047, 0.154, 0.287, 0.427, 0.571, 0.686, 0.782, 0.859, 0.917, 0.96, 0.989, 1.008, 1.019, 1.025, 1.026, 1.024, 1.021, 1.018, 1.014, 1.011, 1.008, 1.005, 1.004, 1.002, 1.001, 1);
+  --nxd-fast: 180ms;
+  --nxd-med: 200ms;
+  --nxd-snappy: 220ms;
+  --nxd-settle: 320ms;
+  --nxd-text: var(--nx-text);
+  --nxd-muted: var(--nx-text-2);
+  --nxd-line: color-mix(in srgb, var(--nx-line-strong) 16%, transparent);
+  --nxd-hover: color-mix(in srgb, var(--nx-raised) 7%, transparent);
+  --nxd-raised: var(--nx-bg);
+  --nxd-ok: var(--nx-accent);
+  --nxd-running: var(--nx-state-running);
+  --nxd-danger: var(--nx-red);
+  --nxd-danger-soft: color-mix(in srgb, var(--nx-red) 14%, transparent);
+  --nxd-accent-soft: color-mix(in srgb, var(--nx-accent) 13%, transparent);
+  --nxd-track: color-mix(in srgb, var(--nx-raised) 10%, transparent);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    /* Morning (plan 19 R3): Neyvia's light theme, forest shade instead of brown. */
+    --nxd-text: var(--nx-muted);
+    --nxd-muted: var(--nx-muted);
+    --nxd-line: color-mix(in srgb, var(--nx-line-strong) 18%, transparent);
+    --nxd-hover: color-mix(in srgb, var(--nx-bg) 6%, transparent);
+    --nxd-raised: var(--nx-raised);
+    --nxd-ok: var(--nx-accent);
+    --nxd-running: var(--nx-state-running);
+    --nxd-danger: var(--nx-red);
+    --nxd-danger-soft: color-mix(in srgb, var(--nx-red) 10%, transparent);
+    --nxd-accent-soft: color-mix(in srgb, var(--nx-accent) 11%, transparent);
+    --nxd-track: color-mix(in srgb, var(--nx-bg) 10%, transparent);
+  }
+}
+
+.nxd-sr { position: absolute; width: 1px; height: 1px; margin: calc(-1 * var(--nx-space-1)); padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* press: a 0.97 press, never from nothing */
+.nxd-press { transition: transform var(--nxd-snappy) var(--nxd-spring-snappy), background-color var(--nxd-fast) var(--nxd-ease), color var(--nxd-fast) var(--nxd-ease); }
+.nxd-press:active:not(:disabled) { transform: scale(0.97); }
+
+.nxd-btn {
+  font: inherit; font-size: var(--nx-fs-md); height: 2em; padding: 0 var(--nx-space-12); border: 0; border-radius: var(--nx-r-pill); cursor: pointer;
+  color: var(--nxd-text); background: transparent; box-shadow: inset 0 0 0 var(--nx-stroke) var(--nxd-line);
+}
+.nxd-btn:hover { background: var(--nxd-hover); }
+.nxd-btn.is-danger { background: var(--nxd-danger-soft); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nxd-danger); }
+.nxd-btn:focus-visible, .nxd-copy:focus-visible { outline: 2px solid var(--nxd-ok); outline-offset: 2px; }
+
+/* rolling number */
+.nxd-roll { display: inline-flex; font-variant-numeric: tabular-nums; }
+.nxd-roll-face { --nxd-roll-h: 1.3em; display: inline-flex; align-items: baseline; }
+.nxd-roll-col {
+  position: relative; display: inline-grid; line-height: var(--nxd-roll-h); overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent, var(--nx-bg) 24%, var(--nx-bg) 76%, transparent);
+}
+.nxd-roll-col::before { content: "0"; visibility: hidden; }
+.nxd-roll-strip {
+  position: absolute; inset: 0 0 auto 0; text-align: center; white-space: pre; line-height: var(--nxd-roll-h);
+  transform: translateY(calc(var(--nxd-roll-p, 10) * var(--nxd-roll-h) * -1));
+  transition: transform var(--nxd-settle) var(--nxd-spring-settle);
+}
+.nxd-roll-strip::before { content: "0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9"; }
+.nxd-roll-strip.is-snap { transition: none; }
+.nxd-roll-mark { white-space: pre; }
+.nxd-roll-mark::before { content: attr(data-c); }
+.nxd-roll-col.is-new { animation: nxd-in var(--nxd-med) var(--nxd-ease); }
+@keyframes nxd-in { from { opacity: 0; transform: translateY(0.25em); } }
+
+/* meter */
+.nxd-meter { position: relative; display: inline-block; width: 44px; height: 4px; border-radius: var(--nx-r-xs); overflow: hidden; background: var(--nxd-track); vertical-align: middle; }
+.nxd-meter > i {
+  position: absolute; inset: 0; border-radius: inherit; background: var(--nxd-ok);
+  transform: scaleX(var(--nxd-meter, 0)); transform-origin: left center;
+  transition: transform var(--nxd-settle) var(--nxd-spring-settle), background-color var(--nxd-fast) var(--nxd-ease);
+}
+.nxd-meter[data-tone="running"] > i { background: var(--nxd-running); }
+.nxd-meter[data-tone="error"] > i { background: var(--nxd-danger); }
+
+/* confirm in place */
+.nxd-confirm {
+  display: inline-flex; align-items: center; gap: var(--nx-space-4); padding: var(--nx-space-2) var(--nx-space-2) var(--nx-space-2) var(--nx-space-10); border-radius: var(--nx-r-pill); white-space: nowrap;
+  font-size: var(--nx-fs-md); color: var(--nxd-text); background: var(--nxd-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nxd-line);
+  animation: nxd-pop var(--nxd-med) var(--nxd-ease);
+}
+.nxd-confirm-q { margin-right: var(--nx-space-4); }
+@keyframes nxd-pop { from { opacity: 0; transform: scale(0.985); } }
+
+/* strike */
+.nxd-strike {
+  background-image: linear-gradient(var(--nxd-muted), var(--nxd-muted)); background-repeat: no-repeat;
+  background-position: 0 58%; background-size: 0% 1px; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  transition: background-size var(--nxd-settle) var(--nxd-ease), color var(--nxd-settle) var(--nxd-ease);
+}
+.nxd-strike.is-on { background-size: 100% 1px; color: var(--nxd-muted); }
+
+/* copy */
+.nxd-copy {
+  display: inline-flex; align-items: center; gap: var(--nx-space-6); min-width: 2em; height: 2em; padding: 0 var(--nx-space-8); border: 0; border-radius: var(--nx-r-sm);
+  font: inherit; font-size: var(--nx-fs-md); color: var(--nxd-muted); background: transparent; cursor: pointer;
+}
+.nxd-copy:hover { color: var(--nxd-text); background: var(--nxd-hover); }
+.nxd-copy-icons { display: grid; }
+.nxd-copy-icons > svg { grid-area: 1 / 1; }
+.nxd-copy-a { transition: opacity var(--nxd-fast) var(--nxd-ease), transform var(--nxd-fast) var(--nxd-ease); }
+.nxd-copy-b { color: var(--nxd-ok); clip-path: inset(0 100% 0 0); transition: clip-path var(--nxd-snappy) var(--nxd-ease); }
+.nxd-copy[data-state="done"] .nxd-copy-a { opacity: 0; transform: scale(0.96); }
+.nxd-copy[data-state="done"] .nxd-copy-b { clip-path: inset(0 0 0 0); }
+.nxd-copy[data-state="failed"] { color: var(--nxd-danger); }
+
+/* empty state */
+.nxd-empty { display: grid; justify-items: center; gap: var(--nx-space-6); max-width: 22rem; margin: 0 auto; padding: var(--nx-space-24) var(--nx-space-16); text-align: center; animation: nxd-pop var(--nxd-med) var(--nxd-ease); }
+.nxd-empty strong { color: var(--nxd-text); }
+.nxd-empty p { margin: 0; max-width: 32ch; color: var(--nxd-muted); font-size: var(--nx-fs-prose); line-height: 1.5; }
+.nxd-empty .nxd-btn { margin-top: var(--nx-space-6); }
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="nxd-"], [class*="nxd-"]::before, .nxd-meter > i { transition-duration: var(--nx-reduced) !important; animation-duration: var(--nx-reduced) !important; }
+}

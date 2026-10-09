@@ -1,0 +1,18 @@
+/* Dragging the docked chat out to float (NxDockDrag). Transform and opacity only. */
+
+.nx .nx-work.is-docked .nx-work-chat .nx-head.is-draggable { cursor: grab; touch-action: none; user-select: none; }
+.nx .nx-work.is-docked.is-dragging-out .nx-work-chat { opacity: 0.55; transition: opacity var(--nx-fast) var(--nx-ease); }
+.nx .nx-dock-ghost {
+  position: fixed; top: 0; left: 0; z-index: 70; display: flex; align-items: center; gap: var(--nx-space-10); pointer-events: none;
+}
+.nx .nx-dock-ghost-bubble {
+  width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: var(--nx-raised); box-shadow: var(--nx-shadow-pop), inset 0 0 0 var(--nx-stroke-icon) var(--nx-line-strong);
+  transition: box-shadow var(--nx-fast) var(--nx-ease), transform var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-dock-ghost.is-out .nx-dock-ghost-bubble { box-shadow: var(--nx-shadow-pop), 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi); transform: scale(1.06); }
+.nx .nx-dock-ghost-label {
+  padding: var(--nx-space-4) var(--nx-space-10); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs); font-weight: 500; white-space: nowrap;
+  background: var(--nx-raised); color: var(--nx-text-2); box-shadow: var(--nx-shadow-pop);
+}
+.nx .nx-dock-ghost.is-out .nx-dock-ghost-label { background: var(--nx-accent); color: var(--nx-on-accent); }

@@ -1,0 +1,199 @@
+/* Night Shift (NxNightShift): a tool row, the morning card with the growing
+   tree, the task graph read left to right in the order work can happen, and
+   a side column for the selected task, new task, import or budget. */
+
+.nx .nx-ns { flex: 1 1 auto; min-height: 0; min-width: 0; display: flex; flex-direction: column; background: var(--nx-panel); container-type: inline-size; }
+.nx .nx-ns.is-center { align-items: center; justify-content: center; }
+
+.nx .nx-ns-tools { flex: none; display: flex; align-items: center; gap: var(--nx-space-6); flex-wrap: wrap; min-height: 48px; padding: var(--nx-space-8) var(--nx-space-12) var(--nx-space-8) var(--nx-space-16); box-shadow: inset 0 calc(-1 * var(--nx-stroke)) 0 var(--nx-line); }
+.nx .nx-ns-tools-gap { flex: 1 1 auto; }
+.nx .nx-ns-start {
+  display: inline-flex; align-items: center; gap: var(--nx-space-6); height: 28px; padding: 0 var(--nx-space-12); border-radius: var(--nx-r-sm);
+  background: var(--nx-accent); color: var(--nx-on-accent, var(--nx-bg)); font-weight: 600;  /* a primary action like every other one; the sun colour stays for work in progress */ font-size: var(--nx-fs-sm);
+  transition: filter var(--nx-fast) var(--nx-ease), transform var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-ns-start:hover:not(:disabled) { filter: brightness(1.05); }
+.nx .nx-ns-start:active:not(:disabled) { transform: scale(0.98); }
+.nx .nx-ns-start:disabled { opacity: 0.6; }
+.nx .nx-ns-banner { flex: none; display: flex; align-items: center; gap: var(--nx-space-8); margin: var(--nx-space-10) var(--nx-space-16) 0; padding: var(--nx-space-8) var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-caution-soft); color: var(--nx-state-caution); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-caution-line); font-size: var(--nx-fs-sm); }
+
+.nx .nx-ns-body { flex: 1 1 auto; min-height: 0; display: flex; }
+.nx .nx-ns-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: var(--nx-space-14); padding: var(--nx-space-14) var(--nx-space-16) var(--nx-space-18); }
+.nx .nx-ns-side { flex: 0 0 340px; min-width: 0; display: flex; flex-direction: column; padding: var(--nx-space-14) var(--nx-space-14) var(--nx-space-14) 0; overflow: auto; }
+
+/* The morning card: the hero of the board, with the tree on the left. */
+.nx .nx-ns-morning {
+  flex: none; display: flex; gap: var(--nx-space-16); align-items: flex-end; padding: var(--nx-space-14) var(--nx-space-16); border-radius: var(--nx-r-lg);
+  background: var(--nx-ambient), var(--nx-raised); box-shadow: var(--nx-card-shadow);
+}
+.nx .nx-ns-morning.is-compact { background: none; box-shadow: none; padding: 0; border-radius: 0; }
+.nx .nx-ns-morning > .nx-ns-tree { flex: none; }
+.nx .nx-ns-morning-body { flex: 1 1 auto; min-width: 0; display: grid; gap: var(--nx-space-8); align-self: center; }
+.nx .nx-ns-morning-head { display: flex; align-items: center; gap: var(--nx-space-8); color: var(--nx-text); }
+.nx .nx-ns-morning-head > .nx-icon { color: var(--nx-muted); flex: none; }
+.nx .nx-ns-morning-head strong { flex: 1 1 auto; font-family: var(--nx-display); font-weight: var(--nx-display-weight); font-size: var(--nx-fs-xl); line-height: 1.2; }
+.nx .nx-ns-morning.is-compact .nx-ns-morning-head strong { font-family: var(--nx-font); font-weight: 600; font-size: var(--nx-fs); }
+.nx .nx-ns-morning-meta { display: flex; flex-wrap: wrap; gap: var(--nx-space-4) var(--nx-space-14); font-size: var(--nx-fs-xs); color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+.nx .nx-ns-morning-meta > span { display: inline-flex; align-items: center; gap: var(--nx-space-5); }
+.nx .nx-ns-morning-list { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--nx-space-4); }
+.nx .nx-ns-morning-list li { display: flex; align-items: center; gap: var(--nx-space-8); min-width: 0; font-size: var(--nx-fs-sm); }
+.nx .nx-ns-morning-title { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--nx-text-2); }
+.nx .nx-ns-morning-why { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--nx-muted); }
+.nx .nx-ns-needs { color: var(--nx-state-needs); flex: none; }
+.nx .nx-ns-usage { display: flex; flex-wrap: wrap; gap: var(--nx-space-4) var(--nx-space-14); font-size: var(--nx-fs-xs); color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+.nx .nx-ns-usage strong { font-weight: 600; color: var(--nx-text-2); margin-right: var(--nx-space-5); }
+
+/* Evidence links: a file opens, a run opens its chat, a commit copies. */
+.nx .nx-ns-ev {
+  flex: none; display: inline-flex; align-items: center; gap: var(--nx-space-5); max-width: 100%; min-width: 0; padding: 0 var(--nx-space-8); height: 22px; border-radius: var(--nx-r-pill);
+  font-size: var(--nx-fs-xs); color: var(--nx-accent-text); background: var(--nx-accent-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: background var(--nx-fast) var(--nx-ease);
+}
+.nx button.nx-ns-ev:hover { background: color-mix(in srgb, var(--nx-accent-hi) 22%, transparent); }
+.nx .nx-ns-ev.is-mono { font-family: var(--nx-mono); }
+.nx .nx-ns-ev.is-static { color: var(--nx-text-2); background: var(--nx-raised-2); }
+.nx .nx-ns-ev em { font-style: normal; color: var(--nx-muted); }
+
+/* The growing tree (07 R6: the board grows leaves as tasks complete). */
+.nx .nx-ns-tree { overflow: visible; }
+.nx .nx-ns-tree-sun { fill: var(--nx-amber); opacity: 0.25; transition: opacity var(--nx-drift) var(--nx-ease); }
+.nx .nx-ns-tree.is-running .nx-ns-tree-sun { opacity: 0.85; }
+.nx .nx-ns-tree-ground { fill: none; stroke: var(--nx-line-strong); stroke-width: 1.4; stroke-linecap: round; }
+.nx .nx-ns-tree-trunk { fill: var(--nx-text-2); opacity: 0.75; }
+.nx .nx-ns-tree-branch { fill: none; stroke: var(--nx-text-2); stroke-width: 1.6; stroke-linecap: round; opacity: 0.6; }
+.nx .nx-ns-leaf { transform-box: fill-box; transform-origin: 0 50%; }
+.nx .nx-ns-leaf path { fill: none; stroke: var(--nx-muted); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.nx .nx-ns-leaf.is-done path { fill: var(--nx-green); stroke: none; }
+.nx .nx-ns-leaf.is-done { animation: nx-ns-leaf-grow var(--nx-settle) var(--nx-spring-settle) both; }
+.nx .nx-ns-leaf.is-running path { fill: color-mix(in srgb, var(--nx-amber) 55%, transparent); stroke: var(--nx-amber); }
+.nx .nx-ns-leaf.is-running { animation: nx-pulse calc(var(--nx-settle) * 5) var(--nx-ease-loop) infinite; }
+.nx .nx-ns-leaf.is-blocked path { fill: var(--nx-red-soft); stroke: var(--nx-red); }
+.nx .nx-ns-leaf.is-needs path, .nx .nx-ns-leaf.is-needs_review path { fill: var(--nx-gold-soft); stroke: var(--nx-gold); }
+.nx .nx-ns-leaf.is-selected path { stroke: var(--nx-accent-hi); stroke-width: 2.2; }
+@keyframes nx-ns-leaf-grow { from { opacity: 0; transform: scale(0.2); } }
+
+/* The task graph: columns by prerequisite level, lines from each prerequisite. */
+.nx .nx-ns-graph { position: relative; flex: none; display: flex; gap: var(--nx-space-32); align-items: flex-start; padding: var(--nx-space-4) var(--nx-space-2) var(--nx-space-10); overflow-x: auto; }
+.nx .nx-ns-edges { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.nx .nx-ns-edges path { fill: none; stroke: var(--nx-line-strong); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.nx .nx-ns-edges path.is-done { stroke: color-mix(in srgb, var(--nx-green) 70%, transparent); stroke-dasharray: none; }
+.nx .nx-ns-level { position: relative; flex: 0 0 210px; display: grid; gap: var(--nx-space-10); }
+.nx .nx-ns-level-label { font-size: var(--nx-fs-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--nx-muted); }
+.nx .nx-ns-card {
+  position: relative; display: grid; gap: var(--nx-space-5); padding: var(--nx-space-10) var(--nx-space-11); border-radius: var(--nx-r); text-align: left; background: var(--nx-raised);
+  box-shadow: var(--nx-card-shadow); transition: box-shadow var(--nx-fast) var(--nx-ease), transform var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-ns-card:hover { transform: translateY(-1px); }
+.nx .nx-ns-card.is-selected { box-shadow: 0 0 0 var(--nx-stroke-icon) var(--nx-accent-hi), var(--nx-card-shadow); }
+.nx .nx-ns-card.is-running { box-shadow: 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-amber) 55%, transparent), var(--nx-card-shadow); }
+.nx .nx-ns-card.is-blocked { box-shadow: 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-red) 50%, transparent), var(--nx-card-shadow); }
+.nx .nx-ns-card.is-paul.is-waiting, .nx .nx-ns-card.is-needs_review { box-shadow: 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-gold) 55%, transparent), var(--nx-card-shadow); }
+.nx .nx-ns-card.is-done { background: color-mix(in srgb, var(--nx-green) 7%, var(--nx-raised)); }
+.nx .nx-ns-card.is-selected.is-running, .nx .nx-ns-card.is-selected.is-blocked, .nx .nx-ns-card.is-selected.is-needs_review { box-shadow: 0 0 0 var(--nx-stroke-icon) var(--nx-accent-hi), var(--nx-card-shadow); }
+.nx .nx-ns-card .ny-tree { --ny-tree-ink: var(--nx-text-2); --ny-tree-leaf: var(--nx-green); --ny-tree-sun: var(--nx-amber); }
+.nx .nx-ns-card-top { display: flex; align-items: center; gap: var(--nx-space-6); min-width: 0; }
+.nx .nx-ns-card-top > .nx-icon { color: var(--nx-state-needs); flex: none; }
+.nx .nx-ns-card-route { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-card-id { flex: none; font-family: var(--nx-mono); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-card-title { font-weight: 500; color: var(--nx-text); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.nx .nx-ns-card-state { display: flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); color: var(--nx-text-2); }
+.nx .nx-ns-card-note { font-size: var(--nx-fs-xs); color: var(--nx-muted); line-height: 1.4; overflow-wrap: anywhere; }
+.nx .nx-ns-card-note.is-error { color: var(--nx-state-error); }
+.nx .nx-ns-empty { flex: none; padding: var(--nx-space-28) var(--nx-space-16); }
+.nx .nx-ns-missions { align-self: flex-start; }
+
+/* Side column: task detail and the forms. */
+.nx .nx-ns-detail, .nx .nx-ns-form, .nx .nx-ns-budget {
+  display: flex; flex-direction: column; gap: var(--nx-space-10); padding: var(--nx-space-14); border-radius: var(--nx-r-lg); background: var(--nx-raised); box-shadow: var(--nx-card-shadow);
+  animation: nx-pop-in var(--nx-med) var(--nx-ease);
+}
+.nx .nx-ns-detail .nx-ns-form { padding: 0; background: none; box-shadow: none; animation: none; }
+.nx .nx-ns-detail > header { display: flex; align-items: center; gap: var(--nx-space-8); }
+.nx .nx-ns-detail > header strong { flex: 1 1 auto; min-width: 0; font-weight: 600; color: var(--nx-text); overflow-wrap: anywhere; }
+.nx .nx-ns-detail-state { font-size: var(--nx-fs-sm); color: var(--nx-text-2); line-height: 1.45; }
+.nx .nx-ns-actions { display: flex; flex-wrap: wrap; gap: var(--nx-space-6); }
+.nx .nx-ns-detail-ev { display: flex; align-items: center; gap: var(--nx-space-8); font-size: var(--nx-fs-sm); color: var(--nx-muted); min-width: 0; }
+.nx .nx-ns-route { display: grid; gap: var(--nx-space-5); margin: 0; font-size: var(--nx-fs-sm); }
+.nx .nx-ns-route > div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: var(--nx-space-8); }
+.nx .nx-ns-route dt { color: var(--nx-muted); }
+.nx .nx-ns-route dd { margin: 0; color: var(--nx-text-2); overflow-wrap: anywhere; display: flex; flex-wrap: wrap; gap: var(--nx-space-4); }
+.nx .nx-ns-route dd.is-mono { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); }
+.nx .nx-ns-chip { display: inline-flex; align-items: center; height: 20px; padding: 0 var(--nx-space-7); border-radius: var(--nx-r-pill); font: var(--nx-fs-xs) var(--nx-mono); color: var(--nx-text-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-ns-chip.is-done { color: var(--nx-green); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-green) 45%, transparent); }
+.nx .nx-ns-chip.is-blocked, .nx .nx-ns-chip.is-missing { color: var(--nx-state-error); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-red) 45%, transparent); }
+.nx .nx-ns-chip.is-running { color: var(--nx-state-running-text); }
+.nx .nx-ns-prompt { font-size: var(--nx-fs-sm); line-height: 1.5; color: var(--nx-text-2); white-space: pre-wrap; overflow-wrap: anywhere; padding-top: var(--nx-space-8); box-shadow: inset 0 var(--nx-stroke) 0 var(--nx-line); }
+
+.nx .nx-ns-form > strong, .nx .nx-ns-budget > header strong { font-weight: 600; color: var(--nx-text); }
+.nx .nx-ns-budget > header { display: grid; gap: var(--nx-space-2); }
+.nx .nx-ns-budget > header span { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-field { display: grid; gap: var(--nx-space-4); min-width: 0; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-field.is-id { flex: 0 0 96px; }
+.nx .nx-ns-area { height: auto; padding: var(--nx-space-7) var(--nx-space-10); line-height: 1.45; resize: vertical; }
+.nx .nx-ns-row { display: flex; flex-wrap: wrap; gap: var(--nx-space-8); align-items: flex-end; }
+.nx .nx-ns-row > .nx-ns-field { flex: 1 1 140px; }
+.nx .nx-ns-needs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-4) var(--nx-space-12); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-ns-needs > span { color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.nx .nx-ns-needs label { display: inline-flex; align-items: center; gap: var(--nx-space-5); font-family: var(--nx-mono); font-size: var(--nx-fs-xs); }
+.nx .nx-ns-fine { font-size: var(--nx-fs-xs); line-height: 1.45; color: var(--nx-muted); }
+.nx .nx-ns-fine code { font-family: var(--nx-mono); color: var(--nx-text-2); overflow-wrap: anywhere; }
+.nx .nx-ns-error { color: var(--nx-state-error); font-size: var(--nx-fs-sm); overflow-wrap: anywhere; }
+.nx .nx-ns-ok { color: var(--nx-text-2); font-size: var(--nx-fs-sm); }
+.nx .nx-ns-foot { display: flex; align-items: center; gap: var(--nx-space-8); flex-wrap: wrap; }
+.nx .nx-ns-foot > span { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-check { display: flex; align-items: flex-start; gap: var(--nx-space-8); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-ns-check input { margin-top: var(--nx-space-2); accent-color: var(--nx-accent); }
+.nx .nx-ns-check > span { display: grid; gap: var(--nx-space-1); }
+.nx .nx-ns-check strong { font-weight: 500; color: var(--nx-text); }
+.nx .nx-ns-check small { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-check.is-inline { align-items: center; padding-bottom: var(--nx-space-7); }
+.nx .nx-ns-check.is-inline input { margin-top: 0; }
+
+.nx .nx-ns-group { display: grid; gap: var(--nx-space-8); margin: 0; padding: var(--nx-space-10) 0 0; border: 0; box-shadow: inset 0 var(--nx-stroke) 0 var(--nx-line); }
+.nx .nx-ns-group > legend { float: left; width: 100%; padding: 0 0 var(--nx-space-2); font-size: var(--nx-fs-xs); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--nx-muted); }
+.nx .nx-ns-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--nx-space-8); }
+.nx .nx-ns-num { position: relative; display: grid; gap: var(--nx-space-3); min-width: 0; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-num-box { display: flex; align-items: center; gap: var(--nx-space-5); }
+.nx .nx-ns-num-box em { font-style: normal; color: var(--nx-muted); }
+.nx .nx-ns-num small { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-harness-rows { display: grid; gap: var(--nx-space-8); }
+.nx .nx-ns-harness-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: var(--nx-space-8); align-items: end; }
+.nx .nx-ns-harness-row .nx-ns-num > span:first-child { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.nx .nx-ns-harness-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: var(--nx-space-8); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-harness-name { display: grid; gap: var(--nx-space-1); font-size: var(--nx-fs-sm); font-weight: 500; color: var(--nx-text); padding-bottom: var(--nx-space-4); }
+.nx .nx-ns-harness-name small { font-weight: 400; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ns-plan { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--nx-space-5); }
+.nx .nx-ns-plan li { display: grid; grid-template-columns: minmax(0, 1fr) 70px auto; align-items: center; gap: var(--nx-space-8); font-size: var(--nx-fs-xs); color: var(--nx-text-2); font-variant-numeric: tabular-nums; }
+.nx .nx-ns-plan li.is-held { color: var(--nx-state-needs); }
+.nx .nx-ns-plan-bar { position: relative; height: 4px; border-radius: var(--nx-r-xxs); background: var(--nx-line-strong); overflow: hidden; }
+.nx .nx-ns-plan-bar > i { position: absolute; inset: 0; background: var(--nx-green); transform-origin: 0 50%; }
+.nx .nx-ns-plan li.is-held .nx-ns-plan-bar > i { background: var(--nx-gold); }
+.nx .nx-ns-quiet { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--nx-space-8); }
+.nx .nx-ns-quiet label { display: grid; gap: var(--nx-space-3); font-size: var(--nx-fs-xs); color: var(--nx-muted); flex: 1 1 90px; }
+.nx .nx-ns-quiet-now { font-size: var(--nx-fs-xs); color: var(--nx-muted); padding-bottom: var(--nx-space-8); }
+.nx .nx-ns-quiet-now.is-on { color: var(--nx-state-running-text); }
+.nx .nx-ns-problems { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--nx-space-4); font-size: var(--nx-fs-sm); color: var(--nx-state-caution); }
+.nx .nx-ns-problems li { display: flex; gap: var(--nx-space-6); align-items: flex-start; }
+.nx .nx-ns-problems .nx-icon { margin-top: var(--nx-space-2); flex: none; }
+
+/* Home widget link to the board. */
+.nx .nx-widget-more { display: inline-block; margin-top: var(--nx-space-8); }
+
+/* Missions pane tabs: Missions | Night Shift. */
+.nx .nx-ms-tabs { flex: none; display: flex; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-8) var(--nx-space-16); box-shadow: inset 0 calc(-1 * var(--nx-stroke)) 0 var(--nx-line); }
+.nx .nx-ms-shell { flex: 1 1 auto; min-height: 0; min-width: 0; display: flex; flex-direction: column; }
+
+@container (max-width: 860px) {
+  .nx .nx-ns-body { flex-direction: column; overflow: auto; }
+  .nx .nx-ns-main { flex: none; }
+  .nx .nx-ns-side { flex-basis: auto; padding: 0 var(--nx-space-16) var(--nx-space-16); overflow: visible; }
+}
+.nx.is-phone .nx-ns-morning { flex-direction: column; align-items: stretch; }
+.nx.is-phone .nx-ns-morning > .nx-ns-tree { align-self: center; }
+.nx.is-phone .nx-ns-graph { flex-direction: column; align-items: stretch; gap: var(--nx-space-14); overflow-x: visible; }
+.nx.is-phone .nx-ns-level { flex-basis: auto; }
+.nx.is-phone .nx-ns-edges { display: none; }
+.nx.is-phone .nx-ns-grid, .nx.is-phone .nx-ns-harness-row { grid-template-columns: minmax(0, 1fr); }
+.nx.is-phone .nx-ns-harness-head { display: none; }
+.nx.is-phone .nx-ns-harness-row .nx-ns-num > span:first-child { position: static; width: auto; height: auto; clip-path: none; }
+.nx.is-phone .nx-input { font-size: var(--nx-fs-lg); }

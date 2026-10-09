@@ -1,0 +1,1141 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "dictation",
+  "kind": "environment",
+  "proofs": {
+    "area": "dictation",
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_dictation.names",
+          "grant_agent.proofs_dictation.after"
+        ],
+        "claim": "Name add/remove persists exactly the requested aliases and the names observer reports persisted plus built-in aliases.",
+        "id": "dictation.names.persisted",
+        "impact": [
+          ".neyvia/dictation-names.json",
+          "dictation.process",
+          "dictation stream/finalization"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_dictation.names",
+          "grant_agent.proofs_dictation.after",
+          "grant_agent.proofs_dictation.self_check"
+        ],
+        "claim": "Names are read and written only under the selected state root; a name taught in one workspace does not change another workspace's prompt policy.",
+        "id": "dictation.names.scoped",
+        "impact": [
+          "workspace dictation policy",
+          "other workspaces"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_prompt_dictation.process_prompt",
+          "grant_agent.neyvia_dictation.process",
+          "grant_agent.proofs_dictation.check_prompt"
+        ],
+        "claim": "The prompt is assembled only from ordered text segments; preview is required and stable/provisional match finality. An unfinished hypothesis is literal and has no editor commands.",
+        "id": "dictation.prompt.structure",
+        "impact": [
+          "composer preview",
+          "Notes prompt",
+          "desktop and HTTP dictation"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_prompt_dictation.process_prompt",
+          "grant_agent.proofs_dictation.check_prompt"
+        ],
+        "claim": "Known whole and terminal spoken commands become ordered command segments instead of prompt words; emitted commands equal the command segments. Quoted text remains literal in scratch procedures.",
+        "id": "dictation.prompt.commands",
+        "impact": [
+          "editor spoken commands",
+          "send preview"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_prompt_dictation.process_prompt",
+          "grant_agent.proofs_dictation.check_prompt"
+        ],
+        "claim": "French and mixed utterances select qwen, while English and unknown select phonon2; the French utterance goal is exercised by the shared parser.",
+        "id": "dictation.prompt.route",
+        "impact": [
+          "speech engine routing",
+          "local fallback availability"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_dictation.stream",
+          "grant_agent.proofs_dictation.validate_stream"
+        ],
+        "claim": "Unknown stream operations, invalid ids, oversized chunks, odd PCM and negative sequences are rejected before any settings lookup, session allocation, timer or speech-engine call.",
+        "id": "dictation.stream.preallocation",
+        "impact": [
+          "stream sessions",
+          "PCM memory",
+          "speech engine calls"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_dictation_providers.Transcript",
+          "grant_agent.neyvia_dictation.stream",
+          "grant_agent.proofs_dictation.provider_checks"
+        ],
+        "claim": "Live words from a streaming provider only grow in order: deltas of the segment being heard stay provisional, a segment locks only when it and every earlier one are complete, and a locked segment is never edited. Checked with the recorded sample fed in 250 ms pieces to a scripted provider.",
+        "id": "dictation.provider.partials",
+        "impact": [
+          "live dictation words",
+          "stable/grey split",
+          "Voice settings provider choice"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_dictation_providers.OpenAIStream.finish",
+          "grant_agent.neyvia_dictation.stream",
+          "grant_agent.proofs_dictation.provider_checks"
+        ],
+        "claim": "Release commits the provider's audio, waits for the completed segments, and returns one final text that still goes through the prompt policy and preview.",
+        "id": "dictation.provider.finalise",
+        "impact": [
+          "final dictation text",
+          "send preview"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_dictation_providers.choose",
+          "grant_agent.neyvia_dictation._stream_step",
+          "grant_agent.proofs_dictation.provider_checks"
+        ],
+        "claim": "A provider that is not usable (no key, local-only on, address not api.openai.com, Codex signed in with a ChatGPT plan, or a connection that drops mid-dictation) never loses speech: the local engine takes over with all audio heard so far, numbered from zero, and one plain sentence says so.",
+        "id": "dictation.provider.fallback",
+        "impact": [
+          "dictation provider choice",
+          "local engine",
+          "network policy"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationReveal.js:wordsShown -> checkedDictationAction -> DICTATION_CONTRACTS.wordsShown"
+        ],
+        "claim": "Paced words never go backwards or past the engine's answer, the first word of a batch shows at once, and the whole batch shows by the next answer.",
+        "id": "dictation.reveal",
+        "impact": [
+          "live dictation strip",
+          "composer ghost text"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationProviders.js:providerChoices -> checkedDictationAction -> DICTATION_CONTRACTS.providerChoices"
+        ],
+        "claim": "Settings lists local first as the default, an unavailable provider always carries one plain reason, and at most the chosen provider is selected.",
+        "id": "dictation.providers",
+        "impact": [
+          "Voice settings"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:shiftAnchor -> checkedDictationAction -> DICTATION_CONTRACTS.shiftAnchor"
+        ],
+        "claim": "Insertion at/before the caret follows typing; edits after it retain the prefix anchor",
+        "id": "dictation.anchor",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:endsMidSentence -> checkedDictationAction -> DICTATION_CONTRACTS.endsMidSentence"
+        ],
+        "claim": "Only an unterminated nonblank line continues a sentence",
+        "id": "dictation.sentence-state",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:joinSpoken -> checkedDictationAction -> DICTATION_CONTRACTS.joinSpoken"
+        ],
+        "claim": "Preserve the field prefix, sentence capitalization, names and punctuation spacing",
+        "id": "dictation.join",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:lastSentenceStart -> checkedDictationAction -> DICTATION_CONTRACTS.lastSentenceStart"
+        ],
+        "claim": "The last sentence starts after the latest complete terminator or line boundary",
+        "id": "dictation.sentence-boundary",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:dropLastPhrase -> checkedDictationAction -> DICTATION_CONTRACTS.dropLastPhrase"
+        ],
+        "claim": "Scratch removes only the final phrase and its joining horizontal spaces",
+        "id": "dictation.scratch",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:dropLastSentence -> checkedDictationAction -> DICTATION_CONTRACTS.dropLastSentence"
+        ],
+        "claim": "Delete only the final sentence, preserving prior lines",
+        "id": "dictation.delete-sentence",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:applySegments -> checkedDictationAction -> DICTATION_CONTRACTS.applySegments"
+        ],
+        "claim": "Execute segments in order; preserve suffix; cancel restores original; caller owns send/undo/history",
+        "id": "dictation.edit",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:previewParts -> checkedDictationAction -> DICTATION_CONTRACTS.previewParts"
+        ],
+        "claim": "Preview uses commit spacing/capitalization while retaining stable/provisional separation",
+        "id": "dictation.preview",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:withoutOverlap -> checkedDictationAction -> DICTATION_CONTRACTS.withoutOverlap"
+        ],
+        "claim": "Remove the longest settled suffix or complete decode prefix, preserving fresh words",
+        "id": "dictation.overlap",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:normalizeAnswer -> checkedDictationAction -> DICTATION_CONTRACTS.normalizeAnswer"
+        ],
+        "claim": "Legacy partial/final text remains usable; current stable words and command segments survive normalization",
+        "id": "dictation.answer",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDictationEdit.js:liveCommands -> checkedDictationAction -> DICTATION_CONTRACTS.liveCommands"
+        ],
+        "claim": "Command chips contain only decided commands in stream order",
+        "id": "dictation.commands",
+        "impact": [
+          "prompt composer text/caret",
+          "Notes dictation text",
+          "stream provisional overlay"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.dictation.names": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "list",
+            "add",
+            "remove"
+          ]
+        },
+        "to": {
+          "type": "string"
+        },
+        "from": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": []
+    },
+    "neyvia.dictation.process": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20
+        },
+        "final": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "text": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.dictation.status": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "boolean"
+        }
+      },
+      "required": []
+    },
+    "neyvia.dictation.transcribe": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "engine": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "phonon2",
+            "qwen"
+          ]
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Local speech engine: availability and authorized file transcription",
+      "state": {
+        "engine": {
+          "args": {
+            "start": false
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "string"
+              },
+              "engine": {
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "state",
+              "engine",
+              "enabled"
+            ]
+          },
+          "tool": "neyvia.dictation.status"
+        }
+      },
+      "actions": {
+        "dictation.status": {
+          "effect": "Read missing/off/starting/ready/error and configured engine; start=true may launch it",
+          "pre": "start=false for observation; start=true only with authorization to launch the configured local engine",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "string"
+              },
+              "engine": {
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "state",
+              "engine",
+              "enabled"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.dictation.status",
+          "tool": "neyvia.dictation.status"
+        },
+        "dictation.transcribe": {
+          "effect": "Return text, selected engine, language guess and timings from the existing shared speech service",
+          "pre": "Readable audio file; configured engine installed; permission to use or start the local speech engine; qwen requires its service",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.dictation.transcribe",
+          "tool": "neyvia.dictation.transcribe"
+        }
+      },
+      "checks": {
+        "ready": {
+          "args": {
+            "start": false
+          },
+          "expect": {
+            "op": "eq",
+            "path": "state",
+            "value": "ready"
+          },
+          "tool": "neyvia.dictation.status"
+        }
+      },
+      "procedures": {
+        "transcribe-file": {
+          "goal": "Inspect engine availability and transcribe an authorized audio file with the chosen engine",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "engine": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "phonon2",
+                  "qwen"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "engine"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "dictation.status",
+              "args": {
+                "start": false
+              },
+              "save": "status"
+            },
+            {
+              "judge": "engine-choice"
+            },
+            {
+              "action": "dictation.transcribe",
+              "args": {
+                "engine": {
+                  "$input": "engine"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "transcript",
+              "when": {
+                "judge": "engine-choice",
+                "option": "transcribe"
+              }
+            }
+          ]
+        }
+      },
+      "judge": {
+        "engine-choice": {
+          "constraints": "Phonon-2 is the English prompt path; qwen needs the configured service for French/mixed audio. Stop on missing dependencies or unapproved service launch.",
+          "options": [
+            "transcribe",
+            "stop"
+          ],
+          "question": "Is the installed selected engine appropriate and authorized for this audio?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Engine missing, disabled, or fails to start",
+          "recovery": "Read status.error; check saved engine paths. Do not install, download, restart another service, or substitute a provider silently."
+        },
+        {
+          "failure": "Wrong language path or failed audio decode",
+          "recovery": "Choose the explicit supported engine and a readable audio file; preserve the original audio."
+        }
+      ],
+      "frontier": [
+        "Actual microphone WER and release-to-text latency require reviewed recordings and live UI proof; validation alone proves neither."
+      ],
+      "guidance": [
+        "User side: mic in the composer, new chat and Notes. Click to talk, click again to insert; hold the mic or Ctrl+Shift+Space to talk while held; Esc cancels.",
+        "While talking the words appear in the box: settled words in the normal colour, the newest grey. Settled words never jump; a late change shimmers and never moves the caret.",
+        "Commands: new line, new paragraph, scratch that (anywhere); undo that, cancel (alone); delete the last sentence, send it (alone or at the end). French: à la ligne, nouveau paragraphe, efface ça, annule ça, supprime la dernière phrase, envoie, annule. 'literally new line' types the words.",
+        "Source: web/src/neyvia/next/NxDictation.jsx, nxDictation.js, nxDictationEdit.js (UI); src/grant_agent/neyvia_dictation.py, neyvia_prompt_dictation.py (backend). Human view: docs/manuals/dictation.md."
+      ]
+    },
+    "prompts": {
+      "title": "Prompt dictation in the composer, new chat and Notes: live words, spoken commands, language routing, names",
+      "state": {
+        "engine": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "string"
+              },
+              "device": {},
+              "url": {
+                "type": "string"
+              },
+              "engines": {
+                "type": "object"
+              },
+              "recentLanguage": {}
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "tool": "neyvia.dictation.status"
+        },
+        "names": {
+          "args": {
+            "action": "list"
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "names": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "to": {
+                      "type": "string"
+                    },
+                    "from": {
+                      "type": "array"
+                    },
+                    "builtin": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "names"
+            ]
+          },
+          "tool": "neyvia.dictation.names"
+        }
+      },
+      "actions": {
+        "dictation.start": {
+          "effect": "Starts the local engine hidden when it is off; ready in ~30-55 s on GPU, ~3-4 min on CPU (measured 3 Oct: 189-237 s); it exits after 20 idle minutes",
+          "pre": "start=true; the engine (Phonon-2) is installed (state is not missing)",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.dictation.status",
+          "tool": "neyvia.dictation.status"
+        },
+        "dictation.process": {
+          "effect": "Same prompt policy as live dictation: cleaned text, ordered segments (text / command op), language, route, name fixes. Never sends or edits anything",
+          "pre": "Text of one utterance as heard; history optional (recent languages)",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "segments": {
+                "type": "array"
+              },
+              "commands": {
+                "type": "array"
+              },
+              "fixes": {
+                "type": "array"
+              },
+              "language": {
+                "type": "string"
+              },
+              "route": {
+                "type": "string"
+              },
+              "requiresPreview": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "text",
+              "segments",
+              "commands",
+              "fixes",
+              "language",
+              "route"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.dictation.process",
+          "tool": "neyvia.dictation.process"
+        },
+        "dictation.names": {
+          "effect": "Reads or changes Paul's sound-alike list in .neyvia/dictation-names.json; the next dictation uses it",
+          "pre": "action list|add|remove; add needs from (heard) and to (written); built-ins cannot be removed",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "names": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "names"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.dictation.names",
+          "tool": "neyvia.dictation.names"
+        },
+        "dictation.transcribe": {
+          "effect": "Plain text of the file; no commands applied",
+          "pre": "A local wav/flac/ogg file; engine ready",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.dictation.transcribe",
+          "tool": "neyvia.dictation.transcribe"
+        }
+      },
+      "checks": {
+        "engine-ready": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state",
+            "value": "ready"
+          },
+          "tool": "neyvia.dictation.status"
+        },
+        "name-written": {
+          "args": {
+            "text": {
+              "$input": "heard"
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "text",
+            "value": {
+              "$input": "name"
+            }
+          },
+          "tool": "neyvia.dictation.process"
+        },
+        "command-parsed": {
+          "args": {
+            "text": {
+              "$input": "text"
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "commands",
+            "value": {
+              "op": {
+                "$input": "op"
+              }
+            }
+          },
+          "tool": "neyvia.dictation.process"
+        },
+        "stays-text": {
+          "args": {
+            "text": {
+              "$input": "text"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "commands",
+            "value": []
+          },
+          "tool": "neyvia.dictation.process"
+        }
+      },
+      "procedures": {
+        "teach-a-name": {
+          "goal": "Make dictation write a name Paul uses when it hears a sound-alike (aliases: the heard words, one or a list), and prove an utterance with them now gets the name",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "heard": {
+                "type": "string"
+              },
+              "aliases": {
+                "type": [
+                  "string",
+                  "array"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "heard",
+              "aliases",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "dictation.names",
+              "args": {
+                "action": "list"
+              },
+              "save": "before"
+            },
+            {
+              "judge": "add-name"
+            },
+            {
+              "action": "dictation.names",
+              "args": {
+                "action": "add",
+                "from": {
+                  "$input": "aliases"
+                },
+                "to": {
+                  "$input": "name"
+                }
+              },
+              "save": "added",
+              "when": {
+                "judge": "add-name",
+                "option": "add"
+              }
+            },
+            {
+              "action": "dictation.process",
+              "args": {
+                "text": {
+                  "$input": "heard"
+                }
+              },
+              "check": "name-written",
+              "save": "after",
+              "when": {
+                "judge": "add-name",
+                "option": "add"
+              }
+            }
+          ]
+        },
+        "check-a-command": {
+          "goal": "Confirm a spoken phrase is done as the expected command (not typed)",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "op": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "dictation.process",
+              "args": {
+                "text": {
+                  "$input": "text"
+                }
+              },
+              "check": "command-parsed",
+              "save": "parsed"
+            }
+          ]
+        },
+        "check-stays-text": {
+          "goal": "Confirm a sentence that contains a command phrase mid-sentence is typed, not done",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "dictation.process",
+              "args": {
+                "text": {
+                  "$input": "text"
+                }
+              },
+              "check": "stays-text",
+              "save": "parsed"
+            }
+          ]
+        },
+        "warm-engine": {
+          "goal": "Start the speech engine before Paul dictates and confirm it is ready",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "dictation.start",
+              "args": {
+                "start": true
+              },
+              "save": "started"
+            },
+            {
+              "judge": "engine-wait"
+            },
+            {
+              "action": "dictation.start",
+              "args": {
+                "start": false
+              },
+              "check": "engine-ready",
+              "save": "ready",
+              "when": {
+                "judge": "engine-wait",
+                "option": "check-now"
+              }
+            }
+          ]
+        },
+        "edit-local-names": {
+          "goal": "Add or remove custom aliases and read exact merged names",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "enum": [
+                  "list",
+                  "add",
+                  "remove"
+                ],
+                "type": "string"
+              },
+              "from": {
+                "items": {
+                  "type": "string"
+                },
+                "type": [
+                  "string",
+                  "array"
+                ]
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "action",
+              "from",
+              "to"
+            ]
+          },
+          "steps": [
+            {
+              "action": "dictation.names",
+              "args": {
+                "action": {
+                  "$input": "action"
+                },
+                "from": {
+                  "$input": "from"
+                },
+                "to": {
+                  "$input": "to"
+                }
+              },
+              "save": "observed"
+            }
+          ]
+        },
+        "process-local-prompt": {
+          "goal": "Clean an English prompt and observe its exact language history append",
+          "inputs": {
+            "properties": {
+              "final": {
+                "type": "boolean"
+              },
+              "history": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "final",
+              "history"
+            ],
+            "type": "object"
+          },
+          "steps": [
+            {
+              "action": "dictation.process",
+              "args": {
+                "final": {
+                  "$input": "final"
+                },
+                "history": {
+                  "$input": "history"
+                },
+                "text": {
+                  "$input": "text"
+                }
+              },
+              "save": "observed"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "add-name": {
+          "constraints": "Add only when Paul never means the heard words literally (nevia → Neyvia). Skip common words (layer, queen, tory) unless Paul asked; the list rewrites every prompt.",
+          "options": [
+            "add",
+            "skip"
+          ],
+          "question": "Should these heard words always be written as the name?"
+        },
+        "engine-wait": {
+          "constraints": "GPU start ~30-55 s, CPU ~3-4 min. Don't poll in a tight loop; check again after the wait, or let Paul's first press record while it loads: the UI holds the whole recording in memory, waits up to 10 min (cancellable) and writes it when the engine is ready.",
+          "options": [
+            "check-now",
+            "later"
+          ],
+          "question": "Is the engine likely ready now?"
+        },
+        "send": {
+          "constraints": "Only Paul decides. \"Send it\" shows a 2 s preview with Stop (Esc); editing the text stops it. A model never sends a dictated prompt on its own.",
+          "options": [
+            "send",
+            "stop"
+          ],
+          "question": "Send the dictated prompt?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "French or mixed speech written as English-looking words",
+          "recovery": "There is no French speech engine yet: the note says so in plain words (\"Neyvia has no French speech engine on this PC yet, so the English engine wrote its best guess\") with Undo. Check the text or type it; the mic tooltip says English only while status.languages lacks fr"
+        },
+        {
+          "failure": "Undo says the text changed since",
+          "recovery": "Paul typed after the dictation; undo by hand. One-tap Undo only restores an untouched insert"
+        },
+        {
+          "failure": "A command phrase was typed as words",
+          "recovery": "undo, cancel and send count only alone or at the end of an utterance; say them after a pause. Test with procedure check-a-command"
+        },
+        {
+          "failure": "Mic gives nothing on a phone or another PC",
+          "recovery": "The browser mic needs https or localhost: use the :8443 address over Tailscale"
+        },
+        {
+          "failure": "Engine state missing",
+          "recovery": "phonon2_engine.py or the dictation Python wasn't found; set engineDir/python in .neyvia/dictation.json via dictation_settings_command"
+        },
+        {
+          "failure": "First press after the engine idled out (or while it loads): no grey words",
+          "recovery": "Expected: the strip turns amber (\"The speech model is starting. Keep talking\"), every word is held and written once the engine is ready; after release it shows elapsed time and the usual start time. Esc or X drops the recording"
+        },
+        {
+          "failure": "Dictation failed after release (backend restarted, engine crashed)",
+          "recovery": "The recording stays in memory: the note offers Try again, which waits for the engine and decodes it again. A new dictation replaces it"
+        },
+        {
+          "failure": "Grey words lag on a CPU engine",
+          "recovery": "Partials come every few seconds on CPU; the final text is still complete. Prefer the GPU engine (device cuda)"
+        }
+      ],
+      "frontier": [
+        "Late re-decode with Qwen needs a local recognizer that accepts PCM (no audio on disk); until one runs, French gets a route_note instead of a rewrite",
+        "Engine word confidences are not used; stability is agreement between partials plus committed pieces",
+        "Code dictation (identifiers, symbols) and structural edits beyond the seven commands are not mapped",
+        "Desktop (Tauri) stream path is wired through the bridge but proven only in the browser so far",
+        "A held recording over 28 s is decoded on the one-shot path (no sid), so it cannot get a later French re-decode",
+        "The engine's idle timer counts its own load time: with idleExitMinutes shorter than a CPU load it exits before ready (the UI then starts it again)"
+      ],
+      "guidance": [
+        "User side: mic in the composer, new chat and Notes. Click to talk, click again to insert; hold the mic or Ctrl+Shift+Space to talk while held; Esc cancels.",
+        "While talking the words appear in the box: settled words in the normal colour, the newest grey. Settled words never jump; a late change shimmers and never moves the caret.",
+        "Commands: new line, new paragraph, scratch that (anywhere); undo that, cancel (alone); delete the last sentence, send it (alone or at the end). French: à la ligne, nouveau paragraphe, efface ça, annule ça, supprime la dernière phrase, envoie, annule. 'literally new line' types the words.",
+        "Source: web/src/neyvia/next/NxDictation.jsx, nxDictation.js, nxDictationEdit.js (UI); src/grant_agent/neyvia_dictation.py, neyvia_prompt_dictation.py (backend). Human view: docs/manuals/dictation.md."
+      ]
+    }
+  }
+}

@@ -1,0 +1,76 @@
+/* Autopilot (NxAutopilot.jsx): the run above the composer, the switch and the
+   scope inside it. Same anatomy as the agent checklist so the two read alike. */
+
+.nx .nx-ap { margin-bottom: var(--nx-space-8); border-radius: var(--nx-r-lg); background: var(--nx-panel); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); overflow: hidden; }
+.nx .nx-ap.is-live { box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-amber) 40%, transparent); }
+.nx .nx-ap-head { display: flex; align-items: center; gap: var(--nx-space-4); padding-right: var(--nx-space-6); }
+.nx .nx-ap-head-main { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: var(--nx-space-8); min-height: 38px; padding: 0 var(--nx-space-10); text-align: left; font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-ap-head-main:hover { background: var(--nx-hover); }
+.nx .nx-ap-head-main > strong { flex: none; font-weight: 600; color: var(--nx-text); }
+.nx .nx-ap-icon { flex: none; color: var(--nx-accent-text); }
+.nx .nx-ap-status { flex: none; display: inline-flex; align-items: center; gap: var(--nx-space-5); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ap-status.is-live { color: var(--nx-state-running-text); }
+.nx .nx-ap-status.is-gold { color: var(--nx-state-needs); }
+.nx .nx-ap-status.is-green { color: var(--nx-state-ok); }
+.nx .nx-ap-status.is-red { color: var(--nx-state-error); }
+.nx .nx-ap-count { flex: none; font-weight: 600; color: var(--nx-text); font-variant-numeric: tabular-nums; }
+.nx .nx-ap-now { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--nx-accent-text); }
+.nx .nx-ap-caret-head { flex: none; color: var(--nx-muted); transition: transform var(--nx-med) var(--nx-ease); }
+.nx .nx-ap.is-open .nx-ap-caret-head { transform: rotate(180deg); }
+.nx .nx-ap-act { flex: none; display: inline-flex; align-items: center; gap: var(--nx-space-5); height: 26px; padding: 0 var(--nx-space-10); border-radius: var(--nx-r-sm); font-size: var(--nx-fs-xs); color: var(--nx-text-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-ap-act:hover:not(:disabled) { background: var(--nx-hover); color: var(--nx-text); }
+
+.nx .nx-ap-body { display: grid; gap: var(--nx-space-8); max-height: min(46vh, 380px); padding: var(--nx-space-8) var(--nx-space-10) var(--nx-space-10); box-shadow: inset 0 var(--nx-stroke) 0 var(--nx-line); }
+.nx .nx-ap-sum { font-size: var(--nx-fs-xs); color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+.nx .nx-ap-wait { font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx .nx-ap-items { display: grid; gap: var(--nx-space-1); margin: 0; padding: 0; list-style: none; }
+.nx .nx-ap-item-line { width: 100%; display: flex; align-items: flex-start; gap: var(--nx-space-10); padding: var(--nx-space-5) var(--nx-space-6); border-radius: var(--nx-r-sm); text-align: left; font-size: var(--nx-fs-sm); line-height: 1.45; color: var(--nx-text-2); }
+.nx .nx-ap-item-line:hover { background: var(--nx-hover); }
+.nx .nx-ap-item.is-in_progress > .nx-ap-item-line { color: var(--nx-text); background: color-mix(in srgb, var(--nx-accent) 9%, transparent); }
+.nx .nx-ap-item.is-completed > .nx-ap-item-line { color: var(--nx-muted); }
+.nx .nx-ap-item-ask { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.nx .nx-ap-mark-bad { flex: none; margin-top: var(--nx-space-1); color: var(--nx-state-error); }
+.nx .nx-ap-caret { flex: none; margin-top: var(--nx-space-3); color: var(--nx-muted); }
+.nx .nx-ap-route { flex: none; margin-top: var(--nx-space-1); padding: 0 var(--nx-space-7); border-radius: var(--nx-r-pill); line-height: 18px; font-size: var(--nx-fs-xs); white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--nx-text-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-ap-route.is-script, .nx .nx-ap-route.is-manual { color: var(--nx-state-ok); background: var(--nx-green-soft); box-shadow: none; }
+.nx .nx-ap-route.is-model { color: var(--nx-text); background: var(--nx-raised-2); }
+.nx .nx-ap-route.is-frontier { color: var(--nx-state-caution); background: var(--nx-caution-soft); box-shadow: none; }
+
+.nx .nx-ap-item-more { display: grid; gap: var(--nx-space-6); margin: var(--nx-space-2) 0 var(--nx-space-6) var(--nx-space-32); padding: var(--nx-space-8) var(--nx-space-10); border-radius: var(--nx-r); background: var(--nx-raised); font-size: var(--nx-fs-sm); }
+.nx .nx-ap-why { color: var(--nx-text-2); line-height: 1.45; }
+.nx .nx-ap-item-more dl { display: grid; gap: var(--nx-space-3); margin: 0; }
+.nx .nx-ap-item-more dl > div { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: var(--nx-space-8); }
+.nx .nx-ap-item-more dt { color: var(--nx-muted); font-size: var(--nx-fs-xs); line-height: 1.7; }
+.nx .nx-ap-item-more dd { margin: 0; color: var(--nx-text-2); overflow-wrap: anywhere; }
+.nx .nx-ap .is-mono { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); }
+.nx .nx-ap-frontier { font-size: var(--nx-fs-xs); color: var(--nx-state-caution); overflow-wrap: anywhere; }
+.nx .nx-ap-copy { justify-self: start; display: inline-flex; align-items: center; gap: var(--nx-space-5); padding: var(--nx-space-3) var(--nx-space-8); border-radius: var(--nx-r-sm); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ap-copy:hover { background: var(--nx-hover); color: var(--nx-text); }
+
+.nx .nx-ap-body h4 { font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-text-2); }
+.nx .nx-ap-calls { display: grid; gap: var(--nx-space-4); margin: 0; padding: 0; list-style: none; }
+.nx .nx-ap-call { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--nx-space-1) var(--nx-space-8); font-size: var(--nx-fs-xs); }
+.nx .nx-ap-call-model { font-family: var(--nx-mono); color: var(--nx-text-2); }
+.nx .nx-ap-call-why { color: var(--nx-text-2); overflow-wrap: anywhere; }
+.nx .nx-ap-call-cost { grid-column: 2; color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+.nx .nx-ap-call.is-failed .nx-ap-call-cost { color: var(--nx-state-error); }
+.nx .nx-ap-note { display: flex; align-items: flex-start; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); color: var(--nx-muted); overflow-wrap: anywhere; }
+.nx .nx-ap-note > .nx-icon { flex: none; margin-top: var(--nx-space-1); }
+.nx .nx-ap-note.is-needs { color: var(--nx-state-needs); }
+.nx .nx-ap-note.is-bad { color: var(--nx-state-error); }
+.nx .nx-ap-foot { font-size: var(--nx-fs-xs); color: var(--nx-muted); line-height: 1.45; }
+
+/* the switch and the scope in the composer bar */
+.nx .nx-ap-toggle { display: inline-flex; align-items: center; gap: var(--nx-space-5); height: 28px; padding: 0 var(--nx-space-9); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-sm); color: var(--nx-text-2); transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease); }
+.nx .nx-ap-toggle:hover:not(:disabled) { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-ap-toggle.is-on { background: var(--nx-accent-soft); color: var(--nx-accent-text); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 45%, transparent); }
+.nx .nx-ap-scope { display: inline-flex; padding: var(--nx-space-2); border-radius: var(--nx-r-pill); background: var(--nx-raised-2); }
+.nx .nx-ap-scope > button { height: 24px; padding: 0 var(--nx-space-9); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs); color: var(--nx-muted); white-space: nowrap; }
+.nx .nx-ap-scope > button.is-on { background: var(--nx-raised); color: var(--nx-text); box-shadow: var(--nx-card-shadow); }
+.nx .nx-ap-hint { font-size: var(--nx-fs-xs); color: var(--nx-muted); padding: 0 var(--nx-space-4) var(--nx-space-6); line-height: 1.45; }
+
+.nx.is-phone .nx-ap-head-main { flex-wrap: wrap; row-gap: var(--nx-space-2); padding: var(--nx-space-6) var(--nx-space-10); }
+.nx.is-phone .nx-ap-now { flex-basis: 100%; }
+.nx.is-phone .nx-ap-item-more { margin-left: 0; }
+.nx.is-phone .nx-ap-toggle > span { display: none; }
+@media (max-width: 640px) { .nx .nx-ap-item-more dl > div { grid-template-columns: minmax(0, 1fr); gap: 0; } }

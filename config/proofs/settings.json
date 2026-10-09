@@ -1,0 +1,145 @@
+{
+  "area": "settings",
+  "module": "grant_agent.proofs_settings",
+  "self_check": "self_check",
+  "manuals": [
+    "settings"
+  ],
+  "contracts": [
+    {
+      "id": "settings.revision-cas",
+      "phase": "pre",
+      "claim": "Only the current integer expectedRevision may write; a successful canonical update persists exactly one revision increment.",
+      "checkedAt": [
+        "neyvia_settings.update -> proofs_settings.check_revision/check_committed",
+        "proofs_settings.self_check"
+      ],
+      "impact": [
+        "canonical Settings",
+        "view preferences",
+        "Night Shift resource admission"
+      ]
+    },
+    {
+      "id": "settings.invalid-preserves",
+      "phase": "invariant",
+      "claim": "Rejected invalid control patches change no canonical state and emit no events.",
+      "checkedAt": [
+        "neyvia_settings.update -> proofs_settings.snapshot/check_rejection",
+        "proofs_settings.self_check"
+      ],
+      "impact": [
+        "canonical Settings",
+        "view preferences",
+        "Night Shift resource admission"
+      ]
+    },
+    {
+      "id": "settings.canonical-mirrors",
+      "phase": "post",
+      "claim": "Within the same transaction, canonical cleanup/night resources/density/theme storage equals the normalized Settings value.",
+      "checkedAt": [
+        "neyvia_settings.update -> proofs_settings.check_committed",
+        "proofs_settings.self_check"
+      ],
+      "impact": [
+        "canonical Settings",
+        "view preferences",
+        "Night Shift resource admission"
+      ]
+    },
+    {
+      "id": "settings.night-policy-event",
+      "phase": "post",
+      "claim": "Every update emits durable identical receipt events; a nightShift patch emits exactly one normalized policy update.",
+      "checkedAt": [
+        "neyvia_settings.update -> proofs_settings.check_committed",
+        "proofs_settings.self_check"
+      ],
+      "impact": [
+        "canonical Settings",
+        "view preferences",
+        "Night Shift resource admission"
+      ]
+    },
+    {
+      "id": "settings.legacy-theme",
+      "phase": "invariant",
+      "claim": "Legacy theme selection updates the same canonical preference and mirror storage.",
+      "checkedAt": [
+        "neyvia_view_tools.call -> neyvia_settings.update -> proofs_settings.check_committed",
+        "proofs_settings.self_check"
+      ],
+      "impact": [
+        "canonical Settings",
+        "view preferences",
+        "Night Shift resource admission"
+      ]
+    },
+    {
+      "id": "settings.view-durable",
+      "phase": "post",
+      "claim": "Ambient and transparency controls persist their exact value before returning success.",
+      "checkedAt": [
+        "neyvia_view_tools.call -> proofs_settings.check_view",
+        "proofs_settings.self_check"
+      ],
+      "impact": [
+        "canonical Settings",
+        "view preferences",
+        "Night Shift resource admission"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "case": "test_settings_preserve_night_budgets_quiet_hours_and_revision",
+      "contracts": [
+        "settings.revision-cas",
+        "settings.invalid-preserves",
+        "settings.canonical-mirrors",
+        "settings.night-policy-event"
+      ],
+      "test": "tests/test_neyvia_settings.py",
+      "checkedAt": [
+        "neyvia_settings.update -> proofs_settings.check_revision/check_committed",
+        "proofs_settings.self_check",
+        "neyvia_settings.update -> proofs_settings.snapshot/check_rejection",
+        "proofs_settings.self_check",
+        "neyvia_settings.update -> proofs_settings.check_committed",
+        "proofs_settings.self_check",
+        "neyvia_settings.update -> proofs_settings.check_committed",
+        "proofs_settings.self_check"
+      ]
+    },
+    {
+      "case": "test_settings_reject_invalid_night_controls_without_writes",
+      "contracts": [
+        "settings.invalid-preserves"
+      ],
+      "test": "tests/test_neyvia_settings.py",
+      "checkedAt": [
+        "neyvia_settings.update -> proofs_settings.snapshot/check_rejection",
+        "proofs_settings.self_check"
+      ]
+    },
+    {
+      "case": "test_legacy_theme_action_updates_canonical_preferences",
+      "contracts": [
+        "settings.legacy-theme",
+        "settings.view-durable"
+      ],
+      "test": "tests/test_neyvia_settings.py",
+      "checkedAt": [
+        "neyvia_view_tools.call -> neyvia_settings.update -> proofs_settings.check_committed",
+        "proofs_settings.self_check",
+        "neyvia_view_tools.call -> proofs_settings.check_view",
+        "proofs_settings.self_check"
+      ]
+    }
+  ],
+  "frontier": [
+    "Retain tests/test_neyvia_settings.py until seven remaining network policy/catalog/native-launch cases are faithfully mapped."
+  ],
+  "portRoles": []
+}

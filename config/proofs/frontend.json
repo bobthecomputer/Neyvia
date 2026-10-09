@@ -1,0 +1,1221 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "frontend",
+  "manual": "dictation",
+  "runner": "scripts/proofs-frontend.mjs",
+  "state": {
+    "observer": "previewParts/normalizeAnswer/liveCommands",
+    "scope": "Pure editor model; each scratch procedure owns fresh text inputs"
+  },
+  "actions": [
+    "shiftAnchor",
+    "endsMidSentence",
+    "joinSpoken",
+    "lastSentenceStart",
+    "dropLastPhrase",
+    "dropLastSentence",
+    "applySegments",
+    "previewParts",
+    "withoutOverlap",
+    "normalizeAnswer",
+    "liveCommands",
+    "wordsShown",
+    "providerChoices"
+  ],
+  "contracts": [
+    {
+      "id": "dictation.anchor",
+      "phase": "post",
+      "claim": "Insertion at/before the caret follows typing; edits after it retain the prefix anchor",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:shiftAnchor -> checkedDictationAction -> DICTATION_CONTRACTS.shiftAnchor"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.sentence-state",
+      "phase": "post",
+      "claim": "Only an unterminated nonblank line continues a sentence",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:endsMidSentence -> checkedDictationAction -> DICTATION_CONTRACTS.endsMidSentence"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.join",
+      "phase": "post",
+      "claim": "Preserve the field prefix, sentence capitalization, names and punctuation spacing",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:joinSpoken -> checkedDictationAction -> DICTATION_CONTRACTS.joinSpoken"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.sentence-boundary",
+      "phase": "post",
+      "claim": "The last sentence starts after the latest complete terminator or line boundary",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:lastSentenceStart -> checkedDictationAction -> DICTATION_CONTRACTS.lastSentenceStart"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.scratch",
+      "phase": "post",
+      "claim": "Scratch removes only the final phrase and its joining horizontal spaces",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:dropLastPhrase -> checkedDictationAction -> DICTATION_CONTRACTS.dropLastPhrase"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.delete-sentence",
+      "phase": "post",
+      "claim": "Delete only the final sentence, preserving prior lines",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:dropLastSentence -> checkedDictationAction -> DICTATION_CONTRACTS.dropLastSentence"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.edit",
+      "phase": "post",
+      "claim": "Execute segments in order; preserve suffix; cancel restores original; caller owns send/undo/history",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:applySegments -> checkedDictationAction -> DICTATION_CONTRACTS.applySegments"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.preview",
+      "phase": "post",
+      "claim": "Preview uses commit spacing/capitalization while retaining stable/provisional separation",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:previewParts -> checkedDictationAction -> DICTATION_CONTRACTS.previewParts"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.overlap",
+      "phase": "post",
+      "claim": "Remove the longest settled suffix or complete decode prefix, preserving fresh words",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:withoutOverlap -> checkedDictationAction -> DICTATION_CONTRACTS.withoutOverlap"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.answer",
+      "phase": "post",
+      "claim": "Legacy partial/final text remains usable; current stable words and command segments survive normalization",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:normalizeAnswer -> checkedDictationAction -> DICTATION_CONTRACTS.normalizeAnswer"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.commands",
+      "phase": "post",
+      "claim": "Command chips contain only decided commands in stream order",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:liveCommands -> checkedDictationAction -> DICTATION_CONTRACTS.liveCommands"
+      ],
+      "impact": [
+        "prompt composer text/caret",
+        "Notes dictation text",
+        "stream provisional overlay"
+      ],
+      "preconditions": "Same arguments as existing editor function; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.reveal",
+      "phase": "post",
+      "claim": "Paced words never go backwards or past the answer, the first of a batch shows at once, and the whole batch shows by the next answer",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationReveal.js:wordsShown -> checkedDictationAction -> DICTATION_CONTRACTS.wordsShown"
+      ],
+      "impact": [
+        "word-by-word reveal of provisional dictation"
+      ],
+      "preconditions": "Same arguments as the real pacing step; contract is evaluated on every successful real invocation"
+    },
+    {
+      "id": "dictation.providers",
+      "phase": "post",
+      "claim": "Local is listed first and is the default; an unavailable provider always carries one plain reason; exactly the chosen provider is selected",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationProviders.js:providerChoices -> checkedDictationAction -> DICTATION_CONTRACTS.providerChoices"
+      ],
+      "impact": [
+        "Settings > Voice provider choices"
+      ],
+      "preconditions": "Same arguments as the real provider list; contract is evaluated on every successful real invocation"
+    }
+  ],
+  "checks": "Every successful public editor call verifies its real result before returning",
+  "procedures": [
+    {
+      "id": "dictation.join-procedure",
+      "actions": [
+        {
+          "function": "joinSpoken",
+          "args": [
+            "",
+            "Fix the test."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "Fix the test."
+            }
+          ]
+        },
+        {
+          "function": "joinSpoken",
+          "args": [
+            "Please look at",
+            "The parser."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "Please look at the parser."
+            }
+          ]
+        },
+        {
+          "function": "joinSpoken",
+          "args": [
+            "Done.",
+            "The parser is next."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "Done. The parser is next."
+            }
+          ]
+        },
+        {
+          "function": "joinSpoken",
+          "args": [
+            "Ask",
+            "Claude Code to run it."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "Ask Claude Code to run it."
+            }
+          ]
+        },
+        {
+          "function": "joinSpoken",
+          "args": [
+            "line\n",
+            "Next."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "line\nNext."
+            }
+          ]
+        },
+        {
+          "function": "endsMidSentence",
+          "args": [
+            "Ask"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": true
+            }
+          ]
+        },
+        {
+          "function": "endsMidSentence",
+          "args": [
+            "Done."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dictation.ordered-edits",
+      "actions": [
+        {
+          "function": "applySegments",
+          "args": [
+            "",
+            0,
+            [
+              {
+                "type": "text",
+                "text": "Review the parser."
+              },
+              {
+                "type": "command",
+                "op": "new_paragraph",
+                "said": "new_paragraph"
+              },
+              {
+                "type": "text",
+                "text": "Then run the tests."
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "Review the parser.\n\nThen run the tests."
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "",
+            0,
+            [
+              {
+                "type": "text",
+                "text": "Review the parser."
+              },
+              {
+                "type": "command",
+                "op": "new_paragraph",
+                "said": "new_paragraph"
+              },
+              {
+                "type": "text",
+                "text": "Then run the tests."
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "caret",
+              "value": 39
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "Hi",
+            2,
+            [
+              {
+                "type": "command",
+                "op": "new_line",
+                "said": "new_line"
+              },
+              {
+                "type": "text",
+                "text": "There."
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "Hi\nThere."
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "",
+            0,
+            [
+              {
+                "type": "text",
+                "text": "The matrix has two rows."
+              },
+              {
+                "type": "command",
+                "op": "new_paragraph",
+                "said": "new_paragraph"
+              },
+              {
+                "type": "text",
+                "text": "."
+              },
+              {
+                "type": "text",
+                "text": ". Ask Claude Code."
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "The matrix has two rows.\n\nAsk Claude Code."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dictation.scratch-delete-procedure",
+      "actions": [
+        {
+          "function": "applySegments",
+          "args": [
+            "",
+            0,
+            [
+              {
+                "type": "text",
+                "text": "Review the parser. Then run the tests."
+              },
+              {
+                "type": "command",
+                "op": "scratch",
+                "said": "scratch"
+              },
+              {
+                "type": "text",
+                "text": "Then run the full suite."
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "Review the parser. Then run the full suite."
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "Earlier text.",
+            13,
+            [
+              {
+                "type": "command",
+                "op": "scratch",
+                "said": "scratch"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "Earlier text."
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "Earlier text.",
+            13,
+            [
+              {
+                "type": "command",
+                "op": "scratch",
+                "said": "scratch"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "actions.scratchPrevious",
+              "value": true
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "One. Two three.",
+            15,
+            [
+              {
+                "type": "command",
+                "op": "delete_last_sentence",
+                "said": "delete_last_sentence"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "One."
+            }
+          ]
+        },
+        {
+          "function": "dropLastSentence",
+          "args": [
+            "Only one sentence"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "function": "lastSentenceStart",
+          "args": [
+            "One. Two three."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "function": "dropLastPhrase",
+          "args": [
+            "Review the parser, then run the tests."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "Review the parser,"
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "The matrix has two rows.",
+            24,
+            [
+              {
+                "type": "text",
+                "text": "Review the parser, then run the tests."
+              },
+              {
+                "type": "command",
+                "op": "scratch",
+                "said": "scratch"
+              },
+              {
+                "type": "text",
+                "text": ", then run the full suite."
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "The matrix has two rows. Review the parser, then run the full suite."
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "",
+            0,
+            [
+              {
+                "type": "command",
+                "op": "new_line",
+                "said": "new_line"
+              },
+              {
+                "type": "text",
+                "text": "then go."
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "\nThen go."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dictation.caller-actions",
+      "actions": [
+        {
+          "function": "applySegments",
+          "args": [
+            "Keep me.",
+            8,
+            [
+              {
+                "type": "text",
+                "text": "Gone."
+              },
+              {
+                "type": "command",
+                "op": "cancel",
+                "said": "cancel"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "Keep me."
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "",
+            0,
+            [
+              {
+                "type": "text",
+                "text": "Fix it."
+              },
+              {
+                "type": "command",
+                "op": "send",
+                "said": "send"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "Fix it."
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "",
+            0,
+            [
+              {
+                "type": "text",
+                "text": "Fix it."
+              },
+              {
+                "type": "command",
+                "op": "send",
+                "said": "send"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "actions.send",
+              "value": true
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "x",
+            1,
+            [
+              {
+                "type": "command",
+                "op": "undo",
+                "said": "undo"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "actions.undo",
+              "value": true
+            }
+          ]
+        },
+        {
+          "function": "liveCommands",
+          "args": [
+            [
+              {
+                "type": "text",
+                "text": "Fix it."
+              },
+              {
+                "type": "command",
+                "op": "send",
+                "said": "send"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": [
+                "send"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dictation.anchor-and-suffix",
+      "actions": [
+        {
+          "function": "applySegments",
+          "args": [
+            "Start end.",
+            5,
+            [
+              {
+                "type": "text",
+                "text": "middle"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "value",
+              "value": "Start middle end."
+            }
+          ]
+        },
+        {
+          "function": "applySegments",
+          "args": [
+            "Start end.",
+            5,
+            [
+              {
+                "type": "text",
+                "text": "middle"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "caret",
+              "value": 12
+            }
+          ]
+        },
+        {
+          "function": "shiftAnchor",
+          "args": [
+            "abc",
+            "abcXY",
+            3
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "function": "shiftAnchor",
+          "args": [
+            "abc def",
+            "abc deZf",
+            3
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "function": "shiftAnchor",
+          "args": [
+            "abc def",
+            "XXabc def",
+            3
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dictation.stream-observer",
+      "actions": [
+        {
+          "function": "previewParts",
+          "args": [
+            "Please look at",
+            14,
+            "The parser",
+            "and the"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": {
+                "before": "Please look at",
+                "stable": " the parser",
+                "provisional": " and the",
+                "after": ""
+              }
+            }
+          ]
+        },
+        {
+          "function": "withoutOverlap",
+          "args": [
+            "Let",
+            "let epsilon be positive and"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "epsilon be positive and"
+            }
+          ]
+        },
+        {
+          "function": "withoutOverlap",
+          "args": [
+            "Let epsilon be positive and",
+            "and ten"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "ten"
+            }
+          ]
+        },
+        {
+          "function": "withoutOverlap",
+          "args": [
+            "Fix the",
+            "parser now"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "parser now"
+            }
+          ]
+        },
+        {
+          "function": "withoutOverlap",
+          "args": [
+            "Review the parser, then",
+            "Review the parser, then run the tests."
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "run the tests."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dictation.legacy-answer",
+      "actions": [
+        {
+          "function": "normalizeAnswer",
+          "args": [
+            {
+              "partial": "hello there"
+            }
+          ],
+          "goals": [
+            {
+              "path": "provisional",
+              "value": "hello there"
+            }
+          ]
+        },
+        {
+          "function": "normalizeAnswer",
+          "args": [
+            {
+              "text": "Hello there."
+            },
+            true
+          ],
+          "goals": [
+            {
+              "path": "segments",
+              "value": [
+                {
+                  "type": "text",
+                  "text": "Hello there."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "function": "normalizeAnswer",
+          "args": [
+            {
+              "text": "Hello there."
+            },
+            true
+          ],
+          "goals": [
+            {
+              "path": "policy",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dictation.reveal-procedure",
+      "actions": [
+        {
+          "function": "wordsShown",
+          "args": [
+            {
+              "startShown": 1,
+              "total": 5,
+              "elapsedMs": 300,
+              "gapMs": 300
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "function": "wordsShown",
+          "args": [
+            {
+              "startShown": 5,
+              "total": 5,
+              "elapsedMs": 0,
+              "gapMs": 300
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "function": "wordsShown",
+          "args": [
+            {
+              "startShown": 1,
+              "total": 5,
+              "elapsedMs": 0,
+              "gapMs": 300
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dictation.providers-procedure",
+      "actions": [
+        {
+          "function": "providerChoices",
+          "args": [
+            {
+              "providerWanted": "local",
+              "providers": [
+                {
+                  "id": "local",
+                  "label": "Local",
+                  "available": true,
+                  "offline": true
+                },
+                {
+                  "id": "openai",
+                  "label": "OpenAI",
+                  "available": false,
+                  "reason": "No API key saved"
+                }
+              ]
+            }
+          ],
+          "goals": [
+            {
+              "path": "0.id",
+              "value": "local"
+            },
+            {
+              "path": "0.selected",
+              "value": true
+            },
+            {
+              "path": "1.available",
+              "value": false
+            },
+            {
+              "path": "1.reason",
+              "value": "No API key saved"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "impact": [
+    "NxDictationField.jsx composer and Notes callers",
+    "nxDictation.js stream response/anchor callers"
+  ],
+  "frontier": [
+    "Microphone and ASR hardware",
+    "Rendered caret/overlay styling",
+    "History application/send preview in caller"
+  ],
+  "coverage": [
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "spoken text joins the field: one space, no capital in the middle of a sentence",
+      "contracts": [
+        "dictation.join"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:joinSpoken -> checkedDictationAction -> DICTATION_CONTRACTS.joinSpoken"
+      ],
+      "procedure": "dictation.join-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "segments run in order: text, new line, new paragraph",
+      "contracts": [
+        "dictation.edit"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:applySegments -> checkedDictationAction -> DICTATION_CONTRACTS.applySegments"
+      ],
+      "procedure": "dictation.ordered-edits",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "scratch drops the last spoken sentence, or asks for the previous dictation when nothing was said",
+      "contracts": [
+        "dictation.edit"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:applySegments -> checkedDictationAction -> DICTATION_CONTRACTS.applySegments"
+      ],
+      "procedure": "dictation.scratch-delete-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "delete the last sentence works on the field when the utterance is only the command",
+      "contracts": [
+        "dictation.delete-sentence"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:dropLastSentence -> checkedDictationAction -> DICTATION_CONTRACTS.dropLastSentence"
+      ],
+      "procedure": "dictation.scratch-delete-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "cancel keeps the field untouched; send and undo are actions for the caller",
+      "contracts": [
+        "dictation.edit"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:applySegments -> checkedDictationAction -> DICTATION_CONTRACTS.applySegments"
+      ],
+      "procedure": "dictation.caller-actions",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "dictation in the middle of the field keeps the text after it, spaced",
+      "contracts": [
+        "dictation.edit"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:applySegments -> checkedDictationAction -> DICTATION_CONTRACTS.applySegments"
+      ],
+      "procedure": "dictation.anchor-and-suffix",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "the dictation point follows edits made while talking",
+      "contracts": [
+        "dictation.anchor"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:shiftAnchor -> checkedDictationAction -> DICTATION_CONTRACTS.shiftAnchor"
+      ],
+      "procedure": "dictation.anchor-and-suffix",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "the overlay shows the same joining the final insert will use",
+      "contracts": [
+        "dictation.preview"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:previewParts -> checkedDictationAction -> DICTATION_CONTRACTS.previewParts"
+      ],
+      "procedure": "dictation.stream-observer",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "an older backend's answers still give text",
+      "contracts": [
+        "dictation.answer"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:normalizeAnswer -> checkedDictationAction -> DICTATION_CONTRACTS.normalizeAnswer"
+      ],
+      "procedure": "dictation.legacy-answer",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "a lone full stop left after a spoken command is dropped",
+      "contracts": [
+        "dictation.edit"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:applySegments -> checkedDictationAction -> DICTATION_CONTRACTS.applySegments"
+      ],
+      "procedure": "dictation.ordered-edits",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "grey words never repeat the settled ones",
+      "contracts": [
+        "dictation.overlap"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:withoutOverlap -> checkedDictationAction -> DICTATION_CONTRACTS.withoutOverlap"
+      ],
+      "procedure": "dictation.stream-observer",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "scratch takes back the last phrase, as the engine wrote it",
+      "contracts": [
+        "dictation.edit"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:applySegments -> checkedDictationAction -> DICTATION_CONTRACTS.applySegments"
+      ],
+      "procedure": "dictation.scratch-delete-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDictationEdit.test.js",
+      "case": "a whole-utterance decode in the grey part doesn't repeat the settled words",
+      "contracts": [
+        "dictation.overlap"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDictationEdit.js:withoutOverlap -> checkedDictationAction -> DICTATION_CONTRACTS.withoutOverlap"
+      ],
+      "procedure": "dictation.stream-observer",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    }
+  ],
+  "sourceHashes": {
+    "web/src/neyvia/next/nxDictationEdit.test.js": "e2fd87284d4dfa06a1024dddd77e7456c68b9c0aa8361ff38a04a458fe432d8b"
+  }
+}

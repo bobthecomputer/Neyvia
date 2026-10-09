@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "attempts": 1,
+  "maxTurns": 8,
+  "models": ["gpt-6-luna", "gpt-6.1-sol"],
+  "arms": ["a", "b", "c"],
+  "tasks": [
+    {"id":"notes", "layer":"notes", "goal":"Find the note tagged #dispatch whose title is Orchard plan. Append exactly a newline then 'Confirmed: 42 units #verified' without changing any existing text; guard the write against concurrent edits using the version returned by read. Pin that note. Inspect it afterwards to verify both body and pin. Do not change other notes."},
+    {"id":"files", "layer":"files", "goal":"In inbox, find the text report whose body says status=approved (the filenames are unreliable). Move only that report to archive as approved.txt without overwriting anything. Keep draft and rejected reports unchanged. Inspect the destination text after the move."},
+    {"id":"native", "layer":"win", "goal":"Inspect the owned native window. Uppercase ONLY the textbox's existing value, append the exact suffix ' / checked', then fill it and click Apply. Refresh to verify the displayed Applied label. Do not alter any other window."},
+    {"id":"web", "layer":"web", "goal":"Inspect the owned dispatch web page. Sum Units for rows with Status Ready only, excluding Waiting. Fill Result with '<sum> units', click Confirm, and refresh to verify the confirmation."},
+    {"id":"chart", "layer":"img", "goal":"Observe the chart image. Submit an answer with highest (month label), lead (highest minus second highest), and total (sum of all months). Use observed chart units; do not infer hidden values."}
+  ]
+}

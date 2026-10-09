@@ -1,0 +1,27 @@
+{
+  "area": "event-recovery-journey",
+  "module": "grant_agent.proofs_event_recovery_journey",
+  "self_check": "self_check",
+  "manuals": [
+    "native-runtime"
+  ],
+  "contracts": [
+    {
+      "id": "native.events.recovery-journey",
+      "phase": "invariant",
+      "claim": "A native event journal reopens without duplicating its durable tail, appends the next unique sequential event with the exact payload, and an independent fresh reader and production verifier accept the intact chain; an unencodable append leaves exact prior bytes unchanged and tampered payload content is refused by both readers.",
+      "checkedAt": [
+        "native_event_stream.NativeEventStream.__init__/_recover_tail",
+        "native_event_stream.NativeEventStream.emit",
+        "native_event_stream.NativeEventStream.verify",
+        "grant_agent.proofs_event_recovery_journey._observe_journal",
+        "grant_agent.proofs_event_recovery_journey._journey"
+      ],
+      "impact": [
+        "Native durable event identity and append recovery",
+        "Event integrity verification and tamper refusal",
+        "No mutation after rejected event append"
+      ]
+    }
+  ]
+}

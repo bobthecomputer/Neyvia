@@ -1,0 +1,357 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "settings",
+  "kind": "environment",
+  "schemas": {
+    "neyvia.settings.get": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.settings.setup": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.settings.network_check": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.settings.propose": {
+      "type": "object",
+      "properties": {
+        "patch": {
+          "type": "object",
+          "properties": {
+            "density": {
+              "type": "string",
+              "enum": [
+                "calm",
+                "workshop",
+                "grove"
+              ]
+            },
+            "theme": {
+              "type": "string",
+              "enum": [
+                "forest",
+                "morning",
+                "sunset",
+                "night-green"
+              ]
+            },
+            "initiative": {
+              "type": "string",
+              "enum": [
+                "suggest",
+                "act-and-tell",
+                "silent"
+              ]
+            },
+            "projectInitiative": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "enum": [
+                  "suggest",
+                  "act-and-tell",
+                  "silent"
+                ]
+              }
+            },
+            "localOnly": {
+              "type": "boolean"
+            },
+            "cleanup": {
+              "type": "object"
+            },
+            "nightShift": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": false
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "patch",
+        "expectedRevision"
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Persistent settings, privacy and owner proposals",
+      "state": {
+        "preferences": {
+          "tool": "neyvia.settings.get",
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "revision": {
+                "type": "integer"
+              },
+              "settings": {
+                "type": "object"
+              },
+              "network": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "revision",
+              "settings",
+              "network"
+            ]
+          }
+        }
+      },
+      "actions": {
+        "get": {
+          "tool": "neyvia.settings.get",
+          "schema": "neyvia.settings.get",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Signed-in local workspace",
+          "effect": "Read persisted preferences and network enforcement",
+          "reversible": true
+        },
+        "propose": {
+          "tool": "neyvia.settings.propose",
+          "schema": "neyvia.settings.propose",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Use the observed revision; owner decides each proposal",
+          "effect": "Queue an exact owner approval; no preference changes yet",
+          "reversible": true
+        },
+        "setup": {
+          "tool": "neyvia.settings.setup",
+          "schema": "neyvia.settings.setup",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner requests setup re-entry",
+          "effect": "Emit setup.open resume=true without deleting installed state",
+          "reversible": true
+        },
+        "network_check": {
+          "tool": "neyvia.settings.network_check",
+          "schema": "neyvia.settings.network_check",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Local-only must already be enabled",
+          "effect": "Attempt nine forbidden operations and report actual policy refusals",
+          "reversible": true
+        }
+      },
+      "checks": {
+        "enforced": {
+          "tool": "neyvia.settings.get",
+          "args": {},
+          "expect": {
+            "path": "network.enforced",
+            "op": "eq",
+            "value": true
+          }
+        },
+        "local_only": {
+          "tool": "neyvia.settings.get",
+          "args": {},
+          "expect": {
+            "path": "network.localOnly",
+            "op": "eq",
+            "value": true
+          }
+        }
+      },
+      "procedures": {
+        "read-preferences": {
+          "goal": "Read canonical settings with installed enforcement",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "get",
+              "args": {},
+              "save": "preferences",
+              "check": "enforced"
+            }
+          ]
+        },
+        "check-local-only": {
+          "goal": "Verify actual denied TCP UDP DNS HTTP HTTPS async and child operations while local-only is enabled",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "get",
+              "args": {},
+              "save": "preferences",
+              "check": "local_only"
+            },
+            {
+              "action": "network_check",
+              "args": {},
+              "save": "proof"
+            }
+          ]
+        },
+        "propose-change": {
+          "goal": "Queue an owner-reviewed settings change",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "patch": {
+                "type": "object",
+                "properties": {
+                  "density": {
+                    "type": "string",
+                    "enum": [
+                      "calm",
+                      "workshop",
+                      "grove"
+                    ]
+                  },
+                  "theme": {
+                    "type": "string",
+                    "enum": [
+                      "forest",
+                      "morning",
+                      "sunset",
+                      "night-green"
+                    ]
+                  },
+                  "initiative": {
+                    "type": "string",
+                    "enum": [
+                      "suggest",
+                      "act-and-tell",
+                      "silent"
+                    ]
+                  },
+                  "projectInitiative": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string",
+                      "enum": [
+                        "suggest",
+                        "act-and-tell",
+                        "silent"
+                      ]
+                    }
+                  },
+                  "localOnly": {
+                    "type": "boolean"
+                  },
+                  "cleanup": {
+                    "type": "object"
+                  },
+                  "nightShift": {
+                    "type": "object"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "expectedRevision": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "patch",
+              "expectedRevision"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "propose",
+              "args": {
+                "patch": {
+                  "$input": "patch"
+                },
+                "expectedRevision": {
+                  "$input": "expectedRevision"
+                }
+              },
+              "save": "proposal"
+            }
+          ]
+        },
+        "re-enter-setup": {
+          "goal": "Open existing setup with installed state retained",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "setup",
+              "args": {},
+              "save": "setup"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "owner-change": {
+          "question": "Should this exact proposal change the workspace settings?",
+          "options": [
+            "approve",
+            "decline"
+          ],
+          "constraints": "Only the signed-in PC owner can apply the proposal through the approval UI; never self-approve or bypass the saved revision."
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Settings changed since observation",
+          "recovery": "Read settings.get again and review a fresh proposal; stale revisions never overwrite newer state."
+        },
+        {
+          "failure": "Local-only activation reports active children",
+          "recovery": "Finish or stop only owned CLI/MCP jobs, then retry. Unknown children are refused; the OS System32 console host is not a job."
+        },
+        {
+          "failure": "External operation is blocked",
+          "recovery": "Use literal loopback services or ask the owner to disable local-only. Never silently substitute a provider."
+        }
+      ],
+      "frontier": [
+        "Rendered Settings/setup controls require Claude UI proof.",
+        "T10 owns aggregate night budgets and quiet GPU hours; this source uses the current live resource policy.",
+        "Application egress enforcement does not confine hostile native code or unrelated PC applications."
+      ],
+      "guidance": [
+        "Density calm/workshop/grove; theme forest/morning/sunset/night-green maps to existing dark/light/sunset/night bus values.",
+        "Suggest queues housekeeping, act-and-tell archives reversibly with notification, silent archives reversibly without toast; per-project overrides take precedence.",
+        "The durable Settings revision, cleanupPolicy and nightshift.resources commit together."
+      ]
+    }
+  }
+}

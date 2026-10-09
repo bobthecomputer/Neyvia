@@ -1,0 +1,2884 @@
+{
+ "schema": "neyvia.laya.lenses.v1",
+ "lenses": [
+  {
+   "id": "field-edge-text-truncation",
+   "inputType": "screenshot",
+   "emits": {
+    "fieldEdgeCut": {
+     "type": "bool",
+     "cl": "True when OCR text ink reaches the screenshot's right edge and the line ends in a non-terminal glyph, indicating likely field-edge truncation."
+    }
+   },
+   "branch": {
+    "predicate": "clipped-text",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.fieldEdgeCut",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "clipped-text"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T00:42:35",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\b4f63fb75e174df283602906949fe87a.json",
+    "tokens": {
+     "input": 15653,
+     "cachedInput": 0,
+     "output": 773,
+     "reasoningOutput": 0,
+     "total": 16426
+    },
+    "requestedBy": {
+     "type": "clipped-text",
+     "name": "text-overflows-field-edge",
+     "names": {
+      "text-overflows-field-edge": 1,
+      "field-edge-text-cut": 1,
+      "text-cut-at-container-edge": 1
+     },
+     "descriptions": [
+      "The form text visibly runs past the right edge of its input area and is cut off.",
+      "Detects placeholder or input text extending beyond its visible field and cut mid-word or mid-path.",
+      "Text glyphs or final letters cut by a card or field boundary without a detached ellipsis."
+     ],
+     "measures": [
+      "Compare the rendered text ink bounds with the field's inner clipping edge; detect glyph ink truncated at that edge.",
+      "Compare OCR text bounds and glyph ink to nearby container edges; detect glyphs touching or extending beyond the boundary."
+     ],
+     "looks": 3
+    },
+    "rationale": "This measures only OCR lines whose rendered ink reaches the screenshot edge, which reduces false positives from ordinary tab labels and isolated short labels. It keeps the branch driven by a measured edge condition and does not infer clipping from text content alone.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\field-edge-text-truncation-2.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/field_edge_text_truncation.py",
+   "programSha256": "18f8746fca25d32b8344a0997a03adc0a109af726dac5ab5efea38b8919180fc",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for clipped-text did not improve (0.833 -> 0.833)"
+    ],
+    "checkAccuracy": {
+     "without": 0.8333,
+     "with": 0.8333
+    },
+    "cost": {
+     "medianMs": 43.43,
+     "p95Ms": 62.66,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T00:42:44",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w3-clipped-text-text-overflows-field-edge.json"
+   },
+   "cost": {
+    "medianMs": 43.43,
+    "p95Ms": 62.66,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "glyph-boundary-clipping",
+   "inputType": "screenshot",
+   "emits": {
+    "glyphEdgeTouch": {
+     "type": "bool",
+     "cl": "Text ink reaches the first or last pixel band of its OCR bounds."
+    },
+    "glyphEdgeInkFraction": {
+     "type": "number",
+     "cl": "Largest fraction of OCR-boundary rows containing foreground ink at a vertical edge."
+    },
+    "glyphBoundaryCut": {
+     "type": "bool",
+     "cl": "Text ink substantially reaches an OCR-boundary edge without a recognized terminal ellipsis."
+    }
+   },
+   "branch": {
+    "predicate": "clipped-text",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.glyphBoundaryCut",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "clipped-text"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T00:45:42",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\5ffec963c175427f8765c3643ac9fa94.json",
+    "tokens": {
+     "input": 15430,
+     "cachedInput": 0,
+     "output": 882,
+     "reasoningOutput": 0,
+     "total": 16312
+    },
+    "requestedBy": {
+     "type": "clipped-text",
+     "name": "glyph-boundary-clipping",
+     "names": {
+      "glyph-boundary-clipping": 2,
+      "glyph-boundary-truncation": 1
+     },
+     "descriptions": [
+      "Text clipped at its own container edge without a detached ellipsis.",
+      "No lens detects glyphs cut by their own containers unless a detached ellipsis is present.",
+      "Detect glyphs sliced at a container boundary without detached ellipsis."
+     ],
+     "measures": [
+      "Detect text ink touching or cut by nearby container boundaries and inspect glyph contours at those edges.",
+      "Compare glyph ink bounds against text container edges.",
+      "Inspect glyph ink against clipping edges and compare with text bounds."
+     ],
+     "looks": 3
+    },
+    "rationale": "The lens measures foreground ink at the left and right edges of each OCR text box and flags strong edge contact when no terminal ellipsis is recognized. This targets cut final glyphs in the examples, though OCR bounds that tightly fit normally rendered text can also touch their edges and produce false positives.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\glyph-boundary-clipping-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/glyph_boundary_clipping.py",
+   "programSha256": "ec3bc96234157044bfc758ceed9e12e61f53135e359fbdec0671cba01c5e6daa",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for clipped-text did not improve (0.833 -> 0.820)",
+     "check precision for clipped-text 0.820 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.8333,
+     "with": 0.82
+    },
+    "cost": {
+     "medianMs": 11.7,
+     "p95Ms": 43.83,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T00:47:00",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w4-clipped-text-glyph-boundary-clipping.json"
+   },
+   "cost": {
+    "medianMs": 11.7,
+    "p95Ms": 43.83,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "non-text-overlap",
+   "inputType": "screenshot",
+   "emits": {
+    "paintOccludesGlyph": {
+     "type": "bool",
+     "cl": "True when high-contrast painted structure interrupts detected glyph ink inside an OCR text line."
+    }
+   },
+   "branch": {
+    "predicate": "overlap",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.paintOccludesGlyph",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "overlap"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T00:58:32",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\178d6145dc2e4786b3074373320dbad0.json",
+    "tokens": {
+     "input": 15628,
+     "cachedInput": 0,
+     "output": 820,
+     "reasoningOutput": 0,
+     "total": 16448
+    },
+    "requestedBy": {
+     "type": "overlap",
+     "name": "non-text-overlap",
+     "names": {
+      "non-text-overlap": 2,
+      "non-text-panel-overlap": 1,
+      "non-text-element-overlap": 1
+     },
+     "descriptions": [
+      "The overlap lens only compares OCR text boxes and misses controls or icons covering text; none is apparent here.",
+      "Detect opaque panels or bubbles covering underlying controls or content, including when OCR text boxes do not intersect.",
+      "Detect badges, icons, or controls covering text even when OCR boxes do not overlap.",
+      "Detect distinct visual elements covering text when their OCR text boxes do not overlap."
+     ],
+     "measures": [
+      "Detect intersecting visible element edges and text ink within their shared region.",
+      "Compare panel and underlying row/control bounds; confirm by aligned edges and foreground occlusion in pixels.",
+      "Compare visible component and glyph masks for intersecting painted regions.",
+      "Compare detected control and text geometry with occlusion edges and foreground contrast."
+     ],
+     "looks": 4
+    },
+    "rationale": "This tests for a strong pixel edge crossing OCR text ink, which avoids treating adjacent buttons and status labels as overlaps. It is deliberately precision-biased and may miss overlaps where OCR text ends before the covered glyphs or where the covering surface has little contrast.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\non-text-overlap-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/non_text_overlap.py",
+   "programSha256": "b8a88fcf7f7257f026ed85241caa227bfbec2e91ee9cffc71c5dca3d8bce6f92",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check precision for overlap 0.624 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.48,
+     "with": 0.6467
+    },
+    "cost": {
+     "medianMs": 45.45,
+     "p95Ms": 76.75,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T00:59:09",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w5-overlap-non-text-overlap.json"
+   },
+   "cost": {
+    "medianMs": 45.45,
+    "p95Ms": 76.75,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "same-layer-element-overlap",
+   "inputType": "screenshot",
+   "emits": {
+    "inkUnderNeighbor": {
+     "type": "bool",
+     "cl": "True when visible pixels inside a text OCR box also lie inside a separately supplied non-text element box."
+    }
+   },
+   "branch": {
+    "predicate": "overlap",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.inkUnderNeighbor",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "overlap"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T01:34:49",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\4d92f9b3fd104bde9d2101d9dd72400a.json",
+    "tokens": {
+     "input": 15404,
+     "cachedInput": 0,
+     "output": 1228,
+     "reasoningOutput": 436,
+     "total": 16632
+    },
+    "requestedBy": {
+     "type": "overlap",
+     "name": "same-layer-element-overlap",
+     "names": {
+      "same-layer-element-overlap": 4,
+      "nontext-element-overlap": 1
+     },
+     "descriptions": [
+      "Distinct visible elements, including text and controls, painted over one another in the same layer.",
+      "Non-text elements or text and controls drawn over one another.",
+      "A badge, caret, icon, or other nontext element covering text.",
+      "Detects distinct visual elements covering one another, including non-text controls covering text."
+     ],
+     "measures": [
+      "Detect intersecting visible element bounds and confirm intersecting ink or control pixels.",
+      "Detect element boundaries and compare their pixel-region intersections; distinguish same-layer overlap from transparent-surface crossing.",
+      "Detect element bounds and text ink intersections, then confirm that the intersecting shapes occupy the same visual layer.",
+      "Compare detected element bounds and inspect intersecting pixel regions for mixed foreground shapes."
+     ],
+     "looks": 5
+    },
+    "rationale": "This lens looks for non-text element bounds crossing OCR text bounds and confirms visible pixels in the shared area, avoiding overlap claims based on bounds alone. It requires nodes for visible non-text elements; OCR-only input cannot establish that a missing icon or bubble covers text.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\same-layer-element-overlap-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/same_layer_element_overlap.py",
+   "programSha256": "794deb96ad19b7da71c5e9aafb99dd5cc24006c646de08614388ac303875e3f0",
+   "status": "retired",
+   "decision": {
+    "status": "retired",
+    "reasons": [
+     "improves held-out check accuracy within budget"
+    ],
+    "checkAccuracy": {
+     "without": 0.48,
+     "with": 0.4867
+    },
+    "cost": {
+     "medianMs": 9.03,
+     "p95Ms": 28.23,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T01:37:18",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w6-overlap-same-layer-element-overlap.json",
+    "retireReason": "ablation at promotion: no check accuracy contribution alongside the other adopted lenses",
+    "ablation": {
+     "lens": "same-layer-element-overlap",
+     "predicate": "overlap",
+     "checkAccuracyWith": 0.8533,
+     "checkAccuracyWithout": 0.8533,
+     "contributes": false
+    }
+   },
+   "cost": {
+    "medianMs": 9.03,
+    "p95Ms": 28.23,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "right-edge-control-truncation",
+   "inputType": "screenshot",
+   "emits": {
+    "rightEdgeControlCut": {
+     "type": "bool",
+     "cl": "Text node bounds reach the physical right viewport edge on a bottom toolbar row and edge pixels show likely partial glyph or control ink."
+    }
+   },
+   "branch": {
+    "predicate": "off-screen-control",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.rightEdgeControlCut",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "off-screen-control"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T02:31:30",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\ce5955d09312457cb6881bb9747ccc9e.json",
+    "tokens": {
+     "input": 14951,
+     "cachedInput": 0,
+     "output": 671,
+     "reasoningOutput": 0,
+     "total": 15622
+    },
+    "requestedBy": {
+     "type": "off-screen-control",
+     "name": "control-viewport-truncation",
+     "names": {
+      "control-viewport-truncation": 2,
+      "control-viewport-cut": 1,
+      "control-edge-truncation": 1
+     },
+     "descriptions": [
+      "A button, control, or its label cut off by the viewport or a fixed panel edge.",
+      "Controls clipped at the viewport edge beyond the OCR-detected text line.",
+      "A control or its label cut off at a viewport or fixed-panel edge.",
+      "Detect controls or control labels cut off by viewport or fixed panel edges."
+     ],
+     "measures": [
+      "Compare detected control bounds and visible ink to viewport and panel edges.",
+      "Detect control shapes touching viewport boundaries and check whether their outlines or labels are truncated.",
+      "Detect control and label bounds intersecting viewport edges and inspect whether the control is visibly truncated.",
+      "Compare control bounds and glyph pixels with viewport and panel boundaries."
+     ],
+     "looks": 4
+    },
+    "rationale": "The earlier lens treated any contrast at the screen edge as a cut, so ordinary Grove and Voice labels near the right side caused false alarms. This version requires the OCR node itself to touch the viewport boundary and checks edge ink within that node's row, which favors actual truncation while retaining the provided cut-label cases.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\right-edge-control-truncation-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/right_edge_control_truncation.py",
+   "programSha256": "da0d5692f35905d0b99512e2a6c5d0968176a47df6148fb98dc607a32002a64e",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for off-screen-control did not improve (0.867 -> 0.867)",
+     "check precision for off-screen-control 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.8667,
+     "with": 0.8667
+    },
+    "cost": {
+     "medianMs": 0.15,
+     "p95Ms": 0.42,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T02:33:03",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w7-off-screen-control-control-viewport-truncation.json"
+   },
+   "cost": {
+    "medianMs": 0.15,
+    "p95Ms": 0.42,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "visible-path-copy",
+   "inputType": "screenshot",
+   "emits": {
+    "visiblePathCopy": {
+     "type": "bool",
+     "cl": "True when OCR text contains a drive-rooted path, a common absolute filesystem root, a recognized repository path prefix, or an encoded slash route."
+    }
+   },
+   "branch": {
+    "predicate": "encoded-path",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.visiblePathCopy",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "encoded-path"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T02:48:53",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\5f785fd18c0f402da1703246abfd5235.json",
+    "tokens": {
+     "input": 14695,
+     "cachedInput": 0,
+     "output": 909,
+     "reasoningOutput": 286,
+     "total": 15604
+    },
+    "requestedBy": {
+     "type": "encoded-path",
+     "name": "absolute-or-encoded-path-copy",
+     "names": {
+      "absolute-or-encoded-path-copy": 1,
+      "absolute-path-detection": 1,
+      "visible-absolute-or-encoded-path": 1,
+      "visible-absolute-path": 1,
+      "absolute-or-repository-path-copy": 1
+     },
+     "descriptions": [
+      "An absolute filesystem or repository path, or a percent-encoded transport route, shown as user-facing text.",
+      "Whether user-facing copy contains an absolute path or encoded route.",
+      "Detects filesystem paths or encoded transport routes presented as user-facing copy.",
+      "Detect filesystem or repository paths shown as user copy."
+     ],
+     "measures": [
+      "OCR text and detect drive-root paths, repository paths, and percent-encoded route patterns.",
+      "OCR text and detect drive-letter paths, repository paths, or percent-encoded path sequences.",
+      "Scan OCR text for drive-rooted paths, repository paths, or percent-encoded path strings.",
+      "OCR text and identify drive-rooted paths or repository path patterns."
+     ],
+     "looks": 5
+    },
+    "rationale": "The broad slash-based rule treated ordinary labels such as “Edit/annotate” as paths, so this version requires a drive root, a known filesystem root or repository directory, or encoded separators. It retains detection for truncated Windows paths and encoded routes while avoiding generic single-slash UI copy.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\visible-path-copy-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/visible_path_copy.py",
+   "programSha256": "ffe04c587e8f570fbfd4efeb7e67f78e175f3fbdbd3fedfbc1b03b3724f229c9",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for encoded-path did not improve (0.987 -> 0.913)",
+     "check precision for encoded-path 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.9867,
+     "with": 0.9133
+    },
+    "cost": {
+     "medianMs": 0.28,
+     "p95Ms": 0.77,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T02:50:10",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w8-encoded-path-absolute-or-encoded-path-copy.json"
+   },
+   "cost": {
+    "medianMs": 0.28,
+    "p95Ms": 0.77,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "panel-bottom-control-cut",
+   "inputType": "screenshot",
+   "emits": {
+    "panelBottomControlCut": {
+     "type": "bool",
+     "cl": "True when a standalone control label is followed by a strong local horizontal panel boundary and the control surface appears to continue across it."
+    }
+   },
+   "branch": {
+    "predicate": "off-screen-control",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.panelBottomControlCut",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "off-screen-control"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:01:34",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\d210fb3de8424b739ebbfd6d11a123c6.json",
+    "tokens": {
+     "input": 15366,
+     "cachedInput": 0,
+     "output": 1550,
+     "reasoningOutput": 366,
+     "total": 16916
+    },
+    "requestedBy": {
+     "type": "off-screen-control",
+     "name": "panel-bottom-control-cut",
+     "names": {
+      "control-boundary-cut": 1,
+      "panel-bottom-control-cut": 2,
+      "control-cut-by-panel-bottom": 1,
+      "panel-bottom-control-cutoff": 1,
+      "bottom-cut-control": 1,
+      "control-cut-by-fixed-panel-bottom": 1,
+      "panel-bottom-content-cutoff": 1,
+      "fixed-panel-bottom-cutoff": 1
+     },
+     "descriptions": [
+      "Whether a control itself is cut by the viewport edge even if its label is not.",
+      "Detects controls clipped by a floating panel's fixed bottom edge, which the viewport-edge lens does not cover.",
+      "The Export button is visibly sliced by the fixed bottom edge of the floating panel, with its icon and lower portion cut off and no visible way to reach the rest.",
+      "Detects controls obscured by a fixed panel boundary even when that boundary is inside the viewport."
+     ],
+     "measures": [
+      "Detect control bounds and compare them with viewport edges.",
+      "Find button or control bounds intersecting the panel's bottom boundary; confirm that the control continues below the boundary and is not reachable within the visible panel.",
+      "Find control rectangles intersecting the panel's bottom edge and check whether the control continues beyond that edge without a visible scroll or access affordance.",
+      "Compare control bounds with the panel bottom edge and determine whether the visible control is only partially reachable."
+     ],
+     "looks": 5
+    },
+    "rationale": "The previous heuristic treated any sentence containing “download” as a control, so this version requires an exact short control label and stronger evidence of a nearby panel edge. It measures the clipped-control cue without classifying the defect; the predicate combines that measurement with the existing pixel-source gate.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\panel-bottom-control-cut-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/panel_bottom_control_cut.py",
+   "programSha256": "3ef349a9bf85dc866d1c8b0104f2a499a7afbee1c350db0d82b23ebf885405d7",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for off-screen-control did not improve (0.867 -> 0.867)",
+     "check precision for off-screen-control 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.8667,
+     "with": 0.8667
+    },
+    "cost": {
+     "medianMs": 0.15,
+     "p95Ms": 0.42,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:03:24",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w9-off-screen-control-panel-bottom-control-cut.json"
+   },
+   "cost": {
+    "medianMs": 0.15,
+    "p95Ms": 0.42,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "internal-identifier-copy",
+   "inputType": "screenshot",
+   "emits": {
+    "internalIdentifier": {
+     "type": "bool",
+     "cl": "True when an OCR line contains a null-like literal, implementation token, identifier assignment, long hexadecimal token, or executable/library filename."
+    }
+   },
+   "branch": {
+    "predicate": "internal-id",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.internalIdentifier",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "internal-id"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:06:51",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\99a6d96d535446a5a0872172f873ffc8.json",
+    "tokens": {
+     "input": 16057,
+     "cachedInput": 12032,
+     "output": 864,
+     "reasoningOutput": 359,
+     "total": 16921
+    },
+    "requestedBy": {
+     "type": "internal-id",
+     "name": "internal-identifier-copy",
+     "names": {
+      "internal-identifier-copy": 5,
+      "internal-identifier-detection": 2,
+      "visible-internal-identifier": 1
+     },
+     "descriptions": [
+      "Whether visible copy exposes internal IDs or implementation tokens.",
+      "Literal null-like values, internal tool IDs, source IDs, directory tokens, or session IDs shown as user-facing text.",
+      "Whether copy contains internal IDs or tool identifiers.",
+      "Detects internal IDs or tool identifiers shown as user-facing text."
+     ],
+     "measures": [
+      "Classify OCR text for null-like values, snake_case, dotted tool IDs, source IDs, and session IDs.",
+      "OCR text and match known identifier patterns, including snake_case, dotted IDs, and hex strings.",
+      "OCR text and detect null-like literals, snake_case or dotted IDs, source IDs, and hex IDs.",
+      "Scan OCR text for null-like literals, snake_case or dotted IDs, source IDs, and hex/session tokens."
+     ],
+     "looks": 8
+    },
+    "rationale": "The visible `<T16-runtime-directory>` token is caught by the implementation-token pattern, including the OCR fragments that preserve its `<T16-runtime-` prefix. The image 4 crop has no OCR text, so it produces no identifier finding; this lens cannot detect content that OCR omits entirely.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\internal-identifier-copy-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/internal_identifier_copy.py",
+   "programSha256": "d6e21eaadd8707d5b480e36ae60fb3f792377b0d6019fab849aca29ea7a91dd6",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for internal-id did not improve (0.960 -> 0.960)"
+    ],
+    "checkAccuracy": {
+     "without": 0.96,
+     "with": 0.96
+    },
+    "cost": {
+     "medianMs": 0.39,
+     "p95Ms": 1.26,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:09:18",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w10-internal-id-internal-identifier-copy.json"
+   },
+   "cost": {
+    "medianMs": 0.39,
+    "p95Ms": 1.26,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "floating-text-intrusion",
+   "inputType": "screenshot",
+   "emits": {
+    "substantialTextIntrusion": {
+     "type": "bool",
+     "cl": "True when two substantial OCR text lines of similar height overlap across a large share of both text boxes."
+    }
+   },
+   "branch": {
+    "predicate": "see-through",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.substantialTextIntrusion",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "see-through"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:11:17",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-1\\.neyvia\\autopilot-model\\dc8afaa9283b4649af56826d8a4c767a.json",
+    "tokens": {
+     "input": 15157,
+     "cachedInput": 0,
+     "output": 1211,
+     "reasoningOutput": 419,
+     "total": 16368
+    },
+    "requestedBy": {
+     "type": "see-through",
+     "name": "floating-surface-transparency",
+     "names": {
+      "floating-surface-transparency": 1,
+      "floating-surface-text-transparency": 1,
+      "surface-transparency-inspection": 1
+     },
+     "descriptions": [
+      "Whether content from behind a floating surface remains visible within it.",
+      "Whether text from an underlying surface remains visible through a floating panel.",
+      "No lens checks whether underlying content shows through a floating surface; the screenshot shows no such panel or foreign content."
+     ],
+     "measures": [
+      "Compare text continuity and foreground/background opacity across surface boundaries.",
+      "Compare text-line continuity and contrast across panel boundaries, checking whether foreign text remains visible inside the panel.",
+      "Compare text continuity and local background colors across visible panel boundaries."
+     ],
+     "looks": 3
+    },
+    "rationale": "The previous overlap threshold treated small incidental OCR intersections as evidence, producing false alarms. This version requires two legible, similarly sized text lines to overlap substantially in both directions, targeting the strong text-on-text collisions shown in the missed examples.",
+    "run": "D:/NeyviaRuns/VISION/stream-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-1\\lens_programs\\floating-text-intrusion-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/floating_text_intrusion.py",
+   "programSha256": "f6866ea8726b81701b064aa8debe5fea24adcdd02ab35c265012d99598026f98",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for see-through did not improve (0.933 -> 0.927)",
+     "check precision for see-through 0.846 below floor 0.88"
+    ],
+    "checkAccuracy": {
+     "without": 0.9333,
+     "with": 0.9267
+    },
+    "cost": {
+     "medianMs": 0.47,
+     "p95Ms": 1.08,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:12:21",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-1-w11-see-through-floating-surface-transparency.json"
+   },
+   "cost": {
+    "medianMs": 0.47,
+    "p95Ms": 1.08,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "painted-text-obstruction",
+   "inputType": "screenshot",
+   "emits": {
+    "glyphObstruction": {
+     "type": "bool",
+     "cl": "True when a compact status or instruction text line contains multiple isolated painted strokes consistent with an icon/control intruding into its text region."
+    }
+   },
+   "branch": {
+    "predicate": "overlap",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.glyphObstruction",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "overlap"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:18:28",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\e14eb53c23f94cada3be87aeeaac6021.json",
+    "tokens": {
+     "input": 14802,
+     "cachedInput": 12032,
+     "output": 982,
+     "reasoningOutput": 0,
+     "total": 15784
+    },
+    "requestedBy": {
+     "type": "overlap",
+     "name": "non-text-overlap",
+     "names": {
+      "non-text-overlap": 1,
+      "non-text-element-overlap": 1,
+      "non-text-panel-overlap": 1
+     },
+     "descriptions": [
+      "The overlap lens only compares OCR text boxes and misses controls or icons covering text; none is apparent here.",
+      "Detect badges, icons, or controls covering text even when OCR boxes do not overlap.",
+      "Detect opaque panels or bubbles covering underlying controls or content, including when OCR text boxes do not intersect."
+     ],
+     "measures": [
+      "Detect intersecting visible element edges and text ink within their shared region.",
+      "Compare visible component and glyph masks for intersecting painted regions.",
+      "Compare panel and underlying row/control bounds; confirm by aligned edges and foreground occlusion in pixels."
+     ],
+     "looks": 3
+    },
+    "rationale": "The positive status-bar examples show an icon intruding into a text run, while the clean crop has no OCR text boxes; the injected example identifies a second possible painted obstruction case. The measure is deliberately limited to compact status-like OCR lines and isolated strokes, but the supplied crops do not expose enough image variety to validate a general panel-overlap detector.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\painted-text-obstruction-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/painted_text_obstruction.py",
+   "programSha256": "7a3f66f68bed62b2d037a3eca7ed09b76819d5e46bc1503a3922c9215ce28bfe",
+   "status": "active",
+   "decision": {
+    "status": "active",
+    "reasons": [
+     "improves held-out check accuracy within budget"
+    ],
+    "checkAccuracy": {
+     "without": 0.48,
+     "with": 0.8533
+    },
+    "cost": {
+     "medianMs": 59.43,
+     "p95Ms": 77.31,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:18:45",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w2-overlap-non-text-overlap.json"
+   },
+   "cost": {
+    "medianMs": 59.43,
+    "p95Ms": 77.31,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "internal-id-copy",
+   "inputType": "screenshot",
+   "emits": {
+    "internalIdentifier": {
+     "type": "bool",
+     "cl": "True when OCR text contains a code-shaped identifier, null-like runtime literal, source/session ID, or implementation file token."
+    },
+    "identifierTokens": {
+     "type": "list",
+     "cl": "Up to four matching identifier-like strings found in the OCR line."
+    }
+   },
+   "branch": {
+    "predicate": "internal-id",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.internalIdentifier",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "internal-id"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:20:31",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\acf3d49476ac4a1aa8c3143b679139a1.json",
+    "tokens": {
+     "input": 14847,
+     "cachedInput": 0,
+     "output": 704,
+     "reasoningOutput": 0,
+     "total": 15551
+    },
+    "requestedBy": {
+     "type": "internal-id",
+     "name": "internal-identifier-detection",
+     "names": {
+      "internal-identifier-detection": 1,
+      "internal-identifier-scan": 1,
+      "internal-identifier-copy": 1
+     },
+     "descriptions": [
+      "No lens classifies internal tokens or identifiers as user-facing copy.",
+      "Detect internal tokens such as snake_case, dotted tool names, source IDs, or session IDs.",
+      "Internal tokens such as snake_case tool names, null/undefined, source IDs, or session IDs shown as copy."
+     ],
+     "measures": [
+      "Classify OCR text for null-like literals, snake_case or dotted identifiers, source tokens, and session IDs.",
+      "OCR text and match identifier patterns.",
+      "OCR text and match identifier patterns, then inspect their UI context to distinguish user-facing text."
+     ],
+     "looks": 3
+    },
+    "rationale": "The broad dotted-name rule was causing domain names like wikipedia.org and github.com to fire, so ordinary domains and standard true/false literals are no longer treated as defects. Narrower runtime, identifier-label, file-suffix, and long opaque-token patterns retain strong signals such as <T16-runtime-directory> while favoring precision.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\internal-id-copy-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/internal_id_copy.py",
+   "programSha256": "9539d16d5d13bd9b15eae79bcb4d7123a224b869f7f632f15ae404877695a5ad",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for internal-id did not improve (0.960 -> 0.960)"
+    ],
+    "checkAccuracy": {
+     "without": 0.96,
+     "with": 0.96
+    },
+    "cost": {
+     "medianMs": 0.57,
+     "p95Ms": 1.56,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:22:15",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w3-internal-id-internal-identifier-detection.json"
+   },
+   "cost": {
+    "medianMs": 0.57,
+    "p95Ms": 1.56,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "edge-control-cut",
+   "inputType": "screenshot",
+   "emits": {
+    "controlEdgeCut": {
+     "type": "bool",
+     "cl": "Text-node bounds extend beyond a screenshot edge, indicating possible control-label truncation."
+    }
+   },
+   "branch": {
+    "predicate": "off-screen-control",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.controlEdgeCut",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "off-screen-control"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:23:55",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\14ee8b577f104a799bb90b33b4d0dcc3.json",
+    "tokens": {
+     "input": 14799,
+     "cachedInput": 12032,
+     "output": 557,
+     "reasoningOutput": 0,
+     "total": 15356
+    },
+    "requestedBy": {
+     "type": "off-screen-control",
+     "name": "control-viewport-cut",
+     "names": {
+      "control-viewport-cut": 1,
+      "control-viewport-truncation": 1,
+      "control-edge-truncation": 1
+     },
+     "descriptions": [
+      "Controls clipped at the viewport edge beyond the OCR-detected text line.",
+      "A control or its label cut off at a viewport or fixed-panel edge.",
+      "Detect controls or control labels cut off by viewport or fixed panel edges."
+     ],
+     "measures": [
+      "Detect control shapes touching viewport boundaries and check whether their outlines or labels are truncated.",
+      "Detect control and label bounds intersecting viewport edges and inspect whether the control is visibly truncated.",
+      "Compare control bounds and glyph pixels with viewport and panel boundaries."
+     ],
+     "looks": 3
+    },
+    "rationale": "The prior rule treated labels near the right edge as defects, which triggered on normal toolbar items such as Apps and Voice. This version requires the OCR line bounds to cross an actual screenshot edge, so the supplied clean toolbar crops stay negative while genuinely cut labels can be detected.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\edge-control-cut-2.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/edge_control_cut.py",
+   "programSha256": "a828c64b5f79d0d432cc81ee30b23edd521dcafc59b2b49b6c2bfaba7bd76afe",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for off-screen-control did not improve (0.867 -> 0.867)",
+     "check precision for off-screen-control 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.8667,
+     "with": 0.8667
+    },
+    "cost": {
+     "medianMs": 0.14,
+     "p95Ms": 0.34,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:24:48",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w4-off-screen-control-control-viewport-cut.json"
+   },
+   "cost": {
+    "medianMs": 0.14,
+    "p95Ms": 0.34,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "right-edge-control-truncation-9a414a17",
+   "inputType": "screenshot",
+   "emits": {
+    "edgeLabelTruncated": {
+     "type": "bool",
+     "cl": "True when a short status-strip control label nearly touches the screenshot's right edge."
+    }
+   },
+   "branch": {
+    "predicate": "off-screen-control",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.edgeLabelTruncated",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "off-screen-control"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:25:15",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\d4d062991c7d459ca6efb27756beff90.json",
+    "tokens": {
+     "input": 15161,
+     "cachedInput": 0,
+     "output": 457,
+     "reasoningOutput": 0,
+     "total": 15618
+    },
+    "requestedBy": {
+     "type": "off-screen-control",
+     "name": "control-viewport-truncation",
+     "names": {
+      "control-viewport-cut": 1,
+      "control-viewport-truncation": 2,
+      "control-edge-truncation": 1
+     },
+     "descriptions": [
+      "Controls clipped at the viewport edge beyond the OCR-detected text line.",
+      "A control or its label cut off at a viewport or fixed-panel edge.",
+      "Detect controls or control labels cut off by viewport or fixed panel edges.",
+      "A button, control, or its label cut off by the viewport or a fixed panel edge."
+     ],
+     "measures": [
+      "Detect control shapes touching viewport boundaries and check whether their outlines or labels are truncated.",
+      "Detect control and label bounds intersecting viewport edges and inspect whether the control is visibly truncated.",
+      "Compare control bounds and glyph pixels with viewport and panel boundaries.",
+      "Compare detected control bounds and visible ink to viewport and panel edges."
+     ],
+     "looks": 4
+    },
+    "rationale": "The positive crops show the Grove control label pressed against the right edge in the bottom status strip, while the clean examples do not show that pattern. This narrow OCR-based measure favors precision and does not flag unrelated text near other viewport edges.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\right-edge-control-truncation-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/right_edge_control_truncation_9a414a17.py",
+   "programSha256": "9a414a17c74db0dc41437022e00df79c2583d55be7487be23512e8ccb1bf66db",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for off-screen-control did not improve (0.867 -> 0.867)",
+     "check precision for off-screen-control 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.8667,
+     "with": 0.8667
+    },
+    "cost": {
+     "medianMs": 0.14,
+     "p95Ms": 0.39,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:27:18",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w5-off-screen-control-control-viewport-truncation.json"
+   },
+   "cost": {
+    "medianMs": 0.14,
+    "p95Ms": 0.39,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "absolute-path-scan",
+   "inputType": "screenshot",
+   "emits": {
+    "absolutePathText": {
+     "type": "bool",
+     "cl": "True when OCR text contains a drive-root path, slash-delimited repository file path, or percent-encoded path route."
+    }
+   },
+   "branch": {
+    "predicate": "encoded-path",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.absolutePathText",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "encoded-path"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:27:45",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\e71b3f819dd04967a2e03dffdae3f0b6.json",
+    "tokens": {
+     "input": 16204,
+     "cachedInput": 0,
+     "output": 632,
+     "reasoningOutput": 178,
+     "total": 16836
+    },
+    "requestedBy": {
+     "type": "encoded-path",
+     "name": "absolute-path-scan",
+     "names": {
+      "absolute-path-scan": 1,
+      "absolute-or-repository-path-copy": 1,
+      "absolute-or-encoded-path-copy": 1
+     },
+     "descriptions": [
+      "Detect user-facing absolute filesystem or repository paths.",
+      "Detects an absolute filesystem or repository path exposed in ordinary interface copy, including placeholder text.",
+      "An absolute filesystem or repository path, or a percent-encoded transport route, shown as user-facing text."
+     ],
+     "measures": [
+      "OCR text and match drive-letter paths or slash-delimited repository paths.",
+      "OCR visible text and classify path separators and path-like directory sequences; check the text is outside a terminal surface.",
+      "OCR text and detect drive-root paths, repository paths, and percent-encoded route patterns."
+     ],
+     "looks": 3
+    },
+    "rationale": "The lens scans each OCR text node for drive-root paths, repository-style file paths, and encoded route separators, while ignoring layout and pixels that do not affect this text-based signal. Requiring a filename extension for slash-delimited paths helps avoid matching ordinary labels and icon-adjacent text.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\absolute-path-scan-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/absolute_path_scan.py",
+   "programSha256": "ece7dc09053dcd3ed57c4304df158df116055f0252957fc0cb034191572ed74a",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for encoded-path did not improve (0.987 -> 0.987)",
+     "check precision for encoded-path 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.9867,
+     "with": 0.9867
+    },
+    "cost": {
+     "medianMs": 0.17,
+     "p95Ms": 0.44,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:30:08",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w6-encoded-path-absolute-path-scan.json"
+   },
+   "cost": {
+    "medianMs": 0.17,
+    "p95Ms": 0.44,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "internal-identifier-copy-e2be8b4f",
+   "inputType": "screenshot",
+   "emits": {
+    "internalIdentifierCopy": {
+     "type": "bool",
+     "cl": "True when OCR text contains a likely internal token, excluding common dotted web hostnames."
+    }
+   },
+   "branch": {
+    "predicate": "internal-id",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.internalIdentifierCopy",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "internal-id"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:31:13",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\c6cc604d8cae467494c6983e63829d78.json",
+    "tokens": {
+     "input": 14633,
+     "cachedInput": 12032,
+     "output": 851,
+     "reasoningOutput": 203,
+     "total": 15484
+    },
+    "requestedBy": {
+     "type": "internal-id",
+     "name": "internal-identifier-copy",
+     "names": {
+      "internal-identifier-detection": 2,
+      "internal-identifier-scan": 1,
+      "internal-identifier-copy": 4
+     },
+     "descriptions": [
+      "No lens classifies internal tokens or identifiers as user-facing copy.",
+      "Detect internal tokens such as snake_case, dotted tool names, source IDs, or session IDs.",
+      "Internal tokens such as snake_case tool names, null/undefined, source IDs, or session IDs shown as copy.",
+      "Literal null-like values, internal tool IDs, source IDs, directory tokens, or session IDs shown as user-facing text."
+     ],
+     "measures": [
+      "Classify OCR text for null-like literals, snake_case or dotted identifiers, source tokens, and session IDs.",
+      "OCR text and match identifier patterns.",
+      "OCR text and match identifier patterns, then inspect their UI context to distinguish user-facing text.",
+      "OCR text and match known identifier patterns, including snake_case, dotted IDs, and hex strings."
+     ],
+     "looks": 7
+    },
+    "rationale": "The prior broad dotted-name and hyphen patterns treated ordinary site domains as internal identifiers. This keeps stronger token shapes, raises the minimum length for context-prefixed IDs, and excludes common domain suffixes from dotted-token matches.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\internal-identifier-copy-1-e2be8b4f.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/internal_identifier_copy_e2be8b4f.py",
+   "programSha256": "e2be8b4f5b2303804e4877c997bd866d125c63d0c02179bdfdd2ae09c67d84cd",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for internal-id did not improve (0.960 -> 0.933)",
+     "check precision for internal-id 0.333 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.96,
+     "with": 0.9333
+    },
+    "cost": {
+     "medianMs": 0.4,
+     "p95Ms": 1.03,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:32:28",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w7-internal-id-internal-identifier-copy.json"
+   },
+   "cost": {
+    "medianMs": 0.4,
+    "p95Ms": 1.03,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "foreign-text-through-surface",
+   "inputType": "screenshot",
+   "emits": {
+    "foreignTextVisible": {
+     "type": "bool",
+     "cl": "True when a distinct OCR text line substantially overlaps this line and their heights differ, indicating text from behind a surface remains visible through it."
+    }
+   },
+   "branch": {
+    "predicate": "see-through",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.foreignTextVisible",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "see-through"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:32:58",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\0daa3b0d7121408c9596c8bb360a2f52.json",
+    "tokens": {
+     "input": 15718,
+     "cachedInput": 12032,
+     "output": 966,
+     "reasoningOutput": 309,
+     "total": 16684
+    },
+    "requestedBy": {
+     "type": "see-through",
+     "name": "surface-transparency-inspection",
+     "names": {
+      "surface-transparency-inspection": 1,
+      "floating-surface-text-transparency": 1,
+      "floating-surface-transparency": 1
+     },
+     "descriptions": [
+      "No lens checks whether underlying content shows through a floating surface; the screenshot shows no such panel or foreign content.",
+      "Whether text from an underlying surface remains visible through a floating panel.",
+      "Whether content from behind a floating surface remains visible within it."
+     ],
+     "measures": [
+      "Compare text continuity and local background colors across visible panel boundaries.",
+      "Compare text-line continuity and contrast across panel boundaries, checking whether foreign text remains visible inside the panel.",
+      "Compare text continuity and foreground/background opacity across surface boundaries."
+     ],
+     "looks": 3
+    },
+    "rationale": "The labeled defects show distinct sidebar error text occupying the same pixels as a floating panel title or header, while the clean example has no such collision. This measures substantial OCR-box overlap between differently sized text lines to capture that visible-through symptom without treating ordinary adjacent labels as defects.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\foreign-text-through-surface-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/foreign_text_through_surface.py",
+   "programSha256": "6befae157bec507167a7a8a276e4aae16d2fc8a16fd39c430c8fd53c76e23ae3",
+   "status": "active",
+   "decision": {
+    "status": "active",
+    "reasons": [
+     "improves held-out check accuracy within budget"
+    ],
+    "checkAccuracy": {
+     "without": 0.9333,
+     "with": 0.9667
+    },
+    "cost": {
+     "medianMs": 1.51,
+     "p95Ms": 11.08,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:33:16",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w8-see-through-surface-transparency-inspection.json"
+   },
+   "cost": {
+    "medianMs": 1.51,
+    "p95Ms": 11.08,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "encoded-path-text",
+   "inputType": "screenshot",
+   "emits": {
+    "userFacingPath": {
+     "type": "bool",
+     "cl": "True when an OCR text line contains a sufficiently complete filesystem path or encoded path presented as interface text."
+    }
+   },
+   "branch": {
+    "predicate": "encoded-path",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.userFacingPath",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "encoded-path"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:36:41",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\fdd2877a3e7b454d9ea44508b4edd280.json",
+    "tokens": {
+     "input": 15156,
+     "cachedInput": 12032,
+     "output": 768,
+     "reasoningOutput": 0,
+     "total": 15924
+    },
+    "requestedBy": {
+     "type": "encoded-path",
+     "name": "absolute-path-text",
+     "names": {
+      "path-and-route-detection": 1,
+      "absolute-path-detection": 1,
+      "absolute-path-text": 2
+     },
+     "descriptions": [
+      "No lens identifies filesystem paths or encoded routes in user-facing text.",
+      "Whether user-facing copy contains an absolute path or encoded route.",
+      "Detect visible absolute filesystem or repository paths presented as ordinary interface text.",
+      "Detect filesystem paths or encoded routes presented as user-facing text."
+     ],
+     "measures": [
+      "Classify OCR text for absolute path separators, drive prefixes, and percent-encoded route strings.",
+      "OCR text and detect drive-letter paths, repository paths, or percent-encoded path sequences.",
+      "OCR text plus path-like syntax such as a drive letter followed by colon and backslashes; check that the text is outside a terminal region.",
+      "OCR text and match drive-root, repository-path, or percent-encoded URL patterns."
+     ],
+     "looks": 4
+    },
+    "rationale": "The prior false alarms were clipped PowerShell prompt paths, so the lens now excludes terminal-labeled lines and path-only or short OCR fragments. It still flags complete paths embedded in surrounding copy and sufficiently long encoded or repository path strings.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\encoded-path-text-3.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/encoded_path_text.py",
+   "programSha256": "e8f9052cf6d67690b61bd8afd75d252eaf56346068cd6d17ac5a693b43012bf8",
+   "status": "retired",
+   "decision": {
+    "status": "retired",
+    "reasons": [
+     "improves held-out check accuracy within budget"
+    ],
+    "checkAccuracy": {
+     "without": 0.9867,
+     "with": 1.0
+    },
+    "cost": {
+     "medianMs": 0.29,
+     "p95Ms": 0.72,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:36:58",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w9-encoded-path-absolute-path-text.json",
+    "evidence": {
+     "lens": "encoded-path-text",
+     "predicate": "encoded-path",
+     "checkPositives": 2,
+     "checkNetGain": 2
+    },
+    "retireReason": "insufficient check evidence (positives >= 5 and net gain >= 2 required); rule added 7 Oct after the first final-group report (disclosed)"
+   },
+   "cost": {
+    "medianMs": 0.29,
+    "p95Ms": 0.72,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "internal-identifier-copy-136476a4",
+   "inputType": "screenshot",
+   "emits": {
+    "identifierCopy": {
+     "type": "bool",
+     "cl": "OCR text appears to expose an internal identifier, technical token, path in command/error context, or null-like value in diagnostic context."
+    }
+   },
+   "branch": {
+    "predicate": "internal-id",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.identifierCopy",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "internal-id"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:40:09",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\369f78ef1d1047c1982aabe1da8a68a3.json",
+    "tokens": {
+     "input": 15759,
+     "cachedInput": 12032,
+     "output": 1005,
+     "reasoningOutput": 0,
+     "total": 16764
+    },
+    "requestedBy": {
+     "type": "internal-id",
+     "name": "internal-identifier-copy",
+     "names": {
+      "internal-identifier-detection": 2,
+      "internal-identifier-scan": 2,
+      "internal-identifier-copy": 5
+     },
+     "descriptions": [
+      "No lens classifies internal tokens or identifiers as user-facing copy.",
+      "Detect internal tokens such as snake_case, dotted tool names, source IDs, or session IDs.",
+      "Internal tokens such as snake_case tool names, null/undefined, source IDs, or session IDs shown as copy.",
+      "Literal null-like values, internal tool IDs, source IDs, directory tokens, or session IDs shown as user-facing text."
+     ],
+     "measures": [
+      "Classify OCR text for null-like literals, snake_case or dotted identifiers, source tokens, and session IDs.",
+      "OCR text and match identifier patterns.",
+      "OCR text and match identifier patterns, then inspect their UI context to distinguish user-facing text.",
+      "OCR text and match known identifier patterns, including snake_case, dotted IDs, and hex strings."
+     ],
+     "looks": 9
+    },
+    "rationale": "This raises precision by requiring technical framing for paths, dotted tokens, and null-like words, so ordinary terminal paths and labels such as “None open” do not trigger alone. It captures the missed runtime-directory placeholder and likely command-line tool tokens while preserving explicit source/session IDs and diagnostic hex IDs.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\internal-identifier-copy-3.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/internal_identifier_copy_136476a4.py",
+   "programSha256": "136476a40634dcaa67267147a81b26ece4ce0b450d77e9e291446779e89d6a4b",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for internal-id did not improve (0.960 -> 0.847)",
+     "check precision for internal-id 0.241 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.96,
+     "with": 0.8467
+    },
+    "cost": {
+     "medianMs": 0.38,
+     "p95Ms": 0.99,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:40:25",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w10-internal-id-internal-identifier-copy.json"
+   },
+   "cost": {
+    "medianMs": 0.38,
+    "p95Ms": 0.99,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "glyph-edge-clipping",
+   "inputType": "screenshot",
+   "emits": {
+    "glyphEdgeClipping": {
+     "type": "bool",
+     "cl": "True when OCR text ink reaches its rightmost measured boundary with a concentrated edge pattern suggestive of a glyph cut at the text container."
+    }
+   },
+   "branch": {
+    "predicate": "clipped-text",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.source",
+       "op": "eq",
+       "value": "pixels"
+      },
+      {
+       "field": "measurements.glyphEdgeClipping",
+       "op": "eq",
+       "value": true
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "clipped-text"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:41:02",
+    "receipt": "D:\\NeyviaRuns\\VISION\\stream-2\\.neyvia\\autopilot-model\\a801a62250e94a938a417207ce6d8358.json",
+    "tokens": {
+     "input": 15394,
+     "cachedInput": 12032,
+     "output": 727,
+     "reasoningOutput": 0,
+     "total": 16121
+    },
+    "requestedBy": {
+     "type": "clipped-text",
+     "name": "glyph-boundary-clipping",
+     "names": {
+      "glyph-boundary-clipping": 2,
+      "glyph-boundary-truncation": 1,
+      "glyph-box-clipping": 2,
+      "glyph-clipping": 1
+     },
+     "descriptions": [
+      "No lens detects glyphs cut by their own containers unless a detached ellipsis is present.",
+      "Text clipped at its own container edge without a detached ellipsis.",
+      "Detect glyphs sliced at a container boundary without detached ellipsis.",
+      "Detects glyphs cut by their own container even without a detached ellipsis."
+     ],
+     "measures": [
+      "Compare glyph ink bounds against text container edges.",
+      "Detect text ink touching or cut by nearby container boundaries and inspect glyph contours at those edges.",
+      "Inspect glyph ink against clipping edges and compare with text bounds.",
+      "Compare glyph ink bounds with the visible text container edges."
+     ],
+     "looks": 6
+    },
+    "rationale": "The measurement checks for image ink at the OCR line's right edge and avoids triggering when the OCR text already ends in an ellipsis. This is intentionally conservative, though OCR boxes and crop-only screenshots can make container boundaries difficult to infer.",
+    "run": "D:/NeyviaRuns/VISION/stream-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\stream-2\\lens_programs\\glyph-edge-clipping-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/glyph_edge_clipping.py",
+   "programSha256": "316acbf7b9706493f939d7afb535824c007bb4969c7669456a2f554aed23575a",
+   "status": "retired",
+   "decision": {
+    "status": "retired",
+    "reasons": [
+     "improves held-out check accuracy within budget"
+    ],
+    "checkAccuracy": {
+     "without": 0.8333,
+     "with": 0.84
+    },
+    "cost": {
+     "medianMs": 23.0,
+     "p95Ms": 32.53,
+     "errors": 0,
+     "images": 495
+    },
+    "at": "2026-10-07T03:43:15",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\stream-2-w11-clipped-text-glyph-boundary-clipping.json",
+    "evidence": {
+     "lens": "glyph-edge-clipping",
+     "predicate": "clipped-text",
+     "checkPositives": 123,
+     "checkNetGain": 1
+    },
+    "retireReason": "insufficient check evidence (positives >= 5 and net gain >= 2 required); rule added 7 Oct after the first final-group report (disclosed)"
+   },
+   "cost": {
+    "medianMs": 23.0,
+    "p95Ms": 32.53,
+    "errors": 0,
+    "images": 495
+   }
+  },
+  {
+   "id": "detached-subject-floaters",
+   "inputType": "render",
+   "emits": {
+    "detachedComponentCount": {
+     "type": "number",
+     "cl": "Count of small orange connected components separated from the largest orange subject component by more than two pixels."
+    }
+   },
+   "branch": {
+    "predicate": "floaters",
+    "condition": {
+     "all": [
+      {
+       "field": "measurements.detachedComponentCount",
+       "op": "gt",
+       "value": 0
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "floaters"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T00:59:01",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-1\\.neyvia\\autopilot-model\\942b25160a2448019a3909c82d96cab1.json",
+    "tokens": {
+     "input": 15339,
+     "cachedInput": 0,
+     "output": 877,
+     "reasoningOutput": 333,
+     "total": 16216
+    },
+    "requestedBy": {
+     "type": "floaters",
+     "name": "detached-subject-components",
+     "names": {
+      "detached-subject-components": 2,
+      "detached-subject-piece": 1
+     },
+     "descriptions": [
+      "Detects small subject pieces separated from the main body.",
+      "Detect small subject-colored pieces separated from the main subject.",
+      "No covered observable detects small subject pieces detached from the main body."
+     ],
+     "measures": [
+      "Find orange components spatially separated from the main subject and measure their pixel distance and bounding boxes.",
+      "Segment orange pixels outside the subject bounds and measure their distance and separation from the main orange component.",
+      "Segment orange subject pixels into components and check for small components separated from the main body."
+     ],
+     "looks": 3
+    },
+    "rationale": "The measure counts only small orange components that are visibly separated from the largest subject component, while ignoring connected details such as thin legs and handles. A two-pixel separation and a 25% size ceiling reduce false positives from shading gaps and large multi-part subjects.",
+    "run": "D:/NeyviaRuns/VISION/render-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-1\\lens_programs\\detached-subject-floaters-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/detached_subject_floaters.py",
+   "programSha256": "83868856debc4579836649977033d8770e61a44ba1977c68566e6a5488bb41b4",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for floaters did not improve (0.750 -> 0.722)",
+     "check precision for floaters 0.444 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.7222
+    },
+    "cost": {
+     "medianMs": 22.37,
+     "p95Ms": 35.1,
+     "errors": 0,
+     "images": 144
+    },
+    "at": "2026-10-07T00:59:44",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-1-w1-floaters-detached-subject-components.json"
+   },
+   "cost": {
+    "medianMs": 22.37,
+    "p95Ms": 35.1,
+    "errors": 0,
+    "images": 144
+   }
+  },
+  {
+   "id": "detached-subject-pieces",
+   "inputType": "render",
+   "emits": {
+    "detachedPieceCountMeasured": {
+     "type": "number",
+     "cl": "Count of sizeable orange pixel components at least six pixels from the largest subject component."
+    }
+   },
+   "branch": {
+    "predicate": "floaters",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.detachedPieceCountMeasured",
+       "op": "gt",
+       "value": 0
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "floaters"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T01:09:34",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-1\\.neyvia\\autopilot-model\\11b7d4a415e04c83a77b29d920a24dbb.json",
+    "tokens": {
+     "input": 15455,
+     "cachedInput": 0,
+     "output": 902,
+     "reasoningOutput": 383,
+     "total": 16357
+    },
+    "requestedBy": {
+     "type": "floaters",
+     "name": "detached-subject-components",
+     "names": {
+      "detached-subject-components": 3,
+      "detached-subject-piece": 2,
+      "detached-piece-detection": 1,
+      "detached-components": 1
+     },
+     "descriptions": [
+      "No covered observable detects small subject pieces detached from the main body.",
+      "Detect small subject-colored pieces separated from the main subject.",
+      "Detect small subject pieces separated from the main body.",
+      "Detect small subject-colored components separated from the main subject silhouette."
+     ],
+     "measures": [
+      "Segment orange subject pixels into components and check for small components separated from the main body.",
+      "Segment orange pixels outside the subject bounds and measure their distance and separation from the main orange component.",
+      "Find orange components disconnected from the main subject silhouette and measure their separation in pixels.",
+      "Segment subject-colored pixels and measure connected components outside a small distance from the main subject mask."
+     ],
+     "looks": 7
+    },
+    "rationale": "The lens counts only substantial orange components separated by a clear pixel gap from the largest component, filtering small shading fragments and thin details. This targets isolated cubes and other detached pieces while keeping the clean boot unlikely to trigger.",
+    "run": "D:/NeyviaRuns/VISION/render-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-1\\lens_programs\\detached-subject-pieces-2.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/detached_subject_pieces.py",
+   "programSha256": "edabaa337bbf0f58e1e066f0b20e79ace18f00437301aacfe9c29879e8ab27dc",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for floaters did not improve (0.750 -> 0.667)",
+     "check precision for floaters 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.6667
+    },
+    "cost": {
+     "medianMs": 6.59,
+     "p95Ms": 32.86,
+     "errors": 0,
+     "images": 144
+    },
+    "at": "2026-10-07T01:09:45",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-1-w2-floaters-detached-subject-components.json"
+   },
+   "cost": {
+    "medianMs": 6.59,
+    "p95Ms": 32.86,
+    "errors": 0,
+    "images": 144
+   }
+  },
+  {
+   "id": "culling-gap-area",
+   "inputType": "render",
+   "emits": {
+    "cullingGapRatio": {
+     "type": "number",
+     "cl": "Largest sizeable neutral-colored gap enclosed by the orange silhouette, divided by orange subject area."
+    }
+   },
+   "branch": {
+    "predicate": "flipped-normals",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.cullingGapRatio",
+       "op": "gt",
+       "value": 0.12
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "flipped-normals"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T01:19:36",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-1\\.neyvia\\autopilot-model\\fa98ae9664fc49d280d4d9ca99d12de4.json",
+    "tokens": {
+     "input": 15456,
+     "cachedInput": 0,
+     "output": 1216,
+     "reasoningOutput": 453,
+     "total": 16672
+    },
+    "requestedBy": {
+     "type": "flipped-normals",
+     "name": "surface-holes",
+     "names": {
+      "surface-culling-gaps": 1,
+      "closed-surface-culling-holes": 1,
+      "surface-holes": 2
+     },
+     "descriptions": [
+      "Detect surface holes or missing patches caused by back-face culling on the subject.",
+      "Detects missing patches or see-through holes caused by inward-facing subject faces under back-face culling.",
+      "Large sections of the orange mug are culled, leaving thin disconnected-looking strips and gaps where a closed mug surface should be.",
+      "Measure visible gaps through the subject where expected surfaces are absent under back-face culling."
+     ],
+     "measures": [
+      "Measure visible gaps within the subject silhouette and distinguish them from intended openings or dark shading.",
+      "Inspect the subject silhouette and interior for visible background or floor through areas expected to be solid.",
+      "Detect background-colored pixels enclosed by or interrupting the subject silhouette, excluding intentional openings."
+     ],
+     "looks": 4
+    },
+    "rationale": "The clearest culling evidence is a sizeable neutral floor or background patch enclosed within the orange subject; orange shading and tiny handle or rim openings are filtered out. A conservative area threshold favors precision, while small or silhouette-open missing patches may remain undetected.",
+    "run": "D:/NeyviaRuns/VISION/render-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-1\\lens_programs\\culling-gap-area-2.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/culling_gap_area.py",
+   "programSha256": "154f532248da0a0cc629de45e502562df2dffff33e11f8c0e673af12c3fecb1c",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for flipped-normals did not improve (0.750 -> 0.750)",
+     "check precision for flipped-normals 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.75
+    },
+    "cost": {
+     "medianMs": 6.5,
+     "p95Ms": 46.51,
+     "errors": 0,
+     "images": 144
+    },
+    "at": "2026-10-07T01:19:50",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-1-w3-flipped-normals-surface-holes.json"
+   },
+   "cost": {
+    "medianMs": 6.5,
+    "p95Ms": 46.51,
+    "errors": 0,
+    "images": 144
+   }
+  },
+  {
+   "id": "detached-orange-piece-gap",
+   "inputType": "render",
+   "emits": {
+    "detachedPieceGapPx": {
+     "type": "number",
+     "cl": "Pixel distance from the main orange silhouette to the nearest qualifying compact, disconnected orange component."
+    }
+   },
+   "branch": {
+    "predicate": "floaters",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.detachedPieceGapPx",
+       "op": "ge",
+       "value": 5
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "floaters"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T01:38:47",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-1\\.neyvia\\autopilot-model\\74287f430bc84d18a9af64af1a501488.json",
+    "tokens": {
+     "input": 16186,
+     "cachedInput": 0,
+     "output": 1156,
+     "reasoningOutput": 337,
+     "total": 17342
+    },
+    "requestedBy": {
+     "type": "floaters",
+     "name": "detached-component-gap",
+     "names": {
+      "detached-component-gap": 5,
+      "detached-component-distance": 5,
+      "detached-component": 2,
+      "detached-piece-gap": 2,
+      "detached-piece-distance": 3,
+      "detached-piece-touching-distance": 1
+     },
+     "descriptions": [
+      "Measure whether small subject-colored components are disconnected from the main subject silhouette.",
+      "Measure whether small subject-colored components are disconnected from the main subject.",
+      "A small orange cube is visibly separated from the main object.",
+      "Detects small subject pieces separated from the main body."
+     ],
+     "measures": [
+      "Segment the subject pixels, identify component regions, and measure the pixel gap between each small component and the main body.",
+      "Segment subject-colored pixels and measure each small component's nearest-pixel distance from the main component.",
+      "Segment subject-colored pixels and measure gaps between small components and the main component.",
+      "Segment subject-colored pixels and measure whether compact components have a clear pixel gap from the main subject silhouette."
+     ],
+     "looks": 18
+    },
+    "rationale": "Closing tiny color breaks and requiring a small, compact, reasonably filled component filters many ridged-surface fragments that caused the flipped-normal false alarms. The reported distance stays zero unless a qualifying component is at least five pixels from the main silhouette, so thin limbs and handles do not trigger the branch.",
+    "run": "D:/NeyviaRuns/VISION/render-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-1\\lens_programs\\detached-orange-piece-gap-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/detached_orange_piece_gap.py",
+   "programSha256": "8f3f6ff01ea5c8853dfc1a1e96374b910dae738577809708bd0d7bee3d346d3b",
+   "status": "active",
+   "decision": {
+    "status": "active",
+    "reasons": [
+     "improves held-out check accuracy within budget"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.8333
+    },
+    "cost": {
+     "medianMs": 18.41,
+     "p95Ms": 44.67,
+     "errors": 0,
+     "images": 144
+    },
+    "at": "2026-10-07T01:39:02",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-1-w4-floaters-detached-component-gap.json"
+   },
+   "cost": {
+    "medianMs": 18.41,
+    "p95Ms": 44.67,
+    "errors": 0,
+    "images": 144
+   }
+  },
+  {
+   "id": "culled-surface-gaps",
+   "inputType": "render",
+   "emits": {
+    "interiorGapRatio": {
+     "type": "number",
+     "cl": "Fraction of the enclosed subject silhouette occupied by interior background gaps of at least four pixels."
+    }
+   },
+   "branch": {
+    "predicate": "flipped-normals",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.interiorGapRatio",
+       "op": "gt",
+       "value": 0.08
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "flipped-normals"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T01:50:46",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-1\\.neyvia\\autopilot-model\\83a9d09b06d4440ab682eb1f4ed93b5b.json",
+    "tokens": {
+     "input": 15909,
+     "cachedInput": 0,
+     "output": 1380,
+     "reasoningOutput": 710,
+     "total": 17289
+    },
+    "requestedBy": {
+     "type": "flipped-normals",
+     "name": "culled-surface-gap",
+     "names": {
+      "culled-surface-gap": 3,
+      "culled-surface-gap-area": 1,
+      "culled-surface-hole-area": 2,
+      "culled-surface-hole-detection": 1
+     },
+     "descriptions": [
+      "Detect narrow background-colored gaps or missing patches within an otherwise continuous subject silhouette, indicating back-face culling of inward-facing surfaces.",
+      "Measure localized holes or unusually thin visible remnants on surfaces that should be closed.",
+      "No holes or missing patches are visible on the crate; no lens measures surface continuity under back-face culling.",
+      "Visible holes or missing patches in the orange object's surface caused by inward-facing faces."
+     ],
+     "measures": [
+      "Measure background-colored connected regions enclosed by the subject's projected silhouette, excluding intentional openings and the outer contour.",
+      "Compare visible subject pixels with expected solid silhouettes and surface continuity under back-face culling.",
+      "Detect holes or background-colored gaps enclosed by the subject silhouette or visible across expected closed surfaces.",
+      "Render with back-face culling and measure contiguous background-colored gaps enclosed by or interrupting the expected subject silhouette."
+     ],
+     "looks": 7
+    },
+    "rationale": "This measures only background regions enclosed inside a lightly closed orange silhouette, so ordinary shading and open spaces between table parts do not count. A gap ratio threshold favors precision while still detecting substantial missing surface patches.",
+    "run": "D:/NeyviaRuns/VISION/render-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-1\\lens_programs\\culled-surface-gaps-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/culled_surface_gaps.py",
+   "programSha256": "7c124c155e82ffd473d0b5105d1666e2cbd99ee121852c7003552fb3e21b514d",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for flipped-normals did not improve (0.750 -> 0.750)",
+     "check precision for flipped-normals 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.75
+    },
+    "cost": {
+     "medianMs": 7.2,
+     "p95Ms": 29.35,
+     "errors": 0,
+     "images": 144
+    },
+    "at": "2026-10-07T01:51:38",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-1-w5-flipped-normals-culled-surface-gap.json"
+   },
+   "cost": {
+    "medianMs": 7.2,
+    "p95Ms": 29.35,
+    "errors": 0,
+    "images": 144
+   }
+  },
+  {
+   "id": "culled-surface-holes",
+   "inputType": "render",
+   "emits": {
+    "culledHoleEvidence": {
+     "type": "number",
+     "cl": "Ratio of substantial, interior background-colored gaps to orange subject pixels."
+    },
+    "culledHoleCount": {
+     "type": "number",
+     "cl": "Count of substantial interior background-colored regions enclosed by the subject silhouette."
+    }
+   },
+   "branch": {
+    "predicate": "flipped-normals",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.culledHoleEvidence",
+       "op": "gt",
+       "value": 0.018
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "flipped-normals"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T02:01:39",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-1\\.neyvia\\autopilot-model\\0f6666bf046347a49617ca2dc2cb61fd.json",
+    "tokens": {
+     "input": 16107,
+     "cachedInput": 0,
+     "output": 1104,
+     "reasoningOutput": 0,
+     "total": 17211
+    },
+    "requestedBy": {
+     "type": "flipped-normals",
+     "name": "culled-surface-hole-area",
+     "names": {
+      "culled-surface-gap": 4,
+      "culled-surface-gap-area": 3,
+      "culled-surface-hole-area": 5,
+      "culled-surface-hole-detection": 1,
+      "culled-surface-hole": 1
+     },
+     "descriptions": [
+      "Detect narrow background-colored gaps or missing patches within an otherwise continuous subject silhouette, indicating back-face culling of inward-facing surfaces.",
+      "Measure localized holes or unusually thin visible remnants on surfaces that should be closed.",
+      "No holes or missing patches are visible on the crate; no lens measures surface continuity under back-face culling.",
+      "Visible holes or missing patches in the orange object's surface caused by inward-facing faces."
+     ],
+     "measures": [
+      "Measure background-colored connected regions enclosed by the subject's projected silhouette, excluding intentional openings and the outer contour.",
+      "Compare visible subject pixels with expected solid silhouettes and surface continuity under back-face culling.",
+      "Detect holes or background-colored gaps enclosed by the subject silhouette or visible across expected closed surfaces.",
+      "Render with back-face culling and measure contiguous background-colored gaps enclosed by or interrupting the expected subject silhouette."
+     ],
+     "looks": 13
+    },
+    "rationale": "This measures only large, interior regions matching the render background, which reduces false alarms from orange shading, thin geometry, and gaps at the cropped silhouette edge. The lower area cutoff keeps the measure sensitive to broad culled patches while requiring distinct evidence before branching.",
+    "run": "D:/NeyviaRuns/VISION/render-1",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-1\\lens_programs\\culled-surface-holes-1.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/culled_surface_holes.py",
+   "programSha256": "7a67942327a3b603da4368368b4cec1fd536b94b6acc616f01c73ad1b4e65bbf",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for flipped-normals did not improve (0.750 -> 0.750)",
+     "check precision for flipped-normals 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.75
+    },
+    "cost": {
+     "medianMs": 5.64,
+     "p95Ms": 33.79,
+     "errors": 0,
+     "images": 144
+    },
+    "at": "2026-10-07T02:04:28",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-1-w6-flipped-normals-culled-surface-hole-area.json"
+   },
+   "cost": {
+    "medianMs": 5.64,
+    "p95Ms": 33.79,
+    "errors": 0,
+    "images": 144
+   }
+  },
+  {
+   "id": "culled-surface-hole-area",
+   "inputType": "render",
+   "emits": {
+    "culledSurfaceHoleArea": {
+     "type": "number",
+     "cl": "Fraction of substantial orange subject pixels replaced by enclosed, floor-like gaps within a compact silhouette."
+    }
+   },
+   "branch": {
+    "predicate": "flipped-normals",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.culledSurfaceHoleArea",
+       "op": "gt",
+       "value": 0.025
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "flipped-normals"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T02:39:46",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-2\\.neyvia\\autopilot-model\\cef73f70f2994111ba9223d1173dc19a.json",
+    "tokens": {
+     "input": 16194,
+     "cachedInput": 0,
+     "output": 1200,
+     "reasoningOutput": 0,
+     "total": 17394
+    },
+    "requestedBy": {
+     "type": "flipped-normals",
+     "name": "culled-surface-hole-area",
+     "names": {
+      "culled-surface-hole-detection": 1,
+      "culled-surface-hole-area": 3,
+      "surface-hole-area": 1
+     },
+     "descriptions": [
+      "Detect holes or see-through patches on the subject caused by inward-facing faces being culled.",
+      "No visible holes or missing patches indicate inward-facing faces.",
+      "Large dark, irregular missing patches and jagged gaps are visible across the emblem's surface, consistent with faces being culled.",
+      "No obvious holes or missing patches are visible, but the render alone cannot certify face orientation."
+     ],
+     "measures": [
+      "Identify interior/background-colored gaps enclosed by the subject silhouette or visible through its surface.",
+      "Render with back-face culling and measure interior/background-colored pixels enclosed by the subject silhouette.",
+      "Measure visible background or interior pixels enclosed by the orange silhouette where a closed surface is expected.",
+      "Measure pixels within the subject silhouette that reveal the background or interior through a surface expected to be closed."
+     ],
+     "looks": 5
+    },
+    "rationale": "Requiring compact subject coverage, larger enclosed gaps, and floor-like color rejects sparse mugs, handles, and articulated-body openings that caused false alarms. The normalized enclosed-gap area still responds to broad patches and jagged holes seen on flipped surfaces, though very sparse or fully open defects may be missed.",
+    "run": "D:/NeyviaRuns/VISION/render-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-2\\lens_programs\\culled-surface-hole-area-2-0fe03087.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/culled_surface_hole_area.py",
+   "programSha256": "0fe03087ac7ad44c47be3bcb61e9a445166ce8e0f1ad8066ccd2949ca9b32408",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for flipped-normals did not improve (0.750 -> 0.750)",
+     "check precision for flipped-normals 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.75
+    },
+    "cost": {
+     "medianMs": 6.22,
+     "p95Ms": 66.92,
+     "errors": 0,
+     "images": 288
+    },
+    "at": "2026-10-07T02:41:57",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-2-w1-flipped-normals-culled-surface-hole-area.json"
+   },
+   "cost": {
+    "medianMs": 6.22,
+    "p95Ms": 66.92,
+    "errors": 0,
+    "images": 288
+   }
+  },
+  {
+   "id": "culled-surface-hole-area-d580075b",
+   "inputType": "render",
+   "emits": {
+    "interiorNeutralPatchRatio": {
+     "type": "number",
+     "cl": "Fraction of filled orange subject silhouette occupied by sizable neutral-colored interior patches that may indicate culled surface holes."
+    }
+   },
+   "branch": {
+    "predicate": "flipped-normals",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.interiorNeutralPatchRatio",
+       "op": "gt",
+       "value": 0.018
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "flipped-normals"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T02:51:14",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-2\\.neyvia\\autopilot-model\\68f50612d0ce4e02b0ecabe1f771eac6.json",
+    "tokens": {
+     "input": 16030,
+     "cachedInput": 12032,
+     "output": 788,
+     "reasoningOutput": 0,
+     "total": 16818
+    },
+    "requestedBy": {
+     "type": "flipped-normals",
+     "name": "culled-surface-hole-area",
+     "names": {
+      "culled-surface-hole-detection": 1,
+      "culled-surface-hole-area": 6,
+      "surface-hole-area": 1
+     },
+     "descriptions": [
+      "Detect holes or see-through patches on the subject caused by inward-facing faces being culled.",
+      "No visible holes or missing patches indicate inward-facing faces.",
+      "Large dark, irregular missing patches and jagged gaps are visible across the emblem's surface, consistent with faces being culled.",
+      "No obvious holes or missing patches are visible, but the render alone cannot certify face orientation."
+     ],
+     "measures": [
+      "Identify interior/background-colored gaps enclosed by the subject silhouette or visible through its surface.",
+      "Render with back-face culling and measure interior/background-colored pixels enclosed by the subject silhouette.",
+      "Measure visible background or interior pixels enclosed by the orange silhouette where a closed surface is expected.",
+      "Measure pixels within the subject silhouette that reveal the background or interior through a surface expected to be closed."
+     ],
+     "looks": 8
+    },
+    "rationale": "The earlier measure counted tiny neutral gaps around small mugs and their handles, so this version requires substantial interior patches and excludes narrow silhouette edges. A filled silhouette with multiple sizeable neutral regions is a more specific cue for the broad irregular see-through areas visible on the boot.",
+    "run": "D:/NeyviaRuns/VISION/render-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-2\\lens_programs\\culled-surface-hole-area-2.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/culled_surface_hole_area_d580075b.py",
+   "programSha256": "d580075b5bd548ce283ec84909fcb68260b52074f9d5a43a6337a6cf6fe3e838",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check accuracy for flipped-normals did not improve (0.750 -> 0.750)",
+     "check precision for flipped-normals 0.000 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.75
+    },
+    "cost": {
+     "medianMs": 9.56,
+     "p95Ms": 61.9,
+     "errors": 0,
+     "images": 288
+    },
+    "at": "2026-10-07T02:52:48",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-2-w2-flipped-normals-culled-surface-hole-area.json"
+   },
+   "cost": {
+    "medianMs": 9.56,
+    "p95Ms": 61.9,
+    "errors": 0,
+    "images": 288
+   }
+  },
+  {
+   "id": "culled-interior-voids",
+   "inputType": "render",
+   "emits": {
+    "interiorVoidRatio": {
+     "type": "number",
+     "cl": "Fraction of the filled orange subject silhouette occupied by neutral interior pixels consistent with see-through surface gaps."
+    }
+   },
+   "branch": {
+    "predicate": "flipped-normals",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.interiorVoidRatio",
+       "op": "gt",
+       "value": 0.06
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "flipped-normals"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:00:01",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-2\\.neyvia\\autopilot-model\\1e56fe18d7dd4972b49826124aa00ac2.json",
+    "tokens": {
+     "input": 15377,
+     "cachedInput": 0,
+     "output": 1189,
+     "reasoningOutput": 438,
+     "total": 16566
+    },
+    "requestedBy": {
+     "type": "flipped-normals",
+     "name": "culled-surface-hole-area",
+     "names": {
+      "culled-surface-hole-detection": 1,
+      "culled-surface-hole-area": 8,
+      "surface-hole-area": 1,
+      "subject-surface-hole-area": 1
+     },
+     "descriptions": [
+      "Detect holes or see-through patches on the subject caused by inward-facing faces being culled.",
+      "No visible holes or missing patches indicate inward-facing faces.",
+      "Large dark, irregular missing patches and jagged gaps are visible across the emblem's surface, consistent with faces being culled.",
+      "No obvious holes or missing patches are visible, but the render alone cannot certify face orientation."
+     ],
+     "measures": [
+      "Identify interior/background-colored gaps enclosed by the subject silhouette or visible through its surface.",
+      "Render with back-face culling and measure interior/background-colored pixels enclosed by the subject silhouette.",
+      "Measure visible background or interior pixels enclosed by the orange silhouette where a closed surface is expected.",
+      "Measure pixels within the subject silhouette that reveal the background or interior through a surface expected to be closed."
+     ],
+     "looks": 11
+    },
+    "rationale": "The lens closes small raster seams around the orange silhouette, then measures neutral floor or background pixels inside that filled shape, which captures visible culled patches while excluding most orange shading. A modest area threshold favors broad missing surface over narrow legs, handles, and incidental gaps; very small or fully open gaps may remain undetected.",
+    "run": "D:/NeyviaRuns/VISION/render-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-2\\lens_programs\\culled-interior-voids-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/culled_interior_voids.py",
+   "programSha256": "7425f5be42148d9041a28e3292ecb401efbf04fe8cdd98311a1203a90da59735",
+   "status": "retired",
+   "decision": {
+    "status": "retired",
+    "reasons": [
+     "improves held-out check accuracy within budget"
+    ],
+    "checkAccuracy": {
+     "without": 0.75,
+     "with": 0.7639
+    },
+    "cost": {
+     "medianMs": 7.63,
+     "p95Ms": 49.23,
+     "errors": 0,
+     "images": 288
+    },
+    "at": "2026-10-07T03:02:03",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-2-w3-flipped-normals-culled-surface-hole-area.json",
+    "evidence": {
+     "lens": "culled-interior-voids",
+     "predicate": "flipped-normals",
+     "checkPositives": 42,
+     "checkNetGain": 1,
+     "renders": 672
+    },
+    "retireReason": "insufficient check evidence (positives >= 5 and net gain >= 2 required)"
+   },
+   "cost": {
+    "medianMs": 7.63,
+    "p95Ms": 49.23,
+    "errors": 0,
+    "images": 288
+   }
+  },
+  {
+   "id": "subject-height-scale",
+   "inputType": "render",
+   "emits": {
+    "heightScaleDeviation": {
+     "type": "number",
+     "cl": "Scale deviation from the expected close-view frame-height range or, in front view, declared subject-to-reference height ratio."
+    }
+   },
+   "branch": {
+    "predicate": "wrong-scale",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.heightScaleDeviation",
+       "op": "gt",
+       "value": 1.5
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "wrong-scale"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:12:34",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-2\\.neyvia\\autopilot-model\\99d135577fe84a4d9106f82555dea54a.json",
+    "tokens": {
+     "input": 16011,
+     "cachedInput": 12032,
+     "output": 1189,
+     "reasoningOutput": 516,
+     "total": 17200
+    },
+    "requestedBy": {
+     "type": "wrong-scale",
+     "name": "subject-to-reference-height-ratio",
+     "names": {
+      "mannequin-height-ratio": 1,
+      "subject-height-ratio": 2,
+      "subject-to-reference-height-ratio": 29,
+      "subject-height-to-reference-height-ratio": 4,
+      "subject-height-to-reference-ratio": 4,
+      "subject-height-to-reference-height": 1,
+      "subject-projected-height-ratio": 1
+     },
+     "descriptions": [
+      "Compare the subject's apparent height with the 1.8 m mannequin to assess whether it matches its declared 0.25 m height.",
+      "Compares the subject's apparent height with the 1.8 m mannequin and its declared 1.6 m height.",
+      "Compares the subject's apparent height with the 1.8 m reference mannequin.",
+      "Projected subject height compared with the mannequin height, adjusted for the declared real-world heights."
+     ],
+     "measures": [
+      "Ratio of subject pixel height to mannequin pixel height, adjusted for view and depth.",
+      "Compare projected vertical extents of subject and mannequin, accounting for their placement and view.",
+      "Ratio of subject bounding-box height to mannequin bounding-box height.",
+      "Measure vertical pixel extents of the subject and mannequin and compute (subject px / reference px) × (1.8 m / 1.75 m); flag substantial deviation from 1."
+     ],
+     "looks": 42
+    },
+    "rationale": "This recognizes every view name containing “close” and measures close views against the stated 25–60% framing range, so a boot-sized subject occupying a normal share of the frame is not flagged. Front views compare projected subject and mannequin heights against their declared real heights, while the 1.5 threshold filters smaller projection and bounding-box differences.",
+    "run": "D:/NeyviaRuns/VISION/render-2",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-2\\lens_programs\\subject-height-scale-2.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/subject_height_scale.py",
+   "programSha256": "f0ecfe98ac08dfdbaf6b85fd1e1e2215f9fdd933090c9ade1d7425d5fa649f03",
+   "status": "rejected",
+   "decision": {
+    "status": "rejected",
+    "reasons": [
+     "check precision for wrong-scale 0.739 below floor 0.90"
+    ],
+    "checkAccuracy": {
+     "without": 0.8056,
+     "with": 0.9028
+    },
+    "cost": {
+     "medianMs": 0.02,
+     "p95Ms": 0.04,
+     "errors": 0,
+     "images": 288
+    },
+    "at": "2026-10-07T03:13:01",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-2-w4-wrong-scale-subject-to-reference-height-ratio.json"
+   },
+   "cost": {
+    "medianMs": 0.02,
+    "p95Ms": 0.04,
+    "errors": 0,
+    "images": 288
+   }
+  },
+  {
+   "id": "subject-reference-height-ratio",
+   "inputType": "render",
+   "emits": {
+    "subjectHeightRatio": {
+     "type": "number",
+     "cl": "In front view, observed subject-to-mannequin pixel height ratio divided by the declared real-world ratio; in close views, reports subject height as a fraction of the frame."
+    }
+   },
+   "branch": {
+    "predicate": "wrong-scale",
+    "condition": {
+     "all": [
+      {
+       "field": "kind",
+       "op": "eq",
+       "value": "object"
+      },
+      {
+       "field": "measurements.subjectHeightRatio",
+       "op": "gt",
+       "value": 1.7
+      }
+     ]
+    }
+   },
+   "predicates": [
+    "wrong-scale"
+   ],
+   "provenance": {
+    "author": "gpt-6-luna via codex exec (autopilot_model.decide)",
+    "at": "2026-10-07T03:23:58",
+    "receipt": "D:\\NeyviaRuns\\VISION\\render-3\\.neyvia\\autopilot-model\\803116b7d3f4449bb76c8cefa19b9f4d.json",
+    "tokens": {
+     "input": 15476,
+     "cachedInput": 0,
+     "output": 1049,
+     "reasoningOutput": 501,
+     "total": 16525
+    },
+    "requestedBy": {
+     "type": "wrong-scale",
+     "name": "subject-to-reference-height-ratio",
+     "names": {
+      "subject-to-reference-scale-ratio": 1,
+      "subject-to-reference-height-ratio": 15,
+      "subject-height-to-reference-height-ratio": 4,
+      "subject-to-reference-size-ratio": 2,
+      "subject-height-to-reference-ratio": 1
+     },
+     "descriptions": [
+      "Compare the subject's apparent height with the reference mannequin's apparent height to determine whether it matches the declared 1.1 m scale.",
+      "Compares the subject's visible height with the 1.8 m reference mannequin, accounting for the declared 1.1 m subject height.",
+      "The close view omits the mannequin, so the subject's real-world size cannot be checked against the 1.8 m reference. The object appears compact, but this view alone cannot certify declared 0.32 m height.",
+      "Compare the subject's pixel height with the reference mannequin's pixel height and its declared real-world height."
+     ],
+     "measures": [
+      "Measure the orange subject's vertical pixel extent and divide by the mannequin's vertical pixel extent; compare with the expected ratio 1.1/1.8.",
+      "Measure vertical pixel extent of the orange subject and mannequin in the render, then compare their ratio with 1.1/1.8.",
+      "In the front view, divide the subject's pixel height by the mannequin's pixel height and compare with the expected projected ratio for 0.32 m versus 1.8 m.",
+      "Measure vertical pixel extents of both silhouettes in the render and compare the observed ratio to the expected 0.32/1.8 ratio, accounting for their positions in the same scene."
+     ],
+     "looks": 23
+    },
+    "rationale": "A front view can compare both silhouettes directly, so the measurement normalizes their pixel-height ratio by the declared height ratio and flags substantial oversizing. Close views omit the mannequin; there the same fact is frame occupancy, with values above 0.60 indicating the subject exceeds the stated typical framing range.",
+    "run": "D:/NeyviaRuns/VISION/render-3",
+    "runProgram": "D:\\NeyviaRuns\\VISION\\render-3\\lens_programs\\subject-reference-height-ratio-0.py"
+   },
+   "program": "src/grant_agent/scene_core/lens_programs/subject_reference_height_ratio.py",
+   "programSha256": "768fd4819f23eba8e6673396bbdc48505e8c2a725436c36beb78d5d4479e0ce4",
+   "status": "active",
+   "decision": {
+    "status": "active",
+    "reasons": [
+     "improves held-out check accuracy within budget"
+    ],
+    "checkAccuracy": {
+     "without": 0.8274,
+     "with": 0.8452
+    },
+    "cost": {
+     "medianMs": 0.02,
+     "p95Ms": 0.03,
+     "errors": 0,
+     "images": 672
+    },
+    "at": "2026-10-07T03:25:13",
+    "receipt": "C:\\Users\\user\\Projects\\nx-laya-vision\\scripts\\evidence\\VISION-lenses\\render-3-w1-wrong-scale-subject-to-reference-height-ratio.json"
+   },
+   "cost": {
+    "medianMs": 0.02,
+    "p95Ms": 0.03,
+    "errors": 0,
+    "images": 672
+   }
+  }
+ ],
+ "note": "Program lenses written by gpt-6-luna for observables named by model looks (plan 24). Only status \"active\" runs; rejected and retired entries are kept with their decision receipts.",
+ "updatedAt": "2026-10-07T04:42:21"
+}

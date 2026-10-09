@@ -1,0 +1,39 @@
+{
+  "area": "connections",
+  "module": "grant_agent.proofs_connections",
+  "self_check": "self_check",
+  "manuals": [
+    "connections"
+  ],
+  "networkContracts": [],
+  "portRoles": [],
+  "contracts": [
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_connections.check_cards",
+        "grant_agent.neyvia_connections.status",
+        "grant_agent.proofs_connections.self_check"
+      ],
+      "claim": "Every connection has an honest state, a plain reason and a next step. Sign-in uses the provider's own flow: Claude, Codex and OpenCode in their terminal, Kimi's native browser flow. A test receipt only counts while connected; account material never reaches the card.",
+      "id": "conn.screen.invariants",
+      "impact": [
+        "Runtime page and first-run Connect step"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.connections_install.install",
+        "grant_agent.connections_install.run_hidden",
+        "grant_agent.connections_install.install_package",
+        "grant_agent.neyvia_connections.check_cards"
+      ],
+      "claim": "No install starts before the exact consent; fixed official package routes run hidden, stream progress, install missing prerequisites, and verify the version before success. Failure or restart offers Retry.",
+      "id": "conn.install.lifecycle",
+      "impact": [
+        "Connections install and Retry"
+      ],
+      "phase": "post"
+    }
+  ]
+}

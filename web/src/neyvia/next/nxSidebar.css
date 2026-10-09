@@ -1,0 +1,264 @@
+/* Sidebar tree: projects are branches, chats are leaves (07 §3–4). */
+
+.nx .nx-side-section-row { display: flex; align-items: center; gap: var(--nx-space-2); }
+.nx .nx-side-section-row > .nx-side-section-head { flex: 1 1 auto; min-width: 0; }
+.nx .nx-side-section.is-running > .nx-side-section-row .nx-side-section-count { color: var(--nx-state-running-text); }
+.nx .nx-side-section.is-nofolder,
+.nx .nx-side-section.is-fallen { margin-top: var(--nx-space-14); padding-top: var(--nx-space-8); border-top: 1px solid var(--nx-line); }
+
+.nx .nx-side-label {
+  display: flex; align-items: center; justify-content: space-between; margin: var(--nx-space-14) 0 0; padding: 0 var(--nx-space-2) 0 var(--nx-space-8);
+  font-size: var(--nx-fs-xs); font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--nx-faint);
+}
+
+/* A branch: the vertical line its leaves hang from. */
+.nx .nx-branch { position: relative; display: grid; gap: var(--nx-row-gap); margin-left: var(--nx-space-14); padding-left: var(--nx-space-6); }
+.nx .nx-branch::before {
+  content: ""; position: absolute; left: 0; top: 2px; bottom: 10px; width: 1px;
+  background: linear-gradient(var(--nx-line-strong), var(--nx-line-strong) 70%, transparent);
+}
+.nx .nx-branch.is-flat { margin-left: 0; padding-left: 0; }
+.nx .nx-branch.is-flat::before { display: none; }
+.nx .nx-branch-empty { margin: var(--nx-space-2) 0 var(--nx-space-4) var(--nx-space-20); font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+
+.nx .nx-leaf { position: relative; }
+.nx .nx-leaf-head { position: relative; }
+.nx .nx-leaf-light {
+  position: absolute; left: -9px; top: 50%; width: 7px; height: 7px; margin-top: calc(-1 * var(--nx-space-3)); border-radius: 50%;
+  background: var(--nx-state-ok); box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-sidebar); z-index: 1;
+  transition: background var(--nx-settle) var(--nx-spring-settle), transform var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-branch.is-flat .nx-leaf-light { display: none; }
+.nx .nx-leaf.is-running .nx-leaf-light { background: var(--nx-state-running); animation: nx-leaf-glow var(--nx-breathe) var(--nx-ease-loop) infinite; }
+.nx .nx-leaf.is-needs .nx-leaf-light { background: var(--nx-state-needs); }
+.nx .nx-leaf.is-error .nx-leaf-light { background: var(--nx-state-error); }
+.nx .nx-leaf.is-stale .nx-leaf-light { background: var(--nx-state-stale); transform: scale(0.85); }
+.nx .nx-leaf.is-stale .nx-row-title { color: var(--nx-muted); }
+.nx .nx-leaf-head:hover .nx-leaf-light { transform: scale(1.25); }
+@keyframes nx-leaf-glow {
+  0%, 100% { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-sidebar), 0 0 0 var(--nx-stroke-strong) color-mix(in srgb, var(--nx-state-running) 0%, transparent); }
+  50% { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-sidebar), 0 0 0 var(--nx-space-5) color-mix(in srgb, var(--nx-state-running) 22%, transparent); }
+}
+
+/* Pin / archive on hover or keyboard focus; they cover the time, not the title. */
+.nx .nx-leaf-actions {
+  position: absolute; right: 4px; top: calc(var(--nx-row-pad) - 3px); display: flex; gap: var(--nx-space-1);
+  opacity: 0; pointer-events: none; transition: opacity var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-leaf-head:hover .nx-leaf-actions,
+.nx .nx-leaf-head:focus-within .nx-leaf-actions { opacity: 1; pointer-events: auto; }
+.nx .nx-leaf-head:hover .nx-row-side,
+.nx .nx-leaf-head:focus-within .nx-row-side { visibility: hidden; }
+.nx .nx-leaf-act {
+  display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--nx-r-xs); color: var(--nx-muted);
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-leaf-act:hover { background: var(--nx-hover); color: var(--nx-text); }
+
+/* No folder: Images / Quick / Other */
+.nx .nx-nofolder-group + .nx-nofolder-group { margin-top: var(--nx-space-4); }
+.nx .nx-nofolder-head {
+  display: flex; align-items: center; gap: var(--nx-space-6); height: 24px; padding: 0 var(--nx-space-8) 0 var(--nx-space-20);
+  font-size: var(--nx-fs-xs); color: var(--nx-faint);
+}
+.nx .nx-nofolder-head > span:nth-child(2) { flex: 1 1 auto; }
+
+.nx .nx-fallen { display: flex; align-items: center; gap: var(--nx-space-4); padding: 0 var(--nx-space-4) 0 var(--nx-space-20); }
+.nx .nx-fallen-title {
+  flex: 1 1 auto; min-width: 0; height: 28px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: var(--nx-fs-sm); color: var(--nx-muted); border-radius: var(--nx-r-xs); padding: 0 var(--nx-space-6);
+}
+.nx .nx-fallen-title:hover { color: var(--nx-text-2); background: var(--nx-hover); }
+
+/* The tidy chip: appears only when stale chats pile up. */
+.nx .nx-tidy {
+  flex: none; display: flex; align-items: center; gap: var(--nx-space-8); margin: 0 var(--nx-space-10) var(--nx-space-8); padding: var(--nx-space-6) var(--nx-space-6) var(--nx-space-6) var(--nx-space-10);
+  border-radius: var(--nx-r-sm); font-size: var(--nx-fs-sm); color: var(--nx-text-2);
+  background: color-mix(in srgb, var(--nx-state-stale) 12%, transparent);
+  box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-state-stale) 35%, transparent);
+  animation: nx-rise var(--nx-settle) var(--nx-spring-settle) both;
+}
+.nx .nx-tidy > .nx-icon { color: var(--nx-state-stale); }
+.nx .nx-tidy > span { flex: 1 1 auto; }
+.nx .nx-tidy-go { height: 24px; padding: 0 var(--nx-space-10); border-radius: var(--nx-r-xs); font-weight: 500; color: var(--nx-text); background: var(--nx-hover); }
+.nx .nx-tidy-go:hover { background: var(--nx-active); }
+@keyframes nx-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* Cleanup rules popover */
+.nx .nx-cleanup { display: grid; gap: var(--nx-space-10); padding: var(--nx-space-12); font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx .nx-cleanup > strong { color: var(--nx-text); font-size: var(--nx-fs); font-weight: 600; }
+.nx .nx-cleanup p { line-height: 1.45; }
+.nx .nx-cleanup-never { color: var(--nx-faint); font-size: var(--nx-fs-xs); }
+.nx .nx-cleanup-actions { display: flex; justify-content: space-between; gap: var(--nx-space-8); padding-top: var(--nx-space-4); border-top: 1px solid var(--nx-line); }
+.nx .nx-field { display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-10); }
+.nx .nx-field-label { color: var(--nx-text-2); }
+.nx .nx-field-input { display: flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-field-input input {
+  width: 52px; height: 26px; padding: 0 var(--nx-space-6); border-radius: var(--nx-r-xs); text-align: right; font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--nx-text) 5%, transparent); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+}
+.nx .nx-field-input input:focus { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-accent-hi); }
+.nx .nx-field-input input { -moz-appearance: textfield; appearance: textfield; }
+.nx .nx-field-input input::-webkit-inner-spin-button,
+.nx .nx-field-input input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Tidy preview (sidebar chip, cleanup popover, Settings): what would be archived, then confirm. */
+.nx .nx-tidy-preview { display: grid; gap: var(--nx-space-10); padding: var(--nx-space-12); font-size: var(--nx-fs-sm); color: var(--nx-muted); min-width: 0; }
+.nx .nx-tidy-preview > strong { color: var(--nx-text); font-size: var(--nx-fs); font-weight: 600; }
+.nx .nx-tidy-preview p { line-height: 1.45; margin: 0; }
+.nx .nx-tidy-preview.is-busy { display: flex; align-items: center; gap: var(--nx-space-8); }
+.nx .nx-tidy-list { display: grid; gap: var(--nx-space-2); max-height: 220px; overflow: auto; margin: 0; padding: var(--nx-space-4); list-style: none; border-radius: var(--nx-r-sm); background: color-mix(in srgb, var(--nx-text) 3%, transparent); }
+.nx .nx-tidy-list li { display: flex; align-items: center; gap: var(--nx-space-8); min-width: 0; padding: var(--nx-space-4) var(--nx-space-6); color: var(--nx-text-2); }
+.nx .nx-tidy-list li > .nx-icon { flex: none; color: var(--nx-state-stale); }
+.nx .nx-tidy-list li span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx .nx-tidy-list li.is-more { color: var(--nx-faint); }
+.nx .nx-tidy-kept { display: flex; align-items: flex-start; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); }
+.nx .nx-tidy-kept > .nx-icon { flex: none; margin-top: var(--nx-space-2); color: var(--nx-accent-text); }
+.nx .nx-tidy-error { color: var(--nx-red); }
+.nx .nx-cleanup-auto .nx-field-label { display: grid; gap: var(--nx-space-2); }
+.nx .nx-cleanup-auto small { color: var(--nx-faint); font-size: var(--nx-fs-xs); }
+.nx .nx-cleanup-auto input[type="checkbox"] { flex: none; width: 16px; height: 16px; accent-color: var(--nx-accent); }
+
+/* Settings pane */
+.nx .nx-set-card { display: grid; gap: var(--nx-space-12); }
+.nx .nx-set-rules { padding: 0; max-width: 420px; }
+.nx .nx-set-tidy { border-radius: var(--nx-r); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); max-width: 520px; }
+.nx .nx-set-row { display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-12); flex-wrap: wrap; font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-set-row.is-actions { justify-content: flex-start; }
+.nx .nx-set-row > span:has(.nx-set-hint) { display: grid; gap: var(--nx-space-2); }
+.nx .nx-set-hint { font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-set-last { display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-10); flex-wrap: wrap; padding: var(--nx-space-6) var(--nx-space-6) var(--nx-space-6) var(--nx-space-10); border-radius: var(--nx-r-sm); background: color-mix(in srgb, var(--nx-text) 4%, transparent); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+
+/* ---------- T7: agents under their chat ---------- */
+.nx .nx-kids { min-width: 0; margin: 0 0 var(--nx-space-2) var(--nx-space-28); }
+.nx .nx-kids-toggle {
+  display: flex; align-items: center; gap: var(--nx-space-5); max-width: 100%; height: 22px; padding: 0 var(--nx-space-8) 0 var(--nx-space-4); border-radius: var(--nx-r-xs);
+  font-size: var(--nx-fs-xs); color: var(--nx-muted); white-space: nowrap; overflow: hidden;
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-kids-toggle:hover { background: var(--nx-hover); color: var(--nx-text-2); }
+.nx .nx-kids-toggle[aria-expanded="true"] .nx-chev { transform: rotate(90deg); }
+.nx .nx-kids-toggle .is-live { color: var(--nx-state-running-text); }
+.nx .nx-kids-toggle .is-red { color: var(--nx-red); }
+.nx .nx-kids-list { position: relative; display: grid; gap: var(--nx-space-1); min-width: 0; margin: var(--nx-space-2) 0 var(--nx-space-4) var(--nx-space-9); padding: 0 0 0 var(--nx-space-6); list-style: none; }
+.nx .nx-kid { min-width: 0; }
+.nx .nx-kids-list::before {
+  content: ""; position: absolute; left: 0; top: 2px; bottom: 8px; width: 1px;
+  background: linear-gradient(var(--nx-line-strong), var(--nx-line-strong) 70%, transparent);
+}
+.nx .nx-kids-list .nx-kids-list { margin-top: var(--nx-space-1); margin-left: var(--nx-space-10); }
+.nx .nx-kid-row {
+  display: flex; align-items: center; gap: var(--nx-space-7); width: 100%; min-width: 0; height: 24px; padding: 0 var(--nx-space-6); border-radius: var(--nx-r-xs);
+  font-size: var(--nx-fs-sm); color: var(--nx-text-2); text-align: left;
+}
+.nx .nx-kid-row.is-link { transition: background var(--nx-fast) var(--nx-ease); }
+.nx .nx-kid-row.is-link:hover { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-kid-row.is-active { background: var(--nx-active); color: var(--nx-text); }
+.nx .nx-kid-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-kid-row.is-link .nx-kid-title { text-decoration: underline; text-decoration-color: var(--nx-line-strong); text-underline-offset: 3px; }
+.nx .nx-kid-state { flex: none; white-space: nowrap; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-kid-state.is-live { color: var(--nx-state-running-text); }
+.nx .nx-kid-state.is-red { color: var(--nx-red); }
+.nx .nx-kids-more { height: 22px; padding: 0 var(--nx-space-6); border-radius: var(--nx-r-xs); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-kids-more:hover { background: var(--nx-hover); color: var(--nx-text-2); }
+
+/* No folder: the PC is still reading some chats to put them in their lane. */
+.nx .nx-nofolder-reading { display: flex; align-items: center; gap: var(--nx-space-6); margin: 0 0 var(--nx-space-4); padding: 0 var(--nx-space-8) 0 var(--nx-space-20); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-sort-go { height: 24px; padding: 0 var(--nx-space-8); color: var(--nx-muted); }
+.nx .nx-sort-go:hover, .nx .nx-sort-go[aria-expanded="true"] { color: var(--nx-text); }
+
+/* ---------- T7: Sort into folders (preview, confirm, undo) ---------- */
+.nx .nx-sort { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-10); padding: var(--nx-space-12); font-size: var(--nx-fs-sm); color: var(--nx-muted); min-width: 0; }
+.nx .nx-sort > strong { color: var(--nx-text); font-size: var(--nx-fs); font-weight: 600; }
+.nx .nx-sort p { margin: 0; line-height: 1.45; }
+.nx .nx-sort.is-busy { display: flex; align-items: flex-start; gap: var(--nx-space-8); color: var(--nx-text-2); line-height: 1.45; }
+.nx .nx-sort.is-busy > .nx-spinner { margin-top: var(--nx-space-2); }
+.nx .nx-sort.is-busy small { display: block; color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.nx .nx-sort-groups { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-8); max-height: 340px; overflow: auto; margin: 0; padding: 0; list-style: none; }
+.nx .nx-sort-group { min-width: 0; border-radius: var(--nx-r-sm); background: color-mix(in srgb, var(--nx-text) 3%, transparent); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-sort-group.is-chosen { background: var(--nx-accent-soft); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 40%, transparent); }
+.nx .nx-sort-group-head { display: flex; align-items: center; gap: var(--nx-space-8); min-width: 0; padding: var(--nx-space-8) var(--nx-space-10) var(--nx-space-4); color: var(--nx-text); cursor: pointer; }
+.nx .nx-sort-group-head input { flex: none; width: 15px; height: 15px; accent-color: var(--nx-accent); }
+.nx .nx-sort-group-head > .nx-icon { flex: none; color: var(--nx-accent-text); }
+.nx .nx-sort-group-head .nx-tag { flex: none; white-space: nowrap; }
+.nx .nx-sort-group-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.nx .nx-sort-chats { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-1); margin: 0; padding: 0 var(--nx-space-10) var(--nx-space-8) var(--nx-space-40); list-style: none; }
+.nx .nx-sort-chats li { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--nx-text-2); font-size: var(--nx-fs-sm); }
+.nx .nx-sort-chats li.is-more { color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.nx .nx-sort-alert { display: flex; align-items: flex-start; gap: var(--nx-space-7); color: var(--nx-text-2); }
+.nx .nx-sort-alert > .nx-icon { flex: none; margin-top: var(--nx-space-2); color: var(--nx-gold); }
+
+/* ---------- T7: collapsed icon rail ---------- */
+.nx .nx-region-rail { flex: none; display: flex; min-height: 0; }
+.nx .nx-rail {
+  width: 52px; flex: none; display: flex; flex-direction: column; align-items: center; min-height: 0;
+  background: var(--nx-sidebar); border-right: 1px solid var(--nx-line);
+}
+.nx .nx-rail-top { display: grid; gap: var(--nx-space-2); padding: var(--nx-space-10) 0 var(--nx-space-8); justify-items: center; }
+.nx .nx-rail-list { flex: 1 1 auto; min-height: 0; width: 100%; display: grid; align-content: start; justify-items: center; gap: 0; padding: 0 0 var(--nx-space-8); overflow-y: auto; overflow-x: hidden; }
+.nx .nx-rail-group { display: grid; gap: var(--nx-space-4); justify-items: center; width: 100%; padding: var(--nx-space-8) 0; }
+.nx .nx-rail-group + .nx-rail-group { border-top: 1px solid var(--nx-line); }
+.nx .nx-rail-chat, .nx .nx-rail-project {
+  position: relative; display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--nx-r); color: var(--nx-muted);
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-rail-chat:hover, .nx .nx-rail-project:hover { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-rail-chat.is-active { background: var(--nx-active); }
+.nx .nx-rail-chat.is-active::before { content: ""; position: absolute; left: -8px; top: 9px; bottom: 9px; width: 2px; border-radius: var(--nx-r-xxs); background: var(--nx-accent-hi); }
+.nx .nx-rail-initial {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -38%); font-size: var(--nx-fs-2xs); font-weight: 600; line-height: 1; color: var(--nx-text-2); pointer-events: none;
+}
+.nx .nx-rail-light, .nx .nx-rail-unread {
+  position: absolute; right: 4px; top: 4px; width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-sidebar);
+}
+.nx .nx-rail-light.is-live { background: var(--nx-state-running); animation: nx-pulse var(--nx-pulse) var(--nx-ease-loop) infinite; }
+.nx .nx-rail-light.is-gold { background: var(--nx-state-needs); }
+.nx .nx-rail-light.is-red { background: var(--nx-state-error); }
+.nx .nx-rail-unread { background: var(--nx-accent-hi); }
+.nx .nx-rail-foot { display: grid; place-items: center; width: 100%; height: 40px; border-top: 1px solid var(--nx-line); padding-bottom: var(--nx-safe-bottom); }
+
+/* The hover/focus preview beside the rail. */
+.nx .nx-peek {
+  position: fixed; z-index: 60; width: 300px; max-width: calc(100vw - 80px); display: grid; gap: var(--nx-space-6); padding: var(--nx-space-12) var(--nx-space-14);
+  border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: var(--nx-shadow-pop);
+  font-size: var(--nx-fs-sm); color: var(--nx-text-2); pointer-events: none;
+  animation: nx-pop-in var(--nx-med) var(--nx-ease);
+}
+.nx .nx-peek-head { display: flex; align-items: center; gap: var(--nx-space-8); min-width: 0; }
+.nx .nx-peek-head > .nx-icon { flex: none; color: var(--nx-accent-text); }
+.nx .nx-peek-head strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--nx-text); font-size: var(--nx-fs); font-weight: 600; }
+.nx .nx-peek-meta { display: flex; flex-wrap: wrap; gap: var(--nx-space-4); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-peek-meta .is-live { color: var(--nx-state-running-text); }
+.nx .nx-peek-status { display: flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); }
+.nx .nx-peek-status.is-live { color: var(--nx-state-running-text); }
+.nx .nx-peek-status.is-gold { color: var(--nx-gold); }
+.nx .nx-peek-status.is-red { color: var(--nx-red); }
+.nx .nx-peek-text {
+  margin: var(--nx-space-2) 0 0; line-height: 1.45; color: var(--nx-text-2);
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
+}
+.nx .nx-peek-note { display: flex; align-items: center; gap: var(--nx-space-6); margin: var(--nx-space-2) 0 0; color: var(--nx-muted); }
+.nx .nx-peek-agents { display: grid; gap: var(--nx-space-4); padding-top: var(--nx-space-8); border-top: 1px solid var(--nx-line); }
+.nx .nx-peek-agents-head { font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-muted); }
+.nx .nx-peek-agents ul, .nx .nx-peek-list { display: grid; gap: var(--nx-space-3); margin: 0; padding: 0; list-style: none; }
+.nx .nx-peek-agents li, .nx .nx-peek-list li { display: flex; align-items: center; gap: var(--nx-space-7); min-width: 0; }
+.nx .nx-peek-agents li > span:not(.nx-dot), .nx .nx-peek-list li > span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-peek-agents li em { flex: none; font-style: normal; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-peek-list time { flex: none; font-size: var(--nx-fs-xs); color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+
+/* The credits line under the More menu notice (details library: docs/design/details-library.md). */
+.nx .nx-menu-legal + .nx-menu-legal { margin-top: 0; padding-top: 0; border-top: 0; }
+.nx .nx-menu-legal a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+/* Chats started headless (codex exec): a small folder-named chip before the title. */
+.nx .nx-row-bg { display: inline-flex; align-items: center; gap: var(--nx-space-3); margin-right: var(--nx-space-6); padding: 0 var(--nx-space-5); border-radius: var(--nx-r-xs); vertical-align: 1px;
+  font-family: var(--nx-mono); font-size: var(--nx-fs-2xs); color: var(--nx-muted); background: var(--nx-hover); max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Sources that can't be listed: one quiet line under the chats, details in the tooltip. */
+.nx .nx-side-sources { display: flex; align-items: center; gap: var(--nx-space-6); margin: var(--nx-space-10) var(--nx-space-10) 0; min-width: 0; font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-side-sources-marks { display: inline-flex; flex: none; gap: var(--nx-space-2); opacity: 0.8; }
+.nx .nx-side-sources-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-side-sources .nx-link { flex: none; margin-left: auto; font-size: var(--nx-fs-xs); }
+/* The chat category switch fits its labels: no clipped "Connected" at the sidebar edge. */
+.nx .nx-side-scope .nx-seg { width: 100%; box-sizing: border-box; }
+.nx .nx-side-scope .nx-seg button { flex: 1 0 auto; min-width: max-content; padding: 0 var(--nx-space-5); }

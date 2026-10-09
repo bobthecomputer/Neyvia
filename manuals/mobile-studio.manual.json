@@ -1,0 +1,2058 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "mobile-studio",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-c-mobile",
+    "manifests": [
+      "config/proofs/proofs-c-mobile.json"
+    ],
+    "startup": {
+      "procedures": [
+        "author-configure-package-reload-reject"
+      ],
+      "runner": "grant_agent.proofs_c_mobile.self_check",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "ios_studio.create_ios_app -> proofs_c_mobile.check_project"
+        ],
+        "claim": "Created Expo authoring files retain requested identity, entrypoint and supported dependency versions.",
+        "id": "proofs-c.mobile.project",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "ios_studio._safe_child"
+        ],
+        "claim": "Creation rejects paths outside selected root before any effects.",
+        "id": "proofs-c.mobile.scope",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "ios_studio.create_ios_app"
+        ],
+        "claim": "Creation requires a valid reverse-domain bundle identifier before writing.",
+        "id": "proofs-c.mobile.bundle-id",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "ios_studio.create_ios_build_capsule -> proofs_c_mobile.check_capsule"
+        ],
+        "claim": "Each capsule retains its source root and exact manifest, excluding generated paths, confidential suffixes and links.",
+        "id": "proofs-c.mobile.capsule",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "ios_studio.save_ios_builder -> proofs_c_mobile.check_config"
+        ],
+        "claim": "Builder metadata persists only the allowed fields and signing references, without passwords.",
+        "id": "proofs-c.mobile.builder-config",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "windows_ios_compiler.save_windows_ios_config -> proofs_c_mobile.check_config"
+        ],
+        "claim": "Compiler preferences validate before writing and persist exactly, without signing passwords.",
+        "id": "proofs-c.mobile.compiler-config",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "windows_ios_compiler._download_verified"
+        ],
+        "claim": "Downloaded bytes match the expected digest before atomic promotion; mismatch never promotes a destination.",
+        "id": "proofs-c.mobile.download-digest",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "windows_ios_compiler._write_info_plist -> proofs_c_mobile.check_plist"
+        ],
+        "claim": "Persisted plist exactly matches identity and iPhoneOS platform metadata.",
+        "id": "proofs-c.mobile.metadata",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "windows_ios_compiler._zip_payload -> proofs_c_mobile.check_package"
+        ],
+        "claim": "IPA archive contains exactly the app files under Payload with unchanged bytes.",
+        "id": "proofs-c.mobile.package",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "windows_ios_compiler._safe_copy_web_assets -> proofs_c_mobile.check_web_assets"
+        ],
+        "claim": "Assets stage inside the app www directory and root-relative links become local links.",
+        "id": "proofs-c.mobile.web-assets",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "windows_ios_compiler._clean_error"
+        ],
+        "claim": "Failure receipts strip terminal control codes and retain bounded useful text.",
+        "id": "proofs-c.mobile.error-text",
+        "impact": [
+          "local app source",
+          "Mobile Studio authoring",
+          "build capsule",
+          "package receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web_backend.FluxioWebBackend.dispatch -> proofs_c_mobile.check_backend"
+        ],
+        "claim": "Mobile authoring, status and compiler configuration commands retain requested workspace, app identity, current recognition and preferences.",
+        "id": "proofs-c.mobile.backend-wiring",
+        "impact": [
+          "authenticated command API",
+          "Mobile Studio source and status",
+          "compiler preferences"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "apple_targets.verify -> apple_bundle.verify_bundle; edge_fixture_mobile.run_apple_artifacts"
+        ],
+        "claim": "Real retained iPhone/iPad/Mac bundles pass independent byte, archive, Mach-O and signature integrity checks; C7 copy mutations must fail without changing originals. No Apple-host trust claim.",
+        "id": "mobile-studio.apple-artifact-integrity",
+        "impact": [
+          "Apple bundles",
+          "archive integrity"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "edge_fixture_mobile.run_apple_preview -> scripts/apple/preview.py + preview.mjs"
+        ],
+        "claim": "C7 captures the real authenticated Scroll Study UI in iPhone/Mac/iPad frames, operates controls and records sandbox storage limits; no native Apple execution claim.",
+        "id": "mobile-studio.apple-preview-rendered",
+        "impact": [
+          "Mobile Studio",
+          "Scroll Study preview"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.browser.capture": {
+      "type": "object",
+      "properties": {
+        "tabId": {
+          "type": "string"
+        },
+        "fullPage": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tabId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "tabId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mobile.build": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": [
+            "ios",
+            "android",
+            "ipados",
+            "macos",
+            "watchos",
+            "tvos",
+            "visionos"
+          ]
+        },
+        "project": {
+          "type": "string"
+        },
+        "waitSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 900
+        },
+        "addShell": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "platform"
+      ]
+    },
+    "neyvia.mobile.create": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "bundleId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "name"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "name": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mobile.install": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "project": {
+          "type": "string"
+        },
+        "avd": {
+          "type": "string"
+        },
+        "waitSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "target": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mobile.preview": {
+      "type": "object",
+      "properties": {
+        "device": {
+          "type": "string",
+          "enum": [
+            "iphone-16-pro",
+            "iphone-16-pro-max",
+            "iphone-16",
+            "iphone-se",
+            "pixel-9",
+            "pixel-9-pro-xl",
+            "ipad-pro-13",
+            "mac-window",
+            "watch-46",
+            "apple-tv",
+            "vision-window"
+          ]
+        },
+        "project": {
+          "type": "string"
+        },
+        "orientation": {
+          "type": "string",
+          "enum": [
+            "portrait",
+            "landscape"
+          ]
+        },
+        "dark": {
+          "type": "boolean"
+        },
+        "startExpo": {
+          "type": "boolean"
+        },
+        "textScale": {
+          "type": "number",
+          "minimum": 0.8,
+          "maximum": 2
+        },
+        "keyboard": {
+          "type": "boolean"
+        }
+      },
+      "required": []
+    },
+    "neyvia.mobile.setup": {
+      "type": "object",
+      "properties": {
+        "part": {
+          "type": "string",
+          "enum": [
+            "ios-compiler"
+          ]
+        },
+        "project": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "part"
+      ]
+    },
+    "neyvia.mobile.simulate": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "instant",
+            "cloud",
+            "device"
+          ]
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "ios",
+            "ipados",
+            "macos",
+            "watchos",
+            "tvos",
+            "visionos"
+          ]
+        },
+        "results": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tier"
+      ]
+    },
+    "neyvia.mobile.status": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.mobile.verify": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "ios",
+            "ipados",
+            "macos",
+            "watchos",
+            "tvos",
+            "visionos"
+          ]
+        }
+      },
+      "required": [
+        "platform"
+      ]
+    }
+  },
+  "chapters": {
+    "apple-targets": {
+      "title": "Windows Apple builds and three simulation tiers",
+      "state": {
+        "apple": {
+          "args": {
+            "project": {
+              "$input": "project"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ]
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.mobile.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read current Apple support, previews and build receipts",
+          "pre": "Existing app; installed direct LLVM; supported web export and bundle identity",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.status",
+          "tool": "neyvia.mobile.status"
+        },
+        "build": {
+          "effect": "Compile, sign and package the selected supported Apple target on Windows",
+          "pre": "Existing app; installed direct LLVM; supported web export and bundle identity",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.build",
+          "tool": "neyvia.mobile.build"
+        },
+        "verify": {
+          "effect": "Re-read bundle and archive; verify target, executable pages, resource and metadata hashes",
+          "pre": "Existing app; installed direct LLVM; supported web export and bundle identity",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.verify",
+          "tool": "neyvia.mobile.verify"
+        },
+        "preview": {
+          "effect": "Persist emulated frame, colour, rem text scaling and optional web keyboard",
+          "pre": "Existing app; installed direct LLVM; supported web export and bundle identity",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.preview",
+          "tool": "neyvia.mobile.preview"
+        },
+        "simulate": {
+          "effect": "Instant browser frame, dormant cloud preparation/import or real-device handoff",
+          "pre": "Existing app; installed direct LLVM; supported web export and bundle identity",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.simulate",
+          "tool": "neyvia.mobile.simulate"
+        },
+        "install": {
+          "effect": "Return Apple sideload/open steps; never claim the device was installed",
+          "pre": "Existing app; installed direct LLVM; supported web export and bundle identity",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.install",
+          "tool": "neyvia.mobile.install"
+        },
+        "sign": {
+          "effect": "Signing is an atomic build phase; Mac ad-hoc, IPA zsign or configured identity/profile",
+          "pre": "Existing app; installed direct LLVM; supported web export and bundle identity",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.build",
+          "tool": "neyvia.mobile.build"
+        },
+        "package": {
+          "effect": "Packaging is an atomic build phase; Mac ZIP retains Unix execute mode; IPA uses Payload",
+          "pre": "Existing app; installed direct LLVM; supported web export and bundle identity",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.build",
+          "tool": "neyvia.mobile.build"
+        },
+        "screenshot": {
+          "effect": "Capture actual native browser PNG pixels and source-bound runtime receipt",
+          "pre": "Existing owned Obscura Apple preview tab; runtime available. No desktop-wide screen capture.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.browser.capture",
+          "tool": "neyvia.browser.capture"
+        }
+      },
+      "checks": {
+        "cloud-off": {
+          "args": {
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "apple.cloudEnabled",
+            "value": false
+          },
+          "tool": "neyvia.mobile.status"
+        },
+        "preview-present": {
+          "args": {
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "preview.ready",
+            "value": true
+          },
+          "tool": "neyvia.mobile.status"
+        },
+        "unsupported-declared": {
+          "args": {
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "apple.targets.watchos.build",
+            "value": false
+          },
+          "tool": "neyvia.mobile.status"
+        },
+        "bundle-valid-ios": {
+          "args": {
+            "platform": "ios",
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.mobile.verify"
+        },
+        "no-native-claim-ios": {
+          "args": {
+            "platform": "ios",
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "nativeExecutionVerified",
+            "value": false
+          },
+          "tool": "neyvia.mobile.verify"
+        },
+        "bundle-valid-ipados": {
+          "args": {
+            "platform": "ipados",
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.mobile.verify"
+        },
+        "no-native-claim-ipados": {
+          "args": {
+            "platform": "ipados",
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "nativeExecutionVerified",
+            "value": false
+          },
+          "tool": "neyvia.mobile.verify"
+        },
+        "bundle-valid-macos": {
+          "args": {
+            "platform": "macos",
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.mobile.verify"
+        },
+        "no-native-claim-macos": {
+          "args": {
+            "platform": "macos",
+            "project": {
+              "$input": "project"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "nativeExecutionVerified",
+            "value": false
+          },
+          "tool": "neyvia.mobile.verify"
+        }
+      },
+      "procedures": {
+        "build-verify-preview-ios": {
+          "goal": "Build a Windows artifact, verify its seals, select its emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "build",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                },
+                "waitSeconds": 60
+              },
+              "save": "build"
+            },
+            {
+              "action": "verify",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "bundle-valid-ios",
+              "save": "outcome"
+            },
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "verify-retained-artifact-ios": {
+          "goal": "Fast repeated byte outcomes without rebuilding or model calls",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "verify",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "bundle-valid-ios",
+              "save": "outcome"
+            },
+            {
+              "action": "verify",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "no-native-claim-ios",
+              "save": "boundary"
+            }
+          ]
+        },
+        "build-verify-preview-ipados": {
+          "goal": "Build a Windows artifact, verify its seals, select its emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "build",
+              "args": {
+                "platform": "ipados",
+                "project": {
+                  "$input": "project"
+                },
+                "waitSeconds": 60
+              },
+              "save": "build"
+            },
+            {
+              "action": "verify",
+              "args": {
+                "platform": "ipados",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "bundle-valid-ipados",
+              "save": "outcome"
+            },
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ipados",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "verify-retained-artifact-ipados": {
+          "goal": "Fast repeated byte outcomes without rebuilding or model calls",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "verify",
+              "args": {
+                "platform": "ipados",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "bundle-valid-ipados",
+              "save": "outcome"
+            },
+            {
+              "action": "verify",
+              "args": {
+                "platform": "ipados",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "no-native-claim-ipados",
+              "save": "boundary"
+            }
+          ]
+        },
+        "build-verify-preview-macos": {
+          "goal": "Build a Windows artifact, verify its seals, select its emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "build",
+              "args": {
+                "platform": "macos",
+                "project": {
+                  "$input": "project"
+                },
+                "waitSeconds": 60
+              },
+              "save": "build"
+            },
+            {
+              "action": "verify",
+              "args": {
+                "platform": "macos",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "bundle-valid-macos",
+              "save": "outcome"
+            },
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "macos",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "verify-retained-artifact-macos": {
+          "goal": "Fast repeated byte outcomes without rebuilding or model calls",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "verify",
+              "args": {
+                "platform": "macos",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "bundle-valid-macos",
+              "save": "outcome"
+            },
+            {
+              "action": "verify",
+              "args": {
+                "platform": "macos",
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "no-native-claim-macos",
+              "save": "boundary"
+            }
+          ]
+        },
+        "prepare-cloud-off": {
+          "goal": "Prepare own-account Simulator capsule without dispatching a run",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "cloud"
+              },
+              "check": "cloud-off",
+              "save": "capsule"
+            }
+          ]
+        },
+        "refuse-unsupported-watch": {
+          "goal": "No unsupported Apple bundle is fabricated",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "check": "unsupported-declared",
+              "save": "support"
+            }
+          ]
+        },
+        "preview-apple": {
+          "goal": "Retain a project-bound emulated preview",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              },
+              "device": {
+                "type": "string",
+                "enum": [
+                  "iphone-16-pro",
+                  "iphone-16-pro-max",
+                  "iphone-16",
+                  "iphone-se",
+                  "pixel-9",
+                  "pixel-9-pro-xl",
+                  "ipad-pro-13",
+                  "mac-window",
+                  "watch-46",
+                  "apple-tv",
+                  "vision-window"
+                ],
+                "default": "iphone-16-pro"
+              },
+              "orientation": {
+                "type": "string",
+                "enum": [
+                  "portrait",
+                  "landscape"
+                ],
+                "default": "portrait"
+              },
+              "dark": {
+                "type": "boolean",
+                "default": false
+              },
+              "textScale": {
+                "type": "number",
+                "minimum": 0.8,
+                "maximum": 2,
+                "default": 1
+              },
+              "keyboard": {
+                "type": "boolean",
+                "default": false
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "preview",
+              "args": {
+                "dark": {
+                  "$input": "dark"
+                },
+                "device": {
+                  "$input": "device"
+                },
+                "keyboard": {
+                  "$input": "keyboard"
+                },
+                "orientation": {
+                  "$input": "orientation"
+                },
+                "project": {
+                  "$input": "project"
+                },
+                "textScale": {
+                  "$input": "textScale"
+                }
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "preview-frame-ios": {
+          "goal": "Retain exact Apple emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "preview-frame-ipados": {
+          "goal": "Retain exact Apple emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ipados",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "preview-frame-macos": {
+          "goal": "Retain exact Apple emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "macos",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "preview-frame-watchos": {
+          "goal": "Retain exact Apple emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "watchos",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "preview-frame-tvos": {
+          "goal": "Retain exact Apple emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "tvos",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "preview-frame-visionos": {
+          "goal": "Retain exact Apple emulated frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "visionos",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "instant"
+              },
+              "check": "preview-present",
+              "save": "preview"
+            }
+          ]
+        },
+        "prepare-cloud-off-ios": {
+          "goal": "Prepare own-account Simulator capsule without dispatching a run",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "cloud"
+              },
+              "check": "cloud-off",
+              "save": "capsule"
+            }
+          ]
+        },
+        "import-cloud-ios": {
+          "goal": "Import hash-bound downloaded outcome without running cloud",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              },
+              "results": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project",
+              "results"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ios",
+                "project": {
+                  "$input": "project"
+                },
+                "results": {
+                  "$input": "results"
+                },
+                "tier": "cloud"
+              },
+              "check": "cloud-off",
+              "save": "result"
+            }
+          ]
+        },
+        "prepare-cloud-off-ipados": {
+          "goal": "Prepare own-account Simulator capsule without dispatching a run",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ipados",
+                "project": {
+                  "$input": "project"
+                },
+                "tier": "cloud"
+              },
+              "check": "cloud-off",
+              "save": "capsule"
+            }
+          ]
+        },
+        "import-cloud-ipados": {
+          "goal": "Import hash-bound downloaded outcome without running cloud",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              },
+              "results": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project",
+              "results"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "simulate",
+              "args": {
+                "platform": "ipados",
+                "project": {
+                  "$input": "project"
+                },
+                "results": {
+                  "$input": "results"
+                },
+                "tier": "cloud"
+              },
+              "check": "cloud-off",
+              "save": "result"
+            }
+          ]
+        },
+        "capture-apple-preview": {
+          "goal": "Capture owned browser preview pixels; never claim Apple OS simulation",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "tabId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tabId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "screenshot",
+              "args": {
+                "tabId": {
+                  "$input": "tabId"
+                }
+              },
+              "save": "capture"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "watchOS/tvOS build",
+          "recovery": "No WKWebView. Separate native renderer required; concept frame only."
+        },
+        {
+          "failure": "visionOS spatial build",
+          "recovery": "WKWebView exists but native runtime/linker/signing lane is absent. Flat web preview only."
+        },
+        {
+          "failure": "Mac cannot open or Apple codesign refuses",
+          "recovery": "Preserve artifact and report Apple-host result; Windows hash integrity cannot prove Gatekeeper acceptance."
+        },
+        {
+          "failure": "Cloud requested",
+          "recovery": "Prepare only; no dispatch tool. Paul installs the workflow in his account, checks minutes/billing and opts in."
+        }
+      ],
+      "frontier": [
+        "No macOS VM on non-Apple hardware; no Apple Simulator on Windows.",
+        "Apple-hardware launch, Apple codesign trust, signing identities/notarization and cloud results need separately exercised host proof.",
+        "Frames emulate web behaviour, not OS APIs. Dynamic Type scales rem/root sizing; fixed-pixel fonts/native IME need device checks.",
+        "Cloud screenshot import is a hash-checked downloaded snapshot, not live streaming or independently authenticated GitHub proof."
+      ],
+      "guidance": [
+        "Mac: universal AppKit/WKWebView app + executable-mode ZIP. Supply native/AppIcon.icns for project artwork; fallback uses Neyvia icon.",
+        "iPad: device family 2, full-screen false, all tablet orientations.",
+        "package/sign are atomic build phases; do not modify a sealed bundle.",
+        "Screenshot proof uses an owned headless browser with final rendered Mobile Studio/Scroll Study state. Never fabricate captures.",
+        "Apple reference: https://developer.apple.com/design/human-interface-guidelines/web-views ; cloud billing: https://docs.github.com/en/billing/concepts/product-billing/github-actions",
+        "Screenshot action uses browser.capture and its native pixel/hash observer on an existing owned Obscura tab. This task used C7 headless rendered journey because the attached MCP transport was not callable. Native screenshot connector was not exercised."
+      ]
+    },
+    "fixcl3-local": {
+      "title": "Exact retained local admission and supervision",
+      "state": {},
+      "actions": {
+        "neyvia.mobile.create": {
+          "effect": "Exact retained mobile.create",
+          "pre": "Saved disposable/local subject; explicit owner approval for arming or creation; never active provider control",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.create",
+          "tool": "neyvia.mobile.create"
+        }
+      },
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Fresh owner state differs from this action subject",
+          "recovery": "Reconcile the specific retained effect; never replay an uncertain launch."
+        }
+      ],
+      "frontier": [
+        "Admission, arming and local starter bytes do not prove provider execution, rendered preview, device build or installation. Active provider controls require a terminal provider witness.",
+        "After mobile.create requests approval, its durable artifact identity can remain uncertain. Reconcile the exact unchanged empty target and use a distinct recovery action ID; automatic replay is refused."
+      ],
+      "guidance": [
+        "CL completion re-reads the owner and compares the exact task graph, source hash, retained control or starter bytes."
+      ]
+    },
+    "overview": {
+      "title": "Web-export frames and Windows iPhone/iPad/Mac builds; Android uses existing SDK",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string"
+              },
+              "orientation": {
+                "type": "string"
+              },
+              "dark": {
+                "type": "boolean"
+              },
+              "jobs": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "device",
+              "orientation",
+              "dark",
+              "jobs"
+            ]
+          },
+          "tool": "neyvia.mobile.status"
+        }
+      },
+      "actions": {
+        "mobile.status": {
+          "effect": "Read app shape/existence, frame, detected SDKs/devices, jobs and latest build receipts",
+          "pre": "Selected root readable; optional project resolves to safe path (missing project reported via exists)",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string"
+              },
+              "orientation": {
+                "type": "string"
+              },
+              "dark": {
+                "type": "boolean"
+              },
+              "jobs": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "device",
+              "orientation",
+              "dark",
+              "jobs"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.status",
+          "tool": "neyvia.mobile.status"
+        },
+        "mobile.build": {
+          "effect": "Start build job; Android may prebuild/install Capacitor and Gradle dependencies; success writes APK/IPA receipt, not install",
+          "pre": "Existing safe app; installed toolchain; Android shell consent; Apple platform support explicit",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "job": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            }
+          },
+          "reversible": false,
+          "schema": "neyvia.mobile.build",
+          "tool": "neyvia.mobile.build"
+        },
+        "mobile.create": {
+          "effect": "Create local app scaffold and select it; does not prove build or installed app",
+          "pre": "Name >=2 chars, valid dotted bundleId, absent/empty safe target, owner grants mobile-create for exact target",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mobile.create",
+          "tool": "neyvia.mobile.create"
+        },
+        "mobile.install": {
+          "effect": "Return iPhone sideload steps or start adb install/launch job; waitSeconds may return pending job",
+          "pre": "Safe project; iPhone returns guide; Android requires prior APK, adb and unambiguous online device or available emulator; external action authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mobile.install",
+          "tool": "neyvia.mobile.install"
+        },
+        "mobile.preview": {
+          "effect": "Persist phone frame and expose preview; startExpo starts existing Expo dev server without installing dependencies",
+          "pre": "Known device and portrait/landscape; supplied project is existing safe directory; startExpo requires Expo app",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mobile.preview",
+          "tool": "neyvia.mobile.preview"
+        },
+        "mobile.setup": {
+          "effect": "Start compiler download job; status/receipt report outcome, no implicit system setup",
+          "pre": "part=ios-compiler and explicit owner grant mobile-setup:ios-compiler; 864 MB download needs separate authorization",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mobile.setup",
+          "tool": "neyvia.mobile.setup"
+        }
+      },
+      "checks": {
+        "starter-selected": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "project.name",
+            "value": {
+              "$input": "name"
+            }
+          },
+          "tool": "neyvia.mobile.status"
+        },
+        "starter-preview": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "preview.ready",
+            "value": true
+          },
+          "tool": "neyvia.mobile.status"
+        },
+        "device-saved": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "device",
+            "value": {
+              "$input": "device"
+            }
+          },
+          "tool": "neyvia.mobile.status"
+        },
+        "orientation-saved": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "orientation",
+            "value": {
+              "$input": "orientation"
+            }
+          },
+          "tool": "neyvia.mobile.status"
+        },
+        "device-probe-disabled": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "android.deviceProbeEnabled",
+            "value": false
+          },
+          "tool": "neyvia.mobile.status"
+        },
+        "build-job-recorded": {
+          "args": {
+            "project": {
+              "$path": "project"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": "jobs",
+            "schema": {
+              "contains": {
+                "properties": {
+                  "id": {
+                    "const": {
+                      "$result": "job.job.id"
+                    }
+                  },
+                  "kind": {
+                    "const": "build"
+                  },
+                  "platform": {
+                    "const": {
+                      "$input": "platform"
+                    }
+                  },
+                  "project": {
+                    "const": {
+                      "$path": "project"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "platform",
+                  "project",
+                  "kind"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "tool": "neyvia.mobile.status"
+        }
+      },
+      "procedures": {
+        "create-starter-app": {
+          "goal": "Create and select a real local starter app with a ready web preview",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "bundleId": {
+                "type": "string",
+                "default": ""
+              },
+              "approvedRequest": {
+                "type": "string",
+                "default": ""
+              }
+            },
+            "required": [
+              "path",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mobile.create",
+              "args": {
+                "path": {
+                  "$path": "path"
+                },
+                "name": {
+                  "$input": "name"
+                },
+                "bundleId": {
+                  "$input": "bundleId"
+                }
+              },
+              "check": "starter-selected",
+              "save": "created"
+            },
+            {
+              "action": "mobile.status",
+              "args": {},
+              "check": "starter-preview",
+              "save": "selected"
+            }
+          ]
+        },
+        "set-phone-frame": {
+          "goal": "Read current phone settings, choose a device and rotation, then verify retained frame",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string",
+                "enum": [
+                  "iphone-16-pro",
+                  "iphone-16-pro-max",
+                  "iphone-16",
+                  "iphone-se",
+                  "pixel-9",
+                  "pixel-9-pro-xl",
+                  "ipad-pro-13",
+                  "mac-window",
+                  "watch-46",
+                  "apple-tv",
+                  "vision-window"
+                ]
+              },
+              "orientation": {
+                "type": "string",
+                "enum": [
+                  "portrait",
+                  "landscape"
+                ]
+              }
+            },
+            "required": [
+              "device",
+              "orientation"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mobile.status",
+              "args": {},
+              "save": "before"
+            },
+            {
+              "judge": "phone-frame"
+            },
+            {
+              "action": "mobile.preview",
+              "args": {
+                "device": {
+                  "$input": "device"
+                },
+                "orientation": {
+                  "$input": "orientation"
+                }
+              },
+              "check": "device-saved",
+              "save": "preview",
+              "when": {
+                "judge": "phone-frame",
+                "option": "preview"
+              }
+            },
+            {
+              "action": "mobile.status",
+              "args": {},
+              "check": "orientation-saved",
+              "save": "after",
+              "when": {
+                "judge": "phone-frame",
+                "option": "preview"
+              }
+            }
+          ]
+        },
+        "build-chosen-platform": {
+          "goal": "Inspect selected app toolchains, review platform and start a real build job",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              },
+              "platform": {
+                "type": "string",
+                "enum": [
+                  "ios",
+                  "android",
+                  "ipados",
+                  "macos",
+                  "watchos",
+                  "tvos",
+                  "visionos"
+                ]
+              },
+              "addShell": {
+                "type": "boolean",
+                "default": false
+              }
+            },
+            "required": [
+              "project",
+              "platform"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mobile.status",
+              "args": {
+                "project": {
+                  "$path": "project"
+                }
+              },
+              "save": "readiness"
+            },
+            {
+              "judge": "build-target"
+            },
+            {
+              "action": "mobile.build",
+              "args": {
+                "platform": {
+                  "$input": "platform"
+                },
+                "project": {
+                  "$path": "project"
+                },
+                "addShell": {
+                  "$input": "addShell"
+                }
+              },
+              "check": "build-job-recorded",
+              "save": "job",
+              "when": {
+                "judge": "build-target",
+                "option": "build"
+              }
+            },
+            {
+              "action": "mobile.status",
+              "args": {
+                "project": {
+                  "$path": "project"
+                }
+              },
+              "save": "progress",
+              "when": {
+                "judge": "build-target",
+                "option": "build"
+              }
+            }
+          ]
+        },
+        "inspect-without-devices": {
+          "goal": "Inspect installed tools in an explicitly isolated session with NEYVIA_MOBILE_PROBE_DEVICES=0; no adb daemon, emulator or device discovery",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mobile.status",
+              "args": {},
+              "check": "device-probe-disabled",
+              "save": "installed"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "phone-frame": {
+          "constraints": "Input device is one of mobile.preview enum; choose based on target screen/safe areas. Frame state does not prove touch, keyboard, build or install behavior.",
+          "options": [
+            "preview",
+            "leave"
+          ],
+          "question": "Which tested phone frame and rotation matches the target audience?"
+        },
+        "build-target": {
+          "constraints": "Check status missing[] and project kind first. Do not install SDKs automatically. Android shell generation/Gradle dependency downloads change project and may exceed current download authorization; stop until separately authorized.",
+          "options": [
+            "build",
+            "leave"
+          ],
+          "question": "Build with the installed platform toolchain now?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Android tools missing / needsShell true",
+          "recovery": "Report exact missing SDK sizes; addShell creates project files and downloads dependencies only after authority"
+        },
+        {
+          "failure": "Gradle exits but APK absent",
+          "recovery": "Inspect job error and output path; do not invent artifact"
+        },
+        {
+          "failure": "USB unauthorized or multiple phones",
+          "recovery": "Unlock/approve debugging or supply exact serial from status; do not guess"
+        },
+        {
+          "failure": "iPhone install returns status=manual",
+          "recovery": "Give IPA path and AltStore/SideStore steps; no adb-style automatic iPhone installation"
+        },
+        {
+          "failure": "Preview state saved but app blank",
+          "recovery": "Verify webRoot/index.html or Expo server separately and inspect actual preview"
+        },
+        {
+          "failure": "Person expects a native iPhone or Android editor or simulator",
+          "recovery": "Say plainly: Mobile Studio previews the web export in a phone frame and builds it; for native screens use Android's emulator (Android Studio) or a real iPhone via the build/sideload path"
+        }
+      ],
+      "frontier": [
+        "Native Swift/SwiftUI or Kotlin/Compose editing, Xcode or Android Studio layouts and an iOS Simulator are not part of Mobile Studio; the preview is a web view in a phone frame",
+        "Store signing/submission, real-device gestures and accessibility need separate proof",
+        "Compiler setup downloads 864 MB; current 200 MB scope does not authorize it",
+        "Completed job is build evidence; UI/device launch needs a separate journey"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_mobile_studio.py (preview, build, install, call); tests/test_neyvia_mobile_studio.py.",
+        "Private headless verification may set NEYVIA_MOBILE_PROBE_DEVICES=0. Device discovery is explicitly disabled and reported as deviceProbeEnabled:false; installed SDK and Java discovery still run. Ordinary sessions retain existing device discovery.",
+        "For owner-click creation, approvedRequest binds a distinct recovery to the native approval ID. Before supplying it, read the exact approval receipt, approve that request, and confirm the parent folder listing is unchanged. Never replay an uncertain write."
+      ]
+    },
+    "proofs-c-local-authoring": {
+      "title": "PROOFS-c local authoring and package contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A package receipt is mistaken for native compilation or installation.",
+          "recovery": "Require separate compiler/signing and device receipts."
+        }
+      ],
+      "frontier": [
+        "Native signing/device and remote builder require their hosts."
+      ],
+      "guidance": [
+        "proofs-c.mobile.project: Created Expo authoring files retain requested identity, entrypoint and supported dependency versions. Checked: ios_studio.create_ios_app -> proofs_c_mobile.check_project",
+        "proofs-c.mobile.scope: Creation rejects paths outside selected root before any effects. Checked: ios_studio._safe_child",
+        "proofs-c.mobile.bundle-id: Creation requires a valid reverse-domain bundle identifier before writing. Checked: ios_studio.create_ios_app",
+        "proofs-c.mobile.capsule: Each capsule retains its source root and exact manifest, excluding generated paths, confidential suffixes and links. Checked: ios_studio.create_ios_build_capsule -> proofs_c_mobile.check_capsule",
+        "proofs-c.mobile.builder-config: Builder metadata persists only the allowed fields and signing references, without passwords. Checked: ios_studio.save_ios_builder -> proofs_c_mobile.check_config",
+        "proofs-c.mobile.compiler-config: Compiler preferences validate before writing and persist exactly, without signing passwords. Checked: windows_ios_compiler.save_windows_ios_config -> proofs_c_mobile.check_config",
+        "proofs-c.mobile.download-digest: Downloaded bytes match the expected digest before atomic promotion; mismatch never promotes a destination. Checked: windows_ios_compiler._download_verified",
+        "proofs-c.mobile.metadata: Persisted plist exactly matches identity and iPhoneOS platform metadata. Checked: windows_ios_compiler._write_info_plist -> proofs_c_mobile.check_plist",
+        "proofs-c.mobile.package: IPA archive contains exactly the app files under Payload with unchanged bytes. Checked: windows_ios_compiler._zip_payload -> proofs_c_mobile.check_package",
+        "proofs-c.mobile.web-assets: Assets stage inside the app www directory and root-relative links become local links. Checked: windows_ios_compiler._safe_copy_web_assets -> proofs_c_mobile.check_web_assets",
+        "proofs-c.mobile.error-text: Failure receipts strip terminal control codes and retain bounded useful text. Checked: windows_ios_compiler._clean_error",
+        "proofs-c.mobile.backend-wiring: Mobile authoring, status and compiler configuration commands retain requested workspace, app identity, current recognition and preferences. Checked: web_backend.FluxioWebBackend.dispatch -> proofs_c_mobile.check_backend"
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b110d" media="(prefers-color-scheme: dark)"><meta name="theme-color" content="#f5f1e6" media="(prefers-color-scheme: light)"><title>__NAME__</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="./details/details.css"><style>
+/* Neyvia's two looks (plan 19 R3). Forest by night: deep green-black, cream text. Morning by day:
+   warm paper lit by a low sun top-left, a card that catches light on its top edge and casts forest
+   shade down-right, leaf light pooled bottom-right. Warmth stays rare (the sun in the mark). Every
+   text colour reads at 4.5:1 or better; motion stays 180-320 ms and stops with reduced motion. */
+:root{color-scheme:light dark;--bg:#0b110d;--card:#141c17;--text:#f1ede3;--muted:#b1b1a4;--line:rgba(240,236,224,.09);--line-strong:rgba(240,236,224,.16);--accent:#3d9a63;--on-accent:#04120a;--btn:rgba(240,236,224,.07);--btn-hover:rgba(240,236,224,.12);--shade:rgba(0,0,0,.6);--sheen:rgba(255,255,255,.04);--leaf:rgba(61,154,99,.1);--sun:rgba(244,184,71,0);--focus:#5ec189;--mark:#74d29c;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--text);background:var(--bg)}
+@media(prefers-color-scheme:light){:root{--bg:#f5f1e6;--card:#fffdf9;--text:#17221a;--muted:#465143;--line:rgba(42,54,32,.12);--line-strong:rgba(42,54,32,.2);--accent:#3a774b;--on-accent:#fff;--btn:#fff;--btn-hover:#fff;--shade:rgba(30,50,28,.24);--sheen:rgba(255,255,255,.95);--leaf:rgba(58,119,75,.13);--sun:rgba(255,190,80,.17);--focus:#2f7d4f;--mark:#3a774b}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(800px 460px at -6% -12%,var(--sun),transparent 60%),radial-gradient(900px 540px at 106% 110%,var(--leaf),transparent 62%),var(--bg)}
+main{width:min(26rem,100%);padding:26px 24px 18px;border-radius:20px;background:var(--card);box-shadow:0 0 0 1px var(--line),inset 0 1px 0 var(--sheen),1px 2px 3px -1px var(--shade),9px 20px 44px -26px var(--shade)}
+h1{margin:0;font-size:1.15rem;font-weight:600;line-height:1.3;letter-spacing:-.01em}
+#count{margin:.9rem 0 1.3rem;font-size:2.6rem;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+/* Keep the state number visible in native and web renderers. Decorative digit
+   faces must never hide the counter's only readable value. */
+#count-value{display:inline-block;position:relative;vertical-align:baseline}
+#count-value>.nxd-sr{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;color:inherit}
+#count-value>.nxd-roll-face{display:none}
+#controls{display:flex;flex-wrap:wrap;gap:.6rem}
+button{font:inherit;font-weight:500;padding:.7rem 1.05rem;border:0;border-radius:12px;cursor:pointer;color:var(--text);background:var(--btn);box-shadow:0 0 0 1px var(--line-strong),inset 0 1px 0 var(--sheen),1px 2px 4px -1px var(--shade)}
+button:first-child{background:var(--accent);color:var(--on-accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),1px 2px 4px -1px var(--shade)}
+button:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+#message{min-height:1.45em;margin:.9rem 0 0;font-size:.875rem;color:var(--muted)}
+footer{display:flex;align-items:center;gap:.4rem;margin-top:1.1rem;padding-top:.9rem;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+footer svg{width:16px;height:16px;flex:none;color:var(--mark)}
+.details-credit{font-size:.75rem;color:var(--muted);margin:.7rem 0 0}.details-credit a{color:inherit}#copy{margin-top:.8rem}
+@media(prefers-reduced-motion:no-preference){button{transition:background-color 180ms,box-shadow 180ms,transform 220ms cubic-bezier(.22,1,.36,1)}button:active{transform:scale(.97)}}
+@media(hover:hover){button:not(:first-child):hover{background:var(--btn-hover)}}
+</style></head><body><main><h1>__NAME__</h1><p id="count" role="status" aria-live="polite">Count: <span id="count-value"></span></p><div id="controls" aria-label="Counter actions"></div><button id="copy" type="button"></button><p id="message" role="alert"></p><footer><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="16.5" cy="7" r="4" fill="#f5a03a"/><path d="M8 20v-5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M8 4c3 2.5 4.5 5 4.5 7.5a4.5 4.5 0 0 1-9 0C3.5 9 5 6.5 8 4z" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>Made with Neyvia</footer><p class="details-credit">__DETAILS_CREDIT__</p></main><script src="./app.bundle.js"></script></body></html>

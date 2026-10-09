@@ -1,0 +1,1293 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "local-evaluations",
+  "kind": "workflow",
+  "schemas": {
+    "intelligence.answer_self": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "question_id": {
+              "type": "string"
+            },
+            "answer": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "checks": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 12,
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              },
+              "description": "IDs of already saved artifact obligations; do not invent check results."
+            },
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "question_id",
+            "answer",
+            "checks",
+            "expected_revision"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "intelligence.ask_self": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "question": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1200
+            },
+            "decision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1200
+            }
+          },
+          "required": [
+            "question",
+            "decision"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "intelligence.brief": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "understanding": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 6000
+            },
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Current brief.revision, or 0 before first save. The top-level revision belongs to preferences."
+            },
+            "assumptions": {
+              "type": "array",
+              "maxItems": 12,
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "directions": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "approach": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1500
+                  },
+                  "tradeoff": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1500
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "approach",
+                  "tradeoff"
+                ]
+              },
+              "description": "Omit to preserve the saved choices. Selected direction content must remain unchanged."
+            },
+            "open_questions": {
+              "type": "array",
+              "maxItems": 12,
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            }
+          },
+          "required": [
+            "understanding",
+            "expected_revision"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "intelligence.handoff": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "intelligence.obligate": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "intelligence.rationale": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "lab.causal": {
+      "type": "object",
+      "properties": {
+        "baseline": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string"
+        },
+        "factor": {
+          "type": "string"
+        },
+        "workId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "baseline",
+        "variant",
+        "factor",
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "baseline": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "variant": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "factor": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "lab.curriculum": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "string"
+        },
+        "examples": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "identity",
+        "examples"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "identity": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "lab.journey": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "lab.rehearse": {
+      "type": "object",
+      "properties": {
+        "experiment_id": {
+          "type": "string"
+        },
+        "script": {
+          "type": "string"
+        },
+        "workId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "experiment_id",
+        "script",
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "experiment_id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "script": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "lab.resolve_uncertainty": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "string"
+        },
+        "assumption": {
+          "type": "integer"
+        },
+        "instrument": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "identity",
+        "assumption",
+        "instrument",
+        "target"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "identity": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "instrument": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "target": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "lab.uncertainty": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "string"
+        },
+        "assumptions": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "identity",
+        "assumptions"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "identity": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "lab.visual_guard": {
+      "type": "object",
+      "properties": {
+        "baseline": {
+          "type": "string"
+        },
+        "candidate": {
+          "type": "string"
+        },
+        "regions": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "baseline",
+        "candidate",
+        "regions"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "baseline": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "candidate": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "evaluation": {
+      "title": "Evidence-backed task reasoning and local evaluation",
+      "state": {},
+      "actions": {
+        "intelligence-answer_self": {
+          "effect": "Record your answer against existing artifact obligation IDs, checking their current evidence. Failed or stale checks keep the question unresolved. Use its exact expected_revision. Arguments: question_id, answer, checks, expected_revision.",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "intelligence.answer_self",
+          "tool": "intelligence.answer_self"
+        },
+        "intelligence-ask_self": {
+          "effect": "Record a concrete unresolved question and the decision it changes. This does not call another model or request user input. Arguments: question, decision.",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "intelligence.ask_self",
+          "tool": "intelligence.ask_self"
+        },
+        "intelligence-brief": {
+          "effect": "Save or revise the task brief. Use expected_revision from intelligence.collaboration.brief.revision (0 when no brief), not the preferences revision. Omitted lists retain their saved values; user corrections and the selected direction are protected. Arguments: understanding.",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "intelligence.brief",
+          "tool": "intelligence.brief"
+        },
+        "intelligence-handoff": {
+          "effect": "Persist an immutable handoff with objective, protected decision IDs, answer key and artifact identities. Arguments: objective, protected_decisions, answers.",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "intelligence.handoff",
+          "tool": "intelligence.handoff"
+        },
+        "intelligence-obligate": {
+          "effect": "Attach a runnable file_contains or json_path criterion to a real artifact hash. Arguments: artifact, sha256, criterion.",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "intelligence.obligate",
+          "tool": "intelligence.obligate"
+        },
+        "intelligence-rationale": {
+          "effect": "Save a versioned purpose and protected decisions for an element. Arguments: element_id, purpose.",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "intelligence.rationale",
+          "tool": "intelligence.rationale"
+        },
+        "lab-causal": {
+          "effect": "Compare reported trials only when one declared factor changes; expose confounded comparisons",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "lab.causal",
+          "tool": "lab.causal"
+        },
+        "lab-curriculum": {
+          "effect": "Freeze training and holdout evidence; reject duplicate content and task-family leakage",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "lab.curriculum",
+          "tool": "lab.curriculum"
+        },
+        "lab-journey": {
+          "effect": "Analyze a timestamped interaction trace for delay, unanswered actions, errors and continuity events",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "lab.journey",
+          "tool": "lab.journey"
+        },
+        "lab-rehearse": {
+          "effect": "Run an existing snapshot script with installed software in a managed session; host access remains",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "lab.rehearse",
+          "tool": "lab.rehearse"
+        },
+        "lab-resolve_uncertainty": {
+          "effect": "Attach a real frozen-instrument measurement to an assumption without promoting its semantic claim",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "lab.resolve_uncertainty",
+          "tool": "lab.resolve_uncertainty"
+        },
+        "lab-uncertainty": {
+          "effect": "Rank explicit assumptions by estimated impact and uncertainty per experiment cost",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "lab.uncertainty",
+          "tool": "lab.uncertainty"
+        },
+        "lab-visual_guard": {
+          "effect": "Compare actual protected image pixels, including alpha, without changing either image",
+          "pre": "Scoped intact input artifacts, current task revisions and enabled task evaluation/rehearsal preferences where required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "lab.visual_guard",
+          "tool": "lab.visual_guard"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "verify-intelligence-answer_self": {
+          "goal": "Record your answer against existing artifact obligation IDs, checking their current evidence. Failed or stale checks keep the question unresolved. Use its exact expected_revision. Arguments: question_id, answer, checks, expected_revision.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "question_id": {
+                    "type": "string"
+                  },
+                  "answer": {
+                    "type": "string",
+                    "maxLength": 4000
+                  },
+                  "checks": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 12,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "IDs of already saved artifact obligations; do not invent check results."
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "question_id",
+                  "answer",
+                  "checks",
+                  "expected_revision"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "intelligence-answer_self",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-intelligence-ask_self": {
+          "goal": "Record a concrete unresolved question and the decision it changes. This does not call another model or request user input. Arguments: question, decision.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1200
+                  },
+                  "decision": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1200
+                  }
+                },
+                "required": [
+                  "question",
+                  "decision"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "intelligence-ask_self",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-intelligence-brief": {
+          "goal": "Save or revise the task brief. Use expected_revision from intelligence.collaboration.brief.revision (0 when no brief), not the preferences revision. Omitted lists retain their saved values; user corrections and the selected direction are protected. Arguments: understanding.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "understanding": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 6000
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Current brief.revision, or 0 before first save. The top-level revision belongs to preferences."
+                  },
+                  "assumptions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 1000
+                    },
+                    "maxItems": 12
+                  },
+                  "directions": {
+                    "type": "array",
+                    "maxItems": 4,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        },
+                        "title": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        },
+                        "approach": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 1500
+                        },
+                        "tradeoff": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 1500
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "approach",
+                        "tradeoff"
+                      ]
+                    },
+                    "description": "Omit to preserve the saved choices. Selected direction content must remain unchanged."
+                  },
+                  "open_questions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 1000
+                    },
+                    "maxItems": 12
+                  }
+                },
+                "required": [
+                  "understanding",
+                  "expected_revision"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "intelligence-brief",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-intelligence-handoff": {
+          "goal": "Persist an immutable handoff with objective, protected decision IDs, answer key and artifact identities. Arguments: objective, protected_decisions, answers.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "intelligence-handoff",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-intelligence-obligate": {
+          "goal": "Attach a runnable file_contains or json_path criterion to a real artifact hash. Arguments: artifact, sha256, criterion.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "intelligence-obligate",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-intelligence-rationale": {
+          "goal": "Save a versioned purpose and protected decisions for an element. Arguments: element_id, purpose.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "intelligence-rationale",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-lab-causal": {
+          "goal": "Compare reported trials only when one declared factor changes; expose confounded comparisons",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "baseline": {
+                "type": "string"
+              },
+              "variant": {
+                "type": "string"
+              },
+              "factor": {
+                "type": "string"
+              },
+              "workId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "baseline",
+              "variant",
+              "factor",
+              "workId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "lab-causal",
+              "args": {
+                "baseline": {
+                  "$input": "baseline"
+                },
+                "factor": {
+                  "$input": "factor"
+                },
+                "variant": {
+                  "$input": "variant"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-lab-curriculum": {
+          "goal": "Freeze training and holdout evidence; reject duplicate content and task-family leakage",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "identity": {
+                "type": "string"
+              },
+              "examples": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "identity",
+              "examples"
+            ]
+          },
+          "steps": [
+            {
+              "action": "lab-curriculum",
+              "args": {
+                "examples": {
+                  "$input": "examples"
+                },
+                "identity": {
+                  "$input": "identity"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-lab-journey": {
+          "goal": "Analyze a timestamped interaction trace for delay, unanswered actions, errors and continuity events",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "steps": [
+            {
+              "action": "lab-journey",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-lab-rehearse": {
+          "goal": "Run an existing snapshot script with installed software in a managed session; host access remains",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "experiment_id": {
+                "type": "string"
+              },
+              "script": {
+                "type": "string"
+              },
+              "workId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "experiment_id",
+              "script",
+              "workId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "lab-rehearse",
+              "args": {
+                "experiment_id": {
+                  "$input": "experiment_id"
+                },
+                "script": {
+                  "$input": "script"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-lab-resolve_uncertainty": {
+          "goal": "Attach a real frozen-instrument measurement to an assumption without promoting its semantic claim",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "identity": {
+                "type": "string"
+              },
+              "assumption": {
+                "type": "integer"
+              },
+              "instrument": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "identity",
+              "assumption",
+              "instrument",
+              "target"
+            ]
+          },
+          "steps": [
+            {
+              "action": "lab-resolve_uncertainty",
+              "args": {
+                "assumption": {
+                  "$input": "assumption"
+                },
+                "identity": {
+                  "$input": "identity"
+                },
+                "instrument": {
+                  "$input": "instrument"
+                },
+                "target": {
+                  "$input": "target"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-lab-uncertainty": {
+          "goal": "Rank explicit assumptions by estimated impact and uncertainty per experiment cost",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "identity": {
+                "type": "string"
+              },
+              "assumptions": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "identity",
+              "assumptions"
+            ]
+          },
+          "steps": [
+            {
+              "action": "lab-uncertainty",
+              "args": {
+                "assumptions": {
+                  "$input": "assumptions"
+                },
+                "identity": {
+                  "$input": "identity"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "verify-lab-visual_guard": {
+          "goal": "Compare actual protected image pixels, including alpha, without changing either image",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "baseline": {
+                "type": "string"
+              },
+              "candidate": {
+                "type": "string"
+              },
+              "regions": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "baseline",
+              "candidate",
+              "regions"
+            ]
+          },
+          "steps": [
+            {
+              "action": "lab-visual_guard",
+              "args": {
+                "baseline": {
+                  "$input": "baseline"
+                },
+                "candidate": {
+                  "$input": "candidate"
+                },
+                "regions": {
+                  "$input": "regions"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A reported answer, trial or trace is presented as independent model quality proof",
+          "recovery": "Keep its declared provenance and prove the actual artifact criterion separately."
+        },
+        {
+          "failure": "A saved witness becomes stale after artifact changes",
+          "recovery": "Re-read current bytes and definitions; completion is refused until the evidence is restored."
+        }
+      ],
+      "frontier": [
+        "Semantic correctness of reported answers, trials and traces needs a separate evaluator.",
+        "Model training and promotion require separate real evaluation and authorization."
+      ],
+      "guidance": [
+        "Use saved obligation IDs and the current question or brief revision.",
+        "Frozen curricula exclude holdout bytes from lesson packets and reject cross-split family leakage.",
+        "Rehearsal runs an existing scoped snapshot script and requires an actual successful managed process."
+      ]
+    }
+  }
+}

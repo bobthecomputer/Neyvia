@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 3,
+  "contract": "zero-disturbance-attributed-v3",
+  "defaultEnvironment": "agent-desktop",
+  "inputDesktopPolicy": {
+    "visibleAgentWindows": "Zero windows composited for the user. Visibility diagnostics stay enabled. A new owned Bureau HWND may register offscreen during its single nonrenewable three-second move lease; normal bounds require verified inactive membership and Shell cloak. Private Windows desktop objects need no lease.",
+    "foregroundChanges": 0,
+    "cursorMoves": 0,
+    "observerThread": "Observe the input desktop and Explorer Default on separately bound threads; never switch desktops",
+    "observation": [
+      "EnumDesktopWindows",
+      "GetForegroundWindow with PID-and-creation-time process-tree ownership; reject children older than their apparent parent",
+      "GetCursorPos as context only",
+      "WinEvent foreground/create/show",
+      "WH_MOUSE_LL LLMHF_INJECTED",
+      "WH_KEYBOARD_LL LLKHF_INJECTED",
+      "DwmGetWindowAttribute DWMWA_CLOAKED for registered owned Bureau HWNDs",
+      "Native previsibility containment, offscreen Shell registration, HWND-only move lease <=3 seconds total, independently verified inactive membership and DWM Shell cloak before normal bounds"
+    ],
+    "uncertainObservation": "fail-closed",
+    "escapedOwnedWindow": "hide immediately and fail run",
+    "inputWindowTitles": "never-read-or-record",
+    "physicalUserInput": "Allowed; report physical events and unowned changes separately. Injected mouse and keyboard events must be zero."
+  },
+  "fallbackLadder": [
+    {
+      "level": 0,
+      "environment": "agent-desktop",
+      "requirements": [
+        "CreateDesktop",
+        "STARTUPINFO.lpDesktop before process starts",
+        "driver threads SetThreadDesktop",
+        "guard active before launch"
+      ],
+      "enabledByDefault": true
+    },
+    {
+      "level": 1,
+      "environment": "agent-bureau",
+      "requirements": [
+        "Maintained task-local VirtualDesktopAccessor with current-build support",
+        "Hidden-first containment before any app thread resumes",
+        "Verify dedicated virtual desktop membership without switching desktops",
+        "Target-only UIA/PostMessage and capture",
+        "Attributed guard active before launch"
+      ],
+      "enabledByDefault": false
+    },
+    {
+      "level": 2,
+      "environment": "needs-permission",
+      "requirements": [
+        "Private route and Bureau route both failed with receipts",
+        "No visible launch in this session"
+      ],
+      "enabledByDefault": false
+    }
+  ],
+  "unprovenFallback": "Installed binaries can launch suspended in an owned job on the Bureau route; actions require a new HWND and verified noncurrent desktop membership. Runtime membership failures are isolation-unavailable, not missing owner permission. Shared broker HWND adoption remains unproven.",
+  "previewInput": "target-only UIA or PostMessage; no SendInput, SetForegroundWindow, desktop switching or physical cursor movement",
+  "taskPanel": "config/cua-everyday-tasks.json; everyday apps and disposable user files only",
+  "officeRoute": "new hidden COM instance; independent new PID/birth; disposable documents; save/reopen/readback; UI preview separate",
+  "registrationDiagnostics": "always_enabled; input + Explorer Default events and samples; failures retained",
+  "bureauMoveLease": "HWND only; one lease per new window; lifetime <=3 seconds; no private-desktop leases"
+}

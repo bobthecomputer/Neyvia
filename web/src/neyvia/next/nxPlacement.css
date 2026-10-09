@@ -1,0 +1,135 @@
+/* Placement (NxPlacement): every app or pane is one window, drawn in one
+   layer over its slot. Colours and radii come from the theme tokens only. */
+
+.nx .nx-surfaces { display: contents; }
+.nx .nx-slot { flex: 1 1 auto; min-width: 0; min-height: 0; }
+.nx .nx-region > .nx-slot-side { width: var(--nx-panel-w); }
+.nx .nx-panel-overlay:has(> .nx-slot) { pointer-events: none; }
+.nx .nx-panel-overlay > .nx-slot-side { width: var(--nx-panel-w); }
+
+.nx .nx-surface {
+  position: fixed; z-index: 5; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden;
+  background: var(--nx-panel);
+}
+.nx .nx-surface > .nx-stage { flex: 1 1 auto; min-height: 0; }
+.nx .nx-surface.is-moving { transition: left var(--nx-settle) var(--nx-spring-settle), top var(--nx-settle) var(--nx-spring-settle), width var(--nx-settle) var(--nx-spring-settle), height var(--nx-settle) var(--nx-spring-settle), border-radius var(--nx-fast) var(--nx-ease); }
+.nx .nx-surface.is-hidden { visibility: hidden; pointer-events: none; }
+/* Opening fades a window in, closing fades it out: one app replacing another crossfades. */
+.nx .nx-surface.is-entering { animation: nx-surface-in var(--nx-med) var(--nx-ease) both; }
+.nx .nx-surface.is-leaving { z-index: 4; pointer-events: none; animation: nx-surface-out var(--nx-med) var(--nx-ease) both; }
+@keyframes nx-surface-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes nx-surface-out { from { opacity: 1; } to { opacity: 0; transform: scale(0.985); } }
+/* Into the bubble and back out of it: the window keeps its size and shrinks toward the bubble's
+   point (or grows from it), on the settle spring, so nothing jumps. */
+.nx .nx-surface.is-folding {
+  z-index: 64; transform-origin: 0 0; pointer-events: none; transform: translate(var(--nx-fold-x), var(--nx-fold-y)) scale(var(--nx-fold-s)); opacity: 0;
+  border-radius: var(--nx-r-xl); box-shadow: var(--nx-shadow-pop);
+  transition: transform var(--nx-settle) var(--nx-spring-settle), opacity var(--nx-med) var(--nx-ease) var(--nx-fast), border-radius var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-surface.is-unfolding.is-unfolding { transform-origin: 0 0; animation: nx-unfold var(--nx-settle) var(--nx-spring-settle) both; }
+@keyframes nx-unfold {
+  from { transform: translate(var(--nx-fold-x), var(--nx-fold-y)) scale(var(--nx-fold-s)); opacity: 0; border-radius: var(--nx-r-xl); }
+  40% { opacity: 1; }
+  to { transform: none; opacity: 1; }
+}
+.nx .nx-surface.is-side.is-right { box-shadow: calc(-1 * var(--nx-stroke)) 0 0 var(--nx-line); }
+.nx .nx-surface.is-side.is-left { box-shadow: var(--nx-stroke) 0 0 var(--nx-line); }
+.nx .nx-surface.is-side.is-floating { z-index: 21; box-shadow: var(--nx-shadow-pop); }
+/* The shell under every window is its own stacking layer, below any placed window (z 5 and up):
+   nothing in home, the sidebar or the chat can draw over a side, floating or peek window, whatever
+   paints it. Popovers portal to the root, and toasts and bubbles sit above at z 65+. */
+.nx .nx-os > .nx-main { z-index: 0; }
+.nx .nx-os > .nx-region { z-index: 1; }
+.nx .nx-surface.is-full { z-index: 50; background: var(--nx-bg); }
+/* Under a full-screen window the shell is out of sight, for the eye and for the keyboard and screen
+   readers (visibility removes it from both); toasts, banners and bubbles stay above it. */
+.nx.has-full .nx-os > .nx-region, .nx.has-full .nx-os > .nx-main, .nx.has-full .nx-os > .nx-panel-overlay,
+.nx.has-full .nx-os > .nx-slot, .nx.has-full .nx-strip,
+.nx.has-full .nx-surface.is-main, .nx.has-full .nx-surface.is-side { visibility: hidden; }
+.nx .nx-surface.is-bubble { z-index: 65; background: var(--nx-bg); border-radius: var(--nx-r-lg); box-shadow: var(--nx-shadow-pop), 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-surface.is-bubble:not(.is-hidden) { animation: nx-peek-in var(--nx-settle) var(--nx-spring-settle) both; }
+.nx .nx-surface.is-dragged { z-index: 71; }
+@keyframes nx-peek-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+
+/* The title bar is the handle; side and bubble windows get a tighter bar. */
+.nx .nx-stage-head.is-handle { cursor: grab; touch-action: none; user-select: none; }
+.nx .nx-surface.is-dragged .nx-stage-head { cursor: grabbing; }
+.nx .nx-surface.is-side .nx-stage-head,
+.nx .nx-surface.is-bubble .nx-stage-head { height: 42px; padding-left: var(--nx-space-12); gap: var(--nx-space-4); }
+.nx .nx-surface.is-side .nx-stage-title,
+.nx .nx-surface.is-bubble .nx-stage-title { flex: 1 1 auto; overflow: hidden; }
+.nx .nx-surface.is-side .nx-stage-head > .nx-head-spacer,
+.nx .nx-surface.is-bubble .nx-stage-head > .nx-head-spacer { display: none; }
+
+.nx .nx-place { display: inline-flex; align-items: center; gap: var(--nx-space-2); padding: var(--nx-space-2); border-radius: var(--nx-r-sm); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); flex: none; }
+.nx .nx-place .nx-iconbtn.is-active { background: var(--nx-accent-soft); color: var(--nx-accent-text); }
+
+/* Drop zones while a window is dragged by its title bar. */
+.nx .nx-dropzones { position: fixed; inset: 0; z-index: 72; pointer-events: none; }
+.nx .nx-dropzone {
+  position: absolute; display: grid; place-items: center; border-radius: var(--nx-r-lg);
+  background: color-mix(in srgb, var(--nx-accent-hi) 10%, var(--nx-bg) 55%); box-shadow: inset 0 0 0 var(--nx-stroke-icon) color-mix(in srgb, var(--nx-accent-hi) 40%, transparent);
+  color: var(--nx-text-2); font-size: var(--nx-fs-sm); font-weight: 600;
+  transition: background var(--nx-fast) var(--nx-ease), box-shadow var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-dropzone > span { padding: var(--nx-space-6) var(--nx-space-12); border-radius: var(--nx-r-pill); background: var(--nx-raised); box-shadow: var(--nx-shadow-pop); }
+.nx .nx-dropzone.is-over { background: color-mix(in srgb, var(--nx-accent-hi) 26%, var(--nx-bg) 60%); box-shadow: inset 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi); color: var(--nx-text); }
+.nx .nx-dropzone.is-side-left { left: 8px; top: 8px; bottom: 8px; width: calc(20% - 16px); }
+.nx .nx-dropzone.is-side-right { right: 8px; top: 8px; bottom: 8px; width: calc(20% - 16px); }
+.nx .nx-dropzone.is-full { left: 20%; right: 20%; top: 8px; height: calc(16% - 16px); }
+.nx .nx-dropzone.is-main { left: 20%; right: 20%; top: 16%; bottom: 16%; margin: var(--nx-space-8); }
+.nx .nx-dropzone.is-bubble { left: 20%; right: 20%; bottom: 8px; height: calc(16% - 16px); }
+.nx .nx-drop-ghost {
+  position: absolute; top: 0; left: 0; padding: var(--nx-space-6) var(--nx-space-10); border-radius: var(--nx-r-sm); background: var(--nx-raised); box-shadow: var(--nx-shadow-pop);
+  font-size: var(--nx-fs-sm); font-weight: 600; white-space: nowrap;
+}
+
+/* Apps in bubbles: same feel as the floating chats (nxBubbles.css), a square-ish app mark. */
+.nx .nx-wbubbles { position: fixed; inset: 0; z-index: 66; pointer-events: none; }
+.nx .nx-wbubble-wrap { position: absolute; top: 0; left: 0; transition: transform var(--nx-settle) var(--nx-spring-settle); }
+.nx .nx-wbubble {
+  position: relative; width: 52px; height: 52px; border-radius: var(--nx-r-xl); pointer-events: auto; display: grid; place-items: center;
+  background: var(--nx-raised); color: var(--nx-accent-text); box-shadow: var(--nx-shadow-pop), inset 0 0 0 var(--nx-stroke-icon) var(--nx-line-strong);
+  cursor: grab; touch-action: none; transition: box-shadow var(--nx-fast) var(--nx-ease), scale var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-wbubble:hover { scale: 1.04; }
+.nx .nx-wbubble.is-dragging { cursor: grabbing; }
+.nx .nx-wbubble-wrap:has(.is-dragging) { transition: none; }
+.nx .nx-wbubble.is-open { box-shadow: var(--nx-shadow-pop), 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi); }
+.nx .nx-wbubble:focus-visible { outline: 2px solid var(--nx-accent-hi); outline-offset: 3px; }
+.nx .nx-wbubble-name {
+  position: absolute; top: 50%; right: calc(100% + 8px); translate: 0 -50%; padding: var(--nx-space-3) var(--nx-space-8); border-radius: var(--nx-r-xs); white-space: nowrap;
+  background: var(--nx-raised); box-shadow: var(--nx-shadow-pop); font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-text-2);
+  opacity: 0; transition: opacity var(--nx-fast) var(--nx-ease); pointer-events: none;
+}
+.nx .nx-wbubble-name.is-left { right: auto; left: calc(100% + 8px); }
+.nx .nx-wbubble-wrap:hover .nx-wbubble-name,
+.nx .nx-wbubble:focus-visible + .nx-wbubble-name { opacity: 1; }
+
+/* Phone: a side window splits the screen with the chat, under it. */
+.nx.is-phone .nx-os.has-split { flex-direction: column; }
+.nx.is-phone .nx-os.has-split > .nx-slot-side { flex: 0 0 46%; border-top: 1px solid var(--nx-line); }
+.nx.is-phone .nx-os.has-split > :not(.nx-slot-side) { flex: 1 1 0; min-height: 0; }
+.nx.is-phone .nx-surface.is-side { box-shadow: 0 calc(-1 * var(--nx-stroke)) 0 var(--nx-line); }
+.nx.is-phone .nx-surface .nx-place { gap: 0; }
+.nx.is-phone .nx-surface .nx-stage-title span { display: none; }
+
+/* LAYA as a window (NxLaya NxLayaApp), and its popover's "open as a window". */
+
+@media (prefers-reduced-motion: reduce) {
+  .nx .nx-surface.is-moving, .nx .nx-wbubble-wrap, .nx .nx-surface.is-folding { transition: none; }
+  .nx .nx-surface.is-bubble:not(.is-hidden), .nx .nx-surface.is-unfolding.is-unfolding, .nx .nx-surface.is-entering, .nx .nx-surface.is-leaving { animation: none; }
+  .nx .nx-surface.is-folding { opacity: 0; transform: none; }
+}
+.nx[data-nx-motion="reduce"] .nx-surface.is-moving,
+.nx[data-nx-motion="reduce"] .nx-wbubble-wrap,
+.nx[data-nx-motion="reduce"] .nx-surface.is-folding { transition: none; }
+.nx[data-nx-motion="reduce"] .nx-surface.is-folding { opacity: 0; transform: none; }
+.nx[data-nx-motion="reduce"] .nx-surface.is-bubble:not(.is-hidden),
+.nx[data-nx-motion="reduce"] .nx-surface.is-unfolding.is-unfolding,
+.nx[data-nx-motion="reduce"] .nx-surface.is-entering,
+.nx[data-nx-motion="reduce"] .nx-surface.is-leaving { animation: none; }
+
+/* Phone: app bubbles ride the right edge, so the chat list keeps a gutter for them instead of
+   sliding its text under a bubble. */
+.nx.is-phone:has(.nx-wbubbles .nx-wbubble) .nx-side-list { padding-right: calc(52px + var(--nx-space-12)); }

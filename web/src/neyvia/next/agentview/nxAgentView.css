@@ -1,0 +1,229 @@
+/* Agent view (watch and steer agents). Theme names only: the agent's focus is the
+   running colour, Paul's comments the accent, checks the calm green. */
+
+.nx .nx-av { flex: 1 1 auto; align-self: stretch; width: 100%; min-height: 0; display: flex; flex-direction: column; background: var(--nx-panel); }
+.nx .nx-av-head {
+  display: flex; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-10) var(--nx-space-14); border-bottom: 1px solid var(--nx-line); flex-wrap: wrap;
+}
+.nx .nx-av-title { display: flex; flex-direction: column; min-width: 0; flex: 1 1 200px; gap: var(--nx-space-2); }
+.nx .nx-av-title strong { font-size: var(--nx-fs-md); font-weight: 600; color: var(--nx-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx .nx-av-title strong span { font-weight: 450; color: var(--nx-muted); }
+.nx .nx-av-title > span { display: inline-flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+
+/* ---- live ---- */
+.nx .nx-av-live { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.nx .nx-av-away {
+  display: flex; align-items: center; gap: var(--nx-space-10); margin: var(--nx-space-10) var(--nx-space-14) 0; padding: var(--nx-space-8) var(--nx-space-8) var(--nx-space-8) var(--nx-space-12); border-radius: var(--nx-r);
+  background: var(--nx-accent-soft); color: var(--nx-text); font-size: var(--nx-fs-sm);
+}
+.nx .nx-av-away > span { flex: 1 1 auto; min-width: 0; }
+.nx .nx-av-away strong { font-weight: 600; }
+.nx .nx-av-surfaces { display: flex; gap: var(--nx-space-4); padding: var(--nx-space-8) var(--nx-space-14) 0; overflow-x: auto; }
+.nx .nx-av-surfaces button {
+  display: inline-flex; align-items: center; gap: var(--nx-space-6); padding: var(--nx-space-4) var(--nx-space-10); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs);
+  color: var(--nx-muted); background: transparent; border: 1px solid var(--nx-line); white-space: nowrap; cursor: pointer;
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-av-surfaces button:hover { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-av-surfaces button.is-on { background: var(--nx-active); color: var(--nx-text); border-color: transparent; }
+
+.nx .nx-av-body { flex: 1 1 auto; min-height: 0; display: flex; gap: 0; }
+.nx .nx-av-stage {
+  flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--nx-space-10);
+  padding: var(--nx-space-16); position: relative;
+  background: radial-gradient(circle at 50% 35%, var(--nx-hover), transparent 72%);
+}
+.nx .nx-av-frame {
+  position: relative; width: 100%; max-width: calc(var(--av-w, 4) * 1.25px); aspect-ratio: var(--av-w, 4) / var(--av-h, 3);
+  border-radius: var(--nx-r-sm); overflow: visible; background: var(--nx-raised);
+  box-shadow: var(--nx-lift-3); outline: 1px solid var(--nx-line); cursor: crosshair; touch-action: none; user-select: none;
+}
+.nx .nx-av-frame > img { position: absolute; display: block; pointer-events: none; }
+.nx .nx-av-frame > img:first-child { border-radius: var(--nx-r-sm); }
+.nx .nx-av-frame.is-keyframe { cursor: default; }
+.nx .nx-av-frame.is-keyframe > img { inset: 0; width: 100%; height: 100%; border-radius: var(--nx-r-sm); animation: nx-av-in var(--nx-med) var(--nx-ease); }
+.nx .nx-av-frame.is-ended { filter: saturate(0.6); }
+@keyframes nx-av-in { from { opacity: 0.55; } to { opacity: 1; } }
+
+.nx .nx-av-focus {
+  position: absolute; pointer-events: none; border-radius: var(--nx-r-xs);
+  outline: 2px solid var(--nx-state-running); outline-offset: 2px;
+  background: color-mix(in srgb, var(--nx-state-running) 14%, transparent);
+  box-shadow: 0 0 0 var(--nx-halo-wide) color-mix(in srgb, var(--nx-state-running) 16%, transparent);
+  transition: left var(--nx-snappy) var(--nx-spring-snappy), top var(--nx-snappy) var(--nx-spring-snappy), width var(--nx-snappy) var(--nx-spring-snappy), height var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-av-focus.is-about { animation: nx-av-about var(--nx-spin) var(--nx-ease) infinite alternate; }
+.nx .nx-av-focus.is-done { outline-color: var(--nx-green); background: color-mix(in srgb, var(--nx-green) 10%, transparent); box-shadow: none; }
+@keyframes nx-av-about { from { box-shadow: 0 0 0 var(--nx-ring) color-mix(in srgb, var(--nx-state-running) 22%, transparent); } to { box-shadow: 0 0 0 var(--nx-halo-max) color-mix(in srgb, var(--nx-state-running) 6%, transparent); } }
+.nx .nx-av-focus-tag {
+  position: absolute; left: -2px; bottom: calc(100% + 6px); padding: var(--nx-space-2) var(--nx-space-7); border-radius: var(--nx-r-xs); white-space: nowrap;
+  font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-ink-on-warm); background: var(--nx-state-running);
+}
+.nx .nx-av-cursor {
+  position: absolute; width: 14px; height: 14px; margin: calc(-1 * var(--nx-space-7)) 0 0 calc(-1 * var(--nx-space-7)); border-radius: 50%; pointer-events: none;
+  background: var(--nx-state-running); box-shadow: 0 0 0 var(--nx-halo) color-mix(in srgb, var(--nx-state-running) 30%, transparent);
+}
+
+.nx .nx-av-pin {
+  position: absolute; width: 22px; height: 22px; margin: calc(-1 * var(--nx-space-20)) 0 0 calc(-1 * var(--nx-space-11)); pointer-events: none; z-index: 2;
+  border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--nx-accent); box-shadow: var(--nx-lift-2);
+  display: grid; place-items: center;
+}
+.nx .nx-av-pin > span { transform: rotate(45deg); font-size: var(--nx-fs-xs); font-weight: 700; color: var(--nx-on-accent); }
+.nx .nx-av-pin.is-queued { animation: nx-av-wait var(--nx-pulse) var(--nx-ease-loop) infinite; }
+.nx .nx-av-pin.is-delivered { background: var(--nx-green); }
+.nx .nx-av-pin.is-draft { background: var(--nx-state-running); box-shadow: 0 0 0 var(--nx-ring) color-mix(in srgb, var(--nx-panel) 80%, transparent), var(--nx-lift-2); }
+.nx .nx-av-pin.is-draft > span { color: var(--nx-ink-on-warm); }
+@keyframes nx-av-wait { 50% { box-shadow: 0 0 0 var(--nx-halo-wide) color-mix(in srgb, var(--nx-accent) 25%, transparent); } }
+
+/* What the agent is doing, said in words, under the picture. */
+.nx .nx-av-now {
+  display: flex; align-items: center; gap: var(--nx-space-8); max-width: min(100%, 760px); padding: var(--nx-space-8) var(--nx-space-14); border-radius: var(--nx-r-pill);
+  background: var(--nx-raised); box-shadow: var(--nx-lift-2); outline: 1px solid var(--nx-line);
+  font-size: var(--nx-fs-md); color: var(--nx-text);
+}
+.nx .nx-av-now.is-about { outline: 1.5px solid color-mix(in srgb, var(--nx-state-running) 70%, transparent); }
+.nx .nx-av-now.is-about .nx-av-now-text { font-weight: 550; }
+.nx .nx-av-now.is-last { color: var(--nx-muted); }
+.nx .nx-av-now-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-av-result {
+  flex: none; display: inline-flex; align-items: center; gap: var(--nx-space-4); padding: var(--nx-space-1) var(--nx-space-8); border-radius: var(--nx-r-pill);
+  font-size: var(--nx-fs-xs); font-weight: 500; white-space: nowrap; background: var(--nx-hover); color: var(--nx-muted);
+}
+.nx .nx-av-result.is-ok { background: color-mix(in srgb, var(--nx-green) 16%, transparent); color: var(--nx-text); }
+.nx .nx-av-result.is-error { background: color-mix(in srgb, var(--nx-red) 16%, transparent); color: var(--nx-text); }
+.nx .nx-av-result.is-caution { background: var(--nx-caution-soft); }
+.nx .nx-av-result.is-feedback { background: var(--nx-accent-soft); color: var(--nx-text); }
+.nx .nx-av-hint, .nx .nx-av-sent { display: flex; align-items: center; gap: var(--nx-space-6); margin: 0; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-av-sent { color: var(--nx-text); }
+
+/* Comment box. */
+.nx .nx-av-composer {
+  width: min(100%, 420px); display: flex; flex-direction: column; gap: var(--nx-space-8); padding: var(--nx-space-10); border-radius: var(--nx-r-lg);
+  background: var(--nx-raised); box-shadow: var(--nx-lift-3); outline: 1px solid var(--nx-line); cursor: auto; z-index: 3;
+}
+.nx .nx-av-composer.is-floating { position: absolute; width: min(360px, 70%); }
+.nx .nx-av-composer textarea {
+  width: 100%; resize: none; border: 0; outline: none; background: var(--nx-panel); color: var(--nx-text); border-radius: var(--nx-r-sm);
+  padding: var(--nx-space-8) var(--nx-space-10); font: inherit; font-size: var(--nx-fs); line-height: 1.45;
+}
+.nx .nx-av-composer textarea:focus-visible { outline: 2px solid var(--nx-focus); }
+.nx .nx-av-composer-bind { display: flex; flex-wrap: wrap; gap: var(--nx-space-4); }
+.nx .nx-av-chip {
+  display: inline-flex; align-items: center; gap: var(--nx-space-5); max-width: 100%; padding: var(--nx-space-2) var(--nx-space-8); border-radius: var(--nx-r-pill);
+  background: var(--nx-hover); color: var(--nx-muted); font-size: var(--nx-fs-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nx .nx-av-composer-foot { display: flex; align-items: center; gap: var(--nx-space-6); }
+.nx .nx-av-composer-foot > span { flex: 1 1 auto; font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-av-error { margin: 0; color: var(--nx-red); font-size: var(--nx-fs-xs); }
+
+/* Steps. */
+.nx .nx-av-steps { flex: 0 0 340px; min-height: 0; display: flex; flex-direction: column; border-left: 1px solid var(--nx-line); }
+.nx .nx-av-steps > header, .nx .nx-av-progress > header {
+  display: flex; align-items: baseline; gap: var(--nx-space-8); padding: var(--nx-space-12) var(--nx-space-14) var(--nx-space-6); font-size: var(--nx-fs-sm);
+}
+.nx .nx-av-steps > header span, .nx .nx-av-progress > header span { color: var(--nx-faint); font-variant-numeric: tabular-nums; }
+.nx .nx-av-steps ol, .nx .nx-av-progress ol { list-style: none; margin: 0; padding: 0 var(--nx-space-8) var(--nx-space-12); overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+.nx .nx-av-step { position: relative; display: flex; gap: var(--nx-space-10); padding: var(--nx-space-8) var(--nx-space-6); border-radius: var(--nx-r-sm); }
+.nx .nx-av-step:hover { background: var(--nx-hover); }
+.nx .nx-av-step + .nx-av-step::before { content: ""; position: absolute; left: 17px; top: -6px; height: 10px; width: 1px; background: var(--nx-line); }
+.nx .nx-av-step-icon {
+  flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--nx-hover); color: var(--nx-muted);
+}
+.nx .nx-av-step.is-active .nx-av-step-icon { background: color-mix(in srgb, var(--nx-state-running) 22%, transparent); color: var(--nx-text); }
+.nx .nx-av-step.is-feedback .nx-av-step-icon { background: var(--nx-accent-soft); color: var(--nx-text); }
+.nx .nx-av-step-body { min-width: 0; flex: 1 1 auto; }
+.nx .nx-av-step-body p { margin: var(--nx-space-2) 0 var(--nx-space-3); font-size: var(--nx-fs); color: var(--nx-text); line-height: 1.4; overflow-wrap: anywhere; }
+.nx .nx-av-step.is-feedback .nx-av-step-body p { font-weight: 500; }
+.nx .nx-av-step-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-av-step-meta time { font-variant-numeric: tabular-nums; }
+.nx .nx-av-delivery { display: inline-flex; align-items: center; gap: var(--nx-space-4); color: var(--nx-muted); }
+.nx .nx-av-delivery.is-delivered { color: var(--nx-text); }
+.nx .nx-av-step-comment { opacity: 0; transition: opacity var(--nx-fast) var(--nx-ease); }
+.nx .nx-av-step:hover .nx-av-step-comment, .nx .nx-av-step-comment:focus-visible { opacity: 1; }
+.nx .nx-av-quiet { margin: var(--nx-space-8) var(--nx-space-16); color: var(--nx-faint); font-size: var(--nx-fs-sm); }
+
+.nx .nx-av-empty {
+  flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: var(--nx-space-8); padding: var(--nx-space-32) var(--nx-space-20); color: var(--nx-muted); font-size: var(--nx-fs-sm); text-align: center;
+}
+.nx .nx-av-empty.is-big { flex-direction: column; gap: var(--nx-space-10); max-width: 520px; margin: var(--nx-space-40) auto; }
+.nx .nx-av-empty.is-big strong { font-family: var(--nx-display); font-size: var(--nx-fs-xl); font-weight: var(--nx-display-weight); color: var(--nx-text); }
+
+/* ---- time-lapse ---- */
+.nx .nx-av-lapse { flex: 1 1 auto; min-height: 0; display: flex; }
+.nx .nx-av-lapse-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.nx .nx-av-lapse-stage {
+  flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--nx-space-10); padding: var(--nx-space-16);
+  background: radial-gradient(circle at 50% 35%, var(--nx-hover), transparent 72%);
+}
+.nx .nx-av-now.is-replay { color: var(--nx-text); }
+.nx .nx-av-transport { display: flex; align-items: center; gap: var(--nx-space-8); padding: var(--nx-space-8) var(--nx-space-14); border-top: 1px solid var(--nx-line); flex-wrap: wrap; }
+.nx .nx-av-track {
+  position: relative; flex: 1 1 220px; height: 26px; border-radius: var(--nx-r-sm); background: var(--nx-hover); cursor: pointer; touch-action: none; overflow: hidden;
+}
+.nx .nx-av-track:focus-visible { outline: 2px solid var(--nx-focus); outline-offset: 2px; }
+.nx .nx-av-band { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--nx-green) 10%, transparent); }
+.nx .nx-av-band.is-alt { background: color-mix(in srgb, var(--nx-green) 18%, transparent); }
+.nx .nx-av-tick { position: absolute; top: 7px; width: 2px; height: 12px; margin-left: calc(-1 * var(--nx-space-1)); border-radius: var(--nx-r-xxs); background: var(--nx-muted); opacity: 0.75; }
+.nx .nx-av-tick.is-ok { background: var(--nx-green); opacity: 1; }
+.nx .nx-av-tick.is-error { background: var(--nx-red); opacity: 1; }
+.nx .nx-av-tick.is-feedback { top: 3px; width: 8px; height: 8px; margin-left: calc(-1 * var(--nx-space-4)); border-radius: 50%; background: var(--nx-accent); opacity: 1; }
+.nx .nx-av-fill { position: absolute; left: 0; top: 0; bottom: 0; background: color-mix(in srgb, var(--nx-text) 7%, transparent); pointer-events: none; }
+.nx .nx-av-playhead { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: calc(-1 * var(--nx-space-1)); background: var(--nx-text); pointer-events: none; }
+.nx .nx-av-clock { font-variant-numeric: tabular-nums; font-size: var(--nx-fs-sm); color: var(--nx-muted); min-width: 64px; }
+.nx .nx-av-kept { margin: 0; padding: 0 var(--nx-space-14) var(--nx-space-10); font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+
+.nx .nx-av-progress { flex: 0 0 340px; min-height: 0; display: flex; flex-direction: column; border-left: 1px solid var(--nx-line); }
+.nx .nx-av-progress li + li { margin-top: var(--nx-space-4); }
+.nx .nx-av-progress button {
+  width: 100%; text-align: left; display: flex; flex-direction: column; gap: var(--nx-space-4); padding: var(--nx-space-10); border-radius: var(--nx-r); border: 1px solid transparent;
+  background: transparent; color: var(--nx-text); cursor: pointer; transition: background var(--nx-fast) var(--nx-ease), border-color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-av-progress button:hover { background: var(--nx-hover); }
+.nx .nx-av-progress li.is-current button { background: var(--nx-active); border-color: var(--nx-line); }
+.nx .nx-av-seg-time { font-size: var(--nx-fs-xs); color: var(--nx-faint); font-variant-numeric: tabular-nums; }
+.nx .nx-av-seg-text { font-size: var(--nx-fs); line-height: 1.4; }
+.nx .nx-av-seg-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-av-seg-shots { display: flex; align-items: center; gap: var(--nx-space-6); margin-top: var(--nx-space-2); color: var(--nx-faint); }
+.nx .nx-av-seg-shots img { width: calc(50% - 10px); aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-radius: var(--nx-r-xs); outline: 1px solid var(--nx-line); }
+
+/* ---- every run ---- */
+.nx .nx-av-all { overflow-y: auto; }
+.nx .nx-av-cards { list-style: none; margin: 0; padding: var(--nx-space-14); display: flex; flex-wrap: wrap; gap: var(--nx-space-14); }
+.nx .nx-av-card { flex: 1 1 300px; max-width: 520px; min-width: 0; }
+.nx .nx-av-section { margin: var(--nx-space-6) var(--nx-space-14) 0; font-size: var(--nx-fs-sm); font-weight: 600; color: var(--nx-muted); }
+.nx .nx-av-card-open {
+  width: 100%; display: flex; flex-direction: column; text-align: left; padding: 0; border-radius: var(--nx-r-lg); overflow: hidden; cursor: pointer;
+  background: var(--nx-raised); border: 1px solid var(--nx-line); color: var(--nx-text); box-shadow: var(--nx-lift-1);
+  transition: box-shadow var(--nx-fast) var(--nx-ease), transform var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-av-card-open:hover { box-shadow: var(--nx-lift-2); transform: translateY(-1px); }
+.nx .nx-av-card-shot { position: relative; display: grid; place-items: center; aspect-ratio: 16 / 10; overflow: hidden; background: var(--nx-panel); padding: var(--nx-space-10); }
+.nx .nx-av-card-shot > img { width: 100%; height: 100%; object-fit: contain; }
+.nx .nx-av-card-shot .nx-av-frame { box-shadow: var(--nx-lift-1); max-height: 100%; width: auto; height: 100%; max-width: 100%; cursor: pointer; }
+.nx .nx-av-card-wait { color: var(--nx-faint); }
+.nx .nx-av-card-live {
+  position: absolute; top: 10px; left: 10px; display: inline-flex; align-items: center; gap: var(--nx-space-5); padding: var(--nx-space-2) var(--nx-space-8); border-radius: var(--nx-r-pill);
+  background: color-mix(in srgb, var(--nx-panel) 82%, transparent); font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-text);
+}
+.nx .nx-av-card-text { display: flex; flex-direction: column; gap: var(--nx-space-4); padding: var(--nx-space-10) var(--nx-space-12) var(--nx-space-12); }
+.nx .nx-av-card-who { display: flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-sm); min-width: 0; }
+.nx .nx-av-card-who span { color: var(--nx-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx .nx-av-card-doing { font-size: var(--nx-fs); line-height: 1.4; }
+.nx .nx-av-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-av-card.is-ended .nx-av-card-open { box-shadow: none; }
+
+/* Narrow (the view measures itself: side panel, peeking bubble). The picture first, the words under it, steps below. */
+.nx .nx-av-live.is-side .nx-av-body, .nx .nx-av-live.is-thumb .nx-av-body,
+.nx .nx-av-lapse.is-side, .nx .nx-av-lapse.is-thumb { flex-direction: column; overflow-y: auto; }
+.nx .nx-av-live.is-side .nx-av-steps, .nx .nx-av-live.is-thumb .nx-av-steps,
+.nx .nx-av-lapse.is-side .nx-av-progress, .nx .nx-av-lapse.is-thumb .nx-av-progress { flex: none; border-left: 0; border-top: 1px solid var(--nx-line); }
+.nx .nx-av-live.is-side .nx-av-steps ol, .nx .nx-av-lapse.is-side .nx-av-progress ol { overflow: visible; }
+.nx .nx-av-live.is-side .nx-av-stage, .nx .nx-av-lapse.is-side .nx-av-lapse-stage { padding: var(--nx-space-12); flex: none; }
+.nx .nx-av-live.is-side .nx-av-now, .nx .nx-av-lapse.is-side .nx-av-now { font-size: var(--nx-fs); border-radius: var(--nx-r); }
+.nx .nx-av-live.is-side .nx-av-now-text, .nx .nx-av-lapse.is-side .nx-av-now-text { white-space: normal; }
+.nx .nx-av-live.is-thumb .nx-av-hint, .nx .nx-av-live.is-side .nx-av-hint { font-size: var(--nx-fs-xs); }
+.nx .nx-av-lapse.is-side .nx-av-kept { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .nx .nx-av-focus.is-about, .nx .nx-av-pin.is-queued { animation: none; }
+}

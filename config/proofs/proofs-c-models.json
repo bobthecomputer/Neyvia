@@ -1,0 +1,587 @@
+{
+  "area": "proofs-c-models",
+  "module": "grant_agent.proofs_c_models",
+  "self_check": "self_check",
+  "manuals": [
+    "agents"
+  ],
+  "contracts": [
+    {
+      "id": "proofs-c.models.catalog",
+      "phase": "invariant",
+      "claim": "Model catalogs retain bootstrap family identities, model-specific efforts and labels; observed caches add models, preserve source versions, respect explicit restrictions and deprecation, and compute nonnegative source age.",
+      "checkedAt": [
+        "model_catalog.build_model_catalog -> proofs_c_models.check_catalog",
+        "proofs_c_models.self_check:catalog-bootstrap;catalog-detected;catalog-explicit-restrictions"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.portfolio",
+      "phase": "invariant",
+      "claim": "Task lanes keep provider-specific Kimi identifiers and efforts separate; recommendation selects the first observed ready route, requiring runner, auth and Kimi profile observations, and never substitutes a provider.",
+      "checkedAt": [
+        "model_portfolio.build_model_portfolio -> proofs_c_models.checked",
+        "proofs_c_models.self_check:portfolio-task-and-auth"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.classification",
+      "phase": "invariant",
+      "claim": "Tasks select routine, deep or independent verification lanes before provider selection; verification takes precedence over architecture, then bounded work, then caller fallback.",
+      "checkedAt": [
+        "model_portfolio.classify_task_lane -> proofs_c_models.checked",
+        "proofs_c_models.self_check:portfolio-task-and-auth"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.dictation",
+      "phase": "invariant",
+      "claim": "Dictated route rows preserve specialized roles and provider/model/effort identity; the last role assignment and subsequent effort correction win; CLI prints the same parse receipt.",
+      "checkedAt": [
+        "model_routing.parse_route_dictation -> proofs_c_models.checked",
+        "cli.cmd_route_dictation -> model_routing.parse_route_dictation",
+        "proofs_c_models.self_check:dictation-and-cli"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.launch",
+      "phase": "invariant",
+      "claim": "Launch recommendations retain receipt-bound context reading, canonical independent planner/verifier lanes, the task-selected executor and explicit Cursor runtime/model requests.",
+      "checkedAt": [
+        "launch_recommendation.build_launch_runtime_recommendation -> proofs_c_models.checked",
+        "proofs_c_models.self_check:recommendations-and-modes"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.mode",
+      "phase": "invariant",
+      "claim": "Mode selection returns exact configured persona, budgets, workers, merge policy and description; unknown names use balanced when present and the bounded default otherwise.",
+      "checkedAt": [
+        "modes.py: ModeRegistry.get -> proofs_c_models.checked",
+        "proofs_c_models.self_check:recommendations-and-modes"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.advisor",
+      "phase": "invariant",
+      "claim": "Recommendation features follow observed session, verification, resistance, memory, document and approval metrics, priority order and the requested result limit.",
+      "checkedAt": [
+        "improvement_advisor.recommend_improvements -> proofs_c_models.checked",
+        "proofs_c_models.self_check:recommendations-and-modes"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.strict-schema",
+      "phase": "invariant",
+      "claim": "Strict compilation closes objects, requires every property and represents optional typed fields as nullable without mutating the source; unsupported constructs remain non-strict with warnings.",
+      "checkedAt": [
+        "model_tool_intelligence.strict_schema -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.belt",
+      "phase": "invariant",
+      "claim": "Task compilation selects a bounded ranked belt with immutable execution target, source provenance and bound arguments; selection never grants permission authority.",
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.compile_belt -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider;live-capability-routing;mcp-progressive-compiler"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.compiler",
+      "phase": "invariant",
+      "claim": "Every provider callable resolves uniquely to a selected native target with its source provenance and bound arguments; deferred compilation includes tool_search exactly when callable namespaces exist.",
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.compile_openai -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.resolved",
+      "phase": "invariant",
+      "claim": "Provider calls resolve uniquely to the saved target; authored payloads nest provider arguments below immutable toolId and unknown functions are rejected.",
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.resolve_openai_call -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider;adapted-real-stdio"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.provider-request",
+      "phase": "invariant",
+      "claim": "Responses requests send compiled tools and keep the internal callMap off the provider wire.",
+      "checkedAt": [
+        "openai_adapter.build_responses_request_from_tool_compiler -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.loop",
+      "phase": "invariant",
+      "claim": "Bounded execution never exceeds call limits; approval/auth stops require operator action and persist exact loop state, attempts and durable feedback before returning.",
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.run_bounded -> proofs_c_models.checked",
+        "model_tool_intelligence.py: ToolFeedbackStore.record -> proofs_c_models.check_feedback inside durable index transaction",
+        "proofs_c_models.self_check:bounded-approval-receipt"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.benchmark",
+      "phase": "invariant",
+      "claim": "Routing benchmarks derive exact top1/top3/topK accuracy from selected tool identities and persist the same evidence returned to the caller.",
+      "checkedAt": [
+        "capability_service.py: CapabilityService.benchmark_model_tool_routing -> proofs_c_models.checked",
+        "proofs_c_models.self_check:live-capability-routing"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.adapt",
+      "phase": "invariant",
+      "claim": "Adapted external tools preserve remote identity, source hash, original metadata, provider, server, adapter and licensing provenance before review.",
+      "checkedAt": [
+        "tool_factory.py: AuthoredToolStore.adapt -> proofs_c_models.checked",
+        "proofs_c_models.self_check:adapted-real-stdio"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.authored-save",
+      "phase": "invariant",
+      "claim": "Only approved valid authored manifests persist; successful save returns the exact recoverable manifest loaded by a fresh store.",
+      "checkedAt": [
+        "tool_factory.py: AuthoredToolStore.save -> proofs_c_models.checked",
+        "proofs_c_models.self_check:adapted-real-stdio"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.authored-execute",
+      "phase": "invariant",
+      "claim": "Successful adapted execution preserves saved source provenance and validates the external structured output against the authored schema before completion.",
+      "checkedAt": [
+        "capability_service.py: CapabilityService.execute_authored_tool -> proofs_c_models.checked",
+        "proofs_c_models.self_check:adapted-real-stdio"
+      ],
+      "impact": [
+        "model route selection",
+        "compiled callable authority",
+        "recoverable model receipts"
+      ]
+    },
+    {
+      "id": "proofs-c.models.mcp-compiler",
+      "phase": "post",
+      "claim": "The inbound MCP host omits every full input schema on progressive listing, exposes model.tools.compile and dispatches compiler calls to the model tool belt schema.",
+      "checkedAt": [
+        "neyvia_mcp.py: NeyviaMCPServer.handle -> proofs_c_models.checked",
+        "proofs_c_models.self_check:mcp-progressive-compiler"
+      ],
+      "impact": [
+        "inbound MCP model tooling",
+        "progressive tool discovery"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_model_catalog.py",
+      "case": "ModelCatalogTests.test_bootstrap_exposes_new_codex_models_and_model_specific_efforts",
+      "contracts": [
+        "proofs-c.models.catalog"
+      ],
+      "checkedAt": [
+        "model_catalog.build_model_catalog -> proofs_c_models.check_catalog",
+        "proofs_c_models.self_check:catalog-bootstrap;catalog-detected;catalog-explicit-restrictions"
+      ],
+      "case_id": "tests/test_model_catalog.py::ModelCatalogTests.test_bootstrap_exposes_new_codex_models_and_model_specific_efforts"
+    },
+    {
+      "test": "tests/test_model_catalog.py",
+      "case": "ModelCatalogTests.test_detected_cache_adds_models_and_hides_deprecated_5_3",
+      "contracts": [
+        "proofs-c.models.catalog"
+      ],
+      "checkedAt": [
+        "model_catalog.build_model_catalog -> proofs_c_models.check_catalog",
+        "proofs_c_models.self_check:catalog-bootstrap;catalog-detected;catalog-explicit-restrictions"
+      ],
+      "case_id": "tests/test_model_catalog.py::ModelCatalogTests.test_detected_cache_adds_models_and_hides_deprecated_5_3"
+    },
+    {
+      "test": "tests/test_model_catalog.py",
+      "case": "ModelCatalogTests.test_cache_without_timezone_and_explicit_astra_restriction",
+      "contracts": [
+        "proofs-c.models.catalog"
+      ],
+      "checkedAt": [
+        "model_catalog.build_model_catalog -> proofs_c_models.check_catalog",
+        "proofs_c_models.self_check:catalog-bootstrap;catalog-detected;catalog-explicit-restrictions"
+      ],
+      "case_id": "tests/test_model_catalog.py::ModelCatalogTests.test_cache_without_timezone_and_explicit_astra_restriction"
+    },
+    {
+      "test": "tests/test_model_portfolio.py",
+      "case": "test_portfolio_keeps_kimi_routine_deep_and_provider_ids_distinct",
+      "contracts": [
+        "proofs-c.models.portfolio",
+        "proofs-c.models.classification"
+      ],
+      "checkedAt": [
+        "model_portfolio.build_model_portfolio -> proofs_c_models.checked",
+        "proofs_c_models.self_check:portfolio-task-and-auth",
+        "model_portfolio.classify_task_lane -> proofs_c_models.checked"
+      ],
+      "case_id": "tests/test_model_portfolio.py::test_portfolio_keeps_kimi_routine_deep_and_provider_ids_distinct"
+    },
+    {
+      "test": "tests/test_model_portfolio.py",
+      "case": "test_existing_ready_model_wins_over_unproved_managed_kimi_auth",
+      "contracts": [
+        "proofs-c.models.portfolio",
+        "proofs-c.models.classification"
+      ],
+      "checkedAt": [
+        "model_portfolio.build_model_portfolio -> proofs_c_models.checked",
+        "proofs_c_models.self_check:portfolio-task-and-auth",
+        "model_portfolio.classify_task_lane -> proofs_c_models.checked"
+      ],
+      "case_id": "tests/test_model_portfolio.py::test_existing_ready_model_wins_over_unproved_managed_kimi_auth"
+    },
+    {
+      "test": "tests/test_model_portfolio.py",
+      "case": "test_kimi_credential_without_provider_profile_is_not_called_ready",
+      "contracts": [
+        "proofs-c.models.portfolio",
+        "proofs-c.models.classification"
+      ],
+      "checkedAt": [
+        "model_portfolio.build_model_portfolio -> proofs_c_models.checked",
+        "proofs_c_models.self_check:portfolio-task-and-auth",
+        "model_portfolio.classify_task_lane -> proofs_c_models.checked"
+      ],
+      "case_id": "tests/test_model_portfolio.py::test_kimi_credential_without_provider_profile_is_not_called_ready"
+    },
+    {
+      "test": "tests/test_model_portfolio.py",
+      "case": "test_task_classification_stays_task_first",
+      "contracts": [
+        "proofs-c.models.portfolio",
+        "proofs-c.models.classification"
+      ],
+      "checkedAt": [
+        "model_portfolio.build_model_portfolio -> proofs_c_models.checked",
+        "proofs_c_models.self_check:portfolio-task-and-auth",
+        "model_portfolio.classify_task_lane -> proofs_c_models.checked"
+      ],
+      "case_id": "tests/test_model_portfolio.py::test_task_classification_stays_task_first"
+    },
+    {
+      "test": "tests/test_model_routing.py",
+      "case": "ModelRoutingDictationTests.test_parse_dictated_planner_specialized_executors_and_verifier",
+      "contracts": [
+        "proofs-c.models.dictation"
+      ],
+      "checkedAt": [
+        "model_routing.parse_route_dictation -> proofs_c_models.checked",
+        "cli.cmd_route_dictation -> model_routing.parse_route_dictation",
+        "proofs_c_models.self_check:dictation-and-cli"
+      ],
+      "case_id": "tests/test_model_routing.py::ModelRoutingDictationTests.test_parse_dictated_planner_specialized_executors_and_verifier"
+    },
+    {
+      "test": "tests/test_model_routing.py",
+      "case": "ModelRoutingDictationTests.test_route_dictation_cli_prints_parse_receipt",
+      "contracts": [
+        "proofs-c.models.dictation"
+      ],
+      "checkedAt": [
+        "model_routing.parse_route_dictation -> proofs_c_models.checked",
+        "cli.cmd_route_dictation -> model_routing.parse_route_dictation",
+        "proofs_c_models.self_check:dictation-and-cli"
+      ],
+      "case_id": "tests/test_model_routing.py::ModelRoutingDictationTests.test_route_dictation_cli_prints_parse_receipt"
+    },
+    {
+      "test": "tests/test_model_routing.py",
+      "case": "ModelRoutingDictationTests.test_parse_cursor_composer_and_grok_routes",
+      "contracts": [
+        "proofs-c.models.dictation"
+      ],
+      "checkedAt": [
+        "model_routing.parse_route_dictation -> proofs_c_models.checked",
+        "cli.cmd_route_dictation -> model_routing.parse_route_dictation",
+        "proofs_c_models.self_check:dictation-and-cli"
+      ],
+      "case_id": "tests/test_model_routing.py::ModelRoutingDictationTests.test_parse_cursor_composer_and_grok_routes"
+    },
+    {
+      "test": "tests/test_model_routing.py",
+      "case": "ModelRoutingDictationTests.test_parse_gpt_56_family_and_max_effort_without_losing_variant",
+      "contracts": [
+        "proofs-c.models.dictation"
+      ],
+      "checkedAt": [
+        "model_routing.parse_route_dictation -> proofs_c_models.checked",
+        "cli.cmd_route_dictation -> model_routing.parse_route_dictation",
+        "proofs_c_models.self_check:dictation-and-cli"
+      ],
+      "case_id": "tests/test_model_routing.py::ModelRoutingDictationTests.test_parse_gpt_56_family_and_max_effort_without_losing_variant"
+    },
+    {
+      "test": "tests/test_launch_recommendation.py",
+      "case": "LaunchRecommendationTests.test_default_route_uses_requested_four_lane_contract",
+      "contracts": [
+        "proofs-c.models.launch"
+      ],
+      "checkedAt": [
+        "launch_recommendation.build_launch_runtime_recommendation -> proofs_c_models.checked",
+        "proofs_c_models.self_check:recommendations-and-modes"
+      ],
+      "case_id": "tests/test_launch_recommendation.py::LaunchRecommendationTests.test_default_route_uses_requested_four_lane_contract"
+    },
+    {
+      "test": "tests/test_launch_recommendation.py",
+      "case": "LaunchRecommendationTests.test_cursor_model_request_selects_cursor_runtime_and_provider",
+      "contracts": [
+        "proofs-c.models.launch"
+      ],
+      "checkedAt": [
+        "launch_recommendation.build_launch_runtime_recommendation -> proofs_c_models.checked",
+        "proofs_c_models.self_check:recommendations-and-modes"
+      ],
+      "case_id": "tests/test_launch_recommendation.py::LaunchRecommendationTests.test_cursor_model_request_selects_cursor_runtime_and_provider"
+    },
+    {
+      "test": "tests/test_modes.py",
+      "case": "ModeTests.test_load_balanced_mode",
+      "contracts": [
+        "proofs-c.models.mode"
+      ],
+      "checkedAt": [
+        "modes.py: ModeRegistry.get -> proofs_c_models.checked",
+        "proofs_c_models.self_check:recommendations-and-modes"
+      ],
+      "case_id": "tests/test_modes.py::ModeTests.test_load_balanced_mode"
+    },
+    {
+      "test": "tests/test_modes.py",
+      "case": "ModeTests.test_load_swarms_mode_parallel_workers",
+      "contracts": [
+        "proofs-c.models.mode"
+      ],
+      "checkedAt": [
+        "modes.py: ModeRegistry.get -> proofs_c_models.checked",
+        "proofs_c_models.self_check:recommendations-and-modes"
+      ],
+      "case_id": "tests/test_modes.py::ModeTests.test_load_swarms_mode_parallel_workers"
+    },
+    {
+      "test": "tests/test_improvement_advisor.py",
+      "case": "ImprovementAdvisorTests.test_recommendations_generated",
+      "contracts": [
+        "proofs-c.models.advisor"
+      ],
+      "checkedAt": [
+        "improvement_advisor.recommend_improvements -> proofs_c_models.checked",
+        "proofs_c_models.self_check:recommendations-and-modes"
+      ],
+      "case_id": "tests/test_improvement_advisor.py::ImprovementAdvisorTests.test_recommendations_generated"
+    },
+    {
+      "test": "tests/test_model_tool_intelligence.py",
+      "case": "test_strict_schema_preserves_optional_fields_as_nullable",
+      "contracts": [
+        "proofs-c.models.strict-schema"
+      ],
+      "checkedAt": [
+        "model_tool_intelligence.strict_schema -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider"
+      ],
+      "case_id": "tests/test_model_tool_intelligence.py::test_strict_schema_preserves_optional_fields_as_nullable"
+    },
+    {
+      "test": "tests/test_model_tool_intelligence.py",
+      "case": "test_adapted_tool_keeps_original_identity_and_source_provenance",
+      "contracts": [
+        "proofs-c.models.adapt"
+      ],
+      "checkedAt": [
+        "tool_factory.py: AuthoredToolStore.adapt -> proofs_c_models.checked",
+        "proofs_c_models.self_check:adapted-real-stdio"
+      ],
+      "case_id": "tests/test_model_tool_intelligence.py::test_adapted_tool_keeps_original_identity_and_source_provenance"
+    },
+    {
+      "test": "tests/test_model_tool_intelligence.py",
+      "case": "test_compiler_selects_small_belt_and_resolves_provider_call",
+      "contracts": [
+        "proofs-c.models.belt",
+        "proofs-c.models.compiler",
+        "proofs-c.models.resolved",
+        "proofs-c.models.provider-request"
+      ],
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.compile_belt -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider;live-capability-routing;mcp-progressive-compiler",
+        "model_tool_intelligence.py: ModelToolIntelligence.compile_openai -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider",
+        "model_tool_intelligence.py: ModelToolIntelligence.resolve_openai_call -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider;adapted-real-stdio",
+        "openai_adapter.build_responses_request_from_tool_compiler -> proofs_c_models.checked"
+      ],
+      "case_id": "tests/test_model_tool_intelligence.py::test_compiler_selects_small_belt_and_resolves_provider_call"
+    },
+    {
+      "test": "tests/test_model_tool_intelligence.py",
+      "case": "test_bounded_loop_stops_for_approval_and_records_compact_state",
+      "contracts": [
+        "proofs-c.models.loop"
+      ],
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.run_bounded -> proofs_c_models.checked",
+        "model_tool_intelligence.py: ToolFeedbackStore.record -> proofs_c_models.check_feedback inside durable index transaction",
+        "proofs_c_models.self_check:bounded-approval-receipt"
+      ],
+      "case_id": "tests/test_model_tool_intelligence.py::test_bounded_loop_stops_for_approval_and_records_compact_state"
+    },
+    {
+      "test": "tests/test_model_tool_intelligence.py",
+      "case": "test_live_capability_service_routes_representative_model_tools",
+      "contracts": [
+        "proofs-c.models.belt",
+        "proofs-c.models.benchmark"
+      ],
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.compile_belt -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider;live-capability-routing;mcp-progressive-compiler",
+        "capability_service.py: CapabilityService.benchmark_model_tool_routing -> proofs_c_models.checked",
+        "proofs_c_models.self_check:live-capability-routing"
+      ],
+      "case_id": "tests/test_model_tool_intelligence.py::test_live_capability_service_routes_representative_model_tools"
+    },
+    {
+      "test": "tests/test_model_tool_intelligence.py",
+      "case": "test_mcp_exposes_and_calls_model_tool_compiler_progressively",
+      "contracts": [
+        "proofs-c.models.belt",
+        "proofs-c.models.compiler",
+        "proofs-c.models.mcp-compiler"
+      ],
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.compile_belt -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider;live-capability-routing;mcp-progressive-compiler",
+        "model_tool_intelligence.py: ModelToolIntelligence.compile_openai -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider",
+        "neyvia_mcp.py: NeyviaMCPServer.handle -> proofs_c_models.checked",
+        "proofs_c_models.self_check:mcp-progressive-compiler"
+      ],
+      "case_id": "tests/test_model_tool_intelligence.py::test_mcp_exposes_and_calls_model_tool_compiler_progressively"
+    },
+    {
+      "test": "tests/test_model_tool_intelligence.py",
+      "case": "test_adapted_mcp_tool_is_callable_and_provider_arguments_are_nested",
+      "contracts": [
+        "proofs-c.models.compiler",
+        "proofs-c.models.resolved",
+        "proofs-c.models.adapt",
+        "proofs-c.models.authored-save",
+        "proofs-c.models.authored-execute"
+      ],
+      "checkedAt": [
+        "model_tool_intelligence.py: ModelToolIntelligence.compile_openai -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider",
+        "model_tool_intelligence.py: ModelToolIntelligence.resolve_openai_call -> proofs_c_models.checked",
+        "proofs_c_models.self_check:strict-compiler-provider;adapted-real-stdio",
+        "tool_factory.py: AuthoredToolStore.adapt -> proofs_c_models.checked",
+        "proofs_c_models.self_check:adapted-real-stdio",
+        "tool_factory.py: AuthoredToolStore.save -> proofs_c_models.checked",
+        "capability_service.py: CapabilityService.execute_authored_tool -> proofs_c_models.checked"
+      ],
+      "case_id": "tests/test_model_tool_intelligence.py::test_adapted_mcp_tool_is_callable_and_provider_arguments_are_nested"
+    }
+  ],
+  "frontier": [
+    "Model treasury backend hooks and its two cases belong to the lead backend manifest.",
+    "All provider/authentication observations are explicit; no real provider authentication or external send is exercised.",
+    "Adapted execution uses explicit local stdio MCP configuration, because production disables the historical default demo stub."
+  ],
+  "portRoles": []
+}

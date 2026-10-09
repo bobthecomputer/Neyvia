@@ -1,0 +1,855 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "pdf",
+  "kind": "environment",
+  "proofs": {
+    "area": "frontend-models",
+    "manifests": [
+      "config/proofs/frontend-models.json"
+    ],
+    "startup": {
+      "procedures": [
+        "pdf.read-highlight-navigate"
+      ],
+      "runner": "scripts/proofs-frontend-models.mjs",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxPdfModel.js:itemRect -> checkedModelAction"
+        ],
+        "claim": "Character highlights preserve PDF baseline, proportional x range and descender bounds",
+        "id": "pdf.text-geometry",
+        "impact": [
+          "PDF highlights/search/navigation"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxPdfModel.js:searchTexts -> checkedModelAction"
+        ],
+        "claim": "Return every bounded nonoverlapping case-insensitive occurrence in page/run order with actual text geometry",
+        "id": "pdf.search",
+        "impact": [
+          "PDF highlights/search/navigation"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxPdfModel.js:stepZoom -> checkedModelAction"
+        ],
+        "claim": "Zoom moves to nearest supported step in the requested direction and clamps at endpoints",
+        "id": "pdf.zoom",
+        "impact": [
+          "PDF highlights/search/navigation"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxPdfModel.js:displayName -> checkedModelAction"
+        ],
+        "claim": "A PDF is named by its file name, never an encoded route, query or internal path",
+        "id": "pdf.display-name",
+        "impact": [
+          "PDF loading text, toolbar name and reported state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxPdfModel.js:clampPage -> checkedModelAction"
+        ],
+        "claim": "Page navigation rounds/coerces input and stays within 1..page count",
+        "id": "pdf.page",
+        "impact": [
+          "PDF highlights/search/navigation"
+        ],
+        "phase": "post"
+      },
+      {
+        "id": "p22.pdf-render",
+        "phase": "post",
+        "claim": "Canvas contains ink and its selectable text layer contains the known phrase",
+        "checkedAt": [
+          "scripts/p22_render.py",
+          "web/src/neyvia/next/nxOutcomeObservation.js",
+          "web/src/neyvia/next/NxPdfPage.jsx",
+          "web/src/neyvia/next/nxPdfModel.js",
+          "src/grant_agent/neyvia_pdf_api.py",
+          "src/grant_agent/neyvia_pdf_tools.py",
+          "src/grant_agent/cl/pdf_effects.py",
+          "scripts/p22_build.mjs"
+        ],
+        "impact": [
+          "web/src/neyvia/next/nxShellObserve.js",
+          "scripts/placement_shots.py",
+          "config/proofs/fast-ui.json"
+        ]
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.pdf.extract_text": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 512,
+          "maximum": 100000
+        }
+      },
+      "required": []
+    },
+    "neyvia.pdf.goto": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "page"
+      ]
+    },
+    "neyvia.pdf.highlight": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "text": {
+          "type": "string"
+        },
+        "rects": {
+          "type": "array"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "page"
+      ]
+    },
+    "neyvia.pdf.open": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "source": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.pdf.search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "maxHits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        }
+      },
+      "required": []
+    },
+    "neyvia.pdf.state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.pdf.zoom": {
+      "type": "object",
+      "properties": {
+        "scale": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0.25,
+              "maximum": 5
+            },
+            {
+              "type": "string",
+              "enum": [
+                "fit-width"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "scale"
+      ]
+    },
+    "proofs-e-shell.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "PDF shared state, pages, search, highlights and extraction",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "requested": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "state",
+              "requested"
+            ]
+          },
+          "tool": "neyvia.pdf.state"
+        }
+      },
+      "actions": {
+        "pdf.state": {
+          "effect": "Return app-observed PDF state and separately requested source/page",
+          "pre": "Selected root bus is readable; PDF may be unopened",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "requested": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "state",
+              "requested"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.pdf.state",
+          "tool": "neyvia.pdf.state"
+        },
+        "pdf.extract_text": {
+          "effect": "Read real page text with explicit truncation; no OCR",
+          "pre": "Open PDF source still valid; page in range; maxChars 512–100000",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pdf.extract_text",
+          "tool": "neyvia.pdf.extract_text"
+        },
+        "pdf.goto": {
+          "effect": "Emit page navigation; actual visible page awaits app state report",
+          "pre": "Open PDF source still valid; integer page 1..page count",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pdf.goto",
+          "tool": "neyvia.pdf.goto"
+        },
+        "pdf.highlight": {
+          "effect": "Emit highlight overlay request with optional note; does not rewrite PDF or confirm rendering",
+          "pre": "Open PDF and valid page; either nonempty finite four-coordinate rectangles or text found on that page (first 100000 chars)",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.pdf.highlight",
+          "tool": "neyvia.pdf.highlight"
+        },
+        "pdf.open": {
+          "effect": "Read PDF metadata, persist requested source/page and emit open; preserve source, uiVerified=false",
+          "pre": "Existing local .pdf under workspace/repo/registered project, %PDF- header within 1024 bytes, selected page within page count",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pdf.open",
+          "tool": "neyvia.pdf.open"
+        },
+        "pdf.search": {
+          "effect": "Search parsed PDF text, emit the query and require a fresh renderer report of that query and its hit count",
+          "pre": "Open PDF source still valid; literal query, maxHits 1–10000",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pdf.search",
+          "tool": "neyvia.pdf.search"
+        },
+        "pdf.zoom": {
+          "effect": "Emit zoom request; user app reports rendered scale separately",
+          "pre": "Open PDF with valid page; scale is fit-width or numeric 0.25–5",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pdf.zoom",
+          "tool": "neyvia.pdf.zoom"
+        }
+      },
+      "checks": {
+        "requested-source": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "requested.source",
+            "value": {
+              "$path": "source"
+            }
+          },
+          "tool": "neyvia.pdf.state"
+        },
+        "page-text": {
+          "args": {
+            "page": {
+              "$input": "page"
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "text",
+            "value": {
+              "$input": "phrase"
+            }
+          },
+          "tool": "neyvia.pdf.extract_text"
+        },
+        "visible-source": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.source",
+            "value": {
+              "$path": "source"
+            }
+          },
+          "tool": "neyvia.pdf.state"
+        },
+        "visible-text": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": [
+              "state",
+              "highlights",
+              {
+                "$input": "markIndex"
+              },
+              "text"
+            ],
+            "value": {
+              "$input": "phrase"
+            }
+          },
+          "tool": "neyvia.pdf.state"
+        },
+        "visible-page": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": [
+              "state",
+              "highlights",
+              {
+                "$input": "markIndex"
+              },
+              "page"
+            ],
+            "value": {
+              "$input": "page"
+            }
+          },
+          "tool": "neyvia.pdf.state"
+        },
+        "fresh-page": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "fresh",
+            "value": true
+          },
+          "tool": "neyvia.pdf.state"
+        },
+        "canvas-not-blank": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "outcome.nonBlank",
+            "value": true
+          },
+          "tool": "neyvia.pdf.state"
+        },
+        "text-layer-ready": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "outcome.textLayerPresent",
+            "value": true
+          },
+          "tool": "neyvia.pdf.state"
+        },
+        "text-layer-phrase": {
+          "args": {},
+          "expect": {
+            "op": "contains",
+            "path": "outcome.text",
+            "value": {
+              "$input": "phrase"
+            }
+          },
+          "tool": "neyvia.pdf.state"
+        }
+      },
+      "procedures": {
+        "find-and-highlight": {
+          "goal": "Open a local PDF, search a passage, review the chosen page and emit a highlight overlay",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "phrase": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "page",
+              "phrase"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "pdf.open",
+              "args": {
+                "page": {
+                  "$input": "page"
+                },
+                "source": {
+                  "$path": "source"
+                }
+              },
+              "check": "requested-source",
+              "save": "opened"
+            },
+            {
+              "action": "pdf.search",
+              "args": {
+                "query": {
+                  "$input": "phrase"
+                }
+              },
+              "save": "hits"
+            },
+            {
+              "action": "pdf.extract_text",
+              "args": {
+                "page": {
+                  "$input": "page"
+                }
+              },
+              "check": "page-text",
+              "save": "text"
+            },
+            {
+              "judge": "passage"
+            },
+            {
+              "action": "pdf.goto",
+              "args": {
+                "page": {
+                  "$input": "page"
+                }
+              },
+              "save": "navigated",
+              "when": {
+                "judge": "passage",
+                "option": "highlight"
+              }
+            },
+            {
+              "action": "pdf.highlight",
+              "args": {
+                "page": {
+                  "$input": "page"
+                },
+                "text": {
+                  "$input": "phrase"
+                }
+              },
+              "save": "highlightRequest",
+              "when": {
+                "judge": "passage",
+                "option": "highlight"
+              }
+            }
+          ]
+        },
+        "open-and-read": {
+          "goal": "Open and verify text on a known page; no rendering claim",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "phrase": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "page",
+              "phrase"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "pdf.open",
+              "args": {
+                "page": {
+                  "$input": "page"
+                },
+                "source": {
+                  "$path": "source"
+                }
+              },
+              "check": "requested-source",
+              "save": "opened"
+            },
+            {
+              "action": "pdf.extract_text",
+              "args": {
+                "page": {
+                  "$input": "page"
+                }
+              },
+              "check": "page-text",
+              "save": "text"
+            }
+          ]
+        },
+        "verify-visible-highlight": {
+          "goal": "After user app acknowledgement, verify source and the selected observed highlight text/page",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "phrase": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "markIndex": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "source",
+              "phrase",
+              "page",
+              "markIndex"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "pdf.state",
+              "args": {},
+              "check": "visible-source",
+              "save": "source"
+            },
+            {
+              "action": "pdf.state",
+              "args": {},
+              "check": "visible-text",
+              "save": "text"
+            },
+            {
+              "action": "pdf.state",
+              "args": {},
+              "check": "visible-page",
+              "save": "page"
+            }
+          ]
+        },
+        "set-visible-zoom": {
+          "goal": "Set a PDF zoom and verify the user app reports the requested scale",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "scale": {
+                "oneOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0.25,
+                    "maximum": 5
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "fit-width"
+                    ]
+                  }
+                ]
+              }
+            },
+            "required": [
+              "scale"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "pdf.zoom",
+              "args": {
+                "scale": {
+                  "$input": "scale"
+                }
+              },
+              "save": "zoomed"
+            }
+          ]
+        },
+        "verify-rendered-page": {
+          "goal": "The current mounted page has real ink and the requested phrase in its selectable text layer",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "phrase": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "phrase"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "pdf.state",
+              "args": {},
+              "check": "fresh-page",
+              "save": "observed0"
+            },
+            {
+              "action": "pdf.state",
+              "args": {},
+              "check": "canvas-not-blank",
+              "save": "observed1"
+            },
+            {
+              "action": "pdf.state",
+              "args": {},
+              "check": "text-layer-ready",
+              "save": "observed2"
+            },
+            {
+              "action": "pdf.state",
+              "args": {},
+              "check": "text-layer-phrase",
+              "save": "observed3"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "passage": {
+          "constraints": "Read hits and page text; input page must be the intended occurrence, not simply first hit. Text highlights exact phrase; use rectangles only for visual selection with known PDF-point coordinates.",
+          "options": [
+            "highlight",
+            "leave"
+          ],
+          "question": "Which occurrence deserves the highlight?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Open or goto page outside PDF count",
+          "recovery": "Read metadata.pages and choose 1-based existing page"
+        },
+        {
+          "failure": "Highlight text was not found",
+          "recovery": "Extract same page, correct literal text or use explicit finite rectangle coordinates; never claim successful overlay"
+        },
+        {
+          "failure": "Extracted text truncated / search hits truncated",
+          "recovery": "Increase bounded maxChars/maxHits or narrow page/query; absence in a truncated result is inconclusive"
+        },
+        {
+          "failure": "Command returned uiVerified=false",
+          "recovery": "Read state.state observedAt/page/highlights after app consumption; requested is only intent"
+        },
+        {
+          "failure": "Scanned PDF has empty text",
+          "recovery": "Text extraction has no OCR; take separate OCR route with its own evidence"
+        }
+      ],
+      "frontier": [
+        "OCR, encrypted-document handling and semantic match selection are unmapped",
+        "Highlights are overlays; no tool persists annotations into PDF bytes",
+        "Browser upload handles and remote URLs are not valid local PDF sources",
+        "CL PDF effects require a fresh ready renderer report for the same guarded source; a queued event alone does not complete the action.",
+        "Rectangle-only highlight geometry is not present in the renderer state report, so CL refuses rectangle arguments until a geometry observer is wired."
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_pdf_tools.py (safe_pdf, call_pdf, report_pdf_state), pdf_document.py; scripts/verify-grounded-manuals.mjs.",
+        "Choose markIndex from observed state.highlights, not a search-hit index; null state or wrong source/page/text fails verification. Source: web/src/neyvia/next/NxPdfApp.jsx reports real highlights.",
+        "A PDF search is a visible renderer mutation; CL requires the reported query and hits, while extracted text remains a source read."
+      ]
+    },
+    "proofs-e-shell": {
+      "title": "PROOFS-e shell state and action contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the latest verification receipt without repeating shell actions",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-shell.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-shell-proof-receipt": {
+          "goal": "Observe the latest shell proof receipt without replaying mutations",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A queue or shell state receipt is treated as rendered app proof",
+          "recovery": "Inspect the owned running UI and actual PDF/output/provider separately"
+        }
+      ],
+      "frontier": [
+        "Rendered shell journeys and PDF loading require owned UI proof",
+        "Provider execution and actual artifact publishing are separate proof boundaries"
+      ],
+      "guidance": [
+        "pdf.open selects the Documents PDF app; later commands require it open and enter the ordered inbox; invalid pages/scales/text are refused",
+        "Startup runner: scripts/proofs-e-shell.mjs --root <owned-scratch>; area proofs-e-shell checks five composed production journeys and eleven semantic corruptions"
+      ]
+    }
+  }
+}

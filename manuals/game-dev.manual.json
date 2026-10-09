@@ -1,0 +1,892 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "game-dev",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-e-models, surface-games-extra",
+    "manifests": [
+      "config/proofs/proofs-e-models.json",
+      "config/proofs/games-journey.json",
+      "config/proofs/surface-games-extra.json"
+    ],
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_gamedev.handle_command",
+          "grant_agent.neyvia_gamedev.validate_asset",
+          "grant_agent.proofs_games_journey.export_validation_journey",
+          "scripts/gamedev/scene-runtime.js:NeyviaScene.dispatch",
+          "scripts/gamedev/scene-runtime.js:NeyviaScene.persist"
+        ],
+        "claim": "A local Babylon NullEngine journey creates and edits real mesh geometry, preserves the edit across scene save/reopen, refuses an unsupported primitive without changing the saved scene, exports a GLB that passes Khronos validation, diagnoses a broken glTF reference, and refuses paths outside the selected workspace.",
+        "id": "gamedev.export-validation-journey",
+        "impact": [
+          "Game Dev project export validation and engine import boundary"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxGameDevModel.js:keepSelection -> checkedProofsEModel"
+        ],
+        "claim": "Native selection never changes implicitly; browser reload affinity follows only one same-project/context replacement",
+        "id": "gamedev.keepSelection",
+        "impact": [
+          "gamedev frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxGameDevModel.js:tabForStage -> checkedProofsEModel"
+        ],
+        "claim": "Explicit known tabs win, then launcher app aliases, then embedded Browser 3D",
+        "id": "gamedev.tabForStage",
+        "impact": [
+          "gamedev frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxGameDevModel.js:visibleFields -> checkedProofsEModel"
+        ],
+        "claim": "Conditional controls show exactly fields whose predicates hold",
+        "id": "gamedev.visibleFields",
+        "impact": [
+          "gamedev frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxGameDevModel.js:initialValues -> checkedProofsEModel"
+        ],
+        "claim": "Form defaults resolve duplicate keys according to their condition",
+        "id": "gamedev.initialValues",
+        "impact": [
+          "gamedev frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxGameDevModel.js:buildArgs -> checkedProofsEModel"
+        ],
+        "claim": "Visible fields become exact bridge args; vectors/numbers are finite, JSON text must parse as an object and wildcard fields are flattened",
+        "id": "gamedev.buildArgs",
+        "impact": [
+          "gamedev frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxGameDevModel.js:actionFields -> checkedProofsEModel"
+        ],
+        "claim": "Godot edit/interact and Unity test forms retain their typed bridge fields/defaults; other actions return valid field arrays",
+        "id": "gamedev.actionFields",
+        "impact": [
+          "Game Dev typed action forms and engine bridge args"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxGameDevModel.js:sessionLabel",
+          "web/src/neyvia/next/nxGameDevModel.js:keepSelection -> checkedProofsEModel",
+          "scripts/uifix2_contracts.py:c4_gamedev_names_and_selection",
+          "scripts/p22_release_models.mjs"
+        ],
+        "claim": "Sessions are named in words (Browser 3D editor, Editor), never with raw environment ids or a literal null; a reloaded browser-webgl or browser-null scene stays selected",
+        "id": "gamedev.sessionLabel",
+        "impact": [
+          "Game Dev sessions list and session card"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_gamedev.report_state",
+          "grant_agent.ui_command_bus.UICommandBus.put",
+          "grant_agent.ui_command_bus.UICommandBus.get",
+          "grant_agent.proofs_surface_games_extra.screen_state_persists_and_refuses_invalid_tab"
+        ],
+        "claim": "Game Dev screen selection persists the exact tab, project and UI client through the backend state bus; an unknown tab is refused and leaves the last valid selection unchanged.",
+        "id": "p22.gamedev.screen-state-persistence",
+        "impact": [
+          "Game Dev selected editor/project screen state and invalid-tab refusal"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.gamedev.action": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "args": {
+          "type": "object"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sessionId",
+        "action"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "sessionId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "action": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.gamedev.asset_validate": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.gamedev.project_status": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "type": "string",
+          "enum": [
+            "unity",
+            "roblox",
+            "blender",
+            "godot",
+            "babylon"
+          ]
+        },
+        "projectPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine",
+        "projectPath"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "projectPath": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.gamedev.receipt": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "requestId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.gamedev.receipts": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "required": []
+    },
+    "neyvia.gamedev.sessions": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "type": "string",
+          "enum": [
+            "unity",
+            "roblox",
+            "blender",
+            "godot",
+            "babylon"
+          ]
+        },
+        "projectPath": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string",
+          "enum": [
+            "Edit",
+            "Play",
+            "Client",
+            "Server"
+          ]
+        }
+      },
+      "required": []
+    },
+    "neyvia.gamedev.setup": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "type": "string",
+          "enum": [
+            "unity",
+            "roblox",
+            "blender",
+            "godot",
+            "babylon"
+          ]
+        },
+        "projectPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine",
+        "projectPath"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "projectPath": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.gamedev.state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.gamedev.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "proofs-e-models.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "bridges": {
+      "title": "Operate native game editors and Babylon through exact sessions and checked receipts",
+      "state": {
+        "live": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "engines": {
+                "type": "array"
+              },
+              "sessions": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "engines",
+              "sessions"
+            ]
+          },
+          "tool": "neyvia.gamedev.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Observe installation separately from heartbeat connection",
+          "pre": "Selected backend root and scoped workspace; no editor starts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.gamedev.status",
+          "tool": "neyvia.gamedev.status"
+        },
+        "sessions": {
+          "effect": "Observe exact engine/project/context/session/capabilities; never select by engine alone",
+          "pre": "Selected backend root",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.gamedev.sessions",
+          "tool": "neyvia.gamedev.sessions"
+        },
+        "setup": {
+          "effect": "Copy local bridge package and create a project-scoped token; no editor/system install",
+          "pre": "Existing project inside selected workspace; installed native editor; no conflicting bridge files",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.gamedev.setup",
+          "tool": "neyvia.gamedev.setup"
+        },
+        "action": {
+          "effect": "Queue an affinity-bound native operation once; success is determined by native completion, not queue admission",
+          "pre": "Exact connected session advertises action; matching context/Studio; scoped file paths; load_asset passes validator",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.gamedev.action",
+          "tool": "neyvia.gamedev.action"
+        },
+        "receipt": {
+          "effect": "Observe queue/running/terminal result, error and elapsed time; pending is not completed",
+          "pre": "Existing requestId on the same persistent backend",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.gamedev.receipt",
+          "tool": "neyvia.gamedev.receipt"
+        },
+        "asset_validate": {
+          "effect": "Run official Khronos Validator; invalid exports cannot be loaded by action",
+          "pre": "Existing scoped .glb/.gltf with bounded local resources and Node available",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.gamedev.asset_validate",
+          "tool": "neyvia.gamedev.asset_validate"
+        },
+        "gamedev.receipts": {
+          "effect": "Observe durable action receipts and reported UI selection separately from native bridge observations",
+          "pre": "Read only inside the selected owner workspace",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.gamedev.receipts",
+          "tool": "neyvia.gamedev.receipts"
+        },
+        "gamedev.state": {
+          "effect": "Observe durable action receipts and reported UI selection separately from native bridge observations",
+          "pre": "Read only inside the selected owner workspace",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.gamedev.state",
+          "tool": "neyvia.gamedev.state"
+        },
+        "project-status": {
+          "effect": "Read exact bridge package hashes and configuration affinity separately from connection",
+          "pre": "Selected workspace project; capability content is never returned",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.gamedev.project_status",
+          "tool": "neyvia.gamedev.project_status"
+        }
+      },
+      "checks": {
+        "complete": {
+          "args": {
+            "requestId": {
+              "$input": "requestId"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "status",
+            "value": "succeeded"
+          },
+          "tool": "neyvia.gamedev.receipt"
+        },
+        "valid-asset": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "valid",
+            "value": true
+          },
+          "tool": "neyvia.gamedev.asset_validate"
+        },
+        "configured": {
+          "args": {
+            "engine": {
+              "$input": "engine"
+            },
+            "projectPath": {
+              "$input": "projectPath"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "configured",
+            "value": true
+          },
+          "tool": "neyvia.gamedev.project_status"
+        },
+        "one-editor-session": {
+          "args": {
+            "context": "Edit",
+            "engine": {
+              "$input": "engine"
+            },
+            "projectPath": {
+              "$input": "projectPath"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": "sessions",
+            "schema": {
+              "items": {
+                "properties": {
+                  "clientId": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "status": {
+                    "const": "connected"
+                  }
+                },
+                "required": [
+                  "sessionId",
+                  "clientId"
+                ],
+                "type": "object"
+              },
+              "maxItems": 1,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "tool": "neyvia.gamedev.sessions"
+        }
+      },
+      "procedures": {
+        "discover-live-editors": {
+          "goal": "Find installed editors and exact connected native contexts before operating",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "save": "availability"
+            },
+            {
+              "action": "sessions",
+              "args": {},
+              "save": "native"
+            }
+          ]
+        },
+        "review-completed-action": {
+          "goal": "Check a terminal native receipt after polling until it stops being queued/running",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "receipt",
+              "args": {
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "check": "complete",
+              "save": "receipt"
+            }
+          ]
+        },
+        "validate-export-before-engine-load": {
+          "goal": "Reject broken glTF resources before any engine import",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "asset_validate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "valid-asset",
+              "save": "validation"
+            }
+          ]
+        },
+        "setup-project": {
+          "goal": "Install a project-local bridge and prove its current package hashes/configuration; native connection requires a separate session heartbeat",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "engine": {
+                "type": "string",
+                "enum": [
+                  "unity",
+                  "roblox",
+                  "blender",
+                  "godot",
+                  "babylon"
+                ]
+              },
+              "projectPath": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "engine",
+              "projectPath"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "setup",
+              "args": {
+                "engine": {
+                  "$input": "engine"
+                },
+                "projectPath": {
+                  "$input": "projectPath"
+                }
+              },
+              "check": "configured",
+              "save": "setup"
+            }
+          ]
+        },
+        "operate-exact-session": {
+          "goal": "Queue exactly one affinity-bound native operation; poll this same request and review native completion before claiming scene behavior",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "args": {
+                "type": "object"
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sessionId",
+              "action",
+              "args",
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "action",
+              "args": {
+                "action": {
+                  "$input": "action"
+                },
+                "args": {
+                  "$input": "args"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "sessionId": {
+                  "$input": "sessionId"
+                }
+              },
+              "check": "complete",
+              "save": "request"
+            }
+          ]
+        },
+        "inspect-one-editor-session": {
+          "goal": "In a disposable project with exactly one native editor instance, observe one connected client-affine session after registration retry; multiple real instances remain ambiguous",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "engine": {
+                "type": "string",
+                "enum": [
+                  "unity",
+                  "roblox",
+                  "blender",
+                  "godot",
+                  "babylon"
+                ]
+              },
+              "projectPath": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "engine",
+              "projectPath"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "sessions",
+              "args": {
+                "context": "Edit",
+                "engine": {
+                  "$input": "engine"
+                },
+                "projectPath": {
+                  "$input": "projectPath"
+                }
+              },
+              "check": "one-editor-session",
+              "save": "native"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Editor is detected but no native session is connected",
+          "recovery": "Use setup then enable the project-local plugin in its actual editor; inspect heartbeat before actions"
+        },
+        {
+          "failure": "Action is queued/running",
+          "recovery": "Poll the same requestId until terminal; do not call it complete or queue a fresh retry"
+        },
+        {
+          "failure": "Backend restart, timeout or ambiguous completion",
+          "recovery": "Inspect native state first; interrupted actions are failed and never automatically replayed"
+        },
+        {
+          "failure": "Changed request payload reuses an ID",
+          "recovery": "Inspect previous receipt, then choose a new ID only for a new explicit intent"
+        },
+        {
+          "failure": "Roblox simulation stop preserves edits",
+          "recovery": "Require preserveChanges:true for simulation; player EndTest uses exact Server session, then observe Edit playResult"
+        }
+      ],
+      "frontier": [
+        "Native Unity, Blender and Roblox defining editor journeys remain unproven. Godot and rendered Babylon journeys are recorded by the UI integration owner in plans/15-handoff.md followups; FOLLOW replay proves shared backend receipts, not a new editor installation.",
+        "Unity glTF loading requires an existing project importer",
+        "Roblox StudioTestService play/end APIs and actual Client/Server plugin contexts remain unverified without Studio"
+      ],
+      "guidance": [
+        "Observer/action/check tools share HTTP /api/backend, bot state and desktop forwarding; existing generic Tauri IPC carries gamedev_*_command.",
+        "Unity: select/inspect path is scene hierarchy or Assets/...; guarded script edit uses source+expectedSha256; component edit path/component/property/value or vector; run/stop/reload; test mode EditMode/PlayMode only with existing Test Framework.",
+        "Godot Edit: inspect; select/edit node relative to scene, property and value; script edit path res://...gd, source, expectedSha256; validate path res://...gd; run -> observe separate Play session; Play interact node,input invokes game's explicit neyvia_interact method.",
+        "Roblox: exact studio_id and Edit/Client/Server affinity; Instance path, script source+expectedSource; run mode play uses StudioTestService (if available); stop mode play requires Server and final Edit playResult observation; simulation stop requires preserveChanges:true; read actual console.",
+        "Blender: inspect/select/edit object and location/rotation/scale; render path PNG and camera; export path GLB/glTF and selectedOnly; validate then load_asset path.",
+        "Babylon: edit op create/transform/material, name, position/rotation/scaling/color finite triples, expectedRevision; run/stop; interact name,rotateY radians; test name,position/minVertices; export path GLB with expectedSha256 for overwrite; validate then load_asset path GLB.",
+        "Export/import proof is boundary-specific. NullEngine runs real scene geometry and loader but cannot prove rendered pixels, clicks or Blender rendering.",
+        "Engine APIs remain native; do not unify Unity Components, Roblox Instances and Godot Nodes.",
+        "Private .neyvia/gamedev-bridge.json must remain out of source control. Never expose its token in UI or receipts.",
+        "Game Dev action log reads gamedev_receipts_command so bot and UI actions share durable results. Screen reports use POST /api/ui/app-state app=game-dev and appear through neyvia.gamedev.state; reported selection never establishes native engine success.",
+        "Native bridges use the literal loopback port in the selected project capability configuration, excluding public port 47881. Unity batchmode/nographics, Godot --headless --editor, and Blender --background preserve the actual native scene operations. A pending request is not a completed edit; use the same requestId and reread inspect after success.",
+        "Observe sessions with explicit engine, projectPath and context before action. CL fills sessionId only when this current observation contains one exact native session; it never guesses a native session from the chat identity.",
+        "Unity, Godot and Blender register with a stable per-instance clientId. Identical retry replies preserve the native session; changed affinity or capabilities refuse reuse. Separate editor instances keep separate identities, so CL still refuses ambiguous session selection. Unity idle polls never execute empty nested request objects.",
+        "LAYA3D uses the shared scene.transcribe, laya.judge and scene.improve core. Read manuals/cl/laya-3d.cl for defect predicates and manuals/cl/laya-3d-image.cl for image-model acceptance. Blender transcribe observes mesh facts; canonical renders fixed front/side/back/top views; snapshot/restore guard named mesh_fix operations. shape_program executes literal bounded shape operations in its own collection, not Python code.",
+        "For image input call scene.improve with domain=laya3d, source={sessionId, sheet, spec:{object, cells:[{cell, caption, role, camera:{yaw, elevation, roll}, illustrationOnly?}]}} and budget={max_steps:1,max_seconds:240,allowed_fixes:[shape.refit],guards:{outline_iou_mean:min}}; call it once per program edit until the ladder is exhausted. Cells are physical row-major positions from detected gutters, never printed numbers. Camera readings may list alternatives and are fitted within 25 degrees; the first cell is the anchor. Illustration-only cells (topology guides, exploded, detail) are recorded, never geometry. The returned modelPath resumes the CL model; scene.transcribe with sessionId/modelPath observes the live model without rebuilding. Predicates read the shape-model node (worst and mean view outline IoU, colour and extent bands); per-view numbers are evidence. Silhouettes cannot recover concavities; held-out views measure 3D shape.",
+        "Godot and Unity transcribe expose live native hierarchy, scale, mesh/material/reference facts and collider intent to the same predicates; engine.scale is the only automatic engine fix, collider and reference findings stay review-only. Godot's client reconnects with the same clientId when the editor's first scan outlasts the socket handshake. A Unity project needs ProjectSettings/ProjectVersion.txt, or UPM adds and downloads the default template packages; the bridge package declares its JSON, UnityWebRequest and Physics modules. Blender scene.improve callers pass guards {silhouette_quality:min}; transcribe keeps render paths out of the Scene so rollback is checked by sha256. Roblox observer is code-only until an installed Studio session is available. Native texture upscale is bounded resampling, not invented detail; topology flow and rendered lighting remain review-only when not measured."
+      ]
+    },
+    "proofs-e-models": {
+      "title": "PROOFS-e: production model contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the most recent verification receipt without invoking production actions again",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-models.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-model-proof-receipt": {
+          "goal": "Read the latest receipt after the production model self-check runner",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Model transforms are reported as proof of a native app/provider/device effect",
+          "recovery": "Use the real owning feature procedure and its observed runtime"
+        }
+      ],
+      "frontier": [
+        "Rendered browser/desktop journeys are separate from pure model proof",
+        "Remote device, game editor and provider behavior require their real runtimes"
+      ],
+      "guidance": [
+        "gamedev.keepSelection: Native selection never changes implicitly; browser reload affinity follows only one same-project/context replacement",
+        "gamedev.tabForStage: Explicit known tabs win, then launcher app aliases, then embedded Browser 3D",
+        "gamedev.visibleFields: Conditional controls show exactly fields whose predicates hold",
+        "gamedev.initialValues: Form defaults resolve duplicate keys according to their condition",
+        "gamedev.buildArgs: Visible fields become exact bridge args; vectors/numbers are finite, JSON text must parse as an object and wildcard fields are flattened",
+        "gamedev.actionFields: Godot edit/interact and Unity test forms retain their typed bridge fields/defaults; other actions return valid field arrays",
+        "Startup runner: scripts/proofs-e-models.mjs --root <owned-scratch>; area proofs-e-models checks real model actions and corrupted output refusals"
+      ]
+    }
+  }
+}

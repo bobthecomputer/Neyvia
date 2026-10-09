@@ -1,0 +1,874 @@
+{
+  "area": "proofs-b-engine",
+  "manual": "proofs-b-engine",
+  "module": "grant_agent.proofs_b_engine",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "proofs-b.engine.account",
+      "phase": "invariant",
+      "claim": "Credential-free persisted communication configuration retains per-action approval permissions.",
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.register_communication_account",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.presentation",
+      "phase": "invariant",
+      "claim": "Compiled prompt preserves the user original, visibly appends context, and requires explicit insertion without automated login or transcript harvesting.",
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.compile_presentation_prompt",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.capture",
+      "phase": "invariant",
+      "claim": "Explicitly selected presentation content retains its source lineage and exact canonical content digest; unselected capture is rejected.",
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.capture_presentation_content",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.capsule",
+      "phase": "invariant",
+      "claim": "Secret findings block export; a safe durable capsule is explicitly prepared-not-sent and requires explicit sharing.",
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.build_share_capsule",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.experiment",
+      "phase": "invariant",
+      "claim": "Experiment projection exactly retains the stored journal, negative or positive verdict, state and lifetime; append/conclusion are reobserved from real SQLite state.",
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric._experiment",
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.record_experiment_observation",
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.conclude_experiment",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.authorization",
+      "phase": "invariant",
+      "claim": "An act-tier experiment requires recorded authorization and a named target, remains nonexecutable and requires per-action approval.",
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.plan_experiment_action",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.benchmark",
+      "phase": "invariant",
+      "claim": "Eligibility excludes missing subjects, budget excess and incomparable contexts without interpreting observed facts as superiority.",
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric._benchmark_claim",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.workflow",
+      "phase": "invariant",
+      "claim": "Reader/planner/executor/verifier stages have unique IDs and serial dependencies; only an explicitly permitted executor may mutate; role prompts have exact hashes and independent graph preparation preserves prior graphs.",
+      "checkedAt": [
+        "grant_agent.efficient_workflow.build_efficient_workflow",
+        "grant_agent.neyvia_conversations.NeyviaConversationStore.create_concurrency_plan",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.handoff",
+      "phase": "invariant",
+      "claim": "A bounded dependency handoff preserves the full receipt reference and text digest, reports truncation, and excludes the raw runtime dump.",
+      "checkedAt": [
+        "grant_agent.efficient_workflow.compact_dependency_context",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.verdict",
+      "phase": "invariant",
+      "claim": "Malformed or evidence-free pass is unverified; failed verdict stays failed; workspace pass requires actual matching artifact digests.",
+      "checkedAt": [
+        "grant_agent.efficient_workflow.verification_result",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.mcp-authority",
+      "phase": "invariant",
+      "claim": "Every compact MCP request enforces read-only capabilities including nested mutations and stops tool work while a user question is pending.",
+      "checkedAt": [
+        "grant_agent.neyvia_mcp_stdio.CompactNeyviaMCPServer.handle",
+        "grant_agent.neyvia_mcp_stdio.CompactNeyviaMCPServer._allowed"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.recorder",
+      "phase": "invariant",
+      "claim": "Recorder events retain mission identity and bounded payloads; snapshots serialize bounded tails and event counts and scratch rereads establish durable saved state.",
+      "checkedAt": [
+        "grant_agent.flight_recorder.MissionFlightRecorder.append_event",
+        "grant_agent.flight_recorder.MissionFlightRecorder.snapshot",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.event-tail",
+      "phase": "invariant",
+      "claim": "The event reader skips malformed JSON and non-object rows and retains at most the last requested 1-200 valid events.",
+      "checkedAt": [
+        "grant_agent.flight_recorder.read_flight_recorder_events",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.suggestions",
+      "phase": "invariant",
+      "claim": "Feature suggestions use existing feature identities with descending keyword scores and retain the requested ranked relevant output.",
+      "checkedAt": [
+        "grant_agent.feature_suggester.suggest_features_from_text",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.summary",
+      "phase": "invariant",
+      "claim": "Aggregation counts sessions, handoffs, checkpoints and successful/failed command receipts consistently; real subprocess success and failure are retained in run state.",
+      "checkedAt": [
+        "grant_agent.eval.summarize_runs",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.autotune",
+      "phase": "invariant",
+      "claim": "Automatic routing requires at least three local runs; disabled/insufficient policy never applies changes, and safety bias selects uniform quality with pause on failure.",
+      "checkedAt": [
+        "grant_agent.fluxio_harness.resolve_efficiency_autotune_policy",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.routes",
+      "phase": "invariant",
+      "claim": "Core model roles remain distinct and explicit normalized role/provider/model overrides take precedence.",
+      "checkedAt": [
+        "grant_agent.fluxio_harness.recommended_model_routes",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.route-equivalence",
+      "phase": "invariant",
+      "claim": "Equivalent openai/openai-codex providers with the same phase/model/effort do not repeatedly request handoff.",
+      "checkedAt": [
+        "grant_agent.fluxio_harness.FluxioHarness._delegated_route_mismatch",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.run",
+      "phase": "invariant",
+      "claim": "The legacy local planning-state engine blocks unreadable docs, preserves resumable lineage and durable checkpoint/handoff receipts, bounds context rollover, records parallel merge policy and persists the same run result fields. This does not claim model execution or code implementation.",
+      "checkedAt": [
+        "grant_agent.engine.AutonomousEngine.run",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.watchdog",
+      "phase": "invariant",
+      "claim": "Fake-running diagnosis requires an old running/launching mission without changed files/artifacts, live local PID or recorded fresh remote lease; recent/evidenced/fresh-lease missions are exempt.",
+      "checkedAt": [
+        "grant_agent.mission_watchdog.evaluate_fake_running_mission",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.watchdog-enforce",
+      "phase": "invariant",
+      "claim": "Each fake-running enforcement persists blocked state with a unique stuck receipt, diagnostics and repair step; repeated enforcement is idempotent.",
+      "checkedAt": [
+        "grant_agent.mission_watchdog.enforce_fake_running_missions",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.chat-plan",
+      "phase": "invariant",
+      "claim": "Encrypted-chat preview is hash-bound, visibly attributed and attachment-scoped; secrets, denied room permissions and files outside the workspace are rejected before any send approval.",
+      "checkedAt": [
+        "grant_agent.encrypted_chat.EncryptedChatService.build_message_plan",
+        "grant_agent.encrypted_chat.EncryptedChatService._resolve_room",
+        "grant_agent.encrypted_chat.EncryptedChatService._attachment_manifest",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.chat-public",
+      "phase": "invariant",
+      "claim": "Chat catalog/compatibility observers expose opaque identity references rather than room/user/device IDs or protected paths; configured local file identity checks verify exact hashes without claiming Matrix availability.",
+      "checkedAt": [
+        "grant_agent.encrypted_chat.EncryptedChatService.account_catalog",
+        "grant_agent.encrypted_chat.EncryptedChatService.compatibility_snapshot",
+        "grant_agent.encrypted_chat.EncryptedChatService._binary_integrity",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    },
+    {
+      "id": "proofs-b.engine.skill-load",
+      "phase": "invariant",
+      "claim": "Empty or unreadable learned-skill control JSON produces no records; successful skill loads return a list of object records.",
+      "checkedAt": [
+        "grant_agent.skill_library.SkillLibrary._load_skill_rows",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "impact": [
+        "local feature action receipts",
+        "feature state and agent observations"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_ecosystem_evidence_lifecycle.py",
+      "case": "test_experiment_snapshot_retains_observations_and_failed_verdicts",
+      "case_id": "tests/test_ecosystem_evidence_lifecycle.py::test_experiment_snapshot_retains_observations_and_failed_verdicts",
+      "contracts": [
+        "proofs-b.engine.experiment"
+      ],
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric._experiment",
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.conclude_experiment",
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.record_experiment_observation",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_ecosystem"
+    },
+    {
+      "test": "tests/test_ecosystem_evidence_lifecycle.py",
+      "case": "test_act_plan_requires_named_target_and_recorded_authorization",
+      "case_id": "tests/test_ecosystem_evidence_lifecycle.py::test_act_plan_requires_named_target_and_recorded_authorization",
+      "contracts": [
+        "proofs-b.engine.authorization"
+      ],
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.plan_experiment_action",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_ecosystem"
+    },
+    {
+      "test": "tests/test_ecosystem_evidence_lifecycle.py",
+      "case": "test_benchmark_snapshot_excludes_non_comparable_results_from_claim",
+      "case_id": "tests/test_ecosystem_evidence_lifecycle.py::test_benchmark_snapshot_excludes_non_comparable_results_from_claim",
+      "contracts": [
+        "proofs-b.engine.benchmark"
+      ],
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric._benchmark_claim",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_ecosystem"
+    },
+    {
+      "test": "tests/test_ecosystem_fabric.py",
+      "case": "test_communication_fabric_keeps_credentials_out_of_configuration",
+      "case_id": "tests/test_ecosystem_fabric.py::test_communication_fabric_keeps_credentials_out_of_configuration",
+      "contracts": [
+        "proofs-b.engine.account"
+      ],
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.register_communication_account",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_ecosystem"
+    },
+    {
+      "test": "tests/test_ecosystem_fabric.py",
+      "case": "test_presentation_handoff_is_visible_and_share_capsules_block_secrets",
+      "case_id": "tests/test_ecosystem_fabric.py::test_presentation_handoff_is_visible_and_share_capsules_block_secrets",
+      "contracts": [
+        "proofs-b.engine.presentation",
+        "proofs-b.engine.capture",
+        "proofs-b.engine.capsule"
+      ],
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.build_share_capsule",
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.capture_presentation_content",
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.compile_presentation_prompt",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_ecosystem"
+    },
+    {
+      "test": "tests/test_ecosystem_fabric.py",
+      "case": "test_experiment_act_tier_and_benchmark_claims_enforce_fairness",
+      "case_id": "tests/test_ecosystem_fabric.py::test_experiment_act_tier_and_benchmark_claims_enforce_fairness",
+      "contracts": [
+        "proofs-b.engine.authorization",
+        "proofs-b.engine.benchmark"
+      ],
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric._benchmark_claim",
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.plan_experiment_action",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_ecosystem"
+    },
+    {
+      "test": "tests/test_efficient_workflow.py",
+      "case": "test_repeated_preparation_preserves_routes_prompts_and_other_graphs",
+      "case_id": "tests/test_efficient_workflow.py::test_repeated_preparation_preserves_routes_prompts_and_other_graphs",
+      "contracts": [
+        "proofs-b.engine.workflow"
+      ],
+      "checkedAt": [
+        "grant_agent.efficient_workflow.build_efficient_workflow",
+        "grant_agent.neyvia_conversations.NeyviaConversationStore.create_concurrency_plan",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_local_workflow"
+    },
+    {
+      "test": "tests/test_efficient_workflow.py",
+      "case": "test_handoff_has_bounded_evidence_and_full_receipt_reference",
+      "case_id": "tests/test_efficient_workflow.py::test_handoff_has_bounded_evidence_and_full_receipt_reference",
+      "contracts": [
+        "proofs-b.engine.handoff",
+        "proofs-b.engine.verdict"
+      ],
+      "checkedAt": [
+        "grant_agent.efficient_workflow.compact_dependency_context",
+        "grant_agent.efficient_workflow.verification_result",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_local_workflow"
+    },
+    {
+      "test": "tests/test_efficient_workflow.py",
+      "case": "test_native_mcp_reads_real_file_and_blocks_writes_and_nested_mutations",
+      "case_id": "tests/test_efficient_workflow.py::test_native_mcp_reads_real_file_and_blocks_writes_and_nested_mutations",
+      "contracts": [
+        "proofs-b.engine.mcp-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.neyvia_mcp_stdio.CompactNeyviaMCPServer._allowed",
+        "grant_agent.neyvia_mcp_stdio.CompactNeyviaMCPServer.handle"
+      ],
+      "procedure": "_local_workflow"
+    },
+    {
+      "test": "tests/test_encrypted_chat.py",
+      "case": "test_catalog_and_compatibility_never_expose_private_identity_or_paths",
+      "case_id": "tests/test_encrypted_chat.py::test_catalog_and_compatibility_never_expose_private_identity_or_paths",
+      "contracts": [
+        "proofs-b.engine.chat-public"
+      ],
+      "checkedAt": [
+        "grant_agent.encrypted_chat.EncryptedChatService._binary_integrity",
+        "grant_agent.encrypted_chat.EncryptedChatService.account_catalog",
+        "grant_agent.encrypted_chat.EncryptedChatService.compatibility_snapshot",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_chat"
+    },
+    {
+      "test": "tests/test_encrypted_chat.py",
+      "case": "test_message_plan_is_hash_bound_attributed_and_secret_aware",
+      "case_id": "tests/test_encrypted_chat.py::test_message_plan_is_hash_bound_attributed_and_secret_aware",
+      "contracts": [
+        "proofs-b.engine.chat-plan"
+      ],
+      "checkedAt": [
+        "grant_agent.encrypted_chat.EncryptedChatService._attachment_manifest",
+        "grant_agent.encrypted_chat.EncryptedChatService._resolve_room",
+        "grant_agent.encrypted_chat.EncryptedChatService.build_message_plan",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_chat"
+    },
+    {
+      "test": "tests/test_encrypted_chat.py",
+      "case": "test_room_permissions_and_workspace_boundary_are_enforced",
+      "case_id": "tests/test_encrypted_chat.py::test_room_permissions_and_workspace_boundary_are_enforced",
+      "contracts": [
+        "proofs-b.engine.chat-plan"
+      ],
+      "checkedAt": [
+        "grant_agent.encrypted_chat.EncryptedChatService._attachment_manifest",
+        "grant_agent.encrypted_chat.EncryptedChatService._resolve_room",
+        "grant_agent.encrypted_chat.EncryptedChatService.build_message_plan",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_chat"
+    },
+    {
+      "test": "tests/test_engine.py",
+      "case": "EngineTests.test_engine_generates_handoff_on_rollover",
+      "case_id": "tests/test_engine.py::EngineTests.test_engine_generates_handoff_on_rollover",
+      "contracts": [
+        "proofs-b.engine.run"
+      ],
+      "checkedAt": [
+        "grant_agent.engine.AutonomousEngine.run",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_engine"
+    },
+    {
+      "test": "tests/test_engine.py",
+      "case": "EngineTests.test_engine_blocks_when_docs_unreadable",
+      "case_id": "tests/test_engine.py::EngineTests.test_engine_blocks_when_docs_unreadable",
+      "contracts": [
+        "proofs-b.engine.run"
+      ],
+      "checkedAt": [
+        "grant_agent.engine.AutonomousEngine.run",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_engine"
+    },
+    {
+      "test": "tests/test_engine.py",
+      "case": "EngineTests.test_engine_resume_uses_previous_state",
+      "case_id": "tests/test_engine.py::EngineTests.test_engine_resume_uses_previous_state",
+      "contracts": [
+        "proofs-b.engine.run"
+      ],
+      "checkedAt": [
+        "grant_agent.engine.AutonomousEngine.run",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_engine"
+    },
+    {
+      "test": "tests/test_engine.py",
+      "case": "EngineTests.test_engine_resume_from_checkpoint",
+      "case_id": "tests/test_engine.py::EngineTests.test_engine_resume_from_checkpoint",
+      "contracts": [
+        "proofs-b.engine.run"
+      ],
+      "checkedAt": [
+        "grant_agent.engine.AutonomousEngine.run",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_engine"
+    },
+    {
+      "test": "tests/test_engine.py",
+      "case": "EngineTests.test_engine_pauses_on_handoff_guardrail",
+      "case_id": "tests/test_engine.py::EngineTests.test_engine_pauses_on_handoff_guardrail",
+      "contracts": [
+        "proofs-b.engine.run"
+      ],
+      "checkedAt": [
+        "grant_agent.engine.AutonomousEngine.run",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_engine"
+    },
+    {
+      "test": "tests/test_engine.py",
+      "case": "EngineTests.test_engine_parallel_agents_complete_multiple_steps_per_iteration",
+      "case_id": "tests/test_engine.py::EngineTests.test_engine_parallel_agents_complete_multiple_steps_per_iteration",
+      "contracts": [
+        "proofs-b.engine.run"
+      ],
+      "checkedAt": [
+        "grant_agent.engine.AutonomousEngine.run",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_engine"
+    },
+    {
+      "test": "tests/test_engine.py",
+      "case": "EngineTests.test_engine_risk_averse_merge_avoids_verification_winner",
+      "case_id": "tests/test_engine.py::EngineTests.test_engine_risk_averse_merge_avoids_verification_winner",
+      "contracts": [
+        "proofs-b.engine.run"
+      ],
+      "checkedAt": [
+        "grant_agent.engine.AutonomousEngine.run",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_engine"
+    },
+    {
+      "test": "tests/test_eval.py",
+      "case": "EvalTests.test_summarize_runs",
+      "case_id": "tests/test_eval.py::EvalTests.test_summarize_runs",
+      "contracts": [
+        "proofs-b.engine.summary"
+      ],
+      "checkedAt": [
+        "grant_agent.eval.summarize_runs",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_engine"
+    },
+    {
+      "test": "tests/test_fake_running_watchdog.py",
+      "case": "FakeRunningDetectionTests.test_watchdog_flags_fake_running_mission",
+      "case_id": "tests/test_fake_running_watchdog.py::FakeRunningDetectionTests.test_watchdog_flags_fake_running_mission",
+      "contracts": [
+        "proofs-b.engine.watchdog"
+      ],
+      "checkedAt": [
+        "grant_agent.mission_watchdog.evaluate_fake_running_mission",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_watchdog"
+    },
+    {
+      "test": "tests/test_fake_running_watchdog.py",
+      "case": "FakeRunningDetectionTests.test_recent_mission_is_not_flagged",
+      "case_id": "tests/test_fake_running_watchdog.py::FakeRunningDetectionTests.test_recent_mission_is_not_flagged",
+      "contracts": [
+        "proofs-b.engine.watchdog"
+      ],
+      "checkedAt": [
+        "grant_agent.mission_watchdog.evaluate_fake_running_mission",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_watchdog"
+    },
+    {
+      "test": "tests/test_fake_running_watchdog.py",
+      "case": "FakeRunningDetectionTests.test_mission_with_real_proof_is_not_flagged",
+      "case_id": "tests/test_fake_running_watchdog.py::FakeRunningDetectionTests.test_mission_with_real_proof_is_not_flagged",
+      "contracts": [
+        "proofs-b.engine.watchdog"
+      ],
+      "checkedAt": [
+        "grant_agent.mission_watchdog.evaluate_fake_running_mission",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_watchdog"
+    },
+    {
+      "test": "tests/test_fake_running_watchdog.py",
+      "case": "FakeRunningDetectionTests.test_remote_worker_with_fresh_lease_is_not_flagged",
+      "case_id": "tests/test_fake_running_watchdog.py::FakeRunningDetectionTests.test_remote_worker_with_fresh_lease_is_not_flagged",
+      "contracts": [
+        "proofs-b.engine.watchdog"
+      ],
+      "checkedAt": [
+        "grant_agent.mission_watchdog.evaluate_fake_running_mission",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_watchdog"
+    },
+    {
+      "test": "tests/test_fake_running_watchdog.py",
+      "case": "FakeRunningDetectionTests.test_enforcement_blocks_mission_and_writes_stuck_receipt",
+      "case_id": "tests/test_fake_running_watchdog.py::FakeRunningDetectionTests.test_enforcement_blocks_mission_and_writes_stuck_receipt",
+      "contracts": [
+        "proofs-b.engine.watchdog-enforce"
+      ],
+      "checkedAt": [
+        "grant_agent.mission_watchdog.enforce_fake_running_missions",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_watchdog"
+    },
+    {
+      "test": "tests/test_fake_running_watchdog.py",
+      "case": "FakeRunningDetectionTests.test_enforcement_is_idempotent",
+      "case_id": "tests/test_fake_running_watchdog.py::FakeRunningDetectionTests.test_enforcement_is_idempotent",
+      "contracts": [
+        "proofs-b.engine.watchdog-enforce"
+      ],
+      "checkedAt": [
+        "grant_agent.mission_watchdog.enforce_fake_running_missions",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_watchdog"
+    },
+    {
+      "test": "tests/test_fake_running_watchdog.py",
+      "case": "FakeRunningDetectionTests.test_blocked_fake_running_mission_surfaces_repair_step",
+      "case_id": "tests/test_fake_running_watchdog.py::FakeRunningDetectionTests.test_blocked_fake_running_mission_surfaces_repair_step",
+      "contracts": [
+        "proofs-b.engine.watchdog-enforce"
+      ],
+      "checkedAt": [
+        "grant_agent.mission_watchdog.enforce_fake_running_missions",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_watchdog"
+    },
+    {
+      "test": "tests/test_feature_suggester.py",
+      "case": "FeatureSuggestionTests.test_returns_ranked_suggestions",
+      "case_id": "tests/test_feature_suggester.py::FeatureSuggestionTests.test_returns_ranked_suggestions",
+      "contracts": [
+        "proofs-b.engine.suggestions"
+      ],
+      "checkedAt": [
+        "grant_agent.feature_suggester.suggest_features_from_text",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_recorder"
+    },
+    {
+      "test": "tests/test_flight_recorder.py",
+      "case": "MissionFlightRecorderTests.test_records_events_and_builds_snapshot",
+      "case_id": "tests/test_flight_recorder.py::MissionFlightRecorderTests.test_records_events_and_builds_snapshot",
+      "contracts": [
+        "proofs-b.engine.recorder",
+        "proofs-b.engine.event-tail"
+      ],
+      "checkedAt": [
+        "grant_agent.flight_recorder.MissionFlightRecorder.append_event",
+        "grant_agent.flight_recorder.MissionFlightRecorder.snapshot",
+        "grant_agent.flight_recorder.read_flight_recorder_events",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_recorder"
+    },
+    {
+      "test": "tests/test_flight_recorder.py",
+      "case": "MissionFlightRecorderTests.test_snapshot_keeps_last_200_events",
+      "case_id": "tests/test_flight_recorder.py::MissionFlightRecorderTests.test_snapshot_keeps_last_200_events",
+      "contracts": [
+        "proofs-b.engine.recorder",
+        "proofs-b.engine.event-tail"
+      ],
+      "checkedAt": [
+        "grant_agent.flight_recorder.MissionFlightRecorder.append_event",
+        "grant_agent.flight_recorder.MissionFlightRecorder.snapshot",
+        "grant_agent.flight_recorder.read_flight_recorder_events",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_recorder"
+    },
+    {
+      "test": "tests/test_flight_recorder.py",
+      "case": "MissionFlightRecorderTests.test_event_reader_skips_corrupt_lines",
+      "case_id": "tests/test_flight_recorder.py::MissionFlightRecorderTests.test_event_reader_skips_corrupt_lines",
+      "contracts": [
+        "proofs-b.engine.event-tail"
+      ],
+      "checkedAt": [
+        "grant_agent.flight_recorder.read_flight_recorder_events",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_recorder"
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_skill_library_ignores_empty_control_json_files",
+      "case_id": "tests/test_fluxio_harness.py::FluxioHarnessTests.test_skill_library_ignores_empty_control_json_files",
+      "contracts": [
+        "proofs-b.engine.skill-load"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_b_engine.check",
+        "grant_agent.skill_library.SkillLibrary._load_skill_rows"
+      ],
+      "procedure": "_routes"
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_openai_codex_provider_does_not_force_repeated_handoff",
+      "case_id": "tests/test_fluxio_harness.py::FluxioHarnessTests.test_openai_codex_provider_does_not_force_repeated_handoff",
+      "contracts": [
+        "proofs-b.engine.route-equivalence"
+      ],
+      "checkedAt": [
+        "grant_agent.fluxio_harness.FluxioHarness._delegated_route_mismatch",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_routes"
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_recommended_routes_apply_role_overrides_first",
+      "case_id": "tests/test_fluxio_harness.py::FluxioHarnessTests.test_recommended_routes_apply_role_overrides_first",
+      "contracts": [
+        "proofs-b.engine.routes"
+      ],
+      "checkedAt": [
+        "grant_agent.fluxio_harness.recommended_model_routes",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_routes"
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_autotune_policy_waits_for_local_sample_size",
+      "case_id": "tests/test_fluxio_harness.py::FluxioHarnessTests.test_autotune_policy_waits_for_local_sample_size",
+      "contracts": [
+        "proofs-b.engine.autotune"
+      ],
+      "checkedAt": [
+        "grant_agent.fluxio_harness.resolve_efficiency_autotune_policy",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_routes"
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_autotune_policy_switches_to_safe_route_when_completion_is_low",
+      "case_id": "tests/test_fluxio_harness.py::FluxioHarnessTests.test_autotune_policy_switches_to_safe_route_when_completion_is_low",
+      "contracts": [
+        "proofs-b.engine.autotune"
+      ],
+      "checkedAt": [
+        "grant_agent.fluxio_harness.resolve_efficiency_autotune_policy",
+        "grant_agent.proofs_b_engine.check"
+      ],
+      "procedure": "_routes"
+    }
+  ],
+  "frontier": [
+    {
+      "test": "tests/test_efficient_workflow.py",
+      "case": "test_question_pauses_graph_and_answer_resumes_without_repeating_reader",
+      "reason": "Real configured provider-backed execution required; local policy/state checks do not establish delegated completion."
+    },
+    {
+      "test": "tests/test_encrypted_chat.py",
+      "case": "test_send_uses_stdin_and_persists_no_message_or_token",
+      "reason": "Real Matrix transport/enrolled encrypted account required; not replaced by a transport that merely claims encryption."
+    },
+    {
+      "test": "tests/test_encrypted_chat.py",
+      "case": "test_changed_attachment_fails_before_transport_send",
+      "reason": "Real Matrix transport/enrolled encrypted account required; not replaced by a transport that merely claims encryption."
+    },
+    {
+      "test": "tests/test_encrypted_chat.py",
+      "case": "test_history_is_room_scoped_and_sanitized",
+      "reason": "Real Matrix transport/enrolled encrypted account required; not replaced by a transport that merely claims encryption."
+    },
+    {
+      "test": "tests/test_encrypted_chat.py",
+      "case": "test_unencrypted_room_fails_closed",
+      "reason": "Real Matrix transport/enrolled encrypted account required; not replaced by a transport that merely claims encryption."
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_harness_runs_and_promotes_learned_skills",
+      "reason": "Real configured provider-backed execution required; local policy/state checks do not establish delegated completion."
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_rejected_action_triggers_replanning",
+      "reason": "Real configured provider-backed execution required; local policy/state checks do not establish delegated completion."
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_resume_recomputes_route_config_from_current_strategy",
+      "reason": "Real configured provider-backed execution required; local policy/state checks do not establish delegated completion."
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_harness_compacts_context_and_saves_handoff_packets",
+      "reason": "Real configured provider-backed execution required; local policy/state checks do not establish delegated completion."
+    },
+    {
+      "test": "tests/test_fluxio_harness.py",
+      "case": "FluxioHarnessTests.test_harness_shifts_to_uniform_quality_after_verification_failures",
+      "reason": "Real configured provider-backed execution required; local policy/state checks do not establish delegated completion."
+    }
+  ],
+  "portRoles": []
+}

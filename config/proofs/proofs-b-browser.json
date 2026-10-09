@@ -1,0 +1,20 @@
+{
+  "portRoles": [48472,48478],
+  "traceMode": "children",
+  "requiresBuild": true,
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "proofs-b-browser",
+  "manual": "proofs-b-browser",
+  "runner": "scripts/proofs-b-browser.mjs",
+  "contracts": [
+    {"id":"proofs-b.browser.blocked-receipt","phase":"post","claim":"Every Harness render consumes a checked view: blocked is actionable and nonterminal, cleanup/retry follow durable lifecycle, and blocked or cleaned-up blocker output preserves the structured result. A real Chrome fixture proves retry preserves original receipt bytes and explicit cleanup preserves the blocker result.","checkedAt":["web/src/neyvia/HarnessesSurface.jsx:receiptView and rendered flags/controls/output","web/src/neyvia/proofsBViewContracts.js:checkHarnessView","grant_agent.harness_jobs.HarnessJobStore.cancel"],"impact":["Harness receipt","retry and cleanup controls","original blocker evidence"]},
+    {"id":"proofs-b.browser.capacity-label","phase":"post","claim":"Every receipt and queue label, including the accessible queue name, is checked against durable waitingReason: execution-capacity is waiting for capacity rather than active execution.","checkedAt":["web/src/neyvia/HarnessesSurface.jsx:receiptView and queue rows","web/src/neyvia/proofsBViewContracts.js:checkHarnessView"],"impact":["receipt status","visible queue label","accessible queue label"]},
+    {"id":"proofs-b.browser.capacity-explanation","phase":"post","claim":"When a capacity-wait job has no result/error, the checked receipt output explains the workspace capacity wait and explicitly says no execution slot is claimed.","checkedAt":["web/src/neyvia/HarnessesSurface.jsx:receiptView.output","web/src/neyvia/proofsBViewContracts.js:checkHarnessView"],"impact":["execution-wait context","operator execution claims"]}
+  ],
+  "coverage": [
+    {"test":"tests/test_harness_blocked_ui_contract.py","case":"test_blocked_harness_run_is_actionable_without_becoming_terminal","contracts":["proofs-b.browser.blocked-receipt"],"checkedAt":["web/src/neyvia/HarnessesSurface.jsx:checked receipt flags, lifecycle controls and structured output","web/src/neyvia/proofsBViewContracts.js:checkHarnessView","grant_agent.harness_jobs.HarnessJobStore.cancel"],"procedure":"real_chrome_blocked_retry_cleanup"},
+    {"test":"tests/test_harness_execution_capacity_ui_contract.py","case":"test_execution_capacity_wait_is_not_presented_as_active_execution","contracts":["proofs-b.browser.capacity-label","proofs-b.browser.capacity-explanation"],"checkedAt":["web/src/neyvia/HarnessesSurface.jsx:checked receipt output and labels","web/src/neyvia/proofsBViewContracts.js:checkHarnessView"],"procedure":"real_chrome_capacity_wait"},
+    {"test":"tests/test_harness_execution_capacity_ui_contract.py","case":"test_waiting_run_labels_use_durable_wait_reason","contracts":["proofs-b.browser.capacity-label"],"checkedAt":["web/src/neyvia/HarnessesSurface.jsx:checked receipt and accessible/visible queue labels","web/src/neyvia/proofsBViewContracts.js:checkHarnessView"],"procedure":"real_chrome_capacity_wait"}
+  ],
+  "frontier": ["The general conversation-fabric verifier case has not been proven by this bounded Harness journey; retain it.","All 75 desktop UI source cases remain until their complete actual journeys are covered.","Saved-state browser rendering uses real isolated local production records and no provider inference; it does not prove actual capacity scheduling, native desktop or device behavior."]
+}

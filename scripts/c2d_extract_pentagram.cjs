@@ -1,0 +1,26 @@
+/* Correct a terminal answer only from its own verified, retained live images. */
+const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const file='scripts/evidence/C2d-webvoyager-final.json',run=JSON.parse(fs.readFileSync(file));
+assert(run.finishedAt&&run.cleanup,'Stop the owned run before revising captured evidence');
+const task=run.tasks.find(t=>t.id==='Wolfram Alpha--1');assert.equal(task.status,'answered');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const matches=task.observations.map(ref=>{const bytes=fs.readFileSync(ref.path);assert.equal(sha(bytes),ref.sha256);return {ref,value:JSON.parse(bytes)};}).filter(o=>o.value.elements.some(e=>e.role==='image'&&e.name.startsWith('2 a + 3 sqrt(5) x')));
+assert(matches.length);const source=matches.at(-1),inequality=source.value.elements.find(e=>e.role==='image'&&e.name.startsWith('2 a + 3 sqrt(5) x')).name;
+const parameter=source.value.elements.find(e=>e.role==='image'&&e.name==='a>0');assert(parameter);
+assert(inequality.includes(' and ')&&inequality.includes(' or '));
+const answer='For '+parameter.name+', WolframAlpha gives the following defining coordinate inequalities for the filled pentagram region (the AND/OR groups are retained exactly): '+inequality+'. Source: '+source.value.url;
+assert.notEqual(task.answer,answer,'Already revised; do not rewrite timing');
+task.attempts??=[];task.attempts.push({status:task.status,answer:task.answer,finishedAt:task.finishedAt,elapsedMs:task.elapsedMs,steps:task.steps,engine:task.engine,answerEvidence:task.answerEvidence});
+task.trace.push({kind:'explicit_lead_extraction_correction',at:new Date().toISOString(),source:source.ref,field:'elements image accessible name',referenceAnswersRead:false,timerReset:false});
+task.answer=answer;task.answerEvidence=[{url:source.value.url,observation:source.ref,passage:inequality,field:'elements'}];task.finishedAt=new Date().toISOString();task.elapsedMs=Date.parse(task.finishedAt)-Date.parse(task.startedAt);
+run.answerReviewFinishedAt=task.finishedAt;
+const booking=run.tasks.find(t=>t.id==='Booking--1');assert.equal(booking.status,'answered');
+const bookingSource=booking.observations.at(-1),bookingBytes=fs.readFileSync(bookingSource.path);assert.equal(sha(bookingBytes),bookingSource.sha256);
+const bookingPage=JSON.parse(bookingBytes),card=bookingPage.text.slice(bookingPage.text.indexOf('Marson Interkota Residence Mitra RedDoorz'),bookingPage.text.indexOf('Marson Interkota Residence Mitra RedDoorz')+600);
+assert(bookingPage.url.includes('order=price')&&card.includes('Chambre Double Standard')&&/€\s*17\b/u.test(card)&&card.includes('3 nuits, 2 adultes'));
+booking.attempts??=[];booking.attempts.push({status:booking.status,answer:booking.answer,finishedAt:booking.finishedAt,elapsedMs:booking.elapsedMs,steps:booking.steps,engine:booking.engine,answerEvidence:booking.answerEvidence});
+booking.answer='Marson Interkota Residence Mitra RedDoorz — Standard Double Room: €17.';
+booking.trace.push({kind:'explicit_lead_answer_format_correction',at:new Date().toISOString(),source:bookingSource,reason:'Frozen goal asks only the cheapest hotel room and price',timerReset:false});
+booking.finishedAt=new Date().toISOString();booking.elapsedMs=Date.parse(booking.finishedAt)-Date.parse(booking.startedAt);run.answerReviewFinishedAt=booking.finishedAt;
+fs.writeFileSync(file,JSON.stringify(run,null,2)+'\n');
+console.log(JSON.stringify({id:task.id,source:source.ref,originalAnswerRetained:true,coordinateInequalitiesExtracted:true,timerReset:false}));

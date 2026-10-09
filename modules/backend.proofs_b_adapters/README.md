@@ -1,0 +1,11 @@
+# proofs_b_adapters
+
+Action contracts and bounded real procedures for the PROOFS-b adapter chapter.
+
+- **Public API:** `check_result`, `checked`, `native_sync_executable`, `require`, `self_check`, `self_check_chapters`.
+- **Manual:** [neyvia.cl](../../manuals/cl/neyvia.cl).
+- **Contracts:** `run modules.verify-map()`.
+- **Outcome contracts:** `adapters.comparison.grading`, `adapters.comparison.leader`, `adapters.git.artifact-registration`, `adapters.git.objects`, `adapters.git.readiness`, `adapters.git.safety`, `adapters.handoff.progress`, `adapters.html.scoring`, `adapters.ocr.boundaries`, `adapters.release.selection`, `adapters.release.staging`, `adapters.release.update`, `adapters.sync.compatibility`, `adapters.sync.discovery`, `adapters.sync.native-runtime`, `adapters.sync.plan-activation`, `adapters.sync.policy`, `adapters.sync.recovery`, `adapters.sync.rollback`, `adapters.sync.stale`, `adapters.workflow.publication`.
+- **Dependencies:** [backend.__init__](../backend.__init__/README.md), [backend.capability_adapters](../backend.capability_adapters/README.md), [backend.capability_contracts](../backend.capability_contracts/README.md), [backend.capability_service](../backend.capability_service/README.md), [backend.context_manager](../backend.context_manager/README.md), [backend.cua_native](../backend.cua_native/README.md), [backend.folder_sync](../backend.folder_sync/README.md), [backend.git_reference_adapter](../backend.git_reference_adapter/README.md), [backend.github_release_source](../backend.github_release_source/README.md), [backend.handoff](../backend.handoff/README.md), [backend.harness_comparison](../backend.harness_comparison/README.md), [backend.html_site_benchmark](../backend.html_site_benchmark/README.md), [backend.models](../backend.models/README.md), [backend.proof_credential_guard](../backend.proof_credential_guard/README.md), [backend.proof_ports](../backend.proof_ports/README.md), [backend.subprocess_utils](../backend.subprocess_utils/README.md), [backend.tool_manifest_registry](../backend.tool_manifest_registry/README.md).
+- **Owner:** Neyvia / neyvia.
+- **Files:** [src/grant_agent/proofs_b_adapters.py](../../src/grant_agent/proofs_b_adapters.py).

@@ -1,0 +1,1468 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "manuals-next",
+  "kind": "workflow",
+  "proofs": {
+    "area": "manual-registry-journey",
+    "manifests": [
+      "config/proofs/manual-registry-journey.json"
+    ],
+    "contracts": [
+      {
+        "id": "p22.manuals.registry-action-admission",
+        "phase": "post",
+        "claim": "The production manual registry grounds manuals against callable action schemas, refuses a malformed observer schema, blocks an observer outside the caller's nested-tool scope before dispatch, and admits the same observation only when its exact read tool is granted.",
+        "checkedAt": [
+          "grant_agent.manual_contracts.validate_structure",
+          "grant_agent.manual_contracts.validate_grounding",
+          "grant_agent.neyvia_manuals.validate",
+          "grant_agent.neyvia_manuals.context",
+          "grant_agent.neyvia_manuals.call",
+          "grant_agent.proofs_manual_registry_journey.manual_registry_journey"
+        ],
+        "impact": [
+          "Authored manual validation against the live callable tool registry",
+          "Nested observer action admission and caller scope enforcement"
+        ]
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.manual.compile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "chapter": {
+          "type": "string"
+        },
+        "procedure": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "object"
+        },
+        "minRuns": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "id",
+        "procedure"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "procedure": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.compiled": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.manual.demote": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "chapter": {
+          "type": "string"
+        },
+        "procedure": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "chapter",
+        "procedure",
+        "reason"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "chapter": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "procedure": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "reason": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.frontier": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "observed": {
+          "type": "object"
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "id",
+        "note",
+        "observed"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.observe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "object"
+        },
+        "chapter": {
+          "type": "string"
+        },
+        "scopeTools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional restriction on nested tools; never grants authority"
+        },
+        "stream": {
+          "type": "string"
+        },
+        "previousHandle": {
+          "type": "string"
+        },
+        "reset": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "state"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "state": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.patch.apply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "patchId": {
+          "type": "string"
+        },
+        "expectedSha256": {
+          "type": "string"
+        },
+        "approved": {
+          "const": true
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "patchId",
+        "expectedSha256",
+        "approved",
+        "reviewer",
+        "evidence"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "patchId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "expectedSha256": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "reviewer": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.project": {
+      "type": "object",
+      "properties": {
+        "handle": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "handle"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "handle": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.recover": {
+      "type": "object",
+      "properties": {
+        "runId": {
+          "type": "string"
+        },
+        "recipeId": {
+          "type": "string"
+        },
+        "scopeTools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional restriction on nested tools; never grants authority"
+        }
+      },
+      "required": [
+        "runId",
+        "recipeId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "runId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "recipeId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.recovery.bind": {
+      "type": "object",
+      "properties": {
+        "runId": {
+          "type": "string"
+        },
+        "chapter": {
+          "type": "string"
+        },
+        "procedure": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "runId",
+        "chapter",
+        "procedure",
+        "inputs"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "runId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "chapter": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "procedure": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.run": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "procedure": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "object"
+        },
+        "chapter": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "decisions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "scopeTools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional restriction on nested tools; never grants authority"
+        }
+      },
+      "required": [
+        "id",
+        "procedure"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "procedure": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.script.run": {
+      "type": "object",
+      "properties": {
+        "scriptId": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "object"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "decisions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "scopeTools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional restriction on nested tools; never grants authority"
+        }
+      },
+      "required": [
+        "scriptId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "scriptId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.manual.versions": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "scripts": {
+      "title": "scripts: repeated verified procedures",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "required": [
+              "scripts"
+            ]
+          },
+          "tool": "neyvia.manual.compiled"
+        }
+      },
+      "actions": {
+        "run": {
+          "effect": "Execute actions and checks; stop at JUDGE; resume same runId with one offered decision",
+          "pre": "Current manual/procedure, typed inputs and caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.manual.run",
+          "tool": "neyvia.manual.run"
+        },
+        "compile": {
+          "effect": "Persist checked executable plan; constant context and decisions specialize; varying branches stay JUDGE",
+          "pre": "At least minRuns=3 verified repeated traces, current hash and exact input cohort",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.manual.compile",
+          "tool": "neyvia.manual.compile"
+        },
+        "compiled": {
+          "effect": "List executable plans and stale version flags",
+          "pre": "Selected workspace",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.manual.compiled",
+          "tool": "neyvia.manual.compiled"
+        },
+        "script.run": {
+          "effect": "No model call; changed state stops at JUDGE; every effect runs original checks",
+          "pre": "scriptId, learned inputs, original gateway grants and unchanged evidence",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.manual.script.run",
+          "tool": "neyvia.manual.script.run"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "verified-compile": {
+          "goal": "Retain exact grounded compile artifact with fresh owner effect checks",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "chapter": {
+                "type": "string"
+              },
+              "procedure": {
+                "type": "string"
+              },
+              "inputs": {
+                "type": "object"
+              },
+              "minRuns": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "id",
+              "chapter",
+              "procedure",
+              "inputs",
+              "minRuns"
+            ]
+          },
+          "steps": [
+            {
+              "action": "compile",
+              "args": {
+                "chapter": {
+                  "$input": "chapter"
+                },
+                "id": {
+                  "$input": "id"
+                },
+                "inputs": {
+                  "$input": "inputs"
+                },
+                "minRuns": {
+                  "$input": "minRuns"
+                },
+                "procedure": {
+                  "$input": "procedure"
+                }
+              },
+              "save": "artifact"
+            }
+          ]
+        },
+        "verified-run": {
+          "goal": "Retain exact grounded run artifact with fresh owner effect checks",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "procedure": {
+                "type": "string"
+              },
+              "inputs": {
+                "type": "object"
+              },
+              "chapter": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "decisions": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "scopeTools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Optional restriction on nested tools; never grants authority"
+              }
+            },
+            "required": [
+              "id",
+              "procedure",
+              "inputs",
+              "chapter",
+              "runId",
+              "decisions",
+              "scopeTools"
+            ]
+          },
+          "steps": [
+            {
+              "action": "run",
+              "args": {
+                "chapter": {
+                  "$input": "chapter"
+                },
+                "decisions": {
+                  "$input": "decisions"
+                },
+                "id": {
+                  "$input": "id"
+                },
+                "inputs": {
+                  "$input": "inputs"
+                },
+                "procedure": {
+                  "$input": "procedure"
+                },
+                "runId": {
+                  "$input": "runId"
+                },
+                "scopeTools": {
+                  "$input": "scopeTools"
+                }
+              },
+              "save": "artifact"
+            }
+          ]
+        },
+        "verified-script-run": {
+          "goal": "Retain exact grounded script.run artifact with fresh owner effect checks",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "scriptId": {
+                "type": "string"
+              },
+              "inputs": {
+                "type": "object"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "decisions": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "scopeTools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Optional restriction on nested tools; never grants authority"
+              }
+            },
+            "required": [
+              "scriptId",
+              "inputs",
+              "runId",
+              "decisions",
+              "scopeTools"
+            ]
+          },
+          "steps": [
+            {
+              "action": "script.run",
+              "args": {
+                "decisions": {
+                  "$input": "decisions"
+                },
+                "inputs": {
+                  "$input": "inputs"
+                },
+                "runId": {
+                  "$input": "runId"
+                },
+                "scopeTools": {
+                  "$input": "scopeTools"
+                },
+                "scriptId": {
+                  "$input": "scriptId"
+                }
+              },
+              "save": "artifact"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "script-choice": {
+          "constraints": "Only exact learned input scope and current hashes may run; changed state must retain JUDGE; no implied authority from compilation.",
+          "options": [
+            "run",
+            "recompile"
+          ],
+          "question": "Is the retained script mapped to the current task and version?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "stale script, changed inputs or newer varying decision evidence",
+          "recovery": "Use manual.run for new inputs; collect checked ordinary runs and compile again."
+        },
+        {
+          "failure": "changed state before a learned decision",
+          "recovery": "Inspect the returned JUDGE and explicitly choose an option before resuming."
+        }
+      ],
+      "frontier": [
+        "Only observed exact input cohorts can specialize; judgement requiring taste stays with the model or Paul."
+      ],
+      "guidance": [
+        "neyvia.manual.compile(id,chapter,procedure,inputs,minRuns) consumes .neyvia/manual-runs.jsonl and durable completed runs.",
+        "neyvia.manual.script.run(scriptId,inputs,scopeTools?) uses the same runner; resume with scriptId,runId,decisions.",
+        "Artifacts are data plans, not arbitrary source; modelCalls=0 means this runner made no hidden model request.",
+        "zeroToken is conditional on learned state/input guards; changed state or variable branches return JUDGE.",
+        "CL execution completion requires authored verifiers on every nested mutation; compiled cohorts and model-free reruns retain exact original evidence."
+      ]
+    },
+    "state": {
+      "title": "state: durable handles and deltas",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "required": [
+              "manuals"
+            ]
+          },
+          "tool": "neyvia.manual.index"
+        }
+      },
+      "actions": {
+        "observe": {
+          "effect": "First small result is observed; large result is a handle; later results are diffs",
+          "pre": "Grounded observer and typed inputs; use a separate stream per context",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.manual.observe",
+          "tool": "neyvia.manual.observe"
+        },
+        "project": {
+          "effect": "Return bounded selected state; tooLarge requires a deeper path",
+          "pre": "Returned immutable handle, JSON Pointer, offset>=0, limit 1..100",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.manual.project",
+          "tool": "neyvia.manual.project"
+        }
+      },
+      "checks": {
+        "selected-projection-handle": {
+          "args": {
+            "handle": {
+              "$input": "handle"
+            },
+            "limit": {
+              "$input": "limit"
+            },
+            "offset": {
+              "$input": "offset"
+            },
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "handle",
+            "value": {
+              "$input": "handle"
+            }
+          },
+          "tool": "neyvia.manual.project"
+        }
+      },
+      "procedures": {
+        "verified-observe": {
+          "goal": "Read exact observe state with independent source/artifact verification",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "inputs": {
+                "type": "object"
+              },
+              "chapter": {
+                "type": "string"
+              },
+              "scopeTools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Optional restriction on nested tools; never grants authority"
+              },
+              "stream": {
+                "type": "string"
+              },
+              "previousHandle": {
+                "type": "string"
+              },
+              "reset": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "state",
+              "inputs",
+              "chapter",
+              "scopeTools",
+              "stream",
+              "previousHandle",
+              "reset"
+            ]
+          },
+          "steps": [
+            {
+              "action": "observe",
+              "args": {
+                "chapter": {
+                  "$input": "chapter"
+                },
+                "id": {
+                  "$input": "id"
+                },
+                "inputs": {
+                  "$input": "inputs"
+                },
+                "previousHandle": {
+                  "$input": "previousHandle"
+                },
+                "reset": {
+                  "$input": "reset"
+                },
+                "scopeTools": {
+                  "$input": "scopeTools"
+                },
+                "state": {
+                  "$input": "state"
+                },
+                "stream": {
+                  "$input": "stream"
+                }
+              },
+              "save": "state"
+            }
+          ]
+        },
+        "verified-project": {
+          "goal": "Read exact project state with independent source/artifact verification",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "handle": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "offset": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "handle",
+              "path",
+              "offset",
+              "limit"
+            ]
+          },
+          "steps": [
+            {
+              "action": "project",
+              "args": {
+                "handle": {
+                  "$input": "handle"
+                },
+                "limit": {
+                  "$input": "limit"
+                },
+                "offset": {
+                  "$input": "offset"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "selected-projection-handle",
+              "save": "state"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "tooLarge projection",
+          "recovery": "Choose a deeper JSON Pointer or smaller limit; never infer omitted state."
+        }
+      ],
+      "frontier": [
+        "Observer source may itself be bounded; handle covers the observed value, not unread source bytes."
+      ],
+      "guidance": [
+        "neyvia.manual.observe(id,chapter,state,inputs,stream?,previousHandle?,reset?) reads actual tool state.",
+        "Large observations never paste the whole value; retain handle and use neyvia.manual.project(handle,path,offset,limit).",
+        "Diffs use JSON Patch add/remove/replace; diffHandle points to an oversized patch. Handles and stream baselines survive restart.",
+        "Observe persists a fresh source-bound handle and stream/diff; project reads an existing immutable handle. Source drift invalidates observation completion while old handles remain immutable."
+      ]
+    },
+    "versions": {
+      "title": "versions: reviewed patches and failure recovery",
+      "state": {
+        "current": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "required": [
+              "sha256",
+              "lineage"
+            ]
+          },
+          "tool": "neyvia.manual.versions"
+        }
+      },
+      "actions": {
+        "frontier": {
+          "effect": "Quarantine notes or bounded JSON Patch operations; never change live source",
+          "pre": "Actual unmatched state/failure evidence",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.manual.frontier",
+          "tool": "neyvia.manual.frontier"
+        },
+        "patch.apply": {
+          "effect": "Validate and promote scoped revision with parent hash; no repository source edits",
+          "pre": "approved=true, reviewer, evidence and expectedSha256=current base",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.manual.patch.apply",
+          "tool": "neyvia.manual.patch.apply"
+        },
+        "versions": {
+          "effect": "Read current hash, full lineage and demoted procedures",
+          "pre": "Registered manual id",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.manual.versions",
+          "tool": "neyvia.manual.versions"
+        },
+        "demote": {
+          "effect": "Quarantine procedure removal; explicit patch.apply required",
+          "pre": "Existing procedure plus reason",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.manual.demote",
+          "tool": "neyvia.manual.demote"
+        },
+        "recovery.bind": {
+          "effect": "Bind recipe to hash, exact failure, inputs and original tool restriction",
+          "pre": "Observed failed runId and typed recovery procedure/inputs",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.manual.recovery.bind",
+          "tool": "neyvia.manual.recovery.bind"
+        },
+        "recover": {
+          "effect": "Run a fresh checked recovery; never replay failed effects; unchanged original failure retained",
+          "pre": "Failed runId and matching recipeId; caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.manual.recover",
+          "tool": "neyvia.manual.recover"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "quarantine-observation": {
+          "goal": "Save one observed manual frontier as a quarantined patch without changing the active version",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+              },
+              "observed": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "note",
+              "observed"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "versions",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "action": "frontier",
+              "args": {
+                "id": {
+                  "$input": "id"
+                },
+                "note": {
+                  "$input": "note"
+                },
+                "observed": {
+                  "$input": "observed"
+                }
+              },
+              "save": "patch"
+            }
+          ]
+        },
+        "quarantine-demotion": {
+          "goal": "Quarantine removal of one named obsolete procedure while keeping the current manual active",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "chapter": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "procedure": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "chapter",
+              "procedure",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "versions",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "action": "demote",
+              "args": {
+                "chapter": {
+                  "$input": "chapter"
+                },
+                "id": {
+                  "$input": "id"
+                },
+                "procedure": {
+                  "$input": "procedure"
+                },
+                "reason": {
+                  "$input": "reason"
+                }
+              },
+              "save": "patch"
+            }
+          ]
+        },
+        "promote-reviewed-patch": {
+          "goal": "Apply one explicitly reviewed quarantined patch to this workspace with current base hash and evidence",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "expectedSha256": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "patchId": {
+                "type": "string"
+              },
+              "reviewer": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "patchId",
+              "expectedSha256",
+              "reviewer",
+              "evidence"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "versions",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "patch-review"
+            },
+            {
+              "action": "patch.apply",
+              "args": {
+                "approved": true,
+                "evidence": {
+                  "$input": "evidence"
+                },
+                "expectedSha256": {
+                  "$input": "expectedSha256"
+                },
+                "id": {
+                  "$input": "id"
+                },
+                "patchId": {
+                  "$input": "patchId"
+                },
+                "reviewer": {
+                  "$input": "reviewer"
+                }
+              },
+              "save": "promoted",
+              "when": {
+                "judge": "patch-review",
+                "option": "approve"
+              }
+            }
+          ]
+        },
+        "verified-recover": {
+          "goal": "Retain exact grounded recover artifact with fresh owner effect checks",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "recipeId": {
+                "type": "string"
+              },
+              "scopeTools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Optional restriction on nested tools; never grants authority"
+              }
+            },
+            "required": [
+              "runId",
+              "recipeId",
+              "scopeTools"
+            ]
+          },
+          "steps": [
+            {
+              "action": "recover",
+              "args": {
+                "recipeId": {
+                  "$input": "recipeId"
+                },
+                "runId": {
+                  "$input": "runId"
+                },
+                "scopeTools": {
+                  "$input": "scopeTools"
+                }
+              },
+              "save": "artifact"
+            }
+          ]
+        },
+        "verified-recovery-bind": {
+          "goal": "Retain exact grounded recovery.bind artifact with fresh owner effect checks",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "chapter": {
+                "type": "string"
+              },
+              "procedure": {
+                "type": "string"
+              },
+              "inputs": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "runId",
+              "chapter",
+              "procedure",
+              "inputs"
+            ]
+          },
+          "steps": [
+            {
+              "action": "recovery.bind",
+              "args": {
+                "chapter": {
+                  "$input": "chapter"
+                },
+                "inputs": {
+                  "$input": "inputs"
+                },
+                "procedure": {
+                  "$input": "procedure"
+                },
+                "runId": {
+                  "$input": "runId"
+                }
+              },
+              "save": "artifact"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "patch-review": {
+          "constraints": "Promotion requires explicit reviewer, evidence and current base hash; unknown or failing effects stay quarantined.",
+          "options": [
+            "approve",
+            "quarantine"
+          ],
+          "question": "Is the quarantined change supported by current evidence?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "stale baseSha256 or invalid action schema",
+          "recovery": "Read current version, revise quarantined patch, rerun grounding; do not bypass CAS."
+        },
+        {
+          "failure": "unknown situation or verifier failure without a recipe",
+          "recovery": "Inspect frontier evidence; an explorer/reviewer creates a quarantined patch or bound recovery."
+        }
+      ],
+      "frontier": [
+        "No automatic explorer/model call or LAYA service integration; frontier responses identify where explicit exploration starts."
+      ],
+      "guidance": [
+        "Machine detection returns status=frontier for unknown procedures/states or schema drift and quarantines execution failures with no bound recipe.",
+        "Bind a recipe with neyvia.manual.recovery.bind(runId,chapter,procedure,inputs), then select neyvia.manual.recover(runId,recipeId).",
+        "Patch operations support chapter-scoped JSON Patch test/add/remove/replace; promotion is explicit and workspace-local.",
+        "Removed procedures stay in parent snapshots and lineage demoted[]; obsolete scripts/recipes cannot run against newer hashes."
+      ]
+    }
+  }
+}

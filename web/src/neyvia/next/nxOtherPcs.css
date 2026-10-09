@@ -1,0 +1,89 @@
+/* Other PCs (NxOtherPcs): another PC's folders in Files, copies between PCs, pairing in Accounts. */
+
+/* Places tree: the "Other PCs" group */
+.nx .nx-pc-tree { margin-top: var(--nx-space-12); padding-top: var(--nx-space-8); border-top: 1px solid var(--nx-line); }
+.nx .nx-pc-treehead { padding: var(--nx-space-2) var(--nx-space-8) var(--nx-space-6); font-size: var(--nx-fs-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--nx-faint); }
+.nx .nx-pc-node { width: 100%; padding: 0 var(--nx-space-8) 0 var(--nx-space-4); gap: var(--nx-space-6); }
+.nx .nx-pc-node .nx-files-nodename { padding-left: var(--nx-space-14); }
+.nx .nx-pc-node.is-waiting { opacity: 0.6; cursor: default; }
+.nx .nx-pc-add {
+  display: flex; align-items: center; gap: var(--nx-space-6); width: 100%; height: 26px; margin-top: var(--nx-space-2); padding: 0 var(--nx-space-8) 0 var(--nx-space-20); border-radius: var(--nx-r-xs);
+  font-size: var(--nx-fs-xs); color: var(--nx-muted); text-align: left;
+}
+.nx .nx-pc-add:hover { background: var(--nx-hover); color: var(--nx-text); }
+
+/* Side by side: this PC on the left, the other PC on the right */
+.nx .nx-files.is-split .nx-files-main { flex: 1 1 0; }
+.nx .nx-files.is-split .nx-pc-pane { border-left: 1px solid var(--nx-line); }
+.nx .nx-files .nx-files-main.is-hidden { display: none; }
+.nx .nx-files-stack { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.nx .nx-files-panes { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; }
+.nx .nx-files-panes .nx-files-selbar { flex-wrap: wrap; row-gap: var(--nx-space-2); }
+
+.nx .nx-pc-pane { position: relative; background: color-mix(in srgb, var(--nx-accent) 3%, transparent); }
+.nx .nx-pc-pane.is-dropping .nx-files-list { box-shadow: inset 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi); background: var(--nx-accent-soft); border-radius: var(--nx-r-sm); }
+.nx .nx-pc-badge { flex: none; display: inline-flex; align-items: center; gap: var(--nx-space-5); padding: 0 var(--nx-space-4) 0 var(--nx-space-6); color: var(--nx-accent-text); }
+.nx .nx-pc-tag {
+  margin-left: var(--nx-space-8); padding: 0 var(--nx-space-6); line-height: 16px; border-radius: var(--nx-r-pill); font-size: var(--nx-fs-2xs); font-weight: 600;
+  color: var(--nx-accent-text); background: var(--nx-accent-soft); vertical-align: 1px;
+}
+.nx .nx-pc-dropnote {
+  position: sticky; bottom: 8px; align-self: center; display: inline-flex; align-items: center; gap: var(--nx-space-8); margin-top: auto;
+  padding: var(--nx-space-7) var(--nx-space-14); border-radius: var(--nx-r-pill); background: var(--nx-accent); color: var(--nx-on-accent);
+  font-size: var(--nx-fs-sm); font-weight: 550; box-shadow: var(--nx-card-shadow); pointer-events: none;
+}
+.nx .nx-pc-hint { flex: none; margin: 0; padding: var(--nx-space-6) var(--nx-space-12); border-top: 1px solid var(--nx-line); font-size: var(--nx-fs-xs); color: var(--nx-faint); line-height: 1.5; }
+.nx .nx-pc-hint code, .nx .nx-pc-code code { font-family: var(--nx-mono); color: var(--nx-text-2); }
+
+/* Copies between PCs */
+.nx .nx-pc-transfers { flex: none; max-height: 40%; overflow: auto; border-top: 1px solid var(--nx-line); background: var(--nx-sidebar); }
+.nx .nx-pc-transfers > header { display: flex; align-items: center; gap: var(--nx-space-8); padding: var(--nx-space-6) var(--nx-space-10) var(--nx-space-2) var(--nx-space-12); font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-muted); }
+.nx .nx-pc-transfers > header span { flex: 1 1 auto; }
+.nx .nx-pc-transfers ul { list-style: none; margin: 0; padding: var(--nx-space-2) var(--nx-space-6) var(--nx-space-6); display: grid; gap: var(--nx-space-2); }
+.nx .nx-pc-transfer { display: flex; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-6); border-radius: var(--nx-r-sm); }
+.nx .nx-pc-transfer:hover { background: var(--nx-hover); }
+.nx .nx-pc-transfer-dir { flex: none; color: var(--nx-accent-text); }
+.nx .nx-pc-transfer.is-failed .nx-pc-transfer-dir { color: var(--nx-red); }
+.nx .nx-pc-transfer.is-done .nx-pc-transfer-dir { color: var(--nx-green); }
+.nx .nx-pc-transfer-text { flex: 1 1 auto; min-width: 0; display: grid; gap: var(--nx-space-4); }
+.nx .nx-pc-transfer-name { display: flex; align-items: baseline; gap: var(--nx-space-8); min-width: 0; font-size: var(--nx-fs-sm); }
+.nx .nx-pc-transfer-name strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 550; color: var(--nx-text); }
+.nx .nx-pc-transfer-name span { flex: none; font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-pc-transfer-line { font-size: var(--nx-fs-xs); color: var(--nx-muted); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-pc-transfer.is-failed .nx-pc-transfer-line { color: var(--nx-red); white-space: normal; }
+.nx .nx-pc-transfer-actions { flex: none; display: flex; align-items: center; gap: var(--nx-space-2); }
+.nx .nx-pc-bar { position: relative; height: 4px; border-radius: var(--nx-r-xxs); background: var(--nx-line-strong); overflow: hidden; }
+.nx .nx-pc-bar > span { position: absolute; inset: 0; transform-origin: 0 50%; background: var(--nx-accent); transition: transform var(--nx-drift) var(--nx-spring-drift); }
+.nx .nx-pc-transfer.is-paused .nx-pc-bar > span { background: var(--nx-state-caution); }
+.nx .nx-pc-bar > span.is-unknown { width: 30%; animation: nx-pc-slide var(--nx-pulse) var(--nx-ease) infinite; }
+@keyframes nx-pc-slide { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+
+/* Accounts › Other PCs */
+.nx .nx-pc-requests { margin: 0; gap: var(--nx-space-8); }
+.nx .nx-pc-request { margin: 0; list-style: none; }
+.nx .nx-pc-code code { padding: var(--nx-space-1) var(--nx-space-8); border-radius: var(--nx-r-xs); background: var(--nx-bg); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); font-size: var(--nx-fs-prose); letter-spacing: 0.18em; color: var(--nx-text); }
+.nx .nx-pc-muted { font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-pc-link { justify-self: start; font-size: var(--nx-fs-sm); color: var(--nx-accent-text); }
+.nx .nx-pc-link:hover { text-decoration: underline; }
+.nx .nx-ac-device-text code { font-family: var(--nx-mono); letter-spacing: 0.12em; color: var(--nx-text); }
+.nx .nx-ac-device-text strong .nx-dot { margin-left: var(--nx-space-2); }
+
+.nx .nx-pc-share { display: grid; gap: var(--nx-space-10); }
+.nx .nx-pc-share fieldset { display: grid; gap: var(--nx-space-2); margin: 0; padding: 0; border: 0; }
+.nx .nx-pc-share legend { padding: 0 0 var(--nx-space-5); font-size: var(--nx-fs-sm); font-weight: 500; color: var(--nx-text-2); }
+.nx .nx-pc-share-row { display: flex; align-items: center; gap: var(--nx-space-14); flex-wrap: wrap; min-height: 28px; font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-pc-share-row label, label.nx-pc-share-row { display: inline-flex; align-items: center; gap: var(--nx-space-8); cursor: pointer; }
+.nx .nx-pc-share-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--nx-accent); }
+.nx .nx-pc-share-write { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+
+/* Narrow: the two PCs stack, this PC on top. */
+@container (max-width: 820px) {
+  .nx .nx-files.is-split .nx-files-panes { flex-direction: column; }
+  .nx .nx-files.is-split .nx-files-main { min-height: 0; }
+  .nx .nx-files.is-split .nx-pc-pane { border-left: 0; border-top: 1px solid var(--nx-line); }
+  .nx .nx-files.is-split .nx-files-look { width: 220px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx .nx-pc-bar > span { transition: none; }
+  .nx .nx-pc-bar > span.is-unknown { animation: none; }
+}

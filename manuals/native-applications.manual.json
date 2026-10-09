@@ -1,0 +1,447 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "native-applications",
+  "kind": "environment",
+  "proofs": {
+    "area": "applications-journey",
+    "contracts": [
+      {
+        "checkedAt": [
+          "cua_native_procedures.HostedNativeApplications.request",
+          "cua_native_procedures.HostedNativeApplications.__getattr__",
+          "cua_native_procedures.NativeApplications.open",
+          "cua_native_procedures.NativeApplications.edit",
+          "cua_native_procedures.NativeApplications.persist",
+          "cua_native_procedures.NativeApplications.observe",
+          "cua_native_procedures.NativeApplications.close",
+          "cua_native_procedures.NativeApplications.native_process",
+          "proofs_applications_journey.self_check"
+        ],
+        "claim": "A disposable Unicode Git note is edited, read before save, committed through the owned Git CLI, and independently observed from HEAD; multiline input preserves the saved bytes and a later edit makes the prior saved view stale.",
+        "id": "p22.applications.git-note-journey",
+        "impact": [
+          "Native applications",
+          "Owned Git note editing and save/reopen"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "close": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sessionId"
+      ],
+      "additionalProperties": false
+    },
+    "edit": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sessionId",
+        "value"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "properties": {
+            "sessionId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "value": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "observe": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "expected": {
+          "type": "string"
+        },
+        "persisted": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sessionId",
+        "expected",
+        "persisted"
+      ],
+      "additionalProperties": false
+    },
+    "open": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "enum": [
+            "Microsoft Word",
+            "Microsoft Excel",
+            "Microsoft PowerPoint",
+            "Command Prompt",
+            "Windows PowerShell",
+            "Xournal++",
+            "Git",
+            "Mozilla Firefox",
+            "Zen Browser"
+          ]
+        }
+      },
+      "required": [
+        "app"
+      ],
+      "additionalProperties": false
+    },
+    "persist": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sessionId"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "properties": {
+            "sessionId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "office": {
+      "title": "Owned native document, version and render workflow",
+      "state": {},
+      "actions": {
+        "revision1": {
+          "effect": "Revise the owned native draft, Git note or browser card input",
+          "pre": "Owned hidden document and successful guard",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "edit",
+          "tool": "neyvia.nativeapp.edit"
+        },
+        "revision2": {
+          "effect": "Revise the owned native draft, Git note or browser card input",
+          "pre": "Owned hidden document and successful guard",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "edit",
+          "tool": "neyvia.nativeapp.edit"
+        },
+        "revision3": {
+          "effect": "Revise the owned native draft, Git note or browser card input",
+          "pre": "Owned hidden document and successful guard",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "edit",
+          "tool": "neyvia.nativeapp.edit"
+        },
+        "revision4": {
+          "effect": "Revise the owned native draft, Git note or browser card input",
+          "pre": "Owned hidden document and successful guard",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "edit",
+          "tool": "neyvia.nativeapp.edit"
+        },
+        "revision5": {
+          "effect": "Revise the owned native draft, Git note or browser card input",
+          "pre": "Owned hidden document and successful guard",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "edit",
+          "tool": "neyvia.nativeapp.edit"
+        },
+        "persist": {
+          "effect": "Save and reopen a document, commit a local note, or render a card",
+          "pre": "Token-owned draft",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "persist",
+          "tool": "neyvia.nativeapp.persist"
+        }
+      },
+      "checks": {
+        "revision1": {
+          "args": {
+            "expected": {
+              "$input": "value1"
+            },
+            "persisted": false,
+            "sessionId": {
+              "$input": "sessionId"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.nativeapp.observe"
+        },
+        "revision2": {
+          "args": {
+            "expected": {
+              "$input": "value2"
+            },
+            "persisted": false,
+            "sessionId": {
+              "$input": "sessionId"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.nativeapp.observe"
+        },
+        "revision3": {
+          "args": {
+            "expected": {
+              "$input": "value3"
+            },
+            "persisted": false,
+            "sessionId": {
+              "$input": "sessionId"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.nativeapp.observe"
+        },
+        "revision4": {
+          "args": {
+            "expected": {
+              "$input": "value4"
+            },
+            "persisted": false,
+            "sessionId": {
+              "$input": "sessionId"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.nativeapp.observe"
+        },
+        "revision5": {
+          "args": {
+            "expected": {
+              "$input": "value5"
+            },
+            "persisted": false,
+            "sessionId": {
+              "$input": "sessionId"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.nativeapp.observe"
+        },
+        "persist": {
+          "args": {
+            "expected": {
+              "$input": "value5"
+            },
+            "persisted": true,
+            "sessionId": {
+              "$input": "sessionId"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.nativeapp.observe"
+        }
+      },
+      "procedures": {
+        "revise-save-reopen": {
+          "goal": "Revise an owned memo, budget, slide deck, versioned note or browser card; persist and independently verify the artifact",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string"
+              },
+              "value1": {
+                "type": "string"
+              },
+              "value2": {
+                "type": "string"
+              },
+              "value3": {
+                "type": "string"
+              },
+              "value4": {
+                "type": "string"
+              },
+              "value5": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sessionId",
+              "value1",
+              "value2",
+              "value3",
+              "value4",
+              "value5"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "revision1",
+              "args": {
+                "sessionId": {
+                  "$input": "sessionId"
+                },
+                "value": {
+                  "$input": "value1"
+                }
+              },
+              "check": "revision1",
+              "save": "revision1"
+            },
+            {
+              "action": "revision2",
+              "args": {
+                "sessionId": {
+                  "$input": "sessionId"
+                },
+                "value": {
+                  "$input": "value2"
+                }
+              },
+              "check": "revision2",
+              "save": "revision2"
+            },
+            {
+              "action": "revision3",
+              "args": {
+                "sessionId": {
+                  "$input": "sessionId"
+                },
+                "value": {
+                  "$input": "value3"
+                }
+              },
+              "check": "revision3",
+              "save": "revision3"
+            },
+            {
+              "action": "revision4",
+              "args": {
+                "sessionId": {
+                  "$input": "sessionId"
+                },
+                "value": {
+                  "$input": "value4"
+                }
+              },
+              "check": "revision4",
+              "save": "revision4"
+            },
+            {
+              "action": "revision5",
+              "args": {
+                "sessionId": {
+                  "$input": "sessionId"
+                },
+                "value": {
+                  "$input": "value5"
+                }
+              },
+              "check": "revision5",
+              "save": "revision5"
+            },
+            {
+              "action": "persist",
+              "args": {
+                "sessionId": {
+                  "$input": "sessionId"
+                }
+              },
+              "check": "persist",
+              "save": "persist"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "New-process ownership or guard fails",
+          "recovery": "Refuse the session; never use an existing instance"
+        }
+      ],
+      "frontier": [
+        "Firefox-family screenshot checks validate the rendered color and visible heading ink, not OCR text",
+        "Pixel preview and UIA interaction are separate from these application-native tools"
+      ],
+      "guidance": [
+        "Only host-owned token files and hidden COM instances; compilation never removes native verifiers or guard checks"
+      ]
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "area": "rel29-outcomes",
+  "module": "grant_agent.proofs_rel29_outcomes",
+  "self_check": "self_check",
+  "networkContracts": [],
+  "contracts": [
+    {
+      "checkedAt": [
+        "grant_agent.agents_overview.aggregate -> check_graph",
+        "neyvia.agents.overview and GET /api/ui/agents/overview"
+      ],
+      "claim": "The cached live graph preserves unique canonical agents, acyclic real parents, resolvable edges, measured-or-unknown new tokens and exact working/waiting totals.",
+      "id": "agents.live-overview",
+      "impact": [
+        "live workspace supervision",
+        "read-only agent awareness"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "id": "autopilot.live-manual-selection",
+      "phase": "invariant",
+      "claim": "Plan and frontier schemas enumerate live scoped manual IDs. Unique aliases, typos or exact chapter/procedure matches resolve before execution; an unresolvable selection gets one budgeted catalog retry without replaying effects.",
+      "checkedAt": [
+        "src/grant_agent/neyvia_autopilot.py:selection_model",
+        "src/grant_agent/neyvia_autopilot.py:resolve_manual_id",
+        "src/grant_agent/neyvia_autopilot.py:checked_selection"
+      ],
+      "impact": [
+        "Autopilot plan and frontier manual selection"
+      ]
+    },
+    {
+      "id": "memory.launcher-host-binding",
+      "phase": "invariant",
+      "claim": "Native memory uses the trusted host root and selected project; malformed, stale or mismatched launcher scope disables memory with a content-free log and never fails ordinary chat startup.",
+      "checkedAt": [
+        "src/grant_agent/neyvia_memory_tools.py:launcher_context",
+        "src/grant_agent/web_backend_chat.py:_run_neyvia_chat",
+        "src/grant_agent/neyvia_agent.py:_codex_neyvia_mcp_args",
+        "src/grant_agent/neyvia_mcp_stdio.py:CompactNeyviaMCPServer._gateway"
+      ],
+      "impact": [
+        "Normal workspace-root launch and separate selected chat projects"
+      ]
+    },
+    {
+      "checkedAt": [
+        "neyvia_comments.Store append-only SQLite triggers and rows",
+        "cl.comments_effects.verify fresh store observation"
+      ],
+      "claim": "Comment edits, tombstones and delivery state are immutable events; current rows derive from their latest event.",
+      "id": "comments.append-only",
+      "impact": [
+        "workspace comments",
+        "restart persistence"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "checkedAt": [
+        "neyvia_comments.send/deliver",
+        "cl.comments_effects.verify"
+      ],
+      "claim": "A sent message has a real connected-session acceptance and a durable receipt; failures and uncertain retries never claim success.",
+      "id": "comments.send",
+      "impact": [
+        "session delivery",
+        "comment resolution"
+      ],
+      "phase": "post"
+    },
+    {
+      "id": "efficiency.laya-zero-savings",
+      "phase": "invariant",
+      "claim": "LAYA strip retains answered/asked counts and service tone, and shows estimated token savings only when positive. Zero or unavailable savings do not appear as a savings claim.",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayaModel.js:stripView"
+      ],
+      "impact": [
+        "Launch film behavior"
+      ]
+    },
+    {
+      "id": "nightshift.claude-session-usage",
+      "phase": "invariant",
+      "claim": "Claude terminal attempts publish live cumulative token usage from Usage transcript records, counting streamed message IDs once and including helper sessions, cache reads and writes. Saved unknown finished attempts recover only from their persisted session and started/finished run window; unavailable measurements stay unknown.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.claude_usage.ClaudeTranscriptUsage.poll",
+        "grant_agent.nightshift_ledger.recover_claude_usage",
+        "grant_agent.usage_report.claude_usage_entry"
+      ],
+      "impact": [
+        "Launch film behavior"
+      ]
+    },
+    {
+      "id": "transparency.helper-reports",
+      "phase": "invariant",
+      "claim": "Claude Code agent-message and task-notification envelopes render as compact Helper reported items with the helper name and report body; harness authority framing never becomes a human bubble.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.claude_items.helper_reports",
+        "grant_agent.connected_sessions.claude_transcript.ItemStore._helper_notices",
+        "web/src/neyvia/next/NxThread.jsx"
+      ],
+      "impact": [
+        "Launch film behavior"
+      ]
+    },
+    {
+      "id": "transparency.quiet-unreported",
+      "phase": "invariant",
+      "claim": "At most one not-reported reasoning notice appears per human turn, and none when that turn displays tool steps; shared and explicitly withheld reasoning remain available.",
+      "checkedAt": [
+        "web/src/neyvia/next/nxTransparencyModel.js:visibleTranscriptItems"
+      ],
+      "impact": [
+        "Launch film behavior"
+      ]
+    }
+  ]
+}

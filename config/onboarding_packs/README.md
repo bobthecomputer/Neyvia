@@ -1,0 +1,7 @@
+These manifests deliver the local components declared in `config/onboarding_packs.json` through `onboarding_pack_install_command`.
+
+They contain real SDK, helper, and control-library code with its module-level local imports. The descriptor and `onboarding_pack_status_command` name each available entrypoint and the external runtime, pairing, signing, or credential requirements. `installed` means the listed bytes were staged and verified; `stagedOnly` stays true and `runtimeReady` stays false while requirements remain. No services, system tools, or release artifacts are activated.
+
+Run `python scripts/package_onboarding_packs.py` after changing a declared payload. Versions derive from file paths, sizes, and SHA-256 hashes. The generator refers to this repository's source files without copying the project, excludes unrelated source/configuration, and rejects packages larger than 200 MiB. Packages need the installed Neyvia core Python runtime and its dependencies.
+
+Use `node scripts/verify-fixwave-onboarding.mjs` for the authenticated backend journey on port 47966. It installs every local package, verifies the delivered files and receipts, executes library functions from the staged paths, exercises local CAS import/read, and detects and repairs corrupted bytes. The seven external-engine packages report exactly which runtime payloads remain unpackaged; they are not silently replaced with these smaller component bundles.

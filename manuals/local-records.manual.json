@@ -1,0 +1,1969 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "local-records",
+  "kind": "workflow",
+  "schemas": {
+    "behavior.create": {
+      "type": "object",
+      "properties": {
+        "experimentId": {
+          "type": "string"
+        },
+        "baselineInput": {
+          "type": "string"
+        },
+        "variantInput": {
+          "type": "string"
+        },
+        "acceptance": {
+          "type": "object"
+        },
+        "requestedRoute": {
+          "type": "object"
+        },
+        "budget": {
+          "type": "object"
+        },
+        "workId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId",
+        "baselineInput",
+        "variantInput",
+        "acceptance",
+        "requestedRoute",
+        "budget",
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "experimentId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "baselineInput": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "variantInput": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "behavior.observe": {
+      "type": "object",
+      "properties": {
+        "experimentId": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "baseline",
+            "variant"
+          ]
+        },
+        "response": {
+          "type": "string"
+        },
+        "actualRoute": {
+          "type": "object"
+        },
+        "latencyMs": {
+          "type": "number"
+        },
+        "cost": {
+          "type": "number"
+        },
+        "workId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId",
+        "variant",
+        "response",
+        "actualRoute",
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "experimentId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "response": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "experience.compare": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "baseline": {
+          "type": "string"
+        },
+        "candidate": {
+          "type": "string"
+        },
+        "preference": {
+          "type": "string",
+          "enum": [
+            "user",
+            "provisional",
+            "undecided"
+          ]
+        },
+        "observations": {
+          "type": "object"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "baseline": {
+              "type": "string"
+            },
+            "candidate": {
+              "type": "string"
+            },
+            "preference": {
+              "type": "string",
+              "enum": [
+                "user",
+                "provisional",
+                "undecided"
+              ]
+            },
+            "observations": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "required": [
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "experience.investigate": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "hypothesis": {
+          "type": "string"
+        },
+        "experiment": {
+          "type": "object"
+        },
+        "references": {
+          "type": "array"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "hypothesis": {
+              "type": "string"
+            },
+            "experiment": {
+              "type": "object"
+            },
+            "references": {
+              "type": "array"
+            }
+          }
+        }
+      },
+      "required": [
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "experience.note": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "lesson": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "string"
+        },
+        "invalidation": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "lesson": {
+              "type": "string"
+            },
+            "conditions": {
+              "type": "string"
+            },
+            "invalidation": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "experience.trace": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "traceId": {
+          "type": "string"
+        },
+        "eventKind": {
+          "type": "string",
+          "enum": [
+            "input",
+            "frame",
+            "state",
+            "error",
+            "timing"
+          ]
+        },
+        "payload": {
+          "type": "object"
+        },
+        "references": {
+          "type": "array"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "traceId": {
+              "type": "string"
+            },
+            "eventKind": {
+              "type": "string",
+              "enum": [
+                "input",
+                "frame",
+                "state",
+                "error",
+                "timing"
+              ]
+            },
+            "payload": {
+              "type": "object"
+            },
+            "references": {
+              "type": "array"
+            }
+          }
+        }
+      },
+      "required": [
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "experiment.create": {
+      "type": "object",
+      "properties": {
+        "experimentId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "launchRecipe": {
+          "type": "object"
+        },
+        "resetRecipe": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "experimentId",
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "experimentId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "source": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "experiment.restore": {
+      "type": "object",
+      "properties": {
+        "experimentId": {
+          "type": "string"
+        },
+        "restoreId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId",
+        "restoreId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "experimentId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "restoreId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "orchestration.compile": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "outputPath": {
+          "type": "string",
+          "description": "Optional screenshot path inside the active workspace. Omit to use the managed artifact path."
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "source": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "quality.challenge": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "holdout": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+            },
+            "proposal": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "holdout",
+            "proposal"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "quality.compare": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "instrument": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+            },
+            "baseline": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "candidate": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "instrument",
+            "baseline",
+            "candidate"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "quality.examine": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "holdout": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+            },
+            "targets": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 20,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            }
+          },
+          "required": [
+            "holdout",
+            "targets"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "quality.holdout": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "i": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+            },
+            "spec": {
+              "type": "object",
+              "properties": {
+                "instruments": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 20,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+                  }
+                }
+              },
+              "required": [
+                "instruments"
+              ]
+            }
+          },
+          "required": [
+            "i",
+            "spec"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "quality.instrument": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "i": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+            },
+            "spec": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "json_numeric",
+                    "image",
+                    "trace_timing"
+                  ]
+                },
+                "key": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "max": {
+                  "type": "number"
+                },
+                "maxMeanMs": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "minWidth": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "minHeight": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "maxBytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            }
+          },
+          "required": [
+            "i",
+            "spec"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "quality.measure": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "instrument": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "instrument",
+            "target"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "taste.correction": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "context": {
+              "type": "string",
+              "enum": [
+                "landing-page",
+                "product-ui",
+                "research",
+                "game"
+              ]
+            },
+            "before_path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "after_path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "correction": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12000
+            },
+            "agent_id": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "required": [
+            "context",
+            "before_path",
+            "after_path",
+            "correction"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "records": {
+      "title": "Exact local records and declared artifact criteria",
+      "state": {},
+      "actions": {
+        "behavior-create": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "behavior.create",
+          "tool": "behavior.create"
+        },
+        "behavior-observe": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "behavior.observe",
+          "tool": "behavior.observe"
+        },
+        "experience-compare": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "experience.compare",
+          "tool": "experience.compare"
+        },
+        "experience-investigate": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "experience.investigate",
+          "tool": "experience.investigate"
+        },
+        "experience-note": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "experience.note",
+          "tool": "experience.note"
+        },
+        "experience-trace": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "experience.trace",
+          "tool": "experience.trace"
+        },
+        "experiment-create": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "experiment.create",
+          "tool": "experiment.create"
+        },
+        "experiment-restore": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "experiment.restore",
+          "tool": "experiment.restore"
+        },
+        "orchestration-compile": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "orchestration.compile",
+          "tool": "orchestration.compile"
+        },
+        "quality-challenge": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "quality.challenge",
+          "tool": "quality.challenge"
+        },
+        "quality-compare": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "quality.compare",
+          "tool": "quality.compare"
+        },
+        "quality-examine": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "quality.examine",
+          "tool": "quality.examine"
+        },
+        "quality-holdout": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "quality.holdout",
+          "tool": "quality.holdout"
+        },
+        "quality-instrument": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "quality.instrument",
+          "tool": "quality.instrument"
+        },
+        "quality-measure": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "quality.measure",
+          "tool": "quality.measure"
+        },
+        "taste-correction": {
+          "effect": "Persist an exact proposed record, frozen criterion measurement, compiled plan or isolated byte copy",
+          "pre": "Exact scoped identity and intact local owner/source artifacts",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "taste.correction",
+          "tool": "taste.correction"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "record-behavior-create": {
+          "goal": "Freeze a matched API behavioral experiment, observable criterion, route and call budget; does not run a model.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "experimentId": {
+                "type": "string"
+              },
+              "baselineInput": {
+                "type": "string"
+              },
+              "variantInput": {
+                "type": "string"
+              },
+              "acceptance": {
+                "type": "object"
+              },
+              "requestedRoute": {
+                "type": "object"
+              },
+              "budget": {
+                "type": "object"
+              },
+              "workId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "experimentId",
+              "baselineInput",
+              "variantInput",
+              "acceptance",
+              "requestedRoute",
+              "budget",
+              "workId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "behavior-create",
+              "args": {
+                "acceptance": {
+                  "$input": "acceptance"
+                },
+                "baselineInput": {
+                  "$input": "baselineInput"
+                },
+                "budget": {
+                  "$input": "budget"
+                },
+                "experimentId": {
+                  "$input": "experimentId"
+                },
+                "requestedRoute": {
+                  "$input": "requestedRoute"
+                },
+                "variantInput": {
+                  "$input": "variantInput"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-behavior-observe": {
+          "goal": "Record explicitly unverified, caller-reported API observations. Does not establish internal model state or improvement.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "experimentId": {
+                "type": "string"
+              },
+              "variant": {
+                "type": "string",
+                "enum": [
+                  "baseline",
+                  "variant"
+                ]
+              },
+              "response": {
+                "type": "string"
+              },
+              "actualRoute": {
+                "type": "object"
+              },
+              "latencyMs": {
+                "type": "number"
+              },
+              "cost": {
+                "type": "number"
+              },
+              "workId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "experimentId",
+              "variant",
+              "response",
+              "actualRoute",
+              "latencyMs",
+              "cost",
+              "workId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "behavior-observe",
+              "args": {
+                "actualRoute": {
+                  "$input": "actualRoute"
+                },
+                "cost": {
+                  "$input": "cost"
+                },
+                "experimentId": {
+                  "$input": "experimentId"
+                },
+                "latencyMs": {
+                  "$input": "latencyMs"
+                },
+                "response": {
+                  "$input": "response"
+                },
+                "variant": {
+                  "$input": "variant"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-experience-compare": {
+          "goal": "Record a provisional critic comparison tied to two actual image artifacts; does not claim user preference.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "baseline": {
+                "type": "string"
+              },
+              "candidate": {
+                "type": "string"
+              },
+              "preference": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "provisional",
+                  "undecided"
+                ]
+              },
+              "observations": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "workId",
+              "baseline",
+              "candidate",
+              "preference",
+              "observations"
+            ]
+          },
+          "steps": [
+            {
+              "action": "experience-compare",
+              "args": {
+                "baseline": {
+                  "$input": "baseline"
+                },
+                "candidate": {
+                  "$input": "candidate"
+                },
+                "observations": {
+                  "$input": "observations"
+                },
+                "preference": {
+                  "$input": "preference"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-experience-investigate": {
+          "goal": "Preserve an explicit hypothesis and proposed experiment without claiming the experiment ran.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "hypothesis": {
+                "type": "string"
+              },
+              "experiment": {
+                "type": "object"
+              },
+              "references": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "workId",
+              "hypothesis",
+              "experiment",
+              "references"
+            ]
+          },
+          "steps": [
+            {
+              "action": "experience-investigate",
+              "args": {
+                "experiment": {
+                  "$input": "experiment"
+                },
+                "hypothesis": {
+                  "$input": "hypothesis"
+                },
+                "references": {
+                  "$input": "references"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-experience-note": {
+          "goal": "After work, preserve a small proposed lesson, applicability conditions, invalidation rules and existing evidence paths. Requires learning enabled; does not establish truth or authority.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "lesson": {
+                "type": "string"
+              },
+              "conditions": {
+                "type": "string"
+              },
+              "invalidation": {
+                "type": "string"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "workId",
+              "lesson",
+              "conditions",
+              "invalidation",
+              "evidence"
+            ]
+          },
+          "steps": [
+            {
+              "action": "experience-note",
+              "args": {
+                "conditions": {
+                  "$input": "conditions"
+                },
+                "evidence": {
+                  "$input": "evidence"
+                },
+                "invalidation": {
+                  "$input": "invalidation"
+                },
+                "lesson": {
+                  "$input": "lesson"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-experience-trace": {
+          "goal": "Append a timestamped reported interaction observation with references; not an independently verified journey.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "traceId": {
+                "type": "string"
+              },
+              "eventKind": {
+                "type": "string",
+                "enum": [
+                  "input",
+                  "frame",
+                  "state",
+                  "error",
+                  "timing"
+                ]
+              },
+              "payload": {
+                "type": "object"
+              },
+              "references": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "workId",
+              "traceId",
+              "eventKind",
+              "payload",
+              "references"
+            ]
+          },
+          "steps": [
+            {
+              "action": "experience-trace",
+              "args": {
+                "eventKind": {
+                  "$input": "eventKind"
+                },
+                "payload": {
+                  "$input": "payload"
+                },
+                "references": {
+                  "$input": "references"
+                },
+                "traceId": {
+                  "$input": "traceId"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-experiment-create": {
+          "goal": "Preserve an isolated experiment snapshot and declared recipes; does not execute recipes.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "experimentId": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "launchRecipe": {
+                "type": "object"
+              },
+              "resetRecipe": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "experimentId",
+              "source",
+              "launchRecipe",
+              "resetRecipe"
+            ]
+          },
+          "steps": [
+            {
+              "action": "experiment-create",
+              "args": {
+                "experimentId": {
+                  "$input": "experimentId"
+                },
+                "launchRecipe": {
+                  "$input": "launchRecipe"
+                },
+                "resetRecipe": {
+                  "$input": "resetRecipe"
+                },
+                "source": {
+                  "$input": "source"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-experiment-restore": {
+          "goal": "Restore an intact experiment into a new isolated directory, refusing overwrite.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "experimentId": {
+                "type": "string"
+              },
+              "restoreId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "experimentId",
+              "restoreId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "experiment-restore",
+              "args": {
+                "experimentId": {
+                  "$input": "experimentId"
+                },
+                "restoreId": {
+                  "$input": "restoreId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-orchestration-compile": {
+          "goal": "Compile a compact NEYVIA/1 program into a validated dependency graph with runtime, permission, budget, and proof contracts.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "outputPath": {
+                "type": "string",
+                "description": "Optional screenshot path inside the active workspace. Omit to use the managed artifact path."
+              }
+            },
+            "required": [
+              "source",
+              "outputPath"
+            ]
+          },
+          "steps": [
+            {
+              "action": "orchestration-compile",
+              "args": {
+                "outputPath": {
+                  "$input": "outputPath"
+                },
+                "source": {
+                  "$input": "source"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-quality-challenge": {
+          "goal": "Persist a proposed examination challenge pending operator review. Arguments: holdout, proposal.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "holdout": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+                  },
+                  "proposal": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "holdout",
+                  "proposal"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "quality-challenge",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-quality-compare": {
+          "goal": "Apply the same frozen instrument to real baseline and candidate artifacts. Arguments: instrument, baseline, candidate.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "instrument": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+                  },
+                  "baseline": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "candidate": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  }
+                },
+                "required": [
+                  "instrument",
+                  "baseline",
+                  "candidate"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "quality-compare",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-quality-examine": {
+          "goal": "Run all frozen examination instruments on supplied artifact targets. Arguments: holdout, targets.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "holdout": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+                  },
+                  "targets": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    "minItems": 1,
+                    "maxItems": 20
+                  }
+                },
+                "required": [
+                  "holdout",
+                  "targets"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "quality-examine",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-quality-holdout": {
+          "goal": "Seal an immutable examination with an instruments list. Arguments: i, spec.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "i": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+                  },
+                  "spec": {
+                    "type": "object",
+                    "properties": {
+                      "instruments": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120,
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+                        }
+                      }
+                    },
+                    "required": [
+                      "instruments"
+                    ]
+                  }
+                },
+                "required": [
+                  "i",
+                  "spec"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "quality-holdout",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-quality-instrument": {
+          "goal": "Seal a json_numeric, image or trace_timing instrument specification. Arguments: i, spec.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "i": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+                  },
+                  "spec": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "json_numeric",
+                          "image",
+                          "trace_timing"
+                        ]
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                      },
+                      "max": {
+                        "type": "number"
+                      },
+                      "maxMeanMs": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "minWidth": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "minHeight": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "maxBytes": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "i",
+                  "spec"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "quality-instrument",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-quality-measure": {
+          "goal": "Measure an actual scoped artifact and preserve a receipt. Arguments: instrument, target.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "instrument": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+                  },
+                  "target": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  }
+                },
+                "required": [
+                  "instrument",
+                  "target"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "quality-measure",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-taste-correction": {
+          "goal": "Record a provisional contextual correction from real before/after artifacts. Arguments: context, before_path, after_path, correction.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "context": {
+                    "type": "string",
+                    "enum": [
+                      "landing-page",
+                      "product-ui",
+                      "research",
+                      "game"
+                    ]
+                  },
+                  "before_path": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "after_path": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "correction": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 12000
+                  },
+                  "agent_id": {
+                    "type": "string",
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "context",
+                  "before_path",
+                  "after_path",
+                  "correction"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "taste-correction",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A reported observation is mistaken for actual provider/model quality",
+          "recovery": "Keep evidenceVerified false and use a separately authorized real provider journey."
+        },
+        {
+          "failure": "A frozen source, instrument or saved record changes",
+          "recovery": "Completion is refused; inspect the owning source and create a new explicit trial."
+        }
+      ],
+      "frontier": [
+        "No provider model is invoked. No general quality, operator taste or skill improvement is established.",
+        "Dependency provisioning, host rehearsal and skill mutation require their own fresh execution witness."
+      ],
+      "guidance": [
+        "Enable applicable collaboration preferences through the operator seam before a trial.",
+        "Instrument criteria establish exactly the measured local artifact property. Preserve failed measurements."
+      ]
+    }
+  }
+}

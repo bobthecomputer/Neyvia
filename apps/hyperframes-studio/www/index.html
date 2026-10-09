@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HyperFrames Studio</title>
+<link rel="icon" href="icon.svg">
+<style>
+:root{--bg:#0a0f0c;--panel:#111a14;--line:#22322a;--ink:#f1ede3;--mute:#a9b3a6;--leaf:#5ec189;--leaf-ink:#0a0f0c;--warn:#f2a23c}
+@media (prefers-color-scheme:light){:root{--bg:#f5f1e6;--panel:#fffdf9;--line:#dcd8c8;--ink:#17221a;--mute:#4d5a4f;--leaf:#245a35;--leaf-ink:#fffdf9;--warn:#7a4f08}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif;display:grid;grid-template-rows:auto auto 1fr;height:100vh}
+header{display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+header h1{font-size:16px;margin:0;font-weight:600}header small{color:var(--mute)}
+form{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);align-items:center}
+input{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0}
+input[name=project]{flex:1 1 320px}input[name=port]{width:90px}
+button{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button.primary{background:var(--leaf);color:var(--leaf-ink);border-color:transparent}button:disabled{opacity:.5;cursor:default}
+main{display:grid;grid-template-columns:1fr 300px;min-height:0}
+iframe{width:100%;height:100%;border:0;background:#000}
+aside{border-left:1px solid var(--line);padding:12px 14px;overflow:auto}
+aside h2{font-size:13px;margin:12px 0 6px;color:var(--mute);font-weight:600}
+#status{color:var(--mute)}.finding{color:var(--warn)}ul{padding-left:18px;margin:4px 0}
+.empty{display:grid;place-items:center;color:var(--mute);padding:24px;text-align:center}
+@media (max-width:760px){main{grid-template-columns:1fr;grid-template-rows:1fr auto}aside{border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header><img src="icon.svg" width="22" height="22" alt=""><h1>HyperFrames Studio</h1><small>HeyGen, Apache-2.0 · runs on this PC</small></header>
+<form id="form">
+  <input name="project" placeholder="Video project folder" value="" aria-label="Video project folder">
+  <input name="port" type="number" min="49165" max="49167" value="49165" aria-label="Port">
+  <button class="primary" type="submit" id="open">Open</button>
+  <button type="button" id="timeline">Timeline</button>
+  <button type="button" id="render">Render draft</button>
+  <button type="button" id="stop">Stop</button>
+  <span id="status" role="status">Ready.</span>
+</form>
+<main>
+  <div id="stage" class="empty">Open a video project to edit it on the timeline.<br>Agents edit the same project through Neyvia's video manual.</div>
+  <aside aria-label="Timeline and checks"><h2>Timeline</h2><div id="clips">Not read yet.</div><h2>Checks</h2><div id="checks">Not run yet.</div></aside>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

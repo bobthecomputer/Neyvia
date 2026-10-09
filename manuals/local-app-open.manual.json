@@ -1,0 +1,162 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "local-app-open",
+  "kind": "workflow",
+  "schemas": {
+    "neyvia.app.open": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "app"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "app": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.artifact.open": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "apps": {
+      "title": "Acknowledged text opening",
+      "state": {},
+      "actions": {
+        "neyvia-app-open": {
+          "effect": "Fresh mounted visible editor or artifact preview reports the exact text hash for this requested pane and runtime",
+          "pre": "A displayable guarded text file; app must resolve to file pane, artifact must have exact available published bytes",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.app.open",
+          "tool": "neyvia.app.open"
+        },
+        "neyvia-artifact-open": {
+          "effect": "Fresh mounted visible editor or artifact preview reports the exact text hash for this requested pane and runtime",
+          "pre": "A displayable guarded text file; app must resolve to file pane, artifact must have exact available published bytes",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.open",
+          "tool": "neyvia.artifact.open"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "open-neyvia-app-open": {
+          "goal": "Show the exact file or text publication in the owned Neyvia pane",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "app": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "app",
+              "target"
+            ]
+          },
+          "steps": [
+            {
+              "action": "neyvia-app-open",
+              "args": {
+                "app": {
+                  "$input": "app"
+                },
+                "target": {
+                  "$input": "target"
+                }
+              },
+              "save": "opened"
+            }
+          ]
+        },
+        "open-neyvia-artifact-open": {
+          "goal": "Show the exact file or text publication in the owned Neyvia pane",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "steps": [
+            {
+              "action": "neyvia-artifact-open",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "opened"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A queued event is mistaken for content displayed on screen",
+          "recovery": "Wait for the real mounted pane observation; absent renderer, stale heartbeat, hidden/replaced runtime or byte drift refuses completion."
+        }
+      ],
+      "frontier": [
+        "app.open admits only aliases resolving to file panes with an existing displayable text target.",
+        "artifact.open admits only published plain text using the artifact preview; markdown and binary previews remain frontier.",
+        "notes.open, onboarding.open and app_sdk.preview currently route to standalone apps/overlays without pane mounted-content acknowledgements."
+      ],
+      "guidance": [
+        "Use Neyvia own renderer. Never substitute queue delivery or fabricate a renderer report.",
+        "A fresh completion conserves publication metadata, exact text bytes, pane identity and runtime identity."
+      ]
+    }
+  }
+}

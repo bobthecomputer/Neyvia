@@ -1,0 +1,78 @@
+# Design-craft: Neyvia UI components
+
+Build or review a Neyvia component against `docs/standard/cl-skill.md` Appendix A and `manuals/design.manual.json`; Neyvia's direction wins conflicts. Runner: `python -m grant_agent.cl_skill check --skill manuals/skills/design-craft.cl --files <jsx> <css> [--url <design-lab url>] [--journal <run.cl>]`.
+
+## Tools
+
+- `ui.scan(pattern, in?:css|jsx|all=all)`: regex hits in produced files, comments removed.
+- `ui.durations()`: literal ms/s in transitions or animations; token variables are fine.
+- `ui.offscale(props, scale)`: off-scale px/rem values.
+- `ui.hovermotion()`: hover movement outside fine-pointer/hover media query.
+- `ui.unscoped()`: selectors not beginning `.nx`.
+- `ui.copy(pattern)`: matching visible text and label/title/aria-label/placeholder text.
+- `ui.compile()`: esbuild syntax and duplicate-declaration errors.
+- `ui.render(theme:light|dark, viewport:desktop|phone)`: rendered probe; returns overflow, contrast failures, unnamed controls, small targets, collisions, typeface and tiny-text counts, and wrapped controls/labels. Design Lab honours theme; each render costs about 3–6 seconds.
+- `design-craft.build(files, url?)`: writes files; checks run on result. Reads `nxTokens.css`, `nxThemes.css`, `nxPrimitives.jsx`, and `manuals/design.manual.json`. Undo with `git checkout -- <files>`.
+
+## Required build checks
+
+Build must compile: fix each `ui.compile()` error and rerun. Apply all gates below; `block` must pass, while `warn` and `note` identify preferred corrections.
+
+**Tokens and scope**
+
+- Block raw hex/rgb/hsl colours and inline style colours. Use `--nx-*` tokens; add a missing colour to all four theme blocks. Inline styles are for computed geometry only.
+- Warn: font sizes use `--nx-fs-*`; radii use 0, 5, 7, 10, 14, 16 or pill; spacing uses 0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 32, 40, 48. Prefer 2–24 steps and larger values for page rhythm.
+- Warn: use inset `0 0 0 1px var(--nx-line)` instead of solid borders; no glow/neon/gradient text; blur only when real content shows through; no tracked uppercase (sentence case, or `.nx-tag` for a truly small label).
+- Warn: every selector starts `.nx` or `.nx-<area>`.
+
+**Motion**
+
+- Block `transition: all`, literal durations, `scale(0)`, and `ease-in`; use named properties, duration/easing tokens, and entrances from opacity 0 with scale 0.96–0.985. Reuse `nx-pop-in` where appropriate.
+- Warn: animate transform/opacity, not layout; hover movement only in `@media (hover: hover) and (pointer: fine)`; no stagger or custom infinite loops (`StatusDot` pulse and `NxGrowingTree` are approved); no `will-change` at rest.
+- Block JS motion unless it respects `prefers-reduced-motion`.
+
+**Structure and access**
+
+- Block removed focus outlines, clickable div/span/li, dead controls, fixed widths above 400px, horizontal scrolling, and `100vh`. Use real buttons (`type="button"` for raw buttons); icon-only controls need names; use Button's `icon` prop instead of an Icon child; never draw inline SVG.
+- Warn: disclosure state has `aria-expanded`; placeholders are not labels; never block paste. Keep layouts fluid (`minmax(0, 1fr)`, `min-width: 0`, wrapping, `100dvh`).
+- Warn: targets are at least 24px (36px for phone icon buttons); controls should keep icon and short label on one line.
+
+**Copy**
+
+- Warn against exclamation marks, vague links (“click here”, “learn more”), apologies, marketing buzzwords, technical jargon, title case, emoji, em dashes (Neyvia preference), and sentences concatenated around variables. Use sentence case, concrete verbs and Neyvia terms (chat, PC, changes, sign in).
+- Block fabricated names, numbers or claims. Use real state or an honest empty state.
+
+**Rendered gates**
+
+- Block: light and dark desktop contrast failures (WCAG 4.5:1 body, 3:1 large text); unnamed controls in dark desktop; phone light overflow above 1px; phone text collisions.
+- Block: wrapped controls in light desktop. Warn: wrapped controls in light phone; small phone targets.
+
+## Required judgements and procedures
+
+Keep every judgement name and option exactly as listed:
+
+- `motion-need none|feedback|entrance|live-state`: ask how often Paul sees it and what motion explains. Keyboard-initiated or 100+/day actions get none. Feedback uses colour/shadow on `--nx-fast` and press scale 0.97 on `--nx-snappy`; entrance uses `nx-pop-in`/`nx-fade`; live state uses `StatusDot` pulse. Popovers scale from trigger, modals from centre; exit faster than enter.
+- `emphasis primary|status|none`: choose the component's one emphasis. One filled primary per area; reserve sun for the screen's hero action; keep others quiet.
+- `removal keep|remove`: for each border, pill, label, icon and helper line, ask what information/state/action it carries. Remove it if nothing is lost; aim for 20–40% fewer boxes.
+- `states complete|missing`: check first load, empty, error with Try again, long names and many rows. Empty states are honest and offer one next action; no invented data.
+- `copy-voice keep|rewrite`: would Paul say it aloud? Buttons lead with verbs, confirmations repeat consequences, toggles name their ON state. One idea per line; use consistent terms.
+
+## Procedure
+
+`build(files, url?)`: read `nxTokens.css` and `nxPrimitives.jsx`; make judgements `motion-need`, `emphasis`, `states`; run `design-craft.build`; check raw colour, literal duration and transition-all; make `removal` and `copy-voice` judgements; render light desktop, dark desktop, light phone.
+
+`audit(files, url)`: render light desktop and dark phone; make `removal` and `copy-voice` judgements. Review only: evidence-backed findings, subtraction first, P0–P3; do not rewrite.
+
+## Fix guidance
+
+Use token colours and durations; name transition properties; use `var(--nx-ease)` or spring tokens; use transform/opacity for motion, and no delays. Delete `outline:none` (the `.nx` focus ring applies). Use Button/IconButton or a raw typed button; give IconButton a verb label. Snap spacing/radii/type to tokens; use inset token borders. For contrast use `--nx-text-2` for body and `--nx-muted` for labels; never `--nx-faint` below 12px. Fix overflow with fluid tracks, wrapping or ellipsis; remove collisions by wrapping, restacking or dropping less important labels. Errors say what failed and the next step. Wire controls to real handlers or remove them; unfinished actions are text, not buttons. Use real state or honest empty states, and name every control. `100dvh` replaces `100vh`.
+
+## Known gaps
+
+Focus-not-obscured (WCAG 2.4.11) needs a Tab-walk probe; drag alternatives (2.5.7) are in the layout manual. Button/IconButton lack press-scale feedback outside `.nx-send`; interruptible gesture motion for docked chat and sheets remains in the motion chapter.
+
+## Evidence and provenance
+
+Verified references: Emil Kowalski animation/frequency guidance; Anthropic frontend-design emphasis; Jakub Krehel writing; i-have-adhd next-action/state/list guidance; Addy Osmani WCAG 2.2; anti-slop dead-control/fabricated-data gates; taste-skill restraint; Meng To removal audit; ibelick baseline UI. Apple interruptibility guidance is quarantined. Rules include token elevation, no resting `will-change`, no paste blocking, and `dvh` over `vh`.
+
+The build writes files; checks are scripts. The motion judgement is a model decision; removal needs rendered screenshots.

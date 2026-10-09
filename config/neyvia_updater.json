@@ -1,0 +1,153 @@
+{
+  "schema": "neyvia.updater-policy/v1",
+  "networkExecution": "external-supervised-adapter",
+  "consumedReceiptLedger": ".agent_control/updater/consumed-receipts.sqlite3",
+  "dependencyInventory": {
+    "path": ".agent_control/dependency_inventory.json",
+    "required": true,
+    "rebuildAndCompare": true,
+    "failOnCriticalUnresolved": true
+  },
+  "channels": {
+    "stable": {
+      "track": "production",
+      "prereleaseAllowed": false,
+      "operatorOptIn": false,
+      "promotionSource": "beta"
+    },
+    "beta": {
+      "track": "preview",
+      "prereleaseAllowed": true,
+      "operatorOptIn": true,
+      "promotionSource": "development"
+    },
+    "development": {
+      "track": "engineering",
+      "prereleaseAllowed": true,
+      "operatorOptIn": true,
+      "promotionSource": "signed-ci"
+    }
+  },
+  "upstreamDiscovery": {
+    "source": "allowlisted-https-release-manifest",
+    "allowedOrigins": [
+      "https://github.com",
+      "https://objects.githubusercontent.com"
+    ],
+    "manifestPathTemplate": "/neyvia/{channel}/latest.json",
+    "manifestRequired": true,
+    "allowUnsigned": false,
+    "redirectPolicy": "same-allowlisted-origin-only",
+    "limits": {
+      "maxManifestBytes": 262144,
+      "maxRedirects": 2,
+      "timeoutSeconds": 15,
+      "maxCandidates": 1
+    }
+  },
+  "signing": {
+    "acceptanceState": "unproven-until-release-and-local-verifier-trust-roots-are-provisioned",
+    "allowedSchemes": [
+      "ed25519-detached"
+    ],
+    "trustedKeys": {
+      "neyvia-release-2026": {
+        "keyId": "neyvia-release-2026",
+        "identity": "Neyvia offline release authority",
+        "provisioned": false,
+        "publicKeyBase64": "QEgTNBxZVZdYsbtwsTRLnBSXUIcHjYOgtv1Mq3VVwGI=",
+        "fingerprintSha256": "1eab601f33973494d67c77f685b3d4a2b8556dac97fd879e81dcf997221649f6"
+      }
+    },
+    "binds": [
+      "canonical-manifest",
+      "artifact-sha256",
+      "artifact-bytes",
+      "reproducible-build-id",
+      "dependency-inventory-sha256",
+      "channel",
+      "version"
+    ]
+  },
+  "localEvidence": {
+    "maxAgeSeconds": 900,
+    "maxFutureSkewSeconds": 30,
+    "trustedVerifiers": {
+      "neyvia-local-verifier-2026": {
+        "keyId": "neyvia-local-verifier-2026",
+        "identity": "Neyvia supervised local update verifier",
+        "provisioned": false,
+        "publicKeyBase64": "rUSDeJgF7EXe+pf7t/ecPYhZReaxPs7h1VeqbmgID4c=",
+        "fingerprintSha256": "9a40f093f93b84ed3f495c22e46d38ab2c970b923b2b40b877af2dffd1d8f3d2",
+        "allowedKinds": [
+          "artifact-content",
+          "channel-opt-in",
+          "gate:compatibility",
+          "gate:license",
+          "gate:malware",
+          "gate:performance",
+          "delta-content",
+          "peer-content"
+        ]
+      }
+    }
+  },
+  "requiredGates": [
+    "compatibility",
+    "license",
+    "malware",
+    "performance"
+  ],
+  "gateRequirements": {
+    "compatibility": "platform, architecture, installed-version range, migrations, and data-format compatibility",
+    "license": "approved SPDX expression plus dependency and notice review",
+    "malware": "current local scanner receipt and supply-chain policy receipt",
+    "performance": "bounded startup, update duration, memory, disk, and regression budgets"
+  },
+  "artifactRequirements": {
+    "hash": "sha256",
+    "detachedSignature": true,
+    "reproducibleBuildId": true,
+    "exactByteLength": true,
+    "verifyBeforeStage": true,
+    "verifyAfterReconstruction": true
+  },
+  "delivery": {
+    "delta": {
+      "enabled": true,
+      "maxRatio": 0.75,
+      "requireInstalledBaseHash": true,
+      "requirePatchSignature": true,
+      "fallback": "full-signed-artifact"
+    },
+    "peerAssisted": {
+      "enabled": true,
+      "allowlistPolicy": {
+        "policyId": "neyvia-private-peer-allowlist-v1",
+        "source": "supervised-device-registry",
+        "requirements": [
+          "pinned-peer-identity",
+          "private-transport",
+          "session-bound-content-hash"
+        ]
+      },
+      "allowlistPolicySha256": "2a9794b3143745d72086aab63df6c3ae5579d039c944ada5bc83138d8ddf1ceb",
+      "transportIdentity": "neyvia-private-peer-v1",
+      "requireAllowlistedPeer": true,
+      "requirePrivateTransport": true,
+      "requireContentHashBinding": true,
+      "fallback": "supervised-upstream"
+    }
+  },
+  "rollback": {
+    "required": true,
+    "preservePreviousArtifact": true,
+    "healthWindowSeconds": 120,
+    "recoveryOrder": [
+      "restore-previous-version",
+      "restore-compatible-data-snapshot",
+      "safe-mode-with-updates-disabled",
+      "operator-repair"
+    ]
+  }
+}

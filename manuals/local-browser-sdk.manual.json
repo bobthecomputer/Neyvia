@@ -1,0 +1,729 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "local-browser-sdk",
+  "kind": "workflow",
+  "schemas": {
+    "neyvia.app_sdk.preview": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "device": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "required": [
+        "project",
+        "port"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.app_sdk.verify": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "clSource": {
+          "type": "string"
+        },
+        "native": {
+          "type": "object"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "project",
+        "url"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "url": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.browser.decide": {
+      "type": "object",
+      "properties": {
+        "tabId": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string"
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "goal": {},
+            "options": {},
+            "progress": {},
+            "action_receipts": {},
+            "query": {},
+            "result": {},
+            "previous": {},
+            "decision_profile": {},
+            "advisory_field": {},
+            "evidence": {}
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tabId",
+        "question"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "tabId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "question": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.perception.browser.action": {
+      "type": "object",
+      "properties": {
+        "browserId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "element": {
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "fill",
+            "click"
+          ]
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "browserId",
+        "revision",
+        "element",
+        "action"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "browserId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "revision": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "element": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.perception.browser.close": {
+      "type": "object",
+      "properties": {
+        "browserId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "browserId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "browserId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.perception.browser.observe": {
+      "type": "object",
+      "properties": {
+        "browserId": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.perception.browser.open": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "url": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "workspace.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "startLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "evidence": {
+      "title": "Actual owned browser and SDK evidence",
+      "state": {
+        "private-browser": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "browserId": {
+                "type": "string"
+              }
+            },
+            "required": []
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.perception.browser.observe"
+        }
+      },
+      "actions": {
+        "perception-browser-open": {
+          "effect": "Open a private browser session for exactly this origin; no user profile or downloads.",
+          "pre": "Actual configured owned Neyvia browser, current source and authorized local runtime; exact fresh revision for browser actions",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.perception.browser.open",
+          "tool": "neyvia.perception.browser.open"
+        },
+        "perception-browser-action": {
+          "effect": "Act on a fresh DOM projection; stale revisions fail before any effect. Caller must authorize the action.",
+          "pre": "Actual configured owned Neyvia browser, current source and authorized local runtime; exact fresh revision for browser actions",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.perception.browser.action",
+          "tool": "neyvia.perception.browser.action"
+        },
+        "perception-browser-close": {
+          "effect": "Close this owned browser session.",
+          "pre": "Actual configured owned Neyvia browser, current source and authorized local runtime; exact fresh revision for browser actions",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.perception.browser.close",
+          "tool": "neyvia.perception.browser.close"
+        },
+        "app_sdk-preview": {
+          "effect": "Open an SDK app in Mobile Studio's existing phone frame. port is the explicit running Neyvia backend port.",
+          "pre": "Actual configured owned Neyvia browser, current source and authorized local runtime; exact fresh revision for browser actions",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.app_sdk.preview",
+          "tool": "neyvia.app_sdk.preview"
+        },
+        "app_sdk-verify": {
+          "effect": "Run the app's goals through T18 web perception and optional T16 native inspection; failed goals refuse completion. Uses an explicit running-app URL.",
+          "pre": "Actual configured owned Neyvia browser, current source and authorized local runtime; exact fresh revision for browser actions",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.app_sdk.verify",
+          "tool": "neyvia.app_sdk.verify"
+        },
+        "browser-decide": {
+          "effect": "Acquire fresh native DOM and ask the attached LAYA service; explicit unavailable fallback, advisory only.",
+          "pre": "Actual configured owned Neyvia browser, current source and authorized local runtime; exact fresh revision for browser actions",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.browser.decide",
+          "tool": "neyvia.browser.decide"
+        },
+        "read-sdk-observation": {
+          "effect": "Read the exact mounted-runtime witness bytes",
+          "pre": "Use the bounded observation captured from the actual mounted child realm",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "workspace.read",
+          "tool": "workspace.read"
+        }
+      },
+      "checks": {
+        "sdk-native-observation": {
+          "args": {
+            "path": {
+              "$input": "observation"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": "content",
+            "schema": {
+              "allOf": [
+                {
+                  "pattern": "\"actualMountedControlChangesState\"\\s*:\\s*true"
+                },
+                {
+                  "pattern": "\"nativeAppPixelsPresent\"\\s*:\\s*true"
+                },
+                {
+                  "pattern": "\"nativePhoneActuallyVisible\"\\s*:\\s*true"
+                },
+                {
+                  "pattern": "\"previewActualPositiveCL\"\\s*:\\s*true"
+                },
+                {
+                  "pattern": "\"currentManualEffectReceipt\"\\s*:\\s*true"
+                }
+              ],
+              "type": "string"
+            }
+          },
+          "tool": "workspace.read"
+        }
+      },
+      "procedures": {
+        "perception-browser-open": {
+          "goal": "Execute the actual browser or SDK journey and independently verify fresh owner state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url"
+            ]
+          },
+          "steps": [
+            {
+              "action": "perception-browser-open",
+              "args": {
+                "url": {
+                  "$input": "url"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "perception-browser-action": {
+          "goal": "Execute the actual browser or SDK journey and independently verify fresh owner state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "browserId": {
+                "type": "string"
+              },
+              "revision": {
+                "type": "string"
+              },
+              "element": {
+                "type": "string"
+              },
+              "action": {
+                "enum": [
+                  "fill",
+                  "click"
+                ]
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "browserId",
+              "revision",
+              "element",
+              "action",
+              "value"
+            ]
+          },
+          "steps": [
+            {
+              "action": "perception-browser-action",
+              "args": {
+                "action": {
+                  "$input": "action"
+                },
+                "browserId": {
+                  "$input": "browserId"
+                },
+                "element": {
+                  "$input": "element"
+                },
+                "revision": {
+                  "$input": "revision"
+                },
+                "value": {
+                  "$input": "value"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "perception-browser-close": {
+          "goal": "Execute the actual browser or SDK journey and independently verify fresh owner state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "browserId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "browserId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "perception-browser-close",
+              "args": {
+                "browserId": {
+                  "$input": "browserId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "app_sdk-preview": {
+          "goal": "Execute the actual browser or SDK journey and independently verify fresh owner state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              },
+              "device": {
+                "type": "string"
+              },
+              "port": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 65535
+              }
+            },
+            "required": [
+              "project",
+              "device",
+              "port"
+            ]
+          },
+          "steps": [
+            {
+              "action": "app_sdk-preview",
+              "args": {
+                "device": {
+                  "$input": "device"
+                },
+                "port": {
+                  "$input": "port"
+                },
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "app_sdk-verify": {
+          "goal": "Execute the actual browser or SDK journey and independently verify fresh owner state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "clSource": {
+                "type": "string"
+              },
+              "native": {
+                "type": "object"
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "required": [
+              "project",
+              "url",
+              "clSource",
+              "native",
+              "steps"
+            ]
+          },
+          "steps": [
+            {
+              "action": "app_sdk-verify",
+              "args": {
+                "clSource": {
+                  "$input": "clSource"
+                },
+                "native": {
+                  "$input": "native"
+                },
+                "project": {
+                  "$input": "project"
+                },
+                "steps": {
+                  "$input": "steps"
+                },
+                "url": {
+                  "$input": "url"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "browser-decide": {
+          "goal": "Execute the actual browser or SDK journey and independently verify fresh owner state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "tabId": {
+                "type": "string"
+              },
+              "question": {
+                "type": "string"
+              },
+              "context": {
+                "type": "object",
+                "properties": {
+                  "goal": {},
+                  "options": {},
+                  "progress": {},
+                  "action_receipts": {},
+                  "query": {},
+                  "result": {},
+                  "previous": {},
+                  "decision_profile": {},
+                  "advisory_field": {},
+                  "evidence": {}
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "tabId",
+              "question",
+              "context"
+            ]
+          },
+          "steps": [
+            {
+              "action": "browser-decide",
+              "args": {
+                "context": {
+                  "$input": "context"
+                },
+                "question": {
+                  "$input": "question"
+                },
+                "tabId": {
+                  "$input": "tabId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "prove-sdk-mounted-observation": {
+          "goal": "The actual mounted SDK child realm changes shared state and paints native iframe content",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "observation": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "observation"
+            ]
+          },
+          "steps": [
+            {
+              "action": "read-sdk-observation",
+              "args": {
+                "path": {
+                  "$input": "observation"
+                }
+              },
+              "check": "sdk-native-observation",
+              "save": "mounted"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Observed revision or retained proof changes",
+          "recovery": "Observe again and run the requested operation against current state; never accept stale evidence."
+        },
+        {
+          "failure": "Phone layout passes but the iframe is blank",
+          "recovery": "Require the mounted child identity, a real increment and native pixels. A separate same-URL context cannot replace the child realm."
+        }
+      ],
+      "frontier": [
+        "Visible WebView2 promotion needs an allowed desktop and actual native import plus fresh observed DOM. This task prohibits visible windows."
+      ],
+      "guidance": [
+        "Use actual configured Neyvia headless contexts; require fresh observed revisions before DOM actions.",
+        "SDK verification executes the authored contract journey and retains source hashes, actual state and screenshot bytes.",
+        "SDK previews need a mounted Phone iframe and delivered owner event.",
+        "LAYA decisions require the actual frozen local service and durable advisory receipts; advice grants no action authority.",
+        "Observe the sole owned private browser session before acting; multiple sessions require an existing host-selected identity. Transport stamps stay internal. The observer starts no browser."
+      ]
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "area": "plan-history",
+  "module": "grant_agent.proofs_plan_history",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "sessions.plan-history.order",
+      "phase": "post",
+      "claim": "Claude plan history folds accepted tool operations in transcript order, applies only matching successful results and retains the latest completed and active task states.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.claude_plan_history.read_plan_history",
+        "grant_agent.connected_sessions.claude_plan_history.apply_plan_result",
+        "grant_agent.connected_sessions.plan.latest_plan",
+        "grant_agent.proofs_plan_history._order_case"
+      ],
+      "impact": [
+        "connected chat plan visibility",
+        "Claude transcript history"
+      ]
+    },
+    {
+      "id": "sessions.plan-history.source-clear",
+      "phase": "post",
+      "claim": "Plan source changes discard prior source rows and terminal deletion or an empty replacement clears the visible checklist.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.claude_plan_history.read_plan_history",
+        "grant_agent.connected_sessions.plan.latest_plan",
+        "grant_agent.proofs_plan_history._source_and_clear_case"
+      ],
+      "impact": [
+        "connected chat plan visibility",
+        "Claude transcript history"
+      ]
+    },
+    {
+      "id": "sessions.plan-history.conversation-scope",
+      "phase": "post",
+      "claim": "Plan calls and results stay within the selected conversation transcript and sidechain calls do not enter its visible plan.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.claude_plan_history.read_plan_history",
+        "grant_agent.proofs_plan_history._conversation_scope_case"
+      ],
+      "impact": [
+        "connected chat plan visibility",
+        "conversation and subagent boundaries"
+      ]
+    }
+  ],
+  "coverage": [],
+  "portRoles": []
+}

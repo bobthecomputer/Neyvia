@@ -1,0 +1,121 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "local-evolver",
+  "kind": "workflow",
+  "schemas": {
+    "neyvia.evolver.run": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "enum": [
+            "manual_compression",
+            "cl_skill",
+            "manual_compression_v2",
+            "cl_skill_v2",
+            "cl_skill_v3",
+            "paul_intent",
+            "manual_json_local_v1"
+          ]
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maxTrials": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2
+        }
+      },
+      "required": [
+        "domain",
+        "requestId"
+      ]
+    }
+  },
+  "chapters": {
+    "evolution": {
+      "title": "Frozen local manual compression",
+      "state": {},
+      "actions": {
+        "run": {
+          "effect": "Run real manual_json_local_v1 parse, compiler, roundtrip and token measurements on matched seeded cases",
+          "pre": "Owned root and request identity; installed offline Rust engine; actual frozen manual files; current policy permits managed child processes",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.evolver.run",
+          "tool": "neyvia.evolver.run"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "verify-local-manual-evolution": {
+          "goal": "Finish a real frozen paired lossless compression trial, reconfirm on two fresh heldout panels, and update the local Pareto front",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "string",
+                "enum": [
+                  "manual_compression",
+                  "cl_skill",
+                  "manual_compression_v2",
+                  "cl_skill_v2",
+                  "cl_skill_v3",
+                  "paul_intent",
+                  "manual_json_local_v1"
+                ]
+              },
+              "requestId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "domain",
+              "requestId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "run",
+              "args": {
+                "domain": {
+                  "$input": "domain"
+                },
+                "maxTrials": 1,
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A queued job or synthetic score is called an evaluated improvement",
+          "recovery": "Wait for actual parse/compiled artifacts; compare current bytes, paired seeds, frozen panels and counted engine trials."
+        },
+        {
+          "failure": "Compression removes instructions or protected checks",
+          "recovery": "Retain the rejected candidate; exact semantic and compiler roundtrip gates prevent promotion."
+        }
+      ],
+      "frontier": [
+        "manual_json_local_v1 measures lossless JSON compression, not model task accuracy.",
+        "Other domain routes retain their named GPT-6 Luna transport and need separate matched provider evaluations."
+      ],
+      "guidance": [
+        "No models or downloads are used in this named local domain.",
+        "Reuse requestId after interruptions; frozen judges and manual inputs cannot be changed inside an established domain.",
+        "Local-only blocks all managed children, including this offline Rust engine; preserve that policy."
+      ]
+    }
+  }
+}

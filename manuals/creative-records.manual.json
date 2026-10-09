@@ -1,0 +1,284 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "creative-records",
+  "kind": "workflow",
+  "schemas": {
+    "attention.create": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "attention.observe": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "workId",
+        "arguments"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "situation.define": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "task": {
+          "type": "string"
+        },
+        "constraints": {
+          "type": "array"
+        },
+        "acceptance": {
+          "type": "array"
+        },
+        "expectedRevision": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workId",
+        "task"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "task": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "local-records": {
+      "title": "Task proposals and reported representation experiments",
+      "state": {},
+      "actions": {
+        "situation-define": {
+          "effect": "Persist the exact scoped proposal or unverified observation and conserve unrelated records",
+          "pre": "Selected work identity and exact requested record fields; local owner state must be intact",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "situation.define",
+          "tool": "situation.define"
+        },
+        "attention-create": {
+          "effect": "Persist the exact scoped proposal or unverified observation and conserve unrelated records",
+          "pre": "Selected work identity and exact requested record fields; local owner state must be intact",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "attention.create",
+          "tool": "attention.create"
+        },
+        "attention-observe": {
+          "effect": "Persist the exact scoped proposal or unverified observation and conserve unrelated records",
+          "pre": "Selected work identity and exact requested record fields; local owner state must be intact",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "attention.observe",
+          "tool": "attention.observe"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "record-situation-define": {
+          "goal": "Save an exact task proposal, constraints and acceptance criteria under one work identity",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "task": {
+                "type": "string"
+              },
+              "constraints": {
+                "type": "array"
+              },
+              "acceptance": {
+                "type": "array"
+              },
+              "expectedRevision": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "workId",
+              "task",
+              "constraints",
+              "acceptance",
+              "expectedRevision"
+            ]
+          },
+          "steps": [
+            {
+              "action": "situation-define",
+              "args": {
+                "acceptance": {
+                  "$input": "acceptance"
+                },
+                "constraints": {
+                  "$input": "constraints"
+                },
+                "expectedRevision": {
+                  "$input": "expectedRevision"
+                },
+                "task": {
+                  "$input": "task"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-attention-create": {
+          "goal": "Freeze a bounded local representation experiment; no model call occurs",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "attention-create",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "record-attention-observe": {
+          "goal": "Append one caller-reported API observation without claiming it was independently verified",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "workId",
+              "arguments"
+            ]
+          },
+          "steps": [
+            {
+              "action": "attention-observe",
+              "args": {
+                "arguments": {
+                  "$input": "arguments"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A caller-reported route or response is mistaken for independently verified model evidence",
+          "recovery": "Treat attention observations as unverified data; run and cite a separate authorized provider evaluation."
+        },
+        {
+          "failure": "A situation revision or attention experiment ID is stale",
+          "recovery": "Read the selected owner state and retry with the current revision or a fresh experiment ID."
+        }
+      ],
+      "frontier": [
+        "These records do not launch a provider, prove model improvement, or verify API responses.",
+        "Browser action, operator preference, and public promotion need separate authority and observation."
+      ],
+      "guidance": [
+        "Use one workId consistently. Keep task contracts explicit and budget representation experiments.",
+        "Preserve failed, missing, or route-mismatched observations rather than promoting a preferred variant."
+      ]
+    }
+  }
+}

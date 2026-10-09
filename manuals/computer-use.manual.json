@@ -1,0 +1,1797 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "computer-use",
+  "kind": "environment",
+  "proofs": {
+    "area": "computer-use",
+    "manifests": [
+      "config/proofs/proofs-e-models.json"
+    ],
+    "contracts": [
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxCuaModel.js:toCapture -> checkedProofsEModel"
+        ],
+        "claim": "Frame clicks map from shown pixels to capture pixels and outside/empty frames are refused",
+        "id": "cua.toCapture",
+        "impact": [
+          "cua frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxCuaModel.js:keyToInput -> checkedProofsEModel"
+        ],
+        "claim": "Characters, named keys and chords retain exact modifiers; dead/modifier keys never send input",
+        "id": "cua.keyToInput",
+        "impact": [
+          "cua frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxCuaModel.js:wheelToScroll -> checkedProofsEModel"
+        ],
+        "claim": "Dominant axis determines direction; gesture amount is 1â€“10 lines with pixel/line/page conversion",
+        "id": "cua.wheelToScroll",
+        "impact": [
+          "cua frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxCuaModel.js:elementAt -> checkedProofsEModel"
+        ],
+        "claim": "Choose the smallest containing observed element, preserve first match on equal area",
+        "id": "cua.elementAt",
+        "impact": [
+          "cua frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxCuaModel.js:pickSession -> checkedProofsEModel"
+        ],
+        "claim": "Named sessions must exist; otherwise the most recent live session wins, with ended fallback",
+        "id": "cua.pickSession",
+        "impact": [
+          "cua frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxCuaModel.js:mergeLog -> checkedProofsEModel"
+        ],
+        "claim": "Updates preserve entry identity and data; new rows are sequence sorted and bounded",
+        "id": "cua.mergeLog",
+        "impact": [
+          "cua frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+          "grant_agent.proofs_e_wz.check_hidden_kwargs",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Windows background process options include CREATE_NO_WINDOW, optional process group and hidden startup info; non-Windows receives no Windows kwargs.",
+        "id": "proofs-e-wz.hidden-options",
+        "impact": [
+          "owned child processes",
+          "console-window behavior"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.subprocess_utils._hidden_popen_init",
+          "grant_agent.proofs_e_wz.check_spawn_flags",
+          "grant_agent.proofs_e_wz.self_check",
+          "grant_agent.subprocess_utils.install_hidden_subprocess_default"
+        ],
+        "claim": "Every Popen invocation through the installed Windows safety net receives CREATE_NO_WINDOW when flags are missing/zero, while explicit keyword/positional flags and other arguments remain exact; installation is idempotent and off Windows does nothing.",
+        "id": "proofs-e-wz.hidden-default",
+        "impact": [
+          "all Popen-based background launchers",
+          "interactive login consoles"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cua_upstream.runtime_status",
+          "grant_agent.cua_upstream.install_runtime",
+          "scripts/uifix2_contracts.py:c2_cua_helper_plain_and_shared"
+        ],
+        "claim": "The screen-control helper resolves from NEYVIA_CUA_DRIVER_DIR, the shared per-user runtime, then the checkout; a missing helper is reported in plain words with a hash-checked setup offer and never staged unverified",
+        "id": "cua.helper-resolution",
+        "impact": [
+          "Preview pane setup state",
+          "UpstreamDriver start",
+          "LAYA driver readiness"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.cua.action": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string",
+          "enum": [
+            "click",
+            "double_click",
+            "right_click",
+            "type_text",
+            "press_key",
+            "hotkey",
+            "scroll",
+            "drag",
+            "set_value",
+            "invoke_menu",
+            "launch_app"
+          ]
+        },
+        "args": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "tool",
+        "args"
+      ]
+    },
+    "neyvia.cua.adapt": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "window_id": {
+          "type": "integer"
+        },
+        "visual": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "window_id"
+      ]
+    },
+    "neyvia.cua.capture": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "window_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "window_id"
+      ]
+    },
+    "neyvia.cua.flow": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "window_id": {
+          "type": "integer"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "selector": {
+                "type": "object",
+                "properties": {
+                  "role": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "automationId": {
+                    "type": "string"
+                  },
+                  "className": {
+                    "type": "string"
+                  }
+                },
+                "minProperties": 1,
+                "additionalProperties": false
+              },
+              "tool": {
+                "enum": [
+                  "click",
+                  "type_text",
+                  "set_value",
+                  "press_key",
+                  "scroll"
+                ]
+              },
+              "args": {
+                "type": "object"
+              },
+              "expect": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 8
+              }
+            },
+            "required": [
+              "selector",
+              "tool",
+              "expect"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 16
+        }
+      },
+      "required": [
+        "window_id",
+        "steps"
+      ]
+    },
+    "neyvia.cua.inspect": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "window_id": {
+          "type": "integer"
+        },
+        "query": {
+          "type": "string"
+        },
+        "diff_only": {
+          "type": "boolean"
+        },
+        "previousHandle": {
+          "type": "string"
+        },
+        "reset": {
+          "type": "boolean"
+        },
+        "max_elements": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2000
+        }
+      },
+      "required": [
+        "window_id"
+      ]
+    },
+    "neyvia.cua.log": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "since_seq": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "neyvia.cua.state": {
+      "type": "object",
+      "properties": {}
+    },
+    "neyvia.cua.verify": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "window_id": {
+          "type": "integer"
+        },
+        "expect": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "window_id",
+        "expect"
+      ]
+    },
+    "neyvia.cua.wait": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        }
+      },
+      "required": [
+        "timeout_ms"
+      ]
+    },
+    "neyvia.cua.windows": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        }
+      }
+    },
+    "neyvia.pane.show": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "diff",
+            "file",
+            "artifact",
+            "terminal",
+            "browser",
+            "mission",
+            "replay",
+            "builder",
+            "accounts",
+            "runtime",
+            "settings",
+            "preview",
+            "outputs",
+            "perception",
+            "agentview",
+            "sessions",
+            "usage",
+            "parallel",
+            "agents"
+          ]
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "target"
+      ]
+    },
+    "proofs-e-models.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "adaptation": {
+      "title": "C1: first-use adaptation and verified background flows",
+      "state": {
+        "window": {
+          "args": {
+            "sessionId": {
+              "$input": "sessionId"
+            },
+            "window_id": {
+              "$input": "window_id"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string"
+              },
+              "window_id": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "sessionId",
+              "window_id"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.cua.inspect"
+        }
+      },
+      "actions": {
+        "adapt": {
+          "effect": "Read-only probing writes a quarantined CL draft; visual=true invokes T18 only for poor UIA",
+          "pre": "Owner-approved active CUA session and one allowed window",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.adapt",
+          "tool": "neyvia.cua.adapt"
+        },
+        "flow": {
+          "effect": "Resolve fresh unique controls, act and check every step; promote verified use locally; compile after three grounded runs",
+          "pre": "Owner-approved active CUA session and one allowed window",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.cua.flow",
+          "tool": "neyvia.cua.flow"
+        }
+      },
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Selector is missing or ambiguous",
+          "recovery": "Inspect again and choose a unique role/label/automationId/className selector"
+        },
+        {
+          "failure": "Action outcome is unknown or explicit preview takeover occurred",
+          "recovery": "Stop; inspect actual state before any deliberate retry"
+        },
+        {
+          "failure": "Opaque coordinates lack a matching captured frame",
+          "recovery": "Use adapt visual=true or capture; refresh changed pixels; opaque actions retain approval"
+        }
+      ],
+      "frontier": [
+        "C11g (scripts/evidence/C11g.json) meets the local latency and breadth targets: 15 different applications each completed a learned zero-token task, 12 of 12 gates passed, native atomic p50 was 114 ms including sent failures and accepted runs had zero input disturbance. Matched competitor arms are prepared in scripts/C1-comparison-run.json but their provider arms have not been executed, so no comparative claim stands",
+        "Apps that reject background messages retain their native refusal. Isolated native foreground fallback and SendInput are disabled; model arguments and owner foreground flags cannot enable them.",
+        "Visual extraction is model-dependent and may be slow or unavailable"
+      ],
+      "guidance": [
+        "Flow steps use selector/tool/args/expect. UIA checks: element.selector plus value_equals, label_equals, enabled_equals or exists.",
+        "Visual checks use visual.text_contains; uncertain OCR never verifies success. Exact captured pixels must remain unchanged across extraction.",
+        "The first successful use promotes the quarantined workspace draft. Later calls use manual.run; after three verified traces, manual.compile and manual.script.run take over.",
+        "Tools: neyvia.cua.adapt, neyvia.cua.flow; backend/desktop: cua_adapt_command, cua_flow_command; MCP: adapt_app, run_flow."
+      ]
+    },
+    "deadline-driver": {
+      "title": "C1b: bounded native observation and verified delivery",
+      "state": {
+        "window": {
+          "args": {
+            "sessionId": {
+              "$input": "sessionId"
+            },
+            "window_id": {
+              "$input": "window_id"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string"
+              },
+              "window_id": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "sessionId",
+              "window_id"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.cua.inspect"
+        }
+      },
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "UIA provider does not return by its deadline",
+          "recovery": "Use admitted Win32/MSAA controls; resolve new fallback tokens. No desktop-root search or process cleanup."
+        },
+        {
+          "failure": "A dispatched action times out",
+          "recovery": "Do not send another action. Wait for its native lane to finish and verify actual state before a deliberate retry."
+        },
+        {
+          "failure": "Input desktop differs from the process desktop",
+          "recovery": "Background actions require the isolated native driver and an input-desktop attribution guard. Foreground input is disabled; an unavailable guard refuses launch or action."
+        },
+        {
+          "failure": "Field protection metadata is missing or a field became disabled/read-only",
+          "recovery": "Unknown metadata refuses unbound fields. A token-labelled, job-owned disposable document has its own file identity scope; known password, disabled and read-only fields still refuse. Never infer ownership from an old token."
+        }
+      ],
+      "frontier": [
+        "C1b breadth, atomic latency and active-desktop preservation are proven by C11g on local disposable targets; its 3 historical guard-failure records are retained and the whole-session guard flag stays false, so a passing final run does not erase them",
+        "Real UIA cached-pattern/event-diff, general MSAA traversal and T18 model fallback require their own native runs. Isolated native SendInput is disabled.",
+        "T18 image-to-CL remains the existing explicit visual adaptation route; this change proves bounded PrintWindow capture, not an automatic model decision.",
+        "A Bureau launch needs a unique new window, token ownership and verified membership on a noncurrent virtual desktop before action admission. Windows may refuse Shell view registration for contained windows; this is an isolation-unavailable frontier, not missing owner permission. Never show a window on the input desktop or reuse an existing singleton to bypass it.",
+        "C11f (nine apps, four learned flows) is superseded by C11g (15 apps). C11g re-enables visibility diagnostics and proves inactive Bureau placement on Explorer Default even when input is Screen-saver. Calculator CoreWindow lacks injected hook coverage and is refused; shared broker adoption and general Office rendered preview remain unproven. The 15 apps are COM/headless application-native flows plus private UIA/CDP on local disposable targets; that is not universal pixel interaction, and apps that reject background messages keep their native refusal."
+      ],
+      "guidance": [
+        "Windows discovery uses EnumWindows and skips IsHungAppWindow. A persistent in-process MTA UIA client uses ConnectionTimeout 50 ms and TransactionTimeout 80 ms.",
+        "Every UIA/MSAA call runs in a single bounded lane. A busy lane rejects new work immediately; no growing worker pool or PowerShell action process.",
+        "Target-scoped CacheRequest snapshots keep properties and patterns. Property events update cached nodes; structure events refresh only their changed branch. Event buffering is bounded.",
+        "Isolated native routing uses cached UI Automation patterns, admitted background native messages or MSAA. Foreground input and SendInput are disabled regardless of session flags.",
+        "Paul's physical input remains independent of isolated native actions. Explicit preview Take over pauses this session; Give back resumes it with the user's note.",
+        "Observation source, nativeRevision, nativeDiff and degradedReason describe the actual route. Win32 readback and application file effects establish native results.",
+        "No new public command: existing cua.inspect/action/verify/adapt/flow and preview APIs use the same NativeWorker facade. cycle is an internal benchmark/native operation.",
+        "Create a fresh task-local target whose path contains a random 32-character hexadecimal token. launch_app args may include disposable_target {path,token}; the driver binds it only after independent new-window job/desktop ownership and an observed token in its title. Existing broker windows cannot be adopted by this argument.",
+        "Fresh Chrome, Edge and VS Code profiles may expose a task-reserved CDP endpoint on an explicit owned port. The DOM route verifies the local document URL or the token-bearing VS Code page before every evaluation, changes real fields, dispatches their application events and reads fresh values. It never attaches to a user's profile or sends desktop input.",
+        "The native fallback projects actual SysTreeView32 items and owned menu commands. Tree expansion and selection use bounded native messages and fresh affected-item readback; MSAA tree/list roles remain distinct from generic controls.",
+        "The active task panel is config/cua-everyday-tasks.json. It excludes system administration; older frozen panels are historical receipts only. Use disposable notes, generated images, documents and local files.",
+        "Brokered installed binaries have an explicit Bureau route, suspended job launch and a before-launch HWND inventory. Admit only new owned HWNDs with verified noncurrent membership; never adopt an existing user window or activate an uncontained alias. Explorer /n receives a token-named disposable folder and /separate; shared broker HWND ownership remains unproven.",
+        "Notepad skips when an existing instance could reuse a user window. Paint and Calculator use installed binaries and a new owned process; a hidden launch does not prove Bureau membership.",
+        "Office tasks use a new hidden COM instance with PID/birth ownership and save/reopen/package checks. Registered neyvia.nativeapp.open/edit/persist/observe/close drive the native-applications manual. Three grounded runs feed manual.compile; replay uses manual.script.run with fresh checks and zero model tokens. These are application-native tool flows, not UIA or pixel workflows.",
+        "scripts/prove_c11f_shell.py performs actual CREATE_NO_WINDOW file tasks with independent file and ZIP readback. It cannot change system configuration. C11f.json records these lanes separately from the native manual-compiler cohort.",
+        "Bureau uses Explorer Default, not the current input desktop, which can be Screen-saver. The guard observes both desktops continuously. Private desktop windows need no lease. Only a new owned HWND receives one nonrenewable move lease, capped at three seconds.",
+        "New Bureau windows are held hidden before launch resumes. Token-bearing documents must finish loading before admission. Registration stays offscreen with native focus vetoes; pixels reach normal bounds only after actual target GUID membership and DWM Shell cloak are independently verified. DeleteTab is forbidden after placement because it destroys the Shell view and membership.",
+        "Preview images are immutable by advertised sequence and capture identity. The pane swaps loaded pixels and their metadata together. Coordinates and forwarded input use the displayed frame; expired frames and foreign windows refuse. Identical pixels may retain earlier semantic controls, but each selected control is freshly validated before dispatch.",
+        "Preview scroll resolves the observed scrollable ancestor. Classic owned ListBox scroll uses bounded WM_VSCROLL and fresh LB_GETTOPINDEX effect readback. A degraded observation may be retried as a read only; an uncertain dispatched action is never retried."
+      ]
+    },
+    "drive": {
+      "title": "Drive a native Windows app in the background through the computer-use driver (cua-driver tool shape), with Paul watching in the preview",
+      "state": {
+        "driver": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "driver": {
+                "type": "object"
+              },
+              "sessions": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "driver",
+              "sessions"
+            ]
+          },
+          "tool": "neyvia.cua.state"
+        },
+        "windows": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "windows": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "windows"
+            ]
+          },
+          "tool": "neyvia.cua.windows"
+        }
+      },
+      "actions": {
+        "cua.inspect": {
+          "effect": "Read the window's accessibility elements (role, label, value, actions, element_token, screenshot_frame) and its capture_id; tokens expire on the next snapshot",
+          "pre": "window_id from neyvia.cua.windows of the same session; the app is allowed",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "pid": {
+                "type": "integer"
+              },
+              "window_id": {
+                "type": "integer"
+              },
+              "capture_id": {
+                "type": "string"
+              },
+              "elements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "element_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "element_count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "pid",
+              "window_id"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.inspect",
+          "tool": "neyvia.cua.inspect"
+        },
+        "cua.action": {
+          "effect": "Send one cua-driver action (click/type_text/press_key/hotkey/scroll/drag/set_value/invoke_menu/launch_app) to the background window; delivery_mode background by default (no focus or cursor change); returns cua ActionResult plus _meta neyvia/preview {paulActions, note}; irreversible targets wait up to 120 s for Paul's Allow",
+          "pre": "Active session whose allow-list holds the target app; Paul has not taken over; element_token comes from the latest inspect of that window (snapshot-bound) or x,y are pixels of a capture_id",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "confirmed",
+                  "partial",
+                  "unverifiable",
+                  "suspected_noop",
+                  "refused"
+                ]
+              },
+              "route": {
+                "type": "string"
+              },
+              "delivery": {
+                "type": "object"
+              },
+              "evidence": {
+                "type": "array"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "error": {
+                "type": "object"
+              },
+              "escalation": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "effect",
+              "route"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.cua.action",
+          "tool": "neyvia.cua.action"
+        },
+        "cua.wait": {
+          "effect": "Block until Paul gives control back (or timeout); returns his give-back note and every action he did in the preview meanwhile",
+          "pre": "Use after a paused_by_user refusal or when you asked Paul to try something",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "control": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              },
+              "paulActions": {
+                "type": "array"
+              },
+              "timedOut": {
+                "type": "boolean"
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.wait",
+          "tool": "neyvia.cua.wait"
+        },
+        "cua.log": {
+          "effect": "Read the shared log (agent and Paul): who, tool, element, ActionResult, approvals, notes",
+          "pre": "Session exists; since_seq from a previous next_seq to read only what is new",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "session": {
+                "type": "string"
+              },
+              "entries": {
+                "type": "array"
+              },
+              "next_seq": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "entries",
+              "next_seq"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.log",
+          "tool": "neyvia.cua.log"
+        },
+        "pane.show": {
+          "effect": "Open the live preview on Paul's stage: the window, the element you act on outlined before each action, the shared log, Take over/Give back and the allow-list",
+          "pre": "kind preview; target is the session id, or empty for the newest active session",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pane.show",
+          "tool": "neyvia.pane.show"
+        },
+        "cua.inspect-field": {
+          "effect": "Read the window's accessibility elements (role, label, value, actions, element_token, screenshot_frame) and its capture_id; tokens expire on the next snapshot",
+          "pre": "window_id from neyvia.cua.windows of the same session; the app is allowed",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "pid": {
+                "type": "integer"
+              },
+              "window_id": {
+                "type": "integer"
+              },
+              "capture_id": {
+                "type": "string"
+              },
+              "elements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "element_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "element_count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "pid",
+              "window_id"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.inspect",
+          "tool": "neyvia.cua.inspect"
+        }
+      },
+      "checks": {
+        "value-is": {
+          "args": {
+            "expect": [
+              {
+                "element": {
+                  "selector": {
+                    "label_contains": {
+                      "$input": "label"
+                    },
+                    "role": {
+                      "$input": "role"
+                    }
+                  },
+                  "value_equals": {
+                    "$input": "expected"
+                  }
+                }
+              }
+            ],
+            "timeout_ms": 3000,
+            "window_id": {
+              "$result": "before.window_id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "status",
+            "value": "satisfied"
+          },
+          "tool": "neyvia.cua.verify"
+        },
+        "driver-ready": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "driver.available",
+            "value": true
+          },
+          "tool": "neyvia.cua.state"
+        }
+      },
+      "procedures": {
+        "set-field-and-verify": {
+          "goal": "Show the owned preview, inspect and review one field, resolve it afresh, set and independently verify its value",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "window_id": {
+                "type": "integer"
+              },
+              "element_token": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "expected": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "default": ""
+              }
+            },
+            "required": [
+              "window_id",
+              "element_token",
+              "label",
+              "expected"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "pane.show",
+              "args": {
+                "kind": "preview",
+                "target": ""
+              },
+              "save": "shown"
+            },
+            {
+              "action": "cua.inspect-field",
+              "args": {
+                "query": {
+                  "$input": "label"
+                },
+                "window_id": {
+                  "$input": "window_id"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "right-element"
+            },
+            {
+              "action": "cua.action",
+              "args": {
+                "args": {
+                  "element_token": {
+                    "$result": "before.elements.0.element_token"
+                  },
+                  "value": {
+                    "$input": "expected"
+                  }
+                },
+                "tool": "set_value"
+              },
+              "check": "value-is",
+              "save": "set",
+              "when": {
+                "judge": "right-element",
+                "option": "act"
+              }
+            }
+          ]
+        }
+      },
+      "judge": {
+        "right-element": {
+          "constraints": "Tokens are snapshot-bound: use only tokens from the latest inspect of this window. If two elements share the label, pick by role and position or ask Paul. Never act on a window Paul did not allow.",
+          "options": [
+            "act",
+            "look-again"
+          ],
+          "question": "Is the element token the field the task means (role, label and position in the inspect result), in an allowed app?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "effect refused, error.code paused_by_user",
+          "recovery": "Paul took over in the preview. Call neyvia.cua.wait; read his note and paulActions; continue from the new state, do not repeat old steps blindly"
+        },
+        {
+          "failure": "effect refused, error.code app_not_allowed",
+          "recovery": "Ask with launch_app (creates an approval) or tell Paul in chat which app and why; never work around the allow-list"
+        },
+        {
+          "failure": "effect refused, error.code background_unavailable",
+          "recovery": "The target drops background input. Try an observed UI Automation pattern or admitted native message. Isolated native foreground delivery and SendInput remain disabled; report the actual refusal."
+        },
+        {
+          "failure": "effect refused, error.code stale_element_token",
+          "recovery": "The window changed. Inspect again and take the token from the new snapshot"
+        },
+        {
+          "failure": "effect unverifiable or suspected_noop",
+          "recovery": "Neither failure nor success. Verify with neyvia.cua.verify or a fresh inspect before moving on"
+        },
+        {
+          "failure": "effect refused, error.code denied_by_user or approval_timeout",
+          "recovery": "Paul said no (or was away) to an irreversible action. Do not retry the same action; explain in chat and pick a reversible path"
+        },
+        {
+          "failure": "Frame shows minimized or protected",
+          "recovery": "The driver cannot see minimized or capture-protected windows; ask Paul to restore it, never un-minimize with foreground tricks"
+        }
+      ],
+      "frontier": [
+        "Canvas and custom-drawn surfaces with no UI Automation peer can only be driven by pixel clicks on a capture; the driver has no OCR (the AGPL perception extension is never used)",
+        "Isolated native sessions ignore Paul's independent physical input. Preview Take over pauses this session explicitly."
+      ],
+      "guidance": [
+        "Contract: plans/15-handoff.md ## T16 (Session, Frame, LogEntry, refusal codes). Tool shape: trycua/cua libs/cua-driver contract/manifest.json and docs/action-result-contract.md.",
+        "MCP agents use the same session through python -m grant_agent.neyvia_cua_mcp with cua-driver's tool names (click, type_text, get_window_state, ...); Neyvia models use neyvia.cua.*.",
+        "Snapshot before every action: inspect, act with a token from that inspect, verify. Prefer element tokens over coordinates.",
+        "In CL use cua.windows(), then cua.inspect(w1), then cua.action(tool=\"set_value\", args={element:e1, value:\"text\"}). The host fills the driver token and binds value-is to the observed window, role, label and requested value. element_token:e1 is also accepted; literal tokens and stale or foreign refs are refused. Author G from cua.verify before mutation; unsupported observer checks remain frontier.",
+        "User side: pane.show preview (web/src/neyvia/next/NxPreviewPane.jsx) shows the window, outlines the element before each action, and lists every action of yours and Paul's.",
+        "Connected Language: inspect with diff_only=true returns a full window state and handle first; pass previousHandle for scoped changes. reset=true requests a new full state. Handles remain bound to this session and window.",
+        "C11 background work uses UI Automation patterns or admitted PostMessage on the agent desktop. Preview input uses this same driver; browser input in headless proof does not inject Windows input.",
+        "Zero-disturbance proof attributes foreground changes and visible windows to agent process trees, and requires zero LLMHF_INJECTED mouse events and zero LLKHF_INJECTED keyboard events on the input desktop. Paul's independent activity does not invalidate the run.",
+        "Flow step args.observation_timeout_ms accepts 0..10000 milliseconds for bounded read-only initialization and fresh protection observations. Missing/unknown observations may retry; ambiguity refuses immediately. Verification requires two adjacent fresh satisfied observations. No mutation is retried."
+      ]
+    },
+    "private-journey": {
+      "title": "Integrated private-desktop journey: open an allowed app on the agent desktop, perceive it, type and click, verify each effect",
+      "state": {},
+      "actions": {
+        "launch": {
+          "effect": "Start the owner-allowed app on Neyvia's private agent desktop (launch_app with its installed path); nothing appears on Paul's screen",
+          "pre": "Paul allowed this app for the chat's session; the executable family has a verified private launch route",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "confirmed",
+                  "partial",
+                  "unverifiable",
+                  "suspected_noop",
+                  "refused"
+                ]
+              },
+              "route": {
+                "type": "string"
+              },
+              "delivery": {
+                "type": "object"
+              },
+              "evidence": {
+                "type": "array"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "error": {
+                "type": "object"
+              },
+              "escalation": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "effect",
+              "route"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.cua.action",
+          "tool": "neyvia.cua.action"
+        },
+        "observe": {
+          "effect": "Read the selected private window's elements (role, label, value, element_token); query narrows by label or role",
+          "pre": "cua.windows() then cua.inspect(wN) selected the window this journey acts on",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "pid": {
+                "type": "integer"
+              },
+              "window_id": {
+                "type": "integer"
+              },
+              "capture_id": {
+                "type": "string"
+              },
+              "elements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "element_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "element_count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "pid",
+              "window_id"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.inspect",
+          "tool": "neyvia.cua.inspect"
+        },
+        "act": {
+          "effect": "Type into or click one element from the latest observe of the selected window, as background messages on the private desktop",
+          "pre": "element_token comes from the observe step just before this one",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "confirmed",
+                  "partial",
+                  "unverifiable",
+                  "suspected_noop",
+                  "refused"
+                ]
+              },
+              "route": {
+                "type": "string"
+              },
+              "delivery": {
+                "type": "object"
+              },
+              "evidence": {
+                "type": "array"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "error": {
+                "type": "object"
+              },
+              "escalation": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "effect",
+              "route"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.cua.action",
+          "tool": "neyvia.cua.action"
+        }
+      },
+      "checks": {
+        "desktop-undisturbed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "agentDesktop.guard.ok",
+            "value": true
+          },
+          "tool": "neyvia.cua.state"
+        },
+        "typed-value": {
+          "args": {
+            "expect": [
+              {
+                "element": {
+                  "selector": {
+                    "label_contains": {
+                      "$input": "label"
+                    },
+                    "role": {
+                      "$input": "role"
+                    }
+                  },
+                  "value_equals": {
+                    "$input": "typed"
+                  }
+                }
+              }
+            ],
+            "timeout_ms": 3000,
+            "window_id": {
+              "$result": "field.window_id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "status",
+            "value": "satisfied"
+          },
+          "tool": "neyvia.cua.verify"
+        },
+        "composed-value": {
+          "args": {
+            "expect": [
+              {
+                "element": {
+                  "selector": {
+                    "label_contains": {
+                      "$input": "label"
+                    },
+                    "role": {
+                      "$input": "role"
+                    }
+                  },
+                  "value_equals": {
+                    "$input": "composed"
+                  }
+                }
+              }
+            ],
+            "timeout_ms": 3000,
+            "window_id": {
+              "$result": "target.window_id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "status",
+            "value": "satisfied"
+          },
+          "tool": "neyvia.cua.verify"
+        }
+      },
+      "procedures": {
+        "open-on-agent-desktop": {
+          "goal": "Launch an allowed app on the private agent desktop and confirm Paul's desktop saw no foreground, window or injected-input change",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "launch",
+              "args": {
+                "args": {
+                  "path": {
+                    "$input": "path"
+                  }
+                },
+                "tool": "launch_app"
+              },
+              "check": "desktop-undisturbed",
+              "save": "launched"
+            }
+          ]
+        },
+        "type-and-verify": {
+          "goal": "In the selected private window, type text into the field and verify the field's value",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "window_id": {
+                "type": "integer"
+              },
+              "text": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "typed": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "default": "Edit"
+              }
+            },
+            "required": [
+              "window_id",
+              "text",
+              "label",
+              "typed"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe",
+              "args": {
+                "query": {
+                  "$input": "role"
+                },
+                "window_id": {
+                  "$input": "window_id"
+                }
+              },
+              "save": "field"
+            },
+            {
+              "action": "act",
+              "args": {
+                "args": {
+                  "element_token": {
+                    "$result": "field.elements.0.element_token"
+                  },
+                  "text": {
+                    "$input": "text"
+                  }
+                },
+                "tool": "type_text"
+              },
+              "check": "typed-value",
+              "save": "typed_step"
+            }
+          ]
+        },
+        "click-and-verify": {
+          "goal": "In the selected private window, click the named button and verify the field's resulting value",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "window_id": {
+                "type": "integer"
+              },
+              "button": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "composed": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "default": "Edit"
+              }
+            },
+            "required": [
+              "window_id",
+              "button",
+              "label",
+              "composed"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe",
+              "args": {
+                "query": {
+                  "$input": "button"
+                },
+                "window_id": {
+                  "$input": "window_id"
+                }
+              },
+              "save": "target"
+            },
+            {
+              "action": "act",
+              "args": {
+                "args": {
+                  "element_token": {
+                    "$result": "target.elements.0.element_token"
+                  }
+                },
+                "tool": "click"
+              },
+              "check": "composed-value",
+              "save": "clicked"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "launch refused with isolated_launch_unavailable or app_not_allowed",
+          "recovery": "Brokered, Store or singleton apps (Notepad, Calculator, Paint on Windows 11) have no proven private route; ask Paul for an allowed classic app, never a visible launch"
+        },
+        {
+          "failure": "cua.windows lists untitled helper windows next to the app",
+          "recovery": "Select the titled main window with cua.inspect(wN) before each procedure; a procedure acts on the window of the latest observation"
+        },
+        {
+          "failure": "typed-value or composed-value is unsatisfied",
+          "recovery": "Inspect again and read the field's actual value; the app decides where a click inserts (Character Map's Select inserts at the caret). Do not repeat the click blindly"
+        }
+      ],
+      "frontier": [
+        "Proven on Character Map (classic Win32) through the authenticated backend, CL procedures, an independent separate-process WM_GETTEXT readback and the agent-view time-lapse (scripts/prove_rx_cua_journey.py). Saving a document through a private-desktop file dialog is not yet proven.",
+        "The proven journey's task is issued through neyvia.cl on the owner's HTTP route. prove_rx_cua_journey.py --arm claude gives the same task to a Claude Code chat whose only tools are Neyvia's computer-use MCP; that arm has not completed yet (the local Claude CLI sign-in had expired)."
+      ],
+      "guidance": [
+        "Journey: run cua.open-on-agent-desktop(path=...), then cua.windows() and cua.inspect(wN) on the titled window, run cua.type-and-verify(...), cua.inspect(wN) again (an action retires the previous observation), then run cua.click-and-verify(...). Every action sits behind a check; the desktop guard is part of the launch check.",
+        "Paul allows the app for the chat first (preview allow-list); the chat identity of an owner HTTP CL call is http-owner:<session>.",
+        "The agent view mirrors the session: every action gets an 'after' keyframe in the time-lapse at /api/ui/agentview/timeline."
+      ]
+    },
+    "proofs-e-models": {
+      "title": "PROOFS-e: production model contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the most recent verification receipt without invoking production actions again",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-models.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-model-proof-receipt": {
+          "goal": "Read the latest receipt after the production model self-check runner",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Model transforms are reported as proof of a native app/provider/device effect",
+          "recovery": "Use the real owning feature procedure and its observed runtime"
+        }
+      ],
+      "frontier": [
+        "Rendered browser/desktop journeys are separate from pure model proof",
+        "Remote device, game editor and provider behavior require their real runtimes"
+      ],
+      "guidance": [
+        "cua.toCapture: Frame clicks map from shown pixels to capture pixels and outside/empty frames are refused",
+        "cua.keyToInput: Characters, named keys and chords retain exact modifiers; dead/modifier keys never send input",
+        "cua.wheelToScroll: Dominant axis determines direction; gesture amount is 1â€“10 lines with pixel/line/page conversion",
+        "cua.elementAt: Choose the smallest containing observed element, preserve first match on equal area",
+        "cua.pickSession: Named sessions must exist; otherwise the most recent live session wins, with ended fallback",
+        "cua.mergeLog: Updates preserve entry identity and data; new rows are sequence sorted and bounded",
+        "Startup runner: scripts/proofs-e-models.mjs --root <owned-scratch>; area proofs-e-models checks real model actions and corrupted output refusals"
+      ]
+    },
+    "proofs-e-wz": {
+      "title": "PROOFS-e W-Z: live contracts and scratch self-checks",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A local fixture is mistaken for a real provider, signed desktop release or whole-suite replacement",
+          "recovery": "Read the source-bound receipt, per-case coverage map and unresolved frontier before retirement or promotion"
+        }
+      ],
+      "frontier": [
+        "Backend suite and paired-desktop controller scenarios remain pending unless every original predicate has a real action site and observed scratch procedure.",
+        "Hidden-process AST scanner self-tests protect test-only tooling and are retained pending lead retirement review; no source-text scan is relabeled as production proof.",
+        "Legacy desktop-ui/fluxioHelpers.js is absent; its workspace-selection tests remain pending impact/history review.",
+        "The original bootstrap test expected newest merged turn first; its coverage row explicitly supersedes that stale assertion with observed chronological ordering, preserving all other bootstrap/lazy-detail predicates."
+      ],
+      "guidance": [
+        "Self-check entry: grant_agent.proofs_e_wz.self_check; CLI: neyvia verify --root <workspace> --area proofs-e-wz",
+        "Manifest: config/proofs/proofs-e-wz.json; host sites enforce these contracts on every corresponding real action.",
+        "Fixtures use disposable SQLite stores, real owned Python child commands, localhost HTTP port 48503 and bounded source transport injection."
+      ]
+    },
+    "test-loop": {
+      "title": "The test loop: build, launch, drive and check the app while Paul pokes at it in the same preview, then continue from what he did",
+      "state": {
+        "log": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "session": {
+                "type": "string"
+              },
+              "entries": {
+                "type": "array"
+              },
+              "next_seq": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "entries",
+              "next_seq"
+            ]
+          },
+          "tool": "neyvia.cua.log"
+        }
+      },
+      "actions": {
+        "pane.show": {
+          "effect": "Open the live preview on Paul's stage: the window, the element you act on outlined before each action, the shared log, Take over/Give back and the allow-list",
+          "pre": "kind preview; target is the session id, or empty for the newest active session",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pane.show",
+          "tool": "neyvia.pane.show"
+        },
+        "cua.action": {
+          "effect": "Send one cua-driver action (click/type_text/press_key/hotkey/scroll/drag/set_value/invoke_menu/launch_app) to the background window; delivery_mode background by default (no focus or cursor change); returns cua ActionResult plus _meta neyvia/preview {paulActions, note}; irreversible targets wait up to 120 s for Paul's Allow",
+          "pre": "Active session whose allow-list holds the target app; Paul has not taken over; element_token comes from the latest inspect of that window (snapshot-bound) or x,y are pixels of a capture_id",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "confirmed",
+                  "partial",
+                  "unverifiable",
+                  "suspected_noop",
+                  "refused"
+                ]
+              },
+              "route": {
+                "type": "string"
+              },
+              "delivery": {
+                "type": "object"
+              },
+              "evidence": {
+                "type": "array"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "error": {
+                "type": "object"
+              },
+              "escalation": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "effect",
+              "route"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.cua.action",
+          "tool": "neyvia.cua.action"
+        },
+        "cua.inspect": {
+          "effect": "Read the window's accessibility elements (role, label, value, actions, element_token, screenshot_frame) and its capture_id; tokens expire on the next snapshot",
+          "pre": "window_id from neyvia.cua.windows of the same session; the app is allowed",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "pid": {
+                "type": "integer"
+              },
+              "window_id": {
+                "type": "integer"
+              },
+              "capture_id": {
+                "type": "string"
+              },
+              "elements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "element_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "element_count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "pid",
+              "window_id"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.inspect",
+          "tool": "neyvia.cua.inspect"
+        },
+        "cua.wait": {
+          "effect": "Block until Paul gives control back (or timeout); returns his give-back note and every action he did in the preview meanwhile",
+          "pre": "Use after a paused_by_user refusal or when you asked Paul to try something",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "control": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              },
+              "paulActions": {
+                "type": "array"
+              },
+              "timedOut": {
+                "type": "boolean"
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.wait",
+          "tool": "neyvia.cua.wait"
+        },
+        "cua.log": {
+          "effect": "Read the shared log (agent and Paul): who, tool, element, ActionResult, approvals, notes",
+          "pre": "Session exists; since_seq from a previous next_seq to read only what is new",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "session": {
+                "type": "string"
+              },
+              "entries": {
+                "type": "array"
+              },
+              "next_seq": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "entries",
+              "next_seq"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.cua.log",
+          "tool": "neyvia.cua.log"
+        }
+      },
+      "checks": {
+        "value-is": {
+          "args": {
+            "expect": [
+              {
+                "element": {
+                  "selector": {
+                    "label_contains": {
+                      "$input": "label"
+                    },
+                    "role": {
+                      "$input": "role"
+                    }
+                  },
+                  "value_equals": {
+                    "$input": "expected"
+                  }
+                }
+              }
+            ],
+            "timeout_ms": 3000,
+            "window_id": {
+              "$input": "window_id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "status",
+            "value": "satisfied"
+          },
+          "tool": "neyvia.cua.verify"
+        }
+      },
+      "procedures": {
+        "launch-check-handoff": {
+          "goal": "Open the freshly built app in the background, show it live, check one visible value, then hand it to Paul and continue from his note and actions",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "app": {
+                "type": "string"
+              },
+              "window_id": {
+                "type": "integer"
+              },
+              "label": {
+                "type": "string"
+              },
+              "expected": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "default": ""
+              }
+            },
+            "required": [
+              "app",
+              "window_id",
+              "label",
+              "expected"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "cua.action",
+              "args": {
+                "args": {
+                  "app": {
+                    "$input": "app"
+                  }
+                },
+                "tool": "launch_app"
+              },
+              "save": "launched"
+            },
+            {
+              "action": "pane.show",
+              "args": {
+                "kind": "preview",
+                "target": ""
+              },
+              "save": "shown"
+            },
+            {
+              "action": "cua.inspect",
+              "args": {
+                "window_id": {
+                  "$input": "window_id"
+                }
+              },
+              "check": "value-is",
+              "save": "first"
+            },
+            {
+              "judge": "ready-for-paul"
+            },
+            {
+              "action": "cua.wait",
+              "args": {
+                "timeout_ms": 600000
+              },
+              "save": "paul",
+              "when": {
+                "judge": "ready-for-paul",
+                "option": "hand-over"
+              }
+            },
+            {
+              "action": "cua.log",
+              "args": {},
+              "save": "after",
+              "when": {
+                "judge": "ready-for-paul",
+                "option": "hand-over"
+              }
+            }
+          ]
+        }
+      },
+      "judge": {
+        "ready-for-paul": {
+          "constraints": "Say in chat what to try and that he can click and type in the preview; he takes over with the button and gives back with a note. Fix obvious breakage first; never hand over a crash.",
+          "options": [
+            "hand-over",
+            "fix-first"
+          ],
+          "question": "Is the app in a state worth Paul's time (launched, the main screen shows, your own check passed)?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Paul's actions are missing from your view",
+          "recovery": "They arrive in _meta neyvia/preview paulActions of your next call and in neyvia.cua.log; read the log since your last next_seq before deciding"
+        },
+        {
+          "failure": "The rebuilt app is a new process with a new window_id",
+          "recovery": "List windows again after each relaunch; old tokens and window ids are void"
+        },
+        {
+          "failure": "Paul is still typing when you act",
+          "recovery": "Actions serialize per window, but read the log first; if his last action is under 5 s old, wait or ask"
+        }
+      ],
+      "frontier": [
+        "No automatic replay of Paul's actions as a test script yet; copy them from the log into a procedure if they should be repeated"
+      ],
+      "guidance": [
+        "Pairs with the app's own manual when it has one (windows[].manual): that manual says which states and actions exist, this one how to observe and act; the preview shows both sides to Paul."
+      ]
+    }
+  }
+}

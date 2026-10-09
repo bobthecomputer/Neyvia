@@ -1,0 +1,44 @@
+diff --git a/web/src/neyvia/next/nxPdf.css b/web/src/neyvia/next/nxPdf.css
+index 0736a0200..35e8349e5 100644
+--- a/web/src/neyvia/next/nxPdf.css
++++ b/web/src/neyvia/next/nxPdf.css
+@@ -88,23 +88,22 @@
+ @container (max-width: 760px) { .nx .nx-pdf-name { display: none; } }
+ .nx .nx-pdf { container-type: inline-size; }
+ 
+-/* Opening: a sheet of paper with shimmering lines where the first page will be, never a bare spinner. */
++/* Opening: a sheet of paper with a few soft text lines and one slow sheen where the first page
++   will be, never a bare spinner. Plain boxes, so every engine draws the same sheet. */
+ .nx .nx-pdf-ghost {
+-  --ink: var(--nx-scrim);
+-  display: block; width: min(300px, 70cqw); aspect-ratio: 210 / 297; border-radius: var(--nx-r-xxs);
+-  box-shadow: var(--nx-paper-shadow-light);
+-  background:
+-    linear-gradient(100deg, transparent 40%, var(--nx-paper-sheen) 50%, transparent 60%) 0 0 / 300% 100%,
+-    linear-gradient(var(--ink), var(--ink)) 12% 10% / 52% 9px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 18% / 76% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 22% / 70% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 26% / 74% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 30% / 46% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 38% / 76% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 42% / 72% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 46% / 60% 6px no-repeat,
+-    var(--nx-paper);
++  position: relative; overflow: hidden; display: grid; align-content: start; gap: 9px; box-sizing: border-box;
++  width: min(300px, 70cqw); aspect-ratio: 210 / 297; padding: 11% 12%; border-radius: var(--nx-r-xxs);
++  box-shadow: var(--nx-paper-shadow-light); background: var(--nx-paper);
++}
++.nx .nx-pdf-ghost > i { display: block; height: 6px; border-radius: 3px; background: var(--nx-scrim); opacity: 0.5; }
++.nx .nx-pdf-ghost > i:first-child { height: 9px; width: 58%; margin-bottom: 6px; }
++.nx .nx-pdf-ghost > i:nth-child(2) { width: 92%; } .nx .nx-pdf-ghost > i:nth-child(3) { width: 84%; }
++.nx .nx-pdf-ghost > i:nth-child(4) { width: 88%; } .nx .nx-pdf-ghost > i:nth-child(5) { width: 54%; }
++.nx .nx-pdf-ghost::after {
++  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
++  background: linear-gradient(100deg, transparent 30%, var(--nx-paper-sheen) 50%, transparent 70%);
+   animation: nx-pdf-sheen var(--nx-pulse) var(--nx-ease-loop) infinite;
+ }
+-@keyframes nx-pdf-sheen { from { background-position: 100% 0, 12% 10%, 12% 18%, 12% 22%, 12% 26%, 12% 30%, 12% 38%, 12% 42%, 12% 46%; } to { background-position: 0 0, 12% 10%, 12% 18%, 12% 22%, 12% 26%, 12% 30%, 12% 38%, 12% 42%, 12% 46%; } }
+-.nx[data-nx-motion="reduce"] .nx-pdf-ghost { animation: none; }
++@keyframes nx-pdf-sheen { to { transform: translateX(100%); } }
++.nx[data-nx-motion="reduce"] .nx-pdf-ghost::after { animation: none; opacity: 0; }
++.nx .nx-pdf-error-actions { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: var(--nx-space-8); }

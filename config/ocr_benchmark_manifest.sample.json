@@ -1,0 +1,121 @@
+{
+  "schema": "neyvia.ocr_benchmark_manifest.v2",
+  "benchmarkId": "neyvia-ocr-representative-cases-unproven-20260724",
+  "description": "Coverage manifest only. It intentionally contains no new measurements or inferred scores.",
+  "evidence": [
+    {
+      "path": "config/ocr_model_candidates.json",
+      "claim": "Candidate identity, installed state, model hashes, and the previously recorded GLM proof summary."
+    },
+    {
+      "path": "config/tool_suite_lock.json",
+      "claim": "Pinned GLM-OCR runtime, model, cache, and proof provenance."
+    },
+    {
+      "path": "docs/NEYVIA_OCR_RUNTIME_AND_BENCHMARK.md",
+      "claim": "Existing adapter proof scope and required representative corpus categories."
+    }
+  ],
+  "models": [
+    {
+      "candidateId": "glm-ocr",
+      "availability": "installed",
+      "engineIds": ["glm-ocr-bf16"],
+      "identity": {
+        "source": "https://github.com/zai-org/GLM-OCR",
+        "revision": "ca5d8b3e287e52589e37c28385d9655ee4372f9d",
+        "digest": "6effedd0dc8aec66ad86c94b8099395376e212f22c87a9d7147c422f7e447be4",
+        "weightsSha256": "a16eb0de98d199293371c560f95f83130d2a2c9612449df16839f08ff9498815",
+        "registry": {
+          "path": "config/ocr_model_candidates.json",
+          "canonicalSha256": "a7025fd2520e9097f07a53e21183a94a0f8adf300542507cd2e105e5094f56c2",
+          "entrySha256": "c8607faf57dde385f9b0f4902c80ac26d52dedaefe0b435fbafc18e64a989d53"
+        },
+        "toolLock": {
+          "path": "config/tool_suite_lock.json",
+          "canonicalSha256": "94c38b4d5451e8dba7aac168f68f024f5c8c4016f6f7731a4b7f0bbda3edc8e5",
+          "entrySha256": "f3dd2731a484fb6e65ed2f06410b4e4a098ac59b8da309efb49a087d838b7caf",
+          "toolId": "tool.glmocr"
+        }
+      },
+      "quantization": {
+        "format": "Ollama",
+        "precision": "BF16",
+        "provenance": "config/ocr_model_candidates.json#/candidates/glm-ocr/optimizedServing"
+      },
+      "cache": {
+        "state": "present",
+        "treeSha256": null,
+        "provenance": "config/tool_suite_lock.json GLM-OCR pinned local model files"
+      }
+    },
+    {
+      "candidateId": "deepseek-ocr-2",
+      "availability": "missing-model",
+      "identity": {
+        "source": "config/ocr_model_candidates.json",
+        "revision": null,
+        "digest": null,
+        "weightsSha256": null
+      },
+      "quantization": {
+        "format": null,
+        "precision": null,
+        "provenance": "No local model or quantization was proven."
+      },
+      "cache": {
+        "state": "missing",
+        "treeSha256": null,
+        "provenance": "Candidate registry records installed=false."
+      }
+    }
+  ],
+  "cases": [
+    {
+      "caseId": "printed-en-fr-layout",
+      "source": {
+        "path": ".agent_control/capability_os/qa/libreoffice-portable-proof-v6/pages/page-01.png",
+        "sha256": null
+      },
+      "tags": {
+        "languages": ["en", "fr"],
+        "layout": ["single-column", "structured"],
+        "content": ["printed-text"],
+        "handwriting": false
+      }
+    },
+    {
+      "caseId": "table-math-handwriting-mixed",
+      "source": {
+        "path": "corpus/not-yet-provided/table-math-handwriting-mixed.png",
+        "sha256": null
+      },
+      "tags": {
+        "languages": ["und"],
+        "layout": ["multi-column", "structured", "photographed"],
+        "content": ["table", "math", "handwriting"],
+        "handwriting": true
+      }
+    }
+  ],
+  "observations": [
+    {
+      "candidateId": "glm-ocr",
+      "caseId": "printed-en-fr-layout",
+      "state": "unproven",
+      "reason": "Existing GLM evidence is not a reproducible v2 reference/hypothesis pair, so this harness does not convert its summary into a new score."
+    },
+    {
+      "candidateId": "glm-ocr",
+      "caseId": "table-math-handwriting-mixed",
+      "state": "unproven",
+      "reason": "The representative source and ground truth have not been provided."
+    },
+    {
+      "candidateId": "deepseek-ocr-2",
+      "caseId": "printed-en-fr-layout",
+      "state": "missing-model",
+      "reason": "The candidate registry records installed=false; no model was downloaded for this benchmark."
+    }
+  ]
+}

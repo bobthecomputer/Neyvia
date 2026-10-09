@@ -1,0 +1,105 @@
+{
+  "portRoles": [],
+  "area": "documents",
+  "manual": "documents",
+  "module": "grant_agent.proofs_documents",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "documents.create.course",
+      "phase": "post",
+      "claim": "documents.create writes a course document with one concept per chapter; documents.build compiles it with Tectonic and the PDF shows the six labelled blocks and every chapter.",
+      "checkedAt": [
+        "grant_agent.neyvia_documents.run",
+        "grant_agent.study_docs.create",
+        "grant_agent.study_docs.build",
+        "grant_agent.proofs_documents.self_check"
+      ],
+      "impact": [
+        "templates/latex/neyvia-study/neyvia-study.cls",
+        "documents.create",
+        "documents.build"
+      ]
+    },
+    {
+      "id": "documents.checks.pass",
+      "phase": "post",
+      "claim": "On a clean document every outcome check passes from the produced files: no TeX errors, no undefined references, no overfull box over 1 pt, Inter embedded, blocks in order with tags, page count within the limit.",
+      "checkedAt": [
+        "grant_agent.study_docs.check",
+        "grant_agent.proofs_documents.self_check"
+      ],
+      "impact": [
+        "documents.check"
+      ]
+    },
+    {
+      "id": "documents.checks.catch",
+      "phase": "post",
+      "claim": "A document with blocks out of order, an untagged concept, an undefined reference and an overfull line still compiles but fails the blocks, references and overfull checks, each naming the fault.",
+      "checkedAt": [
+        "grant_agent.study_docs.check",
+        "grant_agent.study_docs.concepts",
+        "grant_agent.proofs_documents.self_check"
+      ],
+      "impact": [
+        "documents.check",
+        "neyvia-study.cls aux records"
+      ]
+    },
+    {
+      "id": "documents.sheet.variant",
+      "phase": "post",
+      "claim": "The sheet variant builds from the same source, prints method and reflex and drops traps and practice.",
+      "checkedAt": [
+        "grant_agent.study_docs.build",
+        "grant_agent.proofs_documents.self_check"
+      ],
+      "impact": [
+        "templates/latex/neyvia-study/neyvia-study.cls"
+      ]
+    },
+    {
+      "id": "documents.render.pages",
+      "phase": "post",
+      "claim": "documents.render writes the requested page as a non-blank PNG under D:/NeyviaRuns/docs.",
+      "checkedAt": [
+        "grant_agent.study_docs.render",
+        "grant_agent.proofs_documents.self_check"
+      ],
+      "impact": [
+        "documents.render"
+      ]
+    },
+    {
+      "id": "documents.glance.pending",
+      "phase": "invariant",
+      "claim": "Without an attached LAYA judge documents.glance reports not available and never passes.",
+      "checkedAt": [
+        "grant_agent.study_docs.glance",
+        "grant_agent.proofs_documents.self_check"
+      ],
+      "impact": [
+        "documents.glance",
+        "LAYA page glance"
+      ]
+    },
+    {
+      "id": "documents.tools.registered",
+      "phase": "invariant",
+      "claim": "The five documents tools are workspace tools and the toolchain (Tectonic binary and bundled Inter) is present.",
+      "checkedAt": [
+        "grant_agent.neyvia_workspace_tools.tool_specs",
+        "grant_agent.study_docs.toolchain",
+        "grant_agent.proofs_documents.self_check"
+      ],
+      "impact": [
+        "neyvia.documents.*"
+      ]
+    }
+  ],
+  "coverage": [],
+  "frontier": [
+    "The LAYA page glance is pluggable and reports not available until attached; it never counts as a pass."
+  ]
+}

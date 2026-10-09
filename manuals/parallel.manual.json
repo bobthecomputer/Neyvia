@@ -1,0 +1,1472 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "parallel",
+  "kind": "environment",
+  "proofs": {
+    "area": "parallel",
+    "contracts": [
+      {
+        "id": "parallel.pending-question-retry",
+        "phase": "invariant",
+        "claim": "Repeating an identical unanswered worker ask reuses the saved question without a second delivery; an answer resolves identical historical pending duplicates, preserving unrelated questions.",
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.action"
+        ],
+        "impact": [
+          "Launch film behavior"
+        ]
+      },
+      {
+        "id": "parallel.mod-worker-done",
+        "phase": "invariant",
+        "claim": "The native Claude mod Parallel call executes the server-supplied observer-bound CL recovery within the mod catalog and existing owner grants; done still requires a clean committed branch and answered questions.",
+        "checkedAt": [
+          "grant_agent.claude_code_host.call_tool",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "impact": [
+          "Launch film behavior"
+        ]
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.start",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "claim": "Reject dirty checkout, invalid routes, duplicate tracks and tracks outside 1..8",
+        "id": "parallel.clean-start",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.start",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "claim": "Every main/worker branch and session has its own owned worktree from base; original checkout unchanged",
+        "id": "parallel.separate-worktrees",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.action",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "claim": "Questions and answers retain identity and delivery receipts through existing mid-turn inbox or resumed session",
+        "id": "parallel.question-answer",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.action",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "claim": "Done refuses dirty trees, absent commits and unanswered questions",
+        "id": "parallel.committed-done",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.merge",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "claim": "Track order is preserved; conflict records files, both sides and summaries and pauses subsequent merges",
+        "id": "parallel.ordered-conflict",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.action",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "claim": "Resolved refuses unmerged index and markers, commits merge then continues; checks determine readiness",
+        "id": "parallel.resolution",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.action",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "claim": "Finish requires passing checks, allowFinish and clean original base; diverged base refuses ff-only",
+        "id": "parallel.finish-authority",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.action",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "claim": "Only owned sessions stop; initialized valid trees are checked clean, owned orphans and interrupted initial checkouts are recoverable, reparse points unlinked without traversal, git list verified; committed unmerged branches retained",
+        "id": "parallel.safe-settle",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ],
+        "phase": "post"
+      },
+      {
+        "id": "parallel.orphan-settle",
+        "claim": "Missing linked Git metadata or an orphaned owned folder is safely removed after unlinking reparse points; prune verifies absence; every main and worker track has a durable cleanup receipt; retry is idempotent",
+        "checkedAt": [
+          "grant_agent.neyvia_parallel_git.worktree_status",
+          "grant_agent.neyvia_parallel_git.remove_worktree",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "phase": "post",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ]
+      },
+      {
+        "id": "parallel.failed-start-settle",
+        "claim": "A partial start retains a saved failed run; settle removes initialized and never-initialized owned worktrees and branches still at base, preserving committed unmerged work",
+        "checkedAt": [
+          "grant_agent.neyvia_parallel.start",
+          "grant_agent.neyvia_parallel.action",
+          "grant_agent.cl.parallel_effects.verify"
+        ],
+        "phase": "post",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ]
+      },
+      {
+        "id": "parallel.availability-retry",
+        "claim": "Explicit Claude starts allow two availability attempts of at most 45 seconds each on timeout, bypass cached failed discovery, and never retry session creation",
+        "checkedAt": [
+          "grant_agent.connected_sessions.registry.Registry.availability",
+          "grant_agent.connected_sessions.broker.ConnectedBroker.new"
+        ],
+        "phase": "post",
+        "impact": [
+          "parallel state",
+          "Git history",
+          "connected sessions"
+        ]
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.parallel.answer": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        },
+        "track": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "questionId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "run",
+        "track",
+        "answer"
+      ]
+    },
+    "neyvia.parallel.ask": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        },
+        "track": {
+          "type": "string",
+          "minLength": 1
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "run",
+        "track",
+        "question"
+      ]
+    },
+    "neyvia.parallel.done": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        },
+        "track": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "run",
+        "track",
+        "summary"
+      ]
+    },
+    "neyvia.parallel.finish": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        },
+        "into": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "run"
+      ]
+    },
+    "neyvia.parallel.merge": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "run"
+      ]
+    },
+    "neyvia.parallel.resolved": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "run"
+      ]
+    },
+    "neyvia.parallel.settle": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "run"
+      ]
+    },
+    "neyvia.parallel.start": {
+      "type": "object",
+      "properties": {
+        "repo": {
+          "type": "string",
+          "minLength": 1
+        },
+        "base": {
+          "type": "string",
+          "minLength": 1
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "agent": {
+                "type": "string",
+                "enum": [
+                  "claude-code",
+                  "codex",
+                  "opencode"
+                ]
+              },
+              "model": {
+                "type": "string",
+                "minLength": 1
+              },
+              "effort": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "brief": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "brief"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "main": {
+          "type": "object",
+          "properties": {
+            "agent": {
+              "type": "string",
+              "enum": [
+                "claude-code",
+                "codex",
+                "opencode"
+              ]
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effort": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "allowFinish": {
+          "type": "boolean"
+        },
+        "checkCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checkTimeoutSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600
+        },
+        "sparsePaths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "repo",
+        "goal",
+        "tracks"
+      ]
+    },
+    "neyvia.parallel.state": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": []
+    },
+    "neyvia.parallel.stop": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "run"
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Parallel worktrees and connected agent coordination",
+      "state": {
+        "state": {
+          "args": {
+            "run": {
+              "$input": "run"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run"
+            ]
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "tool": "neyvia.parallel.state"
+        }
+      },
+      "actions": {
+        "start": {
+          "effect": "Start a main agent and 1–8 workers in separate branches and worktrees.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.start",
+          "tool": "neyvia.parallel.start"
+        },
+        "state": {
+          "effect": "Observe saved runs, current session activity and Git state.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.state",
+          "tool": "neyvia.parallel.state"
+        },
+        "ask": {
+          "effect": "Send a worker question to the main agent through the connected inbox.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.ask",
+          "tool": "neyvia.parallel.ask"
+        },
+        "answer": {
+          "effect": "Deliver the main agent answer to the worker, including mid-turn.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.answer",
+          "tool": "neyvia.parallel.answer"
+        },
+        "done": {
+          "effect": "Verify a clean committed worker branch and merge when all tracks are done.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.done",
+          "tool": "neyvia.parallel.done"
+        },
+        "merge": {
+          "effect": "Merge ready worker branches in track order; pause and notify on conflict.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.merge",
+          "tool": "neyvia.parallel.merge"
+        },
+        "resolved": {
+          "effect": "Verify staged conflict resolution, commit the merge and continue.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.resolved",
+          "tool": "neyvia.parallel.resolved"
+        },
+        "settle": {
+          "effect": "Stop owned sessions and safely remove clean worktrees; retain unmerged branches.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.settle",
+          "tool": "neyvia.parallel.settle"
+        },
+        "stop": {
+          "effect": "Stop only this run main and worker sessions, preserving branches and worktrees.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.stop",
+          "tool": "neyvia.parallel.stop"
+        },
+        "finish": {
+          "effect": "With checks passed and allowFinish enabled, integrate into the clean base checkout.",
+          "pre": "Owner-authorized repository and exact saved run scope; preserve all uncommitted work",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "repo": {
+                    "type": "string"
+                  },
+                  "tracks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "repo",
+                  "tracks"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "run"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.parallel.finish",
+          "tool": "neyvia.parallel.finish"
+        }
+      },
+      "checks": {
+        "start-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        },
+        "ask-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        },
+        "answer-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        },
+        "done-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        },
+        "merge-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        },
+        "resolved-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        },
+        "settle-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        },
+        "stop-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        },
+        "finish-observed": {
+          "args": {
+            "run": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "run.id",
+            "value": {
+              "$result": "receipt.run.id"
+            }
+          },
+          "tool": "neyvia.parallel.state"
+        }
+      },
+      "procedures": {
+        "start": {
+          "goal": "Start a main agent and 1–8 workers in separate branches and worktrees. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "repo": {
+                "type": "string",
+                "minLength": 1
+              },
+              "goal": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tracks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "string",
+                      "enum": [
+                        "claude-code",
+                        "codex",
+                        "opencode"
+                      ]
+                    },
+                    "model": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "effort": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ]
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "brief": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "brief"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 1,
+                "maxItems": 8
+              }
+            },
+            "required": [
+              "repo",
+              "goal",
+              "tracks"
+            ]
+          },
+          "steps": [
+            {
+              "action": "start",
+              "args": {
+                "goal": {
+                  "$input": "goal"
+                },
+                "repo": {
+                  "$input": "repo"
+                },
+                "tracks": {
+                  "$input": "tracks"
+                }
+              },
+              "check": "start-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "ask": {
+          "goal": "Send a worker question to the main agent through the connected inbox. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              },
+              "track": {
+                "type": "string",
+                "minLength": 1
+              },
+              "question": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run",
+              "track",
+              "question"
+            ]
+          },
+          "steps": [
+            {
+              "action": "ask",
+              "args": {
+                "question": {
+                  "$input": "question"
+                },
+                "run": {
+                  "$input": "run"
+                },
+                "track": {
+                  "$input": "track"
+                }
+              },
+              "check": "ask-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "answer": {
+          "goal": "Deliver the main agent answer to the worker, including mid-turn. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              },
+              "track": {
+                "type": "string",
+                "minLength": 1
+              },
+              "answer": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run",
+              "track",
+              "answer"
+            ]
+          },
+          "steps": [
+            {
+              "action": "answer",
+              "args": {
+                "answer": {
+                  "$input": "answer"
+                },
+                "run": {
+                  "$input": "run"
+                },
+                "track": {
+                  "$input": "track"
+                }
+              },
+              "check": "answer-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "done": {
+          "goal": "Verify a clean committed worker branch and merge when all tracks are done. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              },
+              "track": {
+                "type": "string",
+                "minLength": 1
+              },
+              "summary": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run",
+              "track",
+              "summary"
+            ]
+          },
+          "steps": [
+            {
+              "action": "done",
+              "args": {
+                "run": {
+                  "$input": "run"
+                },
+                "summary": {
+                  "$input": "summary"
+                },
+                "track": {
+                  "$input": "track"
+                }
+              },
+              "check": "done-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "merge": {
+          "goal": "Merge ready worker branches in track order; pause and notify on conflict. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run"
+            ]
+          },
+          "steps": [
+            {
+              "action": "merge",
+              "args": {
+                "run": {
+                  "$input": "run"
+                }
+              },
+              "check": "merge-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "resolved": {
+          "goal": "Verify staged conflict resolution, commit the merge and continue. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run"
+            ]
+          },
+          "steps": [
+            {
+              "action": "resolved",
+              "args": {
+                "run": {
+                  "$input": "run"
+                }
+              },
+              "check": "resolved-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "settle": {
+          "goal": "Stop owned sessions and safely remove clean worktrees; retain unmerged branches. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run"
+            ]
+          },
+          "steps": [
+            {
+              "action": "settle",
+              "args": {
+                "run": {
+                  "$input": "run"
+                }
+              },
+              "check": "settle-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "stop": {
+          "goal": "Stop only this run main and worker sessions, preserving branches and worktrees. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run"
+            ]
+          },
+          "steps": [
+            {
+              "action": "stop",
+              "args": {
+                "run": {
+                  "$input": "run"
+                }
+              },
+              "check": "stop-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "finish": {
+          "goal": "With checks passed and allowFinish enabled, integrate into the clean base checkout. Verify the fresh subject-bound effect and read saved state.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "run": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "run"
+            ]
+          },
+          "steps": [
+            {
+              "action": "finish",
+              "args": {
+                "run": {
+                  "$input": "run"
+                }
+              },
+              "check": "finish-observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A worker reports done without a committed clean branch",
+          "recovery": "Inspect Git status and commits; preserve changes and commit before done"
+        },
+        {
+          "failure": "A merge conflicts or checks fail",
+          "recovery": "Resolve in main integration worktree, stage and call resolved; rerun merge for checks after repair"
+        },
+        {
+          "failure": "Settle sees dirty worktrees or a session is still stopping",
+          "recovery": "Preserve the work and finish session shutdown; retry settle after inspecting state"
+        }
+      ],
+      "frontier": [
+        "Screenshots require the UI builder pane; Git and session receipts do not prove rendered behavior",
+        "Provider sign-in and scratch-folder trust use the existing connected-session approval path"
+      ],
+      "guidance": [
+        "Use main integration worktree; backend owns ordered merges. Workers ask and report done using exact run/track IDs.",
+        "Finish defaults to leaving integration history intact. Set allowFinish at start only with authorization.",
+        "Start action accepts checkCommand, checkTimeoutSeconds and sparsePaths; procedure uses required fields. Otherwise configure .neyvia/parallel.json checkCommand or use the existing Stop gate.",
+        "Native actions are subject-bound through parallel_effects; state checks reread durable state, session ownership and Git."
+      ]
+    },
+    "filmbugs": {
+      "title": "Launch film behavior contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [],
+      "guidance": [
+        "Repeating an identical unanswered worker ask reuses the saved question without a second delivery; an answer resolves identical historical pending duplicates, preserving unrelated questions.",
+        "The native Claude mod Parallel call executes the server-supplied observer-bound CL recovery within the mod catalog and existing owner grants; done still requires a clean committed branch and answered questions."
+      ]
+    }
+  }
+}

@@ -1,0 +1,345 @@
+{
+  "area": "d-onboarding",
+  "module": "grant_agent.proofs_d_onboarding",
+  "self_check": "self_check",
+  "manuals": [
+    "onboarding"
+  ],
+  "contracts": [
+    {
+      "id": "onboarding.manifest-safety",
+      "phase": "pre",
+      "claim": "Manifests use plain pack/version IDs, unique safe paths, bounded integer sizes and SHA256; only HTTPS/local file/loopback HTTP are allowed, totals match, throttling is local, and staged paths stay inside the pack folder.",
+      "checkedAt": [
+        "neyvia_onboarding.parse_manifest -> proofs_d_onboarding.check_manifest",
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_manifest/safe_destination",
+        "neyvia_onboarding._safe_relative/_check_source",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "base/add-on manifest admission",
+        "staged filesystem"
+      ]
+    },
+    {
+      "id": "onboarding.signature-authority",
+      "phase": "pre",
+      "claim": "Remote non-test payload manifests require a provisioned known Ed25519 key, matching fingerprint and valid canonical Unicode signature. Unsigned admission requires test channel or both local manifest and local payloads.",
+      "checkedAt": [
+        "neyvia_onboarding.parse_manifest -> neyvia_onboarding._verify_manifest_signature",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "release trust",
+        "remote manifest bytes"
+      ]
+    },
+    {
+      "id": "onboarding.verified-staging",
+      "phase": "post",
+      "claim": "Every committed and reused file has its declared size and actual SHA256; only all-verified bytes earn a complete receipt and exact completion counters. Corrupt hashes retry once then discard corrupt partial bytes; oversized sources and errors are durably failed.",
+      "checkedAt": [
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file/check_download_result",
+        "neyvia_onboarding._fetch",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "payload bytes",
+        "install receipt",
+        "download progress"
+      ]
+    },
+    {
+      "id": "onboarding.resume-reuse",
+      "phase": "invariant",
+      "claim": "Partial bytes are resumed with HTTP Range or local seeking; completed files with matching receipt identity, size, timestamp and actual SHA256 are reused without another download.",
+      "checkedAt": [
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file",
+        "neyvia_onboarding._fetch",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "CDN requests",
+        "resume byte progress",
+        "staging cache"
+      ]
+    },
+    {
+      "id": "onboarding.pause",
+      "phase": "post",
+      "claim": "A consumed pause request stops at a progress boundary, persists paused status and retains resumable partial bytes; another run finishes verified staging.",
+      "checkedAt": [
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_download_result",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "worker status",
+        "partial bytes"
+      ]
+    },
+    {
+      "id": "onboarding.addon-isolation",
+      "phase": "invariant",
+      "claim": "Add-on installs run in detached workers, keep separate per-pack status and receipts, expose stagedOnly=true, and never change base-pack status. Installed means every staged file still verifies.",
+      "checkedAt": [
+        "neyvia_onboarding.pack_status -> neyvia_onboarding._installed_pack_error",
+        "neyvia_onboarding.pack_status -> proofs_d_onboarding.check_pack_status",
+        "neyvia_onboarding.install_pack -> neyvia_onboarding._spawn_worker",
+        "neyvia_onboarding.install_pack/run_download -> proofs_d_onboarding.check_staging_scope",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "add-on staging",
+        "base staging",
+        "system activation boundary"
+      ]
+    },
+    {
+      "id": "onboarding.addon-recovery",
+      "phase": "pre",
+      "claim": "Unknown IDs are rejected; unavailable payloads disclose their gap. Mismatched, broken or missing manifests fail without a target; repairing the manifest clears errors and permits staging.",
+      "checkedAt": [
+        "neyvia_onboarding.load_pack_manifest",
+        "neyvia_onboarding.install_pack/pack_status -> proofs_d_onboarding.check_pack_status",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "add-on catalog",
+        "staging retries"
+      ]
+    },
+    {
+      "id": "onboarding.catalog-integrity",
+      "phase": "invariant",
+      "claim": "Every catalog interest references existing registered apps and optional packs.",
+      "checkedAt": [
+        "neyvia_onboarding.load_catalog -> proofs_d_onboarding.check_catalog",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "onboarding recommendations",
+        "app/pack registry"
+      ]
+    },
+    {
+      "id": "onboarding.ordered-recommendations",
+      "phase": "post",
+      "claim": "Recommendations form unique unions in catalog order, filter tour chapters by chosen interests while retaining universal chapters, and keep nonempty tours between 60 and 90 seconds.",
+      "checkedAt": [
+        "neyvia_onboarding.recommend -> proofs_d_onboarding.check_recommendation",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "tier choices",
+        "tour playback"
+      ]
+    },
+    {
+      "id": "onboarding.choices-durable",
+      "phase": "post",
+      "claim": "Invalid app/interest/pack choices are rejected before writing. Accepted normalized setup choices persist exactly and firstRun becomes false.",
+      "checkedAt": [
+        "neyvia_onboarding.save_state -> proofs_d_onboarding.check_saved",
+        "proofs_d_onboarding.self_check"
+      ],
+      "impact": [
+        "setup state",
+        "completed setup"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_resumes_a_partial_file_with_a_range_request",
+      "contracts": [
+        "onboarding.resume-reuse",
+        "onboarding.verified-staging"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file",
+        "neyvia_onboarding._fetch",
+        "proofs_d_onboarding.self_check",
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file/check_download_result"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_resumes_a_partial_file_with_a_range_request"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_second_run_skips_verified_files",
+      "contracts": [
+        "onboarding.resume-reuse"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file",
+        "neyvia_onboarding._fetch",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_second_run_skips_verified_files"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_wrong_checksum_fails_and_keeps_nothing",
+      "contracts": [
+        "onboarding.verified-staging"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file/check_download_result",
+        "neyvia_onboarding._fetch",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_wrong_checksum_fails_and_keeps_nothing"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_pause_stops_and_resume_finishes",
+      "contracts": [
+        "onboarding.pause",
+        "onboarding.resume-reuse"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_download_result",
+        "proofs_d_onboarding.self_check",
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file",
+        "neyvia_onboarding._fetch"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_pause_stops_and_resume_finishes"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_manifest_rejects_unsafe_paths_and_sources",
+      "contracts": [
+        "onboarding.manifest-safety"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.parse_manifest -> proofs_d_onboarding.check_manifest",
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_manifest/safe_destination",
+        "neyvia_onboarding._safe_relative/_check_source",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_manifest_rejects_unsafe_paths_and_sources"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_bundled_test_manifest_is_valid",
+      "contracts": [
+        "onboarding.manifest-safety"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.parse_manifest -> proofs_d_onboarding.check_manifest",
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_manifest/safe_destination",
+        "neyvia_onboarding._safe_relative/_check_source",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_bundled_test_manifest_is_valid"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_add_on_worker_installs_local_manifest_on_separate_state",
+      "contracts": [
+        "onboarding.addon-isolation",
+        "onboarding.verified-staging"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.pack_status -> neyvia_onboarding._installed_pack_error",
+        "neyvia_onboarding.pack_status -> proofs_d_onboarding.check_pack_status",
+        "neyvia_onboarding.install_pack -> neyvia_onboarding._spawn_worker",
+        "proofs_d_onboarding.self_check",
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file/check_download_result",
+        "neyvia_onboarding._fetch",
+        "neyvia_onboarding.install_pack/run_download -> proofs_d_onboarding.check_staging_scope"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_add_on_worker_installs_local_manifest_on_separate_state"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_add_on_rejects_unavailable_and_mismatched_manifests",
+      "contracts": [
+        "onboarding.addon-recovery",
+        "onboarding.manifest-safety"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.load_pack_manifest",
+        "neyvia_onboarding.install_pack/pack_status -> proofs_d_onboarding.check_pack_status",
+        "proofs_d_onboarding.self_check",
+        "neyvia_onboarding.parse_manifest -> proofs_d_onboarding.check_manifest",
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_manifest/safe_destination",
+        "neyvia_onboarding._safe_relative/_check_source"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_add_on_rejects_unavailable_and_mismatched_manifests"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "DownloaderTests.test_download_handles_empty_files_and_rejects_oversized_sources",
+      "contracts": [
+        "onboarding.verified-staging"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.run_download -> proofs_d_onboarding.check_staged_file/check_download_result",
+        "neyvia_onboarding._fetch",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::DownloaderTests.test_download_handles_empty_files_and_rejects_oversized_sources"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "SignatureTests.test_signed_remote_manifest_rejects_tampering_and_unknown_or_unprovisioned_keys",
+      "contracts": [
+        "onboarding.signature-authority"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.parse_manifest -> neyvia_onboarding._verify_manifest_signature",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::SignatureTests.test_signed_remote_manifest_rejects_tampering_and_unknown_or_unprovisioned_keys"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "SignatureTests.test_unsigned_manifest_allows_only_test_or_local_sources",
+      "contracts": [
+        "onboarding.signature-authority"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.parse_manifest -> neyvia_onboarding._verify_manifest_signature",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::SignatureTests.test_unsigned_manifest_allows_only_test_or_local_sources"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "ChoiceTests.test_tiers_preselect_and_filter_the_tour",
+      "contracts": [
+        "onboarding.ordered-recommendations"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.recommend -> proofs_d_onboarding.check_recommendation",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::ChoiceTests.test_tiers_preselect_and_filter_the_tour"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "ChoiceTests.test_catalog_only_names_real_apps_and_packs",
+      "contracts": [
+        "onboarding.catalog-integrity"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.load_catalog -> proofs_d_onboarding.check_catalog",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::ChoiceTests.test_catalog_only_names_real_apps_and_packs"
+    },
+    {
+      "test": "tests/test_neyvia_onboarding.py",
+      "case": "ChoiceTests.test_save_validates_and_persists",
+      "contracts": [
+        "onboarding.choices-durable"
+      ],
+      "checkedAt": [
+        "neyvia_onboarding.save_state -> proofs_d_onboarding.check_saved",
+        "proofs_d_onboarding.self_check"
+      ],
+      "case_id": "tests/test_neyvia_onboarding.py::ChoiceTests.test_save_validates_and_persists"
+    }
+  ]
+}

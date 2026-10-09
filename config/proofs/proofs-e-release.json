@@ -1,0 +1,338 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "proofs-e-release",
+  "runner": "scripts/proofs-e-release.mjs",
+  "state": {
+    "observers": "Actual signed bytes, scoped artifact stats, public manifests, isolated capability metadata files and repository AST graph"
+  },
+  "actions": [
+    "release.signed-envelope",
+    "release.staging-boundary",
+    "release.installer-budget",
+    "release.external-declarations",
+    "runtime.capability-metadata",
+    "runtime.hermes-metadata",
+    "impact.import-provenance",
+    "impact.dispatch-membership",
+    "impact.ui-call-evidence",
+    "impact.index-provenance",
+    "release.vite-physical-paths"
+  ],
+  "contracts": [
+    {
+      "id": "release.signed-envelope",
+      "phase": "post",
+      "claim": "Both Ed25519 signatures bind the observed manifest bytes, signing identity and trusted comment",
+      "checkedAt": [
+        "scripts/prepare_slim_release.mjs:signerFromKey.sign -> checkSignedEnvelope"
+      ],
+      "impact": [
+        "slim-installer production observations"
+      ]
+    },
+    {
+      "id": "release.staging-boundary",
+      "phase": "invariant",
+      "claim": "Release output remains a fresh directory inside the selected repository target; in-tree private key paths are rejected before reading",
+      "checkedAt": [
+        "scripts/prepare_slim_release.mjs:prepareRelease/signer -> validateReleaseOutput/validateSigningKeyPath"
+      ],
+      "impact": [
+        "slim-installer production observations"
+      ]
+    },
+    {
+      "id": "release.installer-budget",
+      "phase": "post",
+      "claim": "Actual artifacts and staged files determine missing-artifact, size, shell-only and forbidden-content failures",
+      "checkedAt": [
+        "scripts/check_installer_size.mjs:inspectInstallerBudget -> checkInstallerBudgetObservation"
+      ],
+      "impact": [
+        "slim-installer production observations"
+      ]
+    },
+    {
+      "id": "release.external-declarations",
+      "phase": "post",
+      "claim": "Every current external registry pack retains pinned official source inputs, summed sizes and explicit activation blockers",
+      "checkedAt": [
+        "scripts/prepare_slim_release.mjs:externalPackDeclarations -> checkExternalDeclarations"
+      ],
+      "impact": [
+        "slim-installer production observations"
+      ]
+    },
+    {
+      "id": "runtime.capability-metadata",
+      "phase": "post",
+      "claim": "Capability inventory exports safe readiness metadata, enabled instruction linkage and honest native activation without raw commands, URLs or environment values",
+      "checkedAt": [
+        "src/grant_agent/runtime_capability_inventory.py:build_runtime_capability_inventory -> check_runtime_inventory"
+      ],
+      "impact": [
+        "awareness production observations"
+      ]
+    },
+    {
+      "id": "runtime.hermes-metadata",
+      "phase": "post",
+      "claim": "Hermes availability and public plugin metadata agree with actual command discovery; unavailable commands cannot expose installed plugin rows",
+      "checkedAt": [
+        "src/grant_agent/hermes_integration.py:plugin_inventory -> check_hermes_inventory"
+      ],
+      "impact": [
+        "agents production observations"
+      ]
+    },
+    {
+      "id": "impact.import-provenance",
+      "phase": "post",
+      "claim": "Imported command aliases resolve only the named source registry in the selected repository",
+      "checkedAt": [
+        "src/grant_agent/neyvia_impact.py:_imported_sets -> check_imported_registries"
+      ],
+      "impact": [
+        "tools-depth production observations"
+      ]
+    },
+    {
+      "id": "impact.dispatch-membership",
+      "phase": "post",
+      "claim": "Backend handler evidence requires actual equality or membership branches, including resolved aliases and unions",
+      "checkedAt": [
+        "src/grant_agent/neyvia_impact.py:_compares -> check_dispatch_membership"
+      ],
+      "impact": [
+        "tools-depth production observations"
+      ]
+    },
+    {
+      "id": "impact.ui-call-evidence",
+      "phase": "post",
+      "claim": "UI command evidence comes from recognized gateways, command slots and typed command registries; display strings and comments stay excluded",
+      "checkedAt": [
+        "src/grant_agent/neyvia_impact.py:_ui_commands -> check_ui_command_evidence"
+      ],
+      "impact": [
+        "tools-depth production observations"
+      ]
+    },
+    {
+      "id": "impact.index-provenance",
+      "phase": "post",
+      "claim": "The impact graph keeps handled commands, branch locations and UI caller provenance consistent",
+      "checkedAt": [
+        "src/grant_agent/neyvia_impact.py:index -> check_impact_index"
+      ],
+      "impact": [
+        "tools-depth production observations"
+      ]
+    },
+    {
+      "id": "release.vite-physical-paths",
+      "phase": "post",
+      "claim": "Every Vite config evaluation uses the selected checkout physical web root, source alias and build output path",
+      "checkedAt": [
+        "vite.config.mjs:default config evaluator -> checkVitePhysicalPaths"
+      ],
+      "impact": [
+        "Vite build and serving configuration paths"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "release.ephemeral-signed-manifest",
+      "contracts": [
+        "release.signed-envelope"
+      ],
+      "claim": "Create an in-memory Ed25519 key, sign actual manifest bytes and reject altered bytes and comment"
+    },
+    {
+      "id": "release.staging-denials",
+      "contracts": [
+        "release.staging-boundary"
+      ],
+      "claim": "Invoke release path denials before any staging or key read"
+    },
+    {
+      "id": "release.installer-scanner",
+      "contracts": [
+        "release.installer-budget"
+      ],
+      "claim": "Run the actual missing-artifact CLI, scan scoped normal/forbidden/oversize files and reject a corrupt observation"
+    },
+    {
+      "id": "release.external-source-declarations",
+      "contracts": [
+        "release.external-declarations"
+      ],
+      "claim": "Read actual public pinned manifests and reject an inconsistent summed size"
+    },
+    {
+      "id": "runtime.inventory-metadata",
+      "contracts": [
+        "runtime.capability-metadata",
+        "runtime.hermes-metadata"
+      ],
+      "claim": "Build actual scoped MCP and plugin metadata with a PATH lacking Hermes; reject unsafe activation/metadata observations"
+    },
+    {
+      "id": "impact.alias-membership-graph",
+      "contracts": [
+        "impact.import-provenance",
+        "impact.dispatch-membership",
+        "impact.ui-call-evidence",
+        "impact.index-provenance"
+      ],
+      "claim": "Index an actual miniature repository, mutate membership and observe the resulting handler gap; reject corrupt graph evidence"
+    },
+    {
+      "id": "release.vite-physical-paths",
+      "contracts": [
+        "release.vite-physical-paths"
+      ],
+      "claim": "Evaluate actual build and serve configs with explicit isolated ports; reject a divergent source alias without running hooks or services"
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/slim_release.mjs",
+      "case": "release Ed25519 manifest signature verifies and rejects changed bytes and comment",
+      "case_id": "tests/slim_release.mjs::release Ed25519 manifest signature verifies and rejects changed bytes and comment",
+      "contracts": [
+        "release.signed-envelope"
+      ],
+      "checkedAt": [
+        "scripts/prepare_slim_release.mjs:signerFromKey.sign -> checkSignedEnvelope"
+      ],
+      "procedure": "release.ephemeral-signed-manifest",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/slim_release.mjs",
+      "case": "release staging refuses out-of-worktree output and in-worktree private key",
+      "case_id": "tests/slim_release.mjs::release staging refuses out-of-worktree output and in-worktree private key",
+      "contracts": [
+        "release.staging-boundary"
+      ],
+      "checkedAt": [
+        "scripts/prepare_slim_release.mjs:prepareRelease/signer -> validateReleaseOutput/validateSigningKeyPath"
+      ],
+      "procedure": "release.staging-denials",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/slim_release.mjs",
+      "case": "slim budget gate refuses a missing installer",
+      "case_id": "tests/slim_release.mjs::slim budget gate refuses a missing installer",
+      "contracts": [
+        "release.installer-budget"
+      ],
+      "checkedAt": [
+        "scripts/check_installer_size.mjs:inspectInstallerBudget -> checkInstallerBudgetObservation"
+      ],
+      "procedure": "release.installer-scanner",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/slim_release.mjs",
+      "case": "all external packs have real pinned metadata and explicit activation blockers",
+      "case_id": "tests/slim_release.mjs::all external packs have real pinned metadata and explicit activation blockers",
+      "contracts": [
+        "release.external-declarations"
+      ],
+      "checkedAt": [
+        "scripts/prepare_slim_release.mjs:externalPackDeclarations -> checkExternalDeclarations"
+      ],
+      "procedure": "release.external-source-declarations",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "assertionRefinements": [
+        "The historic fixed count of seven is replaced by exact correspondence with every current external registry entry; public source metadata and all blockers remain enforced."
+      ]
+    },
+    {
+      "test": "tests/runtime-capability-inventory.mjs",
+      "case": "runtime inventory exposes MCP/plugin readiness without secret values or activation claims",
+      "case_id": "tests/runtime-capability-inventory.mjs::runtime inventory exposes MCP/plugin readiness without secret values or activation claims",
+      "contracts": [
+        "runtime.capability-metadata",
+        "runtime.hermes-metadata"
+      ],
+      "checkedAt": [
+        "src/grant_agent/runtime_capability_inventory.py:build_runtime_capability_inventory -> check_runtime_inventory",
+        "src/grant_agent/hermes_integration.py:plugin_inventory -> check_hermes_inventory"
+      ],
+      "procedure": "runtime.inventory-metadata",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/nx-impact-index.test.mjs",
+      "case": "impact resolves aliased prefix registries and indexes calls rather than error/display strings",
+      "case_id": "tests/nx-impact-index.test.mjs::impact resolves aliased prefix registries and indexes calls rather than error/display strings",
+      "contracts": [
+        "impact.import-provenance",
+        "impact.dispatch-membership",
+        "impact.ui-call-evidence",
+        "impact.index-provenance"
+      ],
+      "checkedAt": [
+        "src/grant_agent/neyvia_impact.py:_imported_sets -> check_imported_registries",
+        "src/grant_agent/neyvia_impact.py:_compares -> check_dispatch_membership",
+        "src/grant_agent/neyvia_impact.py:_ui_commands -> check_ui_command_evidence",
+        "src/grant_agent/neyvia_impact.py:index -> check_impact_index"
+      ],
+      "procedure": "impact.alias-membership-graph",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/vite_config_paths.test.mjs",
+      "case": "Vite uses one physical web path when the checkout contains junctions",
+      "case_id": "tests/vite_config_paths.test.mjs::Vite uses one physical web path when the checkout contains junctions",
+      "contracts": [
+        "release.vite-physical-paths"
+      ],
+      "checkedAt": [
+        "vite.config.mjs:default config evaluator -> checkVitePhysicalPaths"
+      ],
+      "procedure": "procedures/release.vite-physical-paths",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    }
+  ],
+  "sourceHashes": {
+    "tests/slim_release.mjs": "295121c9a1d3577f413e88e85cb67d46bedf6b33bd190a4b22b9fbdfbe0713df",
+    "tests/runtime-capability-inventory.mjs": "b7b63c3ae4b3a32dce03d466360475d171bb72226d14e548756b5372b1f87aae",
+    "tests/nx-impact-index.test.mjs": "faa5675aeae52a1e72fc806a5b087c76c1f29a9f029c35ac6942a5deb01e43da",
+    "tests/vite_config_paths.test.mjs": "f3729f065cfa1882784e31445aba6cfab11d489eb282ae8b67a9412be4ddacc3"
+  },
+  "frontier": [
+    "No installer build, installation, publication, download or private signing-key provisioning is claimed.",
+    "Enabled plugin metadata and native instruction linkage do not prove external MCP/plugin execution.",
+    "The impact index proves static command wiring; it does not execute backend or desktop commands."
+  ],
+  "sourceFiles": [
+    "scripts/release-contracts.mjs",
+    "scripts/proofs_e_release_child.py",
+    "src/grant_agent/proofs_e_release.py",
+    "config/onboarding_packs.json",
+    "src-tauri/installer-budget.json",
+    "config/onboarding_packs/pack.documents-office/manifest.json",
+    "config/onboarding_packs/pack.ocr-local/manifest.json",
+    "config/onboarding_packs/pack.android-lab/manifest.json",
+    "config/onboarding_packs/pack.developer-toolchains/manifest.json",
+    "config/onboarding_packs/pack.models-gpu/manifest.json",
+    "config/onboarding_packs/pack.media-creative/manifest.json",
+    "config/onboarding_packs/pack.mesh-control-plane/manifest.json",
+    "vite.config.mjs"
+  ],
+  "portRoles": [48501, 48502],
+  "traceMode": "children"
+}

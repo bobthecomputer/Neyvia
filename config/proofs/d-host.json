@@ -1,0 +1,497 @@
+{
+  "area": "d-host",
+  "module": "grant_agent.proofs_d_host",
+  "self_check": "self_check",
+  "manuals": [
+    "host-runtime"
+  ],
+  "contracts": [
+    {
+      "id": "d.host.event-identity",
+      "phase": "post",
+      "claim": "Detail and delta preserve caller identities or derive the same canonical 24-hex event identity.",
+      "checkedAt": [
+        "web_backend_workspace.decorate_mission_events -> proofs_d_host.check_event_identity"
+      ],
+      "impact": [
+        "mission receipts",
+        "native execution",
+        "operator authority"
+      ]
+    },
+    {
+      "id": "d.host.skill-provenance",
+      "phase": "pre",
+      "claim": "The canonical design/verification skill catalog retains required entries and real capability provenance.",
+      "checkedAt": [
+        "skills.SkillRegistry._load -> proofs_d_host.check_skill_catalog"
+      ],
+      "impact": [
+        "mission receipts",
+        "native execution",
+        "operator authority"
+      ]
+    },
+    {
+      "id": "d.host.remote-transport",
+      "phase": "pre",
+      "claim": "Remote transports admit only numeric authorized addresses without URL credentials, path, query or fragment; loopback needs explicit granted proof ports and mode.",
+      "checkedAt": [
+        "neyvia_remote._url/_proof_ports"
+      ],
+      "impact": [
+        "mission receipts",
+        "native execution",
+        "operator authority"
+      ]
+    },
+    {
+      "id": "d.host.stage-receipt",
+      "phase": "post",
+      "claim": "Compiled stage order and plan hash match durable receipts; regressed repairs keep rollback evidence and never claim rolled-back steps complete.",
+      "checkedAt": [
+        "neyvia_stage_scheduler.NeyviaStageScheduler.execute -> proofs_d_host.check_stage_receipt"
+      ],
+      "impact": [
+        "mission receipts",
+        "native execution",
+        "operator authority"
+      ]
+    },
+    {
+      "id": "d.host.stage-refusal",
+      "phase": "pre",
+      "claim": "Unknown executable actions return no_handler and never report success.",
+      "checkedAt": [
+        "neyvia_stage_scheduler.default_step_handler"
+      ],
+      "impact": [
+        "mission receipts",
+        "native execution",
+        "operator authority"
+      ]
+    },
+    {
+      "id": "d.host.delta-merge",
+      "phase": "post",
+      "claim": "Typed delta items merge deterministically by identity with later entries winning and evidence preserved.",
+      "checkedAt": [
+        "agent_delta.merge_agent_deltas -> proofs_d_host.check_delta_merge"
+      ],
+      "impact": [
+        "mission receipts",
+        "native execution",
+        "operator authority"
+      ]
+    },
+    {
+      "id": "d.host.delta-synthesis",
+      "phase": "post",
+      "claim": "Synthesis reads typed deltas, keeps transcripts excluded, computes blocker/conflict status and leaves unproven competing candidates disabled.",
+      "checkedAt": [
+        "agent_delta.synthesize_agent_deltas -> proofs_d_host.check_synthesis"
+      ],
+      "impact": [
+        "mission receipts",
+        "native execution",
+        "operator authority"
+      ]
+    },
+    {
+      "id": "d.host.stage-tool-authority",
+      "phase": "invariant",
+      "claim": "Read tools dispatch through the progressive surface; mutating tools require explicit approval before the effect.",
+      "checkedAt": [
+        "neyvia_stage_scheduler.build_progressive_step_handler"
+      ],
+      "impact": [
+        "scheduled tools",
+        "approval",
+        "deterministic receipts"
+      ]
+    },
+    {
+      "id": "d.host.stage-parallel",
+      "phase": "invariant",
+      "claim": "Independent parallel-safe stages use worker futures and merge the resulting outcomes in compiled order.",
+      "checkedAt": [
+        "neyvia_stage_scheduler.NeyviaStageScheduler._run_parallel_steps/execute -> proofs_d_host.check_stage_receipt"
+      ],
+      "impact": [
+        "scheduled tools",
+        "approval",
+        "deterministic receipts"
+      ]
+    },
+    {
+      "id": "d.host.selected-context",
+      "phase": "post",
+      "claim": "Selected context preserves bounded source/import lineage and canonical content hashes, including empty selections.",
+      "checkedAt": [
+        "neyvia_runtime_invocation.build_selected_context_packet -> proofs_d_host.check_context_packet"
+      ],
+      "impact": [
+        "delegated runtime context",
+        "receipt provenance"
+      ]
+    },
+    {
+      "id": "d.host.nearby-redaction",
+      "phase": "post",
+      "claim": "Every public transfer receipt/progress projection excludes transport capabilities and absolute sources, caps files/chunks and discloses truncation.",
+      "checkedAt": [
+        "nearby_send.NearbySendService._public_receipt/_public_progress -> proofs_d_host.check_nearby_projection"
+      ],
+      "impact": [
+        "transfer receipts",
+        "scoped local network authority",
+        "Settings lifetime"
+      ]
+    },
+    {
+      "id": "d.host.nearby-recovery",
+      "phase": "post",
+      "claim": "Under the state lock, a dead owner becomes interrupted without retaining transfer claims or secrets; corrupt state yields an inactive empty projection.",
+      "checkedAt": [
+        "nearby_send.NearbySendService.get_active_transfer -> proofs_d_host.check_nearby_state"
+      ],
+      "impact": [
+        "transfer receipts",
+        "scoped local network authority",
+        "Settings lifetime"
+      ]
+    },
+    {
+      "id": "d.host.nearby-history",
+      "phase": "post",
+      "claim": "History is bounded by caller and server limits, skips corrupt receipts and reports accurate returned-state counts.",
+      "checkedAt": [
+        "nearby_send.NearbySendService.list_transfer_history -> proofs_d_host.check_nearby_history"
+      ],
+      "impact": [
+        "transfer receipts",
+        "scoped local network authority",
+        "Settings lifetime"
+      ]
+    },
+    {
+      "id": "d.host.policy-owner",
+      "phase": "invariant",
+      "claim": "Settings owners register their selected state root, release independently and reopen the persisted local-only preference.",
+      "checkedAt": [
+        "local_network_policy.install/release/enabled -> proofs_d_host.check_policy_release"
+      ],
+      "impact": [
+        "transfer receipts",
+        "scoped local network authority",
+        "Settings lifetime"
+      ]
+    },
+    {
+      "id": "d.host.policy-root",
+      "phase": "invariant",
+      "claim": "Missing policy roots retire after a locked recheck; existing state directories stay observed and Settings re-registers its owner.",
+      "checkedAt": [
+        "local_network_policy.enabled/install"
+      ],
+      "impact": [
+        "transfer receipts",
+        "scoped local network authority",
+        "Settings lifetime"
+      ]
+    },
+    {
+      "id": "d.host.policy-startup",
+      "phase": "pre",
+      "claim": "Pending child startup permits socket workers but refuses local-only activation; enabled local-only mode refuses native terminal launch before loading its launcher.",
+      "checkedAt": [
+        "local_network_policy.child_start/transition; src/grant_agent/connected_sessions/claude_terminal.py:spawn_terminal"
+      ],
+      "impact": [
+        "transfer receipts",
+        "scoped local network authority",
+        "Settings lifetime"
+      ]
+    },
+    {
+      "id": "d.host.artifact-serving",
+      "phase": "post",
+      "claim": "Only paths accepted by the artifact gate gain safe 24-hex serving URLs/media types; rejected paths lose stale artifact endpoints.",
+      "checkedAt": [
+        "web_backend_workspace.WorkspaceArtifactMixin._decorate_mission_artifacts -> proofs_d_host.check_artifact_row"
+      ],
+      "impact": [
+        "mission artifacts",
+        "authenticated content serving"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_neyvia_mission_event_identity.py",
+      "case": "test_detail_and_delta_events_receive_the_same_stable_identity",
+      "contracts": [
+        "d.host.event-identity"
+      ],
+      "checkedAt": [
+        "web_backend_workspace.decorate_mission_events -> proofs_d_host.check_event_identity"
+      ],
+      "case_id": "tests/test_neyvia_mission_event_identity.py::test_detail_and_delta_events_receive_the_same_stable_identity"
+    },
+    {
+      "test": "tests/test_neyvia_skill_catalog_sync.py",
+      "case": "test_new_ui_skills_have_live_catalog_provenance",
+      "contracts": [
+        "d.host.skill-provenance"
+      ],
+      "checkedAt": [
+        "skills.SkillRegistry._load -> proofs_d_host.check_skill_catalog"
+      ],
+      "case_id": "tests/test_neyvia_skill_catalog_sync.py::test_new_ui_skills_have_live_catalog_provenance"
+    },
+    {
+      "test": "tests/test_neyvia_remote.py",
+      "case": "test_assigned_proof_backend_is_accepted",
+      "contracts": [
+        "d.host.remote-transport"
+      ],
+      "checkedAt": [
+        "neyvia_remote._url/_proof_ports"
+      ],
+      "case_id": "tests/test_neyvia_remote.py::test_assigned_proof_backend_is_accepted"
+    },
+    {
+      "test": "tests/test_neyvia_remote.py",
+      "case": "test_ungranted_or_rebinding_transports_are_refused",
+      "contracts": [
+        "d.host.remote-transport"
+      ],
+      "checkedAt": [
+        "neyvia_remote._url/_proof_ports"
+      ],
+      "case_id": "tests/test_neyvia_remote.py::test_ungranted_or_rebinding_transports_are_refused"
+    },
+    {
+      "test": "tests/test_neyvia_remote.py",
+      "case": "test_loopback_needs_explicit_proof_mode",
+      "contracts": [
+        "d.host.remote-transport"
+      ],
+      "checkedAt": [
+        "neyvia_remote._url/_proof_ports"
+      ],
+      "case_id": "tests/test_neyvia_remote.py::test_loopback_needs_explicit_proof_mode"
+    },
+    {
+      "test": "tests/test_neyvia_stage_scheduler.py",
+      "case": "StageSchedulerTests.test_unknown_executable_action_fails_closed",
+      "contracts": [
+        "d.host.stage-refusal"
+      ],
+      "checkedAt": [
+        "neyvia_stage_scheduler.default_step_handler"
+      ],
+      "case_id": "tests/test_neyvia_stage_scheduler.py::StageSchedulerTests.test_unknown_executable_action_fails_closed"
+    },
+    {
+      "test": "tests/test_neyvia_stage_scheduler.py",
+      "case": "StageSchedulerTests.test_repair_score_regression_writes_rollback_receipt",
+      "contracts": [
+        "d.host.stage-receipt"
+      ],
+      "checkedAt": [
+        "neyvia_stage_scheduler.NeyviaStageScheduler.execute -> proofs_d_host.check_stage_receipt"
+      ],
+      "case_id": "tests/test_neyvia_stage_scheduler.py::StageSchedulerTests.test_repair_score_regression_writes_rollback_receipt"
+    },
+    {
+      "test": "tests/test_neyvia_stage_scheduler.py",
+      "case": "AgentDeltaTests.test_normalize_and_merge_deltas",
+      "contracts": [
+        "d.host.delta-merge"
+      ],
+      "checkedAt": [
+        "agent_delta.merge_agent_deltas -> proofs_d_host.check_delta_merge"
+      ],
+      "case_id": "tests/test_neyvia_stage_scheduler.py::AgentDeltaTests.test_normalize_and_merge_deltas"
+    },
+    {
+      "test": "tests/test_neyvia_stage_scheduler.py",
+      "case": "AgentDeltaTests.test_synthesis_prefers_deltas_not_transcripts",
+      "contracts": [
+        "d.host.delta-synthesis"
+      ],
+      "checkedAt": [
+        "agent_delta.synthesize_agent_deltas -> proofs_d_host.check_synthesis"
+      ],
+      "case_id": "tests/test_neyvia_stage_scheduler.py::AgentDeltaTests.test_synthesis_prefers_deltas_not_transcripts"
+    },
+    {
+      "test": "tests/test_neyvia_stage_scheduler.py",
+      "case": "StageSchedulerTests.test_executes_compiled_stages_and_writes_receipt",
+      "contracts": [
+        "d.host.stage-receipt"
+      ],
+      "checkedAt": [
+        "neyvia_stage_scheduler.NeyviaStageScheduler.execute -> proofs_d_host.check_stage_receipt"
+      ],
+      "case_id": "tests/test_neyvia_stage_scheduler.py::StageSchedulerTests.test_executes_compiled_stages_and_writes_receipt"
+    },
+    {
+      "test": "tests/test_neyvia_stage_scheduler.py",
+      "case": "StageSchedulerTests.test_progressive_step_handler_routes_ui_and_gates_mutations",
+      "contracts": [
+        "d.host.stage-tool-authority"
+      ],
+      "checkedAt": [
+        "neyvia_stage_scheduler.build_progressive_step_handler"
+      ],
+      "case_id": "tests/test_neyvia_stage_scheduler.py::StageSchedulerTests.test_progressive_step_handler_routes_ui_and_gates_mutations"
+    },
+    {
+      "test": "tests/test_neyvia_stage_scheduler.py",
+      "case": "StageSchedulerTests.test_parallel_safe_stage_runs_concurrently_with_deterministic_merge",
+      "contracts": [
+        "d.host.stage-parallel",
+        "d.host.stage-receipt"
+      ],
+      "checkedAt": [
+        "neyvia_stage_scheduler.NeyviaStageScheduler.execute -> proofs_d_host.check_stage_receipt",
+        "neyvia_stage_scheduler.NeyviaStageScheduler._run_parallel_steps/execute -> proofs_d_host.check_stage_receipt"
+      ],
+      "case_id": "tests/test_neyvia_stage_scheduler.py::StageSchedulerTests.test_parallel_safe_stage_runs_concurrently_with_deterministic_merge"
+    },
+    {
+      "test": "tests/test_neyvia_runtime_turn.py",
+      "case": "NeyviaRuntimeTurnTests.test_selected_context_packet_is_bounded_and_hash_stable",
+      "contracts": [
+        "d.host.selected-context"
+      ],
+      "checkedAt": [
+        "neyvia_runtime_invocation.build_selected_context_packet -> proofs_d_host.check_context_packet"
+      ],
+      "case_id": "tests/test_neyvia_runtime_turn.py::NeyviaRuntimeTurnTests.test_selected_context_packet_is_bounded_and_hash_stable"
+    },
+    {
+      "test": "tests/test_neyvia_runtime_turn.py",
+      "case": "NeyviaRuntimeTurnTests.test_selected_context_packet_preserves_import_lineage",
+      "contracts": [
+        "d.host.selected-context"
+      ],
+      "checkedAt": [
+        "neyvia_runtime_invocation.build_selected_context_packet -> proofs_d_host.check_context_packet"
+      ],
+      "case_id": "tests/test_neyvia_runtime_turn.py::NeyviaRuntimeTurnTests.test_selected_context_packet_preserves_import_lineage"
+    },
+    {
+      "test": "tests/test_nearby_send_safety.py",
+      "case": "test_restart_recovers_dead_owner_and_corrupt_state_does_not_block",
+      "contracts": [
+        "d.host.nearby-recovery",
+        "d.host.nearby-redaction"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService.get_active_transfer -> proofs_d_host.check_nearby_state",
+        "nearby_send.NearbySendService._public_receipt/_public_progress -> proofs_d_host.check_nearby_projection"
+      ],
+      "case_id": "tests/test_nearby_send_safety.py::test_restart_recovers_dead_owner_and_corrupt_state_does_not_block"
+    },
+    {
+      "test": "tests/test_nearby_send_safety.py",
+      "case": "test_progress_and_history_are_bounded_and_redacted",
+      "contracts": [
+        "d.host.nearby-redaction",
+        "d.host.nearby-history"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService._public_receipt/_public_progress -> proofs_d_host.check_nearby_projection",
+        "nearby_send.NearbySendService.list_transfer_history -> proofs_d_host.check_nearby_history"
+      ],
+      "case_id": "tests/test_nearby_send_safety.py::test_progress_and_history_are_bounded_and_redacted"
+    },
+    {
+      "test": "tests/test_nearby_send_safety.py",
+      "case": "test_history_rejects_non_integer_limit_and_skips_corrupt_receipts",
+      "contracts": [
+        "d.host.nearby-history"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService.list_transfer_history -> proofs_d_host.check_nearby_history"
+      ],
+      "case_id": "tests/test_nearby_send_safety.py::test_history_rejects_non_integer_limit_and_skips_corrupt_receipts"
+    },
+    {
+      "test": "tests/test_neyvia_settings.py",
+      "case": "test_conpty_is_refused_before_the_native_launcher_is_imported",
+      "contracts": [
+        "d.host.policy-startup"
+      ],
+      "checkedAt": [
+        "local_network_policy.child_start/transition; src/grant_agent/connected_sessions/claude_terminal.py:spawn_terminal"
+      ],
+      "case_id": "tests/test_neyvia_settings.py::test_conpty_is_refused_before_the_native_launcher_is_imported"
+    },
+    {
+      "test": "tests/test_neyvia_settings.py",
+      "case": "test_pending_native_start_allows_socket_workers_but_refuses_activation",
+      "contracts": [
+        "d.host.policy-startup"
+      ],
+      "checkedAt": [
+        "local_network_policy.child_start/transition; src/grant_agent/connected_sessions/claude_terminal.py:spawn_terminal"
+      ],
+      "case_id": "tests/test_neyvia_settings.py::test_pending_native_start_allows_socket_workers_but_refuses_activation"
+    },
+    {
+      "test": "tests/test_neyvia_settings.py",
+      "case": "test_removed_policy_roots_retire_and_settings_reregisters",
+      "contracts": [
+        "d.host.policy-root",
+        "d.host.policy-owner"
+      ],
+      "checkedAt": [
+        "local_network_policy.enabled/install",
+        "local_network_policy.install/release/enabled -> proofs_d_host.check_policy_release"
+      ],
+      "case_id": "tests/test_neyvia_settings.py::test_removed_policy_roots_retire_and_settings_reregisters"
+    },
+    {
+      "test": "tests/test_neyvia_settings.py",
+      "case": "test_policy_owners_release_independently_and_reopen_persisted_settings",
+      "contracts": [
+        "d.host.policy-owner"
+      ],
+      "checkedAt": [
+        "local_network_policy.install/release/enabled -> proofs_d_host.check_policy_release"
+      ],
+      "case_id": "tests/test_neyvia_settings.py::test_policy_owners_release_independently_and_reopen_persisted_settings"
+    },
+    {
+      "test": "tests/test_neyvia_serving_contract.py",
+      "case": "NeyviaServingContractTests.test_registered_mission_artifact_gets_safe_url_and_media_type",
+      "contracts": [
+        "d.host.artifact-serving"
+      ],
+      "checkedAt": [
+        "web_backend_workspace.WorkspaceArtifactMixin._decorate_mission_artifacts -> proofs_d_host.check_artifact_row"
+      ],
+      "case_id": "tests/test_neyvia_serving_contract.py::NeyviaServingContractTests.test_registered_mission_artifact_gets_safe_url_and_media_type"
+    },
+    {
+      "test": "tests/test_neyvia_serving_contract.py",
+      "case": "NeyviaServingContractTests.test_outside_file_never_receives_or_keeps_artifact_endpoint",
+      "contracts": [
+        "d.host.artifact-serving"
+      ],
+      "checkedAt": [
+        "web_backend_workspace.WorkspaceArtifactMixin._decorate_mission_artifacts -> proofs_d_host.check_artifact_row"
+      ],
+      "case_id": "tests/test_neyvia_serving_contract.py::NeyviaServingContractTests.test_outside_file_never_receives_or_keeps_artifact_endpoint"
+    }
+  ],
+  "frontier": [
+    "Settings availability-probe/custom-worker/race fixtures remain unmapped.",
+    "Nearby Send cancellation/resume/integrity transport requires the byte-stream peer fixture; no physical recipient proof is claimed.",
+    "Orchestration runtime turns and frontend prompt selection remain pending faithful provider/rendered journeys."
+  ]
+}

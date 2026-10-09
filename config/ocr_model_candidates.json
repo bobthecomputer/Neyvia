@@ -1,0 +1,169 @@
+{
+  "schema": "neyvia.ocr_model_candidates.v1",
+  "researchedAt": "2026-07-23",
+  "selectionPolicy": {
+    "primary": "Use measured local quality, structure fidelity, latency, VRAM, license, and hardware compatibility.",
+    "kernelPolicy": "Profile the maintained runtime and llama.cpp or vendor kernels first. Write custom kernels only for a measured dominant bottleneck with equivalence tests.",
+    "licensePolicy": "Automatic installation requires a permissive license that permits local use in the European Union.",
+    "benchmarkRequiredBeforePromotion": true
+  },
+  "routing": [
+    "Extract native PDF text when it is present and grounded to page coordinates.",
+    "Use PP-OCRv6 medium for ordinary printed or scanned text.",
+    "Use GLM-OCR BF16 for fast full-page visual text, formula, or table recognition when coordinate-level layout is not required.",
+    "Use PaddleOCR-VL 1.6 for layout, tables, formulas, charts, seals, handwriting, distortion, and photographed documents.",
+    "Keep Tesseract as an explicit CPU emergency fallback and comparison baseline only."
+  ],
+  "benchmarkCategories": [
+    "native printed English and French",
+    "scan, skew, warp, lighting, and screen photo",
+    "handwriting",
+    "table",
+    "formula",
+    "chart",
+    "multi-column",
+    "low resolution",
+    "mixed language"
+  ],
+  "metrics": [
+    "character error rate",
+    "word error rate",
+    "reading-order error",
+    "layout block and coordinate fidelity",
+    "table structure similarity",
+    "formula normalized exactness",
+    "hallucination and omission rate",
+    "cold and warm latency",
+    "pages per second",
+    "peak VRAM"
+  ],
+  "candidates": [
+    {
+      "candidateId": "pp-ocrv6-medium",
+      "role": "primary-text",
+      "source": "https://www.paddleocr.ai/latest/en/version3.x/algorithm/PP-OCRv6/PP-OCRv6.html",
+      "repository": "https://github.com/PaddlePaddle/PaddleOCR",
+      "version": "PaddleOCR 3.7.0",
+      "license": "Apache-2.0",
+      "installed": true,
+      "eligible": true,
+      "capabilities": ["detection", "recognition", "word boxes", "50-language unified recognition"],
+      "localModelTrees": {
+        "PP-OCRv6_medium_det": "39130cb7c90e6b53dc4122a6c653cfb5ddcd9b511261deeace30f195f4cd28aa",
+        "PP-OCRv6_medium_rec": "bc6f947e0451b5dba40b8c9c24a5666dc6e60cc443968d7f2ac9663f0e5bae26"
+      }
+    },
+    {
+      "candidateId": "paddleocr-vl-1.6",
+      "role": "primary-structured",
+      "source": "https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.6",
+      "repository": "https://github.com/PaddlePaddle/PaddleOCR",
+      "version": "1.6",
+      "revision": "66317acc4c9fc17bd154591ce650735cd2855f3e",
+      "license": "Apache-2.0",
+      "installed": true,
+      "eligible": true,
+      "parameters": "0.9B",
+      "capabilities": ["text", "layout", "table", "formula", "chart", "seal", "handwriting", "document parsing"],
+      "localModelTreeSha256": "7895929f409a366be806e17c300bd5e846133fd7ffdb575784e27dbb0abffddd"
+      ,
+      "optimizedServing": {
+        "backend": "llama.cpp b10098",
+        "ggufRevision": "511b09642bb324401f15f97cc23bc67e8f0a291d",
+        "serverBackedInferenceSeconds": 7.413,
+        "freshLocalProcessSeconds": 54.002,
+        "semanticBlocksPreserved": 21
+      }
+    },
+    {
+      "candidateId": "glm-ocr",
+      "role": "verified-fast-recognizer",
+      "source": "https://github.com/zai-org/GLM-OCR",
+      "repository": "https://github.com/zai-org/GLM-OCR",
+      "version": "ca5d8b3e287e52589e37c28385d9655ee4372f9d",
+      "revision": "ca5d8b3e287e52589e37c28385d9655ee4372f9d",
+      "license": "MIT model; Apache-2.0 code",
+      "installed": true,
+      "eligible": true,
+      "parameters": "0.9B",
+      "capabilities": ["multilingual text", "layout", "table", "formula", "information extraction"],
+      "localModelWeightsSha256": "a16eb0de98d199293371c560f95f83130d2a2c9612449df16839f08ff9498815",
+      "optimizedServing": {
+        "backend": "Ollama 0.32.1 BF16",
+        "manifestSha256": "6effedd0dc8aec66ad86c94b8099395376e212f22c87a9d7147c422f7e447be4",
+        "coldWallSeconds": 6.876,
+        "warmWallSeconds": 2.105,
+        "bodyTextExact": true,
+        "characterErrorRate": 0.02036067,
+        "wordErrorRate": 0.0209205,
+        "qualityNote": "The duplicate decorative title was omitted; all body text was exact.",
+        "coordinateLayoutAvailable": false
+      }
+    },
+    {
+      "candidateId": "deepseek-ocr-2",
+      "role": "benchmark-challenger",
+      "source": "https://github.com/deepseek-ai/DeepSeek-OCR",
+      "repository": "https://github.com/deepseek-ai/DeepSeek-OCR",
+      "version": "pin-before-install",
+      "license": "Apache-2.0",
+      "installed": false,
+      "eligible": true,
+      "parameters": "3.389B",
+      "capabilities": ["document OCR", "layout", "Transformers and vLLM serving"]
+    },
+    {
+      "candidateId": "dots-mocr",
+      "role": "benchmark-challenger",
+      "source": "https://github.com/rednote-hilab/dots.ocr",
+      "repository": "https://github.com/rednote-hilab/dots.ocr",
+      "version": "pin-before-install",
+      "license": "MIT",
+      "installed": false,
+      "eligible": true,
+      "capabilities": ["multilingual document parsing", "chart", "SVG", "screen and scene text"]
+    },
+    {
+      "candidateId": "olmocr-2",
+      "role": "heavy-benchmark-challenger",
+      "source": "https://github.com/allenai/olmocr",
+      "repository": "https://github.com/allenai/olmocr",
+      "version": "pin-before-install",
+      "license": "Apache-2.0",
+      "installed": false,
+      "eligible": true,
+      "parameters": "7B",
+      "capabilities": ["math", "tables", "multi-column documents"]
+    },
+    {
+      "candidateId": "tesseract-5.5.2",
+      "role": "emergency-fallback",
+      "source": "https://github.com/tesseract-ocr/tesseract/releases",
+      "repository": "https://github.com/tesseract-ocr/tesseract",
+      "version": "5.5.2",
+      "license": "Apache-2.0",
+      "installed": true,
+      "eligible": false,
+      "neverAutoSelectWhenGpuHealthy": true,
+      "capabilities": ["CPU text OCR", "hOCR", "TSV", "ALTO", "searchable PDF"]
+    }
+  ],
+  "excludedByDefault": [
+    {
+      "candidateId": "hunyuanocr",
+      "reason": "The upstream license excludes use in the European Union."
+    },
+    {
+      "candidateId": "chandra-ocr-2",
+      "reason": "The modified OpenRAIL weights restrict broad commercial self-hosting."
+    },
+    {
+      "candidateId": "surya",
+      "reason": "The modified OpenRAIL weights require broader commercial licensing above the stated threshold."
+    },
+    {
+      "candidateId": "mineru",
+      "reason": "The custom Apache-derived license adds conditions; prefer clean permissive defaults."
+    }
+  ]
+}

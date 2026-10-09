@@ -1,0 +1,212 @@
+--- a/crates/obscura-js/src/ops.rs
++++ b/crates/obscura-js/src/ops.rs
+@@ -109,6 +109,16 @@
+     pub width: u32,
+     pub height: u32,
+     pub pixels: JsBuffer,
++}
++
++
++/// Browser-owned child document raster. It is painted as replaced content,
++/// through the existing transforms, clipping, border radius and stacking order.
++#[cfg(feature = "render")]
++pub(crate) struct EmbeddedFrameSurface {
++    pub width: u32,
++    pub height: u32,
++    pub pixels: Vec<u8>,
+ }
+ 
+ const NAVIGATION_TIMING_FIELDS: [&str; 10] = [
+@@ -333,6 +343,8 @@
+     #[cfg(feature = "render")]
+     pub(crate) canvas_surfaces: HashMap<NodeId, CanvasBackingSurface>,
+     #[cfg(feature = "render")]
++    pub(crate) embedded_surfaces: HashMap<NodeId, EmbeddedFrameSurface>,
++    #[cfg(feature = "render")]
+     pub viewport: (f32, f32),
+     /// Root scrolling offset in CSS pixels. With render enabled this is
+     /// clamped against the cached document overflow and is the single source
+@@ -504,6 +516,8 @@
+             #[cfg(feature = "render")]
+             canvas_surfaces: HashMap::new(),
+             #[cfg(feature = "render")]
++            embedded_surfaces: HashMap::new(),
++            #[cfg(feature = "render")]
+             viewport: (1280.0, 720.0),
+             #[cfg(feature = "render")]
+             scroll_offset: (0.0, 0.0),
+@@ -923,6 +937,40 @@
+ }
+ 
+ impl RealmStates {
++
++    #[cfg(feature = "render")]
++    pub(crate) fn render_embedded_frames(&self, parent: &SharedState, depth: usize) {
++        if depth > 64 { return; }
++        let children: Vec<_> = self.frame_timers.iter().filter_map(|(id, timers)| {
++            let (owner, node, generation) = timers.owner.as_ref()?;
++            let owner = owner.upgrade()?;
++            if !Rc::ptr_eq(&owner, parent) || timers.cancel.is_canceled() { return None; }
++            let state = owner.try_borrow().ok()?;
++            if state.document_generation != *generation
++                || !state.dom.as_ref()?.is_connected(*node) { return None; }
++            Some((*node, self.by_frame_id(*id)?))
++        }).collect();
++        parent.borrow_mut().embedded_surfaces.clear();
++        for (node, child) in children {
++            self.render_embedded_frames(&child, depth + 1);
++            let raster = {
++                let mut state = child.borrow_mut();
++                if ensure_resolved_scroll(&mut state).is_none() { continue; }
++                let ObscuraState { dom, prepared_render, render_resources,
++                    resolved_scroll, canvas_surfaces, embedded_surfaces, .. } = &mut *state;
++                let Some((_, scroll)) = resolved_scroll.as_ref() else { continue; };
++                let surfaces = crate::runtime::RuntimeCanvasSurfaceSource(canvas_surfaces, embedded_surfaces);
++                let (Some(dom), Some(prepared)) = (dom.as_ref(), prepared_render.as_mut()) else { continue; };
++                obscura_render::paint_prepared_with_scroll_and_surface_color_and_canvas_surfaces(
++                    dom, prepared, render_resources, scroll, [255,255,255,255], &surfaces)
++            };
++            if let Some(raster) = raster {
++                parent.borrow_mut().embedded_surfaces.insert(node, EmbeddedFrameSurface {
++                    width:raster.width(), height:raster.height(), pixels:raster.data().to_vec() });
++            }
++        }
++    }
++
+     pub(crate) fn live_count(&self) -> usize {
+         self.entries.len()
+     }
+--- a/crates/obscura-js/src/runtime.rs
++++ b/crates/obscura-js/src/runtime.rs
+@@ -29,11 +29,14 @@
+ };
+ 
+ #[cfg(feature = "render")]
+-struct RuntimeCanvasSurfaceSource<'a>(&'a HashMap<NodeId, crate::ops::CanvasBackingSurface>);
++pub(crate) struct RuntimeCanvasSurfaceSource<'a>(pub &'a HashMap<NodeId, crate::ops::CanvasBackingSurface>, pub &'a HashMap<NodeId, crate::ops::EmbeddedFrameSurface>);
+ 
+ #[cfg(feature = "render")]
+ impl obscura_render::CanvasSurfaceSource for RuntimeCanvasSurfaceSource<'_> {
+     fn surface(&self, node: NodeId) -> Option<obscura_render::CanvasSurface<'_>> {
++        if let Some(surface) = self.1.get(&node) {
++            return obscura_render::CanvasSurface::from_rgba8(surface.width, surface.height, &surface.pixels);
++        }
+         let surface = self.0.get(&node)?;
+         obscura_render::CanvasSurface::from_rgba8(
+             surface.width,
+@@ -1663,6 +1666,7 @@
+         base_url: Option<&str>,
+         surface_color: [u8; 4],
+     ) -> Option<Vec<u8>> {
++        self.realm_states().borrow().render_embedded_frames(&self.state, 0);
+         let mut state = self.state.borrow_mut();
+         let effective_base = document_base_url(&state);
+         // A same-document fragment changes Page's visible URL, but cannot
+@@ -1682,10 +1686,11 @@
+                 render_resources,
+                 resolved_scroll,
+                 canvas_surfaces,
++                embedded_surfaces,
+                 ..
+             } = state;
+             let (_, scroll) = resolved_scroll.as_ref()?;
+-            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces);
++            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces, embedded_surfaces);
+             obscura_render::screenshot_prepared_with_scroll_and_surface_color_and_canvas_surfaces(
+                 dom.as_ref()?,
+                 prepared_render.as_mut()?,
+@@ -1744,6 +1749,7 @@
+         region: obscura_render::CaptureRegion,
+         surface_color: [u8; 4],
+     ) -> Result<obscura_render::Pixmap, obscura_render::CaptureError> {
++        self.realm_states().borrow().render_embedded_frames(&self.state, 0);
+         let mut state = self.state.borrow_mut();
+         with_sync_render_loading_disabled(&mut state, |state| {
+             ensure_resolved_scroll(state).ok_or(obscura_render::CaptureError::PaintFailed)?;
+@@ -1753,12 +1759,13 @@
+                 render_resources,
+                 resolved_scroll,
+                 canvas_surfaces,
++                embedded_surfaces,
+                 ..
+             } = state;
+             let (_, scroll) = resolved_scroll
+                 .as_ref()
+                 .ok_or(obscura_render::CaptureError::PaintFailed)?;
+-            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces);
++            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces, embedded_surfaces);
+             obscura_render::paint_prepared_region_with_scroll_and_surface_color_and_canvas_surfaces(
+                 dom.as_ref()
+                     .ok_or(obscura_render::CaptureError::PaintFailed)?,
+@@ -1782,6 +1789,7 @@
+         region: obscura_render::CaptureRegion,
+         paint_backgrounds: bool,
+     ) -> Result<Vec<u8>, obscura_render::CaptureError> {
++        self.realm_states().borrow().render_embedded_frames(&self.state, 0);
+         let mut state = self.state.borrow_mut();
+         with_sync_render_loading_disabled(&mut state, |state| {
+             ensure_resolved_scroll(state).ok_or(obscura_render::CaptureError::PaintFailed)?;
+@@ -1791,12 +1799,13 @@
+                 render_resources,
+                 resolved_scroll,
+                 canvas_surfaces,
++                embedded_surfaces,
+                 ..
+             } = state;
+             let (_, scroll) = resolved_scroll
+                 .as_ref()
+                 .ok_or(obscura_render::CaptureError::PaintFailed)?;
+-            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces);
++            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces, embedded_surfaces);
+             obscura_render::screenshot_prepared_region_with_scroll_and_backgrounds_and_canvas_surfaces(
+                 dom.as_ref()
+                     .ok_or(obscura_render::CaptureError::PaintFailed)?,
+@@ -1823,6 +1832,7 @@
+         root_scroll: (f32, f32),
+         paint_backgrounds: bool,
+     ) -> Result<Vec<u8>, obscura_render::CaptureError> {
++        self.realm_states().borrow().render_embedded_frames(&self.state, 0);
+         let mut state = self.state.borrow_mut();
+         with_sync_render_loading_disabled(&mut state, |state| {
+             ensure_resolved_scroll(state).ok_or(obscura_render::CaptureError::PaintFailed)?;
+@@ -1832,6 +1842,7 @@
+                 render_resources,
+                 element_scroll_offsets,
+                 canvas_surfaces,
++                embedded_surfaces,
+                 ..
+             } = state;
+             let dom = dom
+@@ -1846,7 +1857,7 @@
+                     element_scroll_offsets,
+                     (region.width, region.height),
+                 );
+-            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces);
++            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces, embedded_surfaces);
+             obscura_render::screenshot_prepared_region_with_scroll_and_backgrounds_and_canvas_surfaces(
+                 dom,
+                 prepared_render
+@@ -16079,10 +16090,11 @@
+                 render_resources,
+                 resolved_scroll,
+                 canvas_surfaces,
++                embedded_surfaces,
+                 ..
+             } = &mut *state;
+             let (_, scroll) = resolved_scroll.as_ref().expect("scroll snapshot");
+-            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces);
++            let canvas_surfaces = RuntimeCanvasSurfaceSource(canvas_surfaces, embedded_surfaces);
+             obscura_render::paint_prepared_with_scroll_and_surface_color_and_canvas_surfaces(
+                 dom.as_ref().expect("canvas DOM"),
+                 prepared_render.as_mut().expect("prepared canvas layout"),
+--- a/crates/obscura-render/src/paint.rs
++++ b/crates/obscura-render/src/paint.rs
+@@ -4893,7 +4893,7 @@
+             }
+         }
+ 
+-        if box_on_surface && name.local.as_ref() == "canvas" {
++        if box_on_surface && matches!(name.local.as_ref(), "canvas" | "iframe") {
+             if let Some(surface) = canvas_surfaces.surface(nid) {
+                 // A canvas bitmap is replaced content: CSS sizing and
+                 // object-fit operate on the content box, never the padding or

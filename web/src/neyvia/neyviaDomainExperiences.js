@@ -1,0 +1,116 @@
+export const NEYVIA_DOMAIN_EXPERIENCES = Object.freeze([
+  {
+    id: "student",
+    label: "Study and learning",
+    intent: "Understand and retain material, then organize the next assignment.",
+    profile: "study",
+    adaptive: Object.freeze({ uiPreset: "researcher", systemPromptProfile: "auto" }),
+    composed: ["Documents and OCR", "Research", "Literature", "Office"],
+    artifacts: ["Study set", "Flashcards", "Quiz", "Annotated source", "Assignment plan"],
+    approvals: "Reading uses the current session; every source remains visible.",
+    reality: "Documents, OCR, and citations are ready. Study generators appear when their tools are connected.",
+  },
+  {
+    id: "writing",
+    label: "Writing and publishing",
+    intent: "Produce a finished, correctly typeset, sourced document.",
+    profile: "writing",
+    adaptive: Object.freeze({ uiPreset: "minimal", systemPromptProfile: "writing" }),
+    composed: ["Publishing", "Documents", "Office", "Research", "Communication"],
+    artifacts: ["Manuscript", "Bibliography", "Figures", "Typeset output"],
+    approvals: "Neyvia asks before publishing or sending.",
+    reality: "Pandoc, LibreOffice, and LaTeX are ready. Connected publishers show their status separately.",
+  },
+  {
+    id: "research",
+    label: "Research and science",
+    intent: "Find, verify, analyze, and conclude with evidence.",
+    profile: "research",
+    adaptive: Object.freeze({ uiPreset: "researcher", systemPromptProfile: "research" }),
+    composed: ["Research", "Literature", "Documents", "Data", "Deep Benchmark"],
+    artifacts: ["Literature set", "Dataset", "Analysis notebook", "Evidence bundle"],
+    approvals: "Online sources follow the permission of the active connection.",
+    reality: "Research, documents, citations, data analysis, experiments, and benchmarks are ready.",
+  },
+  {
+    id: "creative",
+    label: "Creative production",
+    intent: "Make and present something visual, spatial, or audible.",
+    profile: "creative",
+    adaptive: Object.freeze({ uiPreset: "creator", systemPromptProfile: "creative" }),
+    composed: ["Image Playground", "Media", "3D and games", "Publishing", "Share Capsule"],
+    artifacts: ["Manifested image set", "Edit", "Render", "Share-ready presentation"],
+    approvals: "Neyvia asks before using an external generator or publishing.",
+    reality: "Image creation and edit history are ready. Video and audio appear when a compatible service is connected.",
+  },
+  {
+    id: "software",
+    label: "Software development",
+    intent: "Change a codebase safely and prove the result.",
+    profile: "implementation",
+    adaptive: Object.freeze({ uiPreset: "engineer", systemPromptProfile: "implementation" }),
+    composed: ["Runtimes", "Worktrees", "Browser and device lab", "Security", "Deep Benchmark"],
+    artifacts: ["Diff", "Pull request", "Verification evidence", "Release proof"],
+    approvals: "File changes, commands, and pushes follow the active execution permission.",
+    reality: "Runtimes, missions, worktrees, receipts, and release verification are ready.",
+  },
+  {
+    id: "social",
+    label: "Social communication",
+    intent: "Prepare a message, campaign, or shareable presentation for a named audience.",
+    profile: "communication",
+    adaptive: Object.freeze({ uiPreset: "minimal", systemPromptProfile: "auto" }),
+    composed: ["Messages", "Everyday design", "Images", "Share package"],
+    artifacts: ["Reviewed draft", "Assets", "Share-ready package"],
+    approvals: "Neyvia asks before sending, deleting, or unsubscribing.",
+    reality: "Drafts and share packages are ready. Each connected publishing service shows its own status.",
+  },
+  {
+    id: "casual",
+    label: "Casual exploration",
+    intent: "Try an idea without turning it into permanent project clutter.",
+    profile: "experimentation",
+    adaptive: Object.freeze({ uiPreset: "minimal", systemPromptProfile: "auto" }),
+    composed: ["Experiments", "Notebook", "Share package"],
+    artifacts: ["Disposable experiment", "Journal", "Verdict", "Optional promotion"],
+    approvals: "Observation and simulation use the session; Neyvia asks before taking action.",
+    reality: "Experiments keep their evidence and failures and show when temporary files will be cleaned up.",
+  },
+  {
+    id: "maker",
+    label: "Maker and connected systems",
+    intent: "Understand, prototype, or safely operate owned computers, devices, and services.",
+    profile: "experimentation",
+    adaptive: Object.freeze({ uiPreset: "engineer", systemPromptProfile: "auto" }),
+    composed: ["Connected devices", "Device bridge", "Nearby sharing", "Security", "Custom tools"],
+    artifacts: ["Architecture map", "Experiment", "Measurements", "Promotion plan"],
+    approvals: "Actions need a named device, clear authorization, and your confirmation.",
+    reality: "Device planning is ready. Hardware actions appear only when a compatible connection reports ready.",
+  },
+  {
+    id: "niche",
+    label: "Custom and niche",
+    intent: "Extend Neyvia for a specialist subject without creating a miscellaneous bucket.",
+    profile: "ecosystem_architecture",
+    adaptive: Object.freeze({ uiPreset: "engineer", systemPromptProfile: "auto" }),
+    composed: ["Custom capabilities", "Skills", "Applications", "Marketplace"],
+    artifacts: ["Capability", "Workflow", "Skill", "Application"],
+    approvals: "Every capability shows its permissions and evidence before activation.",
+    reality: "Custom capabilities are ready to extend Neyvia. Missing connections remain clearly marked as unavailable.",
+  },
+]);
+
+export function domainExperienceById(id) {
+  return NEYVIA_DOMAIN_EXPERIENCES.find(item => item.id === id) || NEYVIA_DOMAIN_EXPERIENCES[0];
+}
+
+export function domainStarterPrompt(experience, userIntent = "") {
+  const selected = experience || NEYVIA_DOMAIN_EXPERIENCES[0];
+  const detail = String(userIntent || "").trim();
+  return [
+    selected.intent,
+    detail ? `My specific goal: ${detail}` : "",
+    `Expected artifact types: ${selected.artifacts.join(", ")}.`,
+    `Available tools: ${selected.reality}`,
+  ].filter(Boolean).join("\n");
+}

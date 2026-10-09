@@ -1,0 +1,29 @@
+{
+  "schema": "neyvia.scroll-procedures.v1",
+  "version": 1,
+  "execution": "registered-deterministic-python-functions",
+  "owner": "grant_agent.scroll_generation",
+  "binding": ["source raw sha256", "source textSha256", "manual sha256", "manifest sha256", "exact prompt and schema hashes via T14"],
+  "stages": [
+    {"name": "ingest", "tier": "script", "entry": "import_sources", "check": "UTF-8 Markdown/text, <=5 MiB, SHA256"},
+    {"name": "split", "tier": "script", "entry": "import_sources", "check": "headings/paragraphs, <=5500 characters, original spans"},
+    {"name": "candidates", "tier": "script", "entry": "import_sources", "check": "bold/italic/formula/definition extract"},
+    {"name": "concepts", "tier": "small", "entry": "build_concepts", "check": "strict JSON, known prerequisite ids, one Luna retry"},
+    {"name": "merge-graph", "tier": "script", "entry": "build_concepts", "check": "normalized-name dedup, chapter-order cycle repair"},
+    {"name": "graph-sanity", "tier": "big", "entry": "build_concepts", "check": "suspected orphan procedures >20 percent or repaired cycles, <=one per chapter"},
+    {"name": "wording", "tier": "small", "entry": "generate_cards", "check": "batch per chapter, budgets, exactly one MCQ answer"},
+    {"name": "cloze", "tier": "script", "entry": "generate_cards", "check": "blank from defining source phrase"},
+    {"name": "formula-perturb", "tier": "script", "entry": "generate_cards", "check": "source identity RHS +1/-1 distractors; false claim RHS+1"},
+    {"name": "worked-extract", "tier": "script", "entry": "generate_cards", "check": "numbered steps in source"},
+    {"name": "worked-example", "tier": "big", "entry": "generate_cards", "check": "procedure lacking numbered source example, <=one per concept"},
+    {"name": "fade-order", "tier": "script", "entry": "generate_cards", "check": "last step/last half blank, original answers retained"},
+    {"name": "spot-sanity", "tier": "small", "entry": "generate_cards", "check": "script injects one sign error, model checks plausible and unique; rejects omitted with reason"},
+    {"name": "recap", "tier": "script", "entry": "generate_cards", "check": "concatenate chapter definitions"},
+    {"name": "answer-check", "tier": "small", "entry": "_answer_check", "check": "batched independent solve; authored answers withheld"},
+    {"name": "answer-symbolic", "tier": "script", "entry": "_answer_check", "check": "SymPy perturbation proof first when installed; independently re-solve via Luna next"},
+    {"name": "answer-compare", "tier": "script", "entry": "_equivalent", "check": "normalized exact comparison, restricted SymPy arithmetic when present"},
+    {"name": "answer-equivalence", "tier": "small", "entry": "_answer_check", "check": "batched semantic comparison after independent solve"},
+    {"name": "answer-dispute", "tier": "big", "entry": "_answer_check", "check": "only substantive disagreement, <=one per card; unresolved flagged"}
+  ],
+  "frontier": ["Definitions are precompiled Python procedures, not evidence-derived T5 manual.compile artifacts.", "Photo OCR and PDF extraction need the existing app adapter."]
+}

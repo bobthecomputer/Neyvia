@@ -1,0 +1,540 @@
+{
+  "area": "release-outcomes",
+  "module": "grant_agent.proofs_release_outcomes",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "checkedAt": [
+        "src/grant_agent/neyvia_agentview.py:SurfaceFrames.delta -> contract"
+      ],
+      "claim": "A frame answer is 'same' only for the version held, a delta only from that version and inside the frame under the full-frame share, otherwise one full frame",
+      "id": "agentview.delta",
+      "impact": [
+        "live view bytes",
+        "picture correctness"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "src/grant_agent/neyvia_agentview.py:AgentView.frame -> contract"
+      ],
+      "claim": "Each frame request renews capture for 2.5 s at 0.2-5 fps (native surfaces at most 1.5 fps); without requests nothing is captured beyond the time-lapse watch",
+      "id": "agentview.demand",
+      "impact": [
+        "capture cost",
+        "driver load"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "src/grant_agent/neyvia_agentview.py:AgentView.enforce_bounds -> contract"
+      ],
+      "claim": "A run keeps at most its keyframe count and bytes; first, last and commented keyframes always stay; dropped files are deleted",
+      "id": "agentview.bounds",
+      "impact": [
+        "disk use",
+        "time-lapse coverage"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "checkedAt": [
+        "src/grant_agent/neyvia_agentview.py:AgentView.feedback -> contract"
+      ],
+      "claim": "A comment is pinned to the exact frame version (or keyframe) Paul saw and the step he picked, and has one delivery channel: steer, computer-use log or next browser result",
+      "id": "agentview.feedback",
+      "impact": [
+        "steering",
+        "time-lapse pins"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "web/src/neyvia/next/agentview/nxAgentViewModel.js:pollDelay -> checked",
+        "scripts/p22_release_models.mjs"
+      ],
+      "claim": "The view polls only while visible and in sight, at its size's rate, slowing on a still picture and backing off on errors",
+      "id": "agentview.poll",
+      "impact": [
+        "live view cost"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "web/src/neyvia/next/agentview/nxAgentViewModel.js:applyFrame -> checked",
+        "scripts/p22_release_models.mjs"
+      ],
+      "claim": "Changed regions stack only on the version they came from; anything else asks for one full frame",
+      "id": "agentview.applyFrame",
+      "impact": [
+        "picture correctness"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "web/src/neyvia/next/agentview/nxAgentViewModel.js:feedbackPayload -> checked",
+        "scripts/p22_release_models.mjs"
+      ],
+      "claim": "A comment sent from the view carries the shown frame version or the time-lapse keyframe, the picked step and the clicked point",
+      "id": "agentview.feedbackPayload",
+      "impact": [
+        "steering"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:sessionLabel",
+        "web/src/neyvia/next/nxGameDevModel.js:keepSelection -> checkedProofsEModel",
+        "scripts/uifix2_contracts.py:c4_gamedev_names_and_selection",
+        "scripts/p22_release_models.mjs"
+      ],
+      "claim": "Sessions are named in words (Browser 3D editor, Editor), never with raw environment ids or a literal null; a reloaded browser-webgl or browser-null scene stays selected",
+      "id": "gamedev.sessionLabel",
+      "impact": [
+        "Game Dev sessions list and session card"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "web/src/neyvia/imageProviderAdapters.js:buildQueueTimeline",
+        "scripts/p22_release_models.mjs"
+      ],
+      "claim": "A failed request does not time-stamp the generating, artifact or handoff stages it never reached",
+      "id": "image.queue.failed-timeline",
+      "impact": [
+        "Image generation, provider dispatch, receipts, queue and library"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "src/grant_agent/neyvia_image_generate.py:generate_image",
+        "web/src/neyvia/imageProviderAdapters.js:IMAGE_REQUEST_DEADLINE_MS"
+      ],
+      "claim": "Generation never outlives its request: the backend stops Codex after 300 seconds and the UI gives up at 330, both ending in a plain failed result",
+      "id": "image.generate.deadline",
+      "impact": [
+        "Image generation, provider dispatch, receipts, queue and library"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "src/grant_agent/neyvia_image_generate.py:codex_cli_status"
+      ],
+      "claim": "With no Codex CLI or no Codex sign-in the user gets a plain error naming the fix within seconds, and the job is recorded failed",
+      "id": "image.generate.preflight",
+      "impact": [
+        "Image generation, provider dispatch, receipts, queue and library"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "src/grant_agent/neyvia_image_generate.py:sweep_stale_jobs",
+        "web/src/neyvia/imagePlaygroundState.js:settleStaleHistoryItem"
+      ],
+      "claim": "A generation job is always done or failed: stale running jobs from an earlier backend session are swept to failed",
+      "id": "image.generate.job-settled",
+      "impact": [
+        "Image generation, provider dispatch, receipts, queue and library"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.source_problem",
+        "web/src/neyvia/next/NxSidebar.jsx:SourceStatus",
+        "scripts/uifix2_contracts.py:c3_sidebar_sources_calm"
+      ],
+      "claim": "A chat source that cannot be listed carries a code, a state and plain words; raw adapter errors stay in detail and are never the sidebar text",
+      "id": "sessions.sources-calm",
+      "impact": [
+        "Sidebar chat sources line"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders.candidates",
+        "grant_agent.proofs_a_sessions.check_candidates"
+      ],
+      "claim": "Any existing absolute directory, including a different drive, is offered as Use this folder; missing paths and files are refused.",
+      "id": "sessions.folders.direct",
+      "impact": [
+        "New chat folder selection"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.cua_upstream.runtime_status",
+        "grant_agent.cua_upstream.install_runtime",
+        "scripts/uifix2_contracts.py:c2_cua_helper_plain_and_shared"
+      ],
+      "claim": "The screen-control helper resolves from NEYVIA_CUA_DRIVER_DIR, the shared per-user runtime, then the checkout; a missing helper is reported in plain words with a hash-checked setup offer and never staged unverified",
+      "id": "cua.helper-resolution",
+      "impact": [
+        "Preview pane setup state",
+        "UpstreamDriver start",
+        "LAYA driver readiness"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.proof_contracts.before_action",
+        "grant_agent.native_tools.NativeToolRegistry.call",
+        "grant_agent.neyvia_workspace_tools.WorkspaceTools.call"
+      ],
+      "claim": "Every documented action validates all grounded manual input schemas before effects",
+      "id": "proofs.manual-input",
+      "impact": [
+        "action effects",
+        "manual input promises"
+      ],
+      "phase": "pre"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.proof_contracts.after_action",
+        "grant_agent.native_tools.NativeToolRegistry.call",
+        "grant_agent.neyvia_workspace_tools.WorkspaceTools.call"
+      ],
+      "claim": "Every successful documented action validates all grounded manual result schemas before delivery",
+      "id": "proofs.manual-output",
+      "impact": [
+        "agent observations",
+        "UI operation results"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.proof_verifier.run_verification",
+        "grant_agent.proof_verifier._local_arguments",
+        "grant_agent.subprocess_utils.capture_bounded_process"
+      ],
+      "claim": "Embedded verifier runs in a new interpreter with task-owned runtime homes, without host UI state or backend routing overrides, and only approved local scratch dispatch",
+      "id": "proofs.scratch-isolation",
+      "impact": [
+        "live workspace state",
+        "self-check effects"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.proof_credential_guard.install",
+        "grant_agent.proof_credential_guard.check_access",
+        "scripts/run_web_backend.py",
+        "scripts/verify_proofs.py"
+      ],
+      "claim": "Python proof workers and explicitly guarded owned backends refuse configured saved credential file opens outside disposable proof state before content is read.",
+      "id": "proofs.saved-credential-boundary",
+      "impact": [
+        "saved credential authority",
+        "disposable proof state"
+      ],
+      "phase": "pre"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.proof_coverage.retirement_gate",
+        "grant_agent.proof_coverage.coverage_source_current"
+      ],
+      "claim": "Retirement requires complete declared host coverage, unchanged original tests and immutable manifests/receipts, plus current source binding or fresh exact-contract revalidation",
+      "id": "proofs.retirement-coverage",
+      "impact": [
+        "tests",
+        "coverage evidence",
+        "protected behavior"
+      ],
+      "phase": "pre"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.proof_coverage.revalidate_existing",
+        "grant_agent.proof_coverage.revalidated_cases",
+        "grant_agent.proof_coverage.evidence_revalidated",
+        "grant_agent.proof_verifier.coverage_report",
+        "scripts/prove_proofs_b_admission.py"
+      ],
+      "claim": "An unchanged prior coverage row may use a fresh observed-contract receipt bound to exact current source; original receipt, manifest, contract ids, production sites and prior binding still match. Tampered or stale revalidation fails closed without editing other tracks rows.",
+      "id": "proofs.source-revalidation",
+      "impact": [
+        "scoped incremental migration",
+        "prior proof lineage",
+        "coverage admission"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.proof_verifier.run_verification",
+        "grant_agent.proof_verifier.worker_failure_message",
+        "grant_agent.web_backend.main"
+      ],
+      "claim": "A startup self-check worker that exits without a readable receipt is reported with its exit code, stdout size, stderr tail and retained diagnostics path, never as empty text; startup supplies the reviewed fixture ports and a ceiling long enough for the complete suite",
+      "id": "proofs.worker-failure-report",
+      "impact": [
+        "backend startup",
+        "release readiness"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.proof_readiness.run_now",
+        "grant_agent.proof_readiness.status",
+        "grant_agent.web_backend.main",
+        "grant_agent.neyvia_runtime.request",
+        "grant_agent.proofs_e_host.check_startup_readiness"
+      ],
+      "claim": "The backend serves immediately while the complete self-check runs hidden at low priority; its running, passed, failed (with failing claims) or error outcome is a durable receipt shown on the Runtime page and never prevents Neyvia from opening; --proof-self-check-blocking restores a refusing run for CI and release audit Passed requires both contractsOk and complete; passing partial coverage is reported as failed with an explicit reason.",
+      "id": "proofs.background-readiness",
+      "impact": [
+        "backend startup",
+        "Runtime page readiness"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "id": "p22.mod-lifecycle",
+      "phase": "post",
+      "claim": "A local source mod installs disabled, executes the requested greeting only after activation and refuses calls after persisted disable",
+      "checkedAt": [
+        "grant_agent.source_marketplace.SourceMarketplace",
+        "grant_agent.module_plugins.dispatch",
+        "apps/hello-module/greeting.py",
+        "apps/hello-module/neyvia.module.json",
+        "apps/hello-module/manual.cl",
+        "apps/hello-module/host-contract.json"
+      ],
+      "impact": [
+        "Local app and mod marketplace lifecycle"
+      ]
+    },
+    {
+      "id": "p22.sdk-state",
+      "phase": "post",
+      "claim": "A generated web app serves one durable shared counter with exact action replay; missing authority, foreign origin, stale revision and negative count never mutate it",
+      "checkedAt": [
+        "grant_agent.app_sdk.new_app",
+        "grant_agent.app_sdk.commit_api",
+        "grant_agent.app_sdk_server.serve",
+        "grant_agent.neyvia_app_sdk.call",
+        "scripts/app_sdk.py",
+        "scripts/build_app_sdk_runtime.mjs"
+      ],
+      "impact": [
+        "Generated SDK app state and local HTTP authority"
+      ]
+    },
+    {
+      "id": "p22.compiled-command",
+      "phase": "post",
+      "claim": "An executable CL workspace command persists its exact Unicode text; read-only and escaped commands cannot change the selected workspace",
+      "checkedAt": [
+        "grant_agent.cl.protocol.Protocol.run",
+        "grant_agent.cl.host",
+        "grant_agent.cl.parser",
+        "grant_agent.cl.runtime",
+        "grant_agent.cl.state",
+        "grant_agent.cl.schema",
+        "grant_agent.cl.validator",
+        "grant_agent.cl.expressions",
+        "grant_agent.cl.effects",
+        "grant_agent.cl.manuals",
+        "grant_agent.cl.integration",
+        "scripts/cl_compile_manuals.py",
+        "config/neyvia_manuals.json"
+      ],
+      "impact": [
+        "Executable manual compilation and command execution"
+      ]
+    },
+    {
+      "id": "p22.desktop-asset-path",
+      "phase": "pre",
+      "claim": "The native frontend directory predicate accepts relative asset folders and refuses drive paths and file URLs that would open a directory listing",
+      "checkedAt": [
+        "src-tauri/build_frontend_guard.rs",
+        "src-tauri/build.rs"
+      ],
+      "impact": [
+        "Desktop generated schemas and native frontend asset location"
+      ]
+    },
+    {
+      "id": "p22.context-replay",
+      "phase": "post",
+      "claim": "Replay repairs only generated workspace metadata and keeps the current tool exchange and saved source history intact",
+      "checkedAt": [
+        "grant_agent.chat_context.normalize_replay_context",
+        "grant_agent.context_window.bounded_history"
+      ],
+      "impact": [
+        "Model context and durable conversation continuity"
+      ]
+    },
+    {
+      "id": "p22.context-admission",
+      "phase": "pre",
+      "claim": "Capacity controls default admission; price limits apply only by explicit choice and measured usage is reused only for an unchanged prefix",
+      "checkedAt": [
+        "grant_agent.compaction_policy.resolve_policy",
+        "grant_agent.compaction_policy.ContextMeter",
+        "config/neyvia_context_policy.json"
+      ],
+      "impact": [
+        "Model context admission and Unicode input accounting"
+      ]
+    },
+    {
+      "id": "p22.compiled-maps",
+      "phase": "pre",
+      "claim": "Retained provider calls keep their exact versioned meaning; ambiguous and absent calls never fall back to another map",
+      "checkedAt": [
+        "grant_agent.compiled_tool_maps.CompiledToolMapStore"
+      ],
+      "impact": [
+        "Provider tool selection and retained map authority"
+      ]
+    },
+    {
+      "id": "p22.app-registry",
+      "phase": "post",
+      "claim": "Local App Factory registration persists source and permissions with upgrade lineage; unreadable state is preserved and publication or executable rollback is never invented",
+      "checkedAt": [
+        "grant_agent.app_factory_semantics.register_app_factory_job"
+      ],
+      "impact": [
+        "Local app registry and source revision continuity"
+      ]
+    },
+    {
+      "id": "p22.watch-pages",
+      "phase": "post",
+      "claim": "Every persisted run watch remains reachable across bounded pages, with a continuation after the second page and no duplicates",
+      "checkedAt": [
+        "grant_agent.neyvia_run_watches.call"
+      ],
+      "impact": [
+        "Run-watch list pagination"
+      ]
+    },
+    {
+      "id": "p22.timer-durable",
+      "phase": "post",
+      "claim": "A checkpoint replays once, stopped elapsed time survives reopening, and a retained timer refuses a different intent",
+      "checkedAt": [
+        "grant_agent.neyvia_time_tools.call"
+      ],
+      "impact": [
+        "Native timer persistence and checkpoint replay"
+      ]
+    },
+    {
+      "id": "p22.cl-history",
+      "phase": "post",
+      "claim": "Archived CL messages reopen with exact Unicode pagination; another task, an impossible budget and tampered messages are refused",
+      "checkedAt": [
+        "grant_agent.cl.turn_context.TurnContext",
+        "grant_agent.cl.tokens.count_tokens"
+      ],
+      "impact": [
+        "CL immutable task and durable history retrieval"
+      ]
+    },
+    {
+      "id": "p22.language-copy",
+      "phase": "post",
+      "claim": "Both installed language skill sources reject bad label copy with evidence while accepting a clean label and ignoring stylesheet source",
+      "checkedAt": [
+        "grant_agent.neyvia_language.check",
+        "grant_agent.cl_skill.run_checks",
+        "manuals/skills/no-slop.cl",
+        "config/cl_skills/no-slop.cl"
+      ],
+      "impact": [
+        "Agent report and authored UI-copy admission"
+      ]
+    },
+    {
+      "checkedAt": [
+        "grant_agent.scene_core.judge",
+        "grant_agent.laya_glance_contracts.observe"
+      ],
+      "claim": "Actual before/after DOM and canvas observations bind typed defects to nodes and fixes.",
+      "id": "layag.scene-predicates",
+      "impact": [
+        "src/grant_agent/scene_core",
+        "src/grant_agent/laya_glance.py",
+        "src/grant_agent/perception_scene.js"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.laya_glance_proof.run",
+        "grant_agent.laya_glance.glance"
+      ],
+      "claim": "From pixels alone, the black PDF page, see-through panels and clipped chips are caught on recorded before captures and absent on the after captures.",
+      "id": "layag.pixel-before-after",
+      "impact": [
+        "src/grant_agent/laya_glance_image.py",
+        "src/grant_agent/laya_glance.py",
+        "src/grant_agent/laya_glance_proof.py",
+        "manuals/cl/laya-glance.cl"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "id": "p22.sdk-clients",
+      "phase": "post",
+      "claim": "Python and browser SDK clients deliver exact Unicode requests and local export policy over owned HTTP; unowned URLs and refused responses preserve typed denials",
+      "checkedAt": [
+        "src/neyvia_sdk/client.py",
+        "src/neyvia_sdk/__init__.py",
+        "packages/neyvia-sdk/index.js",
+        "scripts/p22_release_models.mjs"
+      ],
+      "impact": [
+        "Public SDK command and native-tool transports"
+      ]
+    },
+    {
+      "id": "p29.lesson-public-calibration",
+      "phase": "post",
+      "claim": "The public empty preference seed preserves exact immutable objective replay suites; both taste judges refuse absent labels before model work or saving a calibrated judge.",
+      "checkedAt": [
+        "grant_agent.lesson_evolver._preference_pairs",
+        "grant_agent.lesson_evolver.LessonService.freeze_suite",
+        "grant_agent.lesson_evolver.FrozenJudge.calibrate",
+        "grant_agent.lesson_evolver.LearnedJudge.calibrate",
+        "config/lesson_learning.json",
+        "config/lesson_preferences.json",
+        "grant_agent.proofs_release_outcomes.lesson_preferences"
+      ],
+      "impact": [
+        "Objective lesson replay",
+        "Personal calibration admission"
+      ]
+    }
+  ],
+  "coverage": [],
+  "networkContracts": [
+    "p22.sdk-state",
+    "layag.scene-predicates",
+    "p22.sdk-clients"
+  ],
+  "portRoles": [48461]
+}

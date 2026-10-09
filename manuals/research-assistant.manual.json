@@ -1,0 +1,2597 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "research-assistant",
+  "kind": "workflow",
+  "schemas": {
+    "neyvia.research.answer": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "obscuraPort": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "timeoutSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 600
+        },
+        "rounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "question",
+        "obscuraPort"
+      ]
+    },
+    "neyvia.research.journey": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "obscuraPort": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "maxSources": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "vertical": {
+          "type": "string",
+          "enum": [
+            "web",
+            "scholarly",
+            "code",
+            "encyclopedia"
+          ]
+        },
+        "answerModel": {
+          "type": "string",
+          "enum": [
+            "extractive",
+            "gpt-6.1-sol"
+          ]
+        },
+        "timeoutSeconds": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 600
+        },
+        "requestId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        }
+      },
+      "required": [
+        "question"
+      ]
+    },
+    "neyvia.research.receipt": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "path"
+      ]
+    }
+  },
+  "chapters": {
+    "journey": {
+      "title": "Tool-only research journey with verified citations",
+      "state": {},
+      "actions": {
+        "journey": {
+          "effect": "Answer a public question through Neyvia's own tools: no-key web.search, parallel web.fetch (non-stealth Obscura only for pages refusing plain HTTP), web.dedupe, web.passages, web.cite, an extractive or explicit citation-only gpt-6.1-sol answer, then re-verify every citation; persist a timed receipt or an explicit failure.",
+          "pre": "Public web research is authorized in the selected root. obscuraPort, when passed, is inside the caller-assigned NEYVIA_BROWSER_PROOF_PORTS range. Authority=artifact_write, like web.fetch: it reads public sources and writes receipts in the selected root. No key is required; SearXNG or BRAVE_SEARCH_API_KEY are optional and reported.",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "receiptPath": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "type": "string"
+              },
+              "elapsedMs": {
+                "type": "number"
+              },
+              "claimGrounding": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "reversible": false,
+          "schema": "neyvia.research.journey",
+          "tool": "neyvia.research.journey"
+        }
+      },
+      "checks": {
+        "journey-verified": {
+          "args": {
+            "path": {
+              "$result": "journey.receiptPath"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": "",
+            "schema": {
+              "properties": {
+                "answer": {
+                  "properties": {
+                    "answer": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "claims": {
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "answer",
+                    "claims"
+                  ],
+                  "type": "object"
+                },
+                "citations": {
+                  "items": {
+                    "properties": {
+                      "contentSha256": {
+                        "pattern": "^[a-f0-9]{64}$",
+                        "type": "string"
+                      },
+                      "quote": {
+                        "minLength": 20,
+                        "type": "string"
+                      },
+                      "reverified": {
+                        "const": true
+                      },
+                      "url": {
+                        "minLength": 8,
+                        "type": "string"
+                      },
+                      "verified": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "url",
+                      "quote",
+                      "verified",
+                      "reverified",
+                      "contentSha256"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "claimGrounding": {
+                  "properties": {
+                    "accepted": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "accepted"
+                  ],
+                  "type": "object"
+                },
+                "elapsedMs": {
+                  "maximum": 60000,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "schema": {
+                  "const": "neyvia.research.journey.v1"
+                },
+                "search": {
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "provider": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "provider"
+                  ],
+                  "type": "object"
+                },
+                "stages": {
+                  "minItems": 6,
+                  "type": "array"
+                },
+                "status": {
+                  "const": "completed"
+                }
+              },
+              "required": [
+                "schema",
+                "status",
+                "claimGrounding",
+                "citations",
+                "stages",
+                "elapsedMs",
+                "search",
+                "answer"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        }
+      },
+      "procedures": {
+        "journey": {
+          "goal": "Answer a public question with Neyvia's own tools, verify every citation from the cached source, and judge support",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "requestId": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+              }
+            },
+            "required": [
+              "question",
+              "requestId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "journey",
+              "args": {
+                "question": {
+                  "$input": "question"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "check": "journey-verified",
+              "save": "journey"
+            },
+            {
+              "judge": "support"
+            }
+          ]
+        },
+        "journey-rendered": {
+          "goal": "Same journey, reading pages that refuse plain HTTP through the non-stealth Obscura runtime on an assigned port",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "obscuraPort": {
+                "type": "integer",
+                "minimum": 1024,
+                "maximum": 65535
+              },
+              "requestId": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+              }
+            },
+            "required": [
+              "question",
+              "obscuraPort",
+              "requestId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "journey",
+              "args": {
+                "obscuraPort": {
+                  "$input": "obscuraPort"
+                },
+                "question": {
+                  "$input": "question"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "check": "journey-verified",
+              "save": "journey"
+            },
+            {
+              "judge": "support"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "support": {
+          "constraints": "Completed status proves execution only. Inspect answer.citations and source receipts for entailment; quoted text existing in a source alone does not prove the claim. Preserve failed attempts and request further research if evidence is inadequate.",
+          "options": [
+            "supported",
+            "needs-more-evidence",
+            "contradicted"
+          ],
+          "question": "Do the retrieved passages support every material answer claim, with no contradiction or missing reasoning?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "DuckDuckGo serves a human-verification page after a burst",
+          "recovery": "It is reported as status challenge, the transport pauses for 60 s, and search falls back to the Wikipedia index then DDGS Yandex. Never solve or bypass it; space queries (NEYVIA_DDG_MIN_INTERVAL_MS, default 2500 ms)."
+        },
+        {
+          "failure": "Treating an exact quote as proof that the answer is right",
+          "recovery": "Citation verification proves the quoted span exists in the cached source. Use the support judgement for entailment, and run another journey or vertical when the quotes do not answer the question."
+        }
+      ],
+      "frontier": [
+        "Sentence ranking is lexical and advisory; it can pick a relevant but non-answering sentence. Twenty-question development checks are not an accuracy benchmark.",
+        "Unauthenticated GitHub search is rate limited by IP; a refused code search is reported, not retried with credentials."
+      ],
+      "guidance": [
+        "Stages, in order and each a native tool call with its own receipt: search (web.search) -> open (web.fetch, parallel) -> dedupe (web.dedupe) -> extract (web.passages plus advisory sentence ranking) -> cite (web.cite with expectedText) -> answer -> verify (web.cite again on every citation).",
+        "Before the run, author an observer goal on the receipt the caller names: G: research.receipt(path=\"research/<requestId>/receipt.json\").claimGrounding.accepted == true. A requestId is single-use; an existing receipt is never overwritten.",
+        "Search needs no key: paced DuckDuckGo HTML for the web; vertical=scholarly uses OpenAlex and arXiv, code uses GitHub repositories, encyclopedia uses Wikipedia. SearXNG (NEYVIA_SEARXNG_URL) or BRAVE_SEARCH_API_KEY are optional; an unset key is recorded as not_configured, never silently skipped.",
+        "web.fetch identifies itself honestly as NeyviaAgent. A page that refuses plain HTTP (401/403/429/503) is read through the workspace's already running non-stealth Obscura only when the journey was given obscuraPort; it is labelled obscura-rendered with plainHttpStatus. Without a runtime the refusal is reported.",
+        "answerModel=extractive (default) answers with verbatim cached spans, so every claim is byte-exact and no model or key is used. answerModel=gpt-6.1-sol may only restate the numbered verified quotes without web access; any claim citing an unknown number fails grounding.",
+        "Read receipt.stages[].elapsedMs and toolReceipts before reporting speed. Measured 2026-10-06 on 20 frozen public questions (scripts/evidence/RX-research-journeys.json): extractive journeys 20/20 completed with every citation re-verified, p50 3.2 s, mean 4.1 s, p95 6.7 s (search 1.7 s and open 1.4 s dominate); with an Obscura runtime started per journey p50 5.9 s; citation-only gpt-6.1-sol about 10 s and 9.3k tokens per journey. The lexical answer check (18/20) is a development signal, not accuracy."
+      ]
+    },
+    "public-research": {
+      "title": "Public research with source and provider receipts",
+      "state": {
+        "saved": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "receiptPath": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "type": "string"
+              },
+              "claimGrounding": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        }
+      },
+      "actions": {
+        "answer": {
+          "effect": "Use Sol-low keyword planning and live web search, C10b public-source Obscura/PDF capture with CPU LAYA advisory ranking, exact citation repair, and an independent Sol-low claim-grounding check; persist answers or explicit failures.",
+          "pre": "Public web research is authorized in the selected root; pass an explicit Obscura port inside the caller-assigned NEYVIA_BROWSER_PROOF_PORTS range (never a live Neyvia port); configured providers and the non-stealth runtime are available.",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "receiptPath": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "type": "string"
+              },
+              "claimGrounding": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "reversible": false,
+          "schema": "neyvia.research.answer",
+          "tool": "neyvia.research.answer"
+        },
+        "receipt": {
+          "effect": "Read the persisted receipt without running another model or web request.",
+          "pre": "The receipt path is inside the selected workspace and comes from its research run.",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "receiptPath": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "type": "string"
+              },
+              "claimGrounding": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.research.receipt",
+          "tool": "neyvia.research.receipt"
+        }
+      },
+      "checks": {
+        "grounded": {
+          "args": {
+            "path": {
+              "$result": "research.receiptPath"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "claimGrounding.accepted",
+            "value": true
+          },
+          "tool": "neyvia.research.receipt"
+        }
+      },
+      "procedures": {
+        "research": {
+          "goal": "Answer an authorized public question and inspect its persisted completion receipt",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "minLength": 1
+              },
+              "obscuraPort": {
+                "type": "integer",
+                "minimum": 1024,
+                "maximum": 65535
+              },
+              "timeoutSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 600
+              },
+              "rounds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              }
+            },
+            "required": [
+              "question",
+              "obscuraPort"
+            ]
+          },
+          "steps": [
+            {
+              "action": "answer",
+              "args": {
+                "obscuraPort": {
+                  "$input": "obscuraPort"
+                },
+                "question": {
+                  "$input": "question"
+                },
+                "rounds": 5,
+                "timeoutSeconds": 600
+              },
+              "check": "grounded",
+              "save": "research"
+            },
+            {
+              "judge": "support"
+            }
+          ]
+        },
+        "inspect-receipt": {
+          "goal": "Inspect source evidence and failures for an existing research run",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "steps": [
+            {
+              "action": "receipt",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "support": {
+          "constraints": "Completed status proves execution only. Inspect answer.citations and source receipts for entailment; quoted text existing in a source alone does not prove the claim. Preserve failed attempts and request further research if evidence is inadequate.",
+          "options": [
+            "supported",
+            "needs-more-evidence",
+            "contradicted"
+          ],
+          "question": "Do the retrieved passages support every material answer claim, with no contradiction or missing reasoning?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Missing runtime, search CAPTCHA, unreadable source, provider timeout or unsupported output",
+          "recovery": "Read the failed receipt and stage-specific errors; repair the underlying service or query, then run a fresh question without changing reference answers."
+        },
+        {
+          "failure": "Confusing reachable URLs or matching quotes with factual support",
+          "recovery": "Read the surrounding source context and verify the actual claim and calculation; distinguish unsupported, contradicted and inaccessible evidence."
+        }
+      ],
+      "frontier": [
+        "Open briefs and semantic accuracy require a frozen arm-blind judge; completed receipts alone are not accuracy judgments.",
+        "Subscription token usage does not establish attributable monetary cost; unavailable cost remains unknown.",
+        "General superiority and lower cost require a completed matched comparison; targeted repairs are development evidence."
+      ],
+      "guidance": [
+        "Pass an explicit port from the caller-assigned NEYVIA_BROWSER_PROOF_PORTS range; there is no default port and no stealth browsing.",
+        "Only public questions and retrieved source content go to research models. Never provide benchmark gold answers or another arm's results.",
+        "Read source receipts, model receipts, searches, cascade and elapsedMs before reporting what ran.",
+        "Search records the actual engine and each transport attempt; an unavailable configured engine is never reported as having searched.",
+        "Every live and data-only model step explicitly uses gpt-6.1-sol at low effort. Luna is never called by this research route. Sol preserves full relevant C10b source context; the independent checker verifies necessary relationships, temporal filters, calculations and every material answer claim. Reject a genuine quote attached to a false claim.",
+        "A literal span repair copies one contiguous actual source span, preserving words, numbers and punctuation; it reconciles HTML whitespace or includes actual adjacent context for a short quote, and does not establish entailment.",
+        "An explicit as-of day resolves Wikipedia revisions through the public API; month and year precision use the period's last day. Include a day when that boundary matters.",
+        "PDF sources use native pypdf extraction with a 32-MiB response byte limit and 2,097,152-character extracted-text limit, separately labeled from DOM text. Metadata records actual SHA, pages and truncation. Encrypted, malformed, incomplete or oversized PDFs are refused; no OCR or invented text is used.",
+        "Research arms receive only public prompts. Independent comparator outputs and reference answers never enter Neyvia context. Every model call has actual token receipts; evaluation overhead is separate.",
+        "Retrieved text and captured table rows retain C10b context budgets. Source ranking is advisory, never factual evidence. No whole-panel accuracy or cost claim follows from a successful native answer.",
+        "The request has a 600-second bounded model deadline. Missing providers, inaccessible sources, invalid quotes and rejected claims remain visible; no invented text or answer fallback.",
+        "Existing owner browser runtimes are borrowed and must not be stopped by a research call."
+      ]
+    },
+    "tool-gate": {
+      "title": "Research tool correctness and latency gates",
+      "state": {},
+      "actions": {
+        "observe-tool-gate": {
+          "effect": "Read the recorded public-source benchmark; do not run another research model or modify providers.",
+          "pre": "A bounded receipt.json under the selected task root contains the actual fixed tool benchmark observations.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.research.receipt",
+          "tool": "neyvia.research.receipt"
+        }
+      },
+      "checks": {
+        "tool-gate-measured": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": "",
+            "schema": {
+              "properties": {
+                "allMeasured": {
+                  "const": true
+                },
+                "casesSha256": {
+                  "const": "14a0187091c99076a30e9a61ca444a0b52ccbf6c0503a5127f607ade6e40d632"
+                },
+                "measuredTools": {
+                  "const": 17
+                },
+                "selected": {
+                  "additionalProperties": {
+                    "properties": {
+                      "baseline": {
+                        "required": [
+                          "correct",
+                          "p50Ms",
+                          "p95Ms"
+                        ],
+                        "type": "object"
+                      },
+                      "cases": {
+                        "minimum": 20,
+                        "type": "integer"
+                      },
+                      "correct": {
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "correctness": {
+                        "maximum": 1,
+                        "minimum": 0,
+                        "type": "number"
+                      },
+                      "failureRate": {
+                        "maximum": 1,
+                        "minimum": 0,
+                        "type": "number"
+                      },
+                      "p50Ms": {
+                        "minimum": 0,
+                        "type": "number"
+                      },
+                      "p95Ms": {
+                        "minimum": 0,
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "cases",
+                      "correct",
+                      "correctness",
+                      "failureRate",
+                      "p50Ms",
+                      "p95Ms",
+                      "baseline",
+                      "gates"
+                    ],
+                    "type": "object"
+                  },
+                  "required": [
+                    "web.fetch",
+                    "web.read",
+                    "web.passages",
+                    "web.cite",
+                    "web.dedupe",
+                    "web.search",
+                    "web.image_search",
+                    "neyvia.research.receipt",
+                    "neyvia.browser.decide",
+                    "web.fetch.pdf",
+                    "neyvia.pdf.open",
+                    "neyvia.pdf.extract_text",
+                    "neyvia.pdf.search",
+                    "neyvia.pdf.state",
+                    "neyvia.browser.open",
+                    "neyvia.browser.observe",
+                    "neyvia.browser.capture"
+                  ],
+                  "type": "object"
+                }
+              },
+              "required": [
+                "allMeasured",
+                "measuredTools",
+                "casesSha256",
+                "selected"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-web-fetch": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "web.fetch"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-web-read": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "web.read"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-web-passages": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "web.passages"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-web-cite": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "web.cite"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-web-dedupe": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "web.dedupe"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-web-search": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "web.search"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-web-image_search": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "web.image_search"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-research-receipt": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.research.receipt"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-browser-decide": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.browser.decide"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-web-fetch-pdf": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "web.fetch.pdf"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-pdf-open": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.pdf.open"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-pdf-extract_text": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.pdf.extract_text"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-pdf-search": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.pdf.search"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-pdf-state": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.pdf.state"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-browser-open": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.browser.open"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-browser-observe": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.browser.observe"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        },
+        "gate-neyvia-browser-capture": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": [
+              "selected",
+              "neyvia.browser.capture"
+            ],
+            "schema": {
+              "properties": {
+                "baseline": {
+                  "required": [
+                    "correct",
+                    "p50Ms",
+                    "p95Ms"
+                  ],
+                  "type": "object"
+                },
+                "cases": {
+                  "minimum": 20,
+                  "type": "integer"
+                },
+                "correct": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "correctness": {
+                  "maximum": 1,
+                  "minimum": 0.95,
+                  "type": "number"
+                },
+                "failureRate": {
+                  "maximum": 0.05,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "gates": {
+                  "properties": {
+                    "latency": {
+                      "const": true
+                    },
+                    "twentyRealCases": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "latency",
+                    "twentyRealCases"
+                  ],
+                  "type": "object"
+                },
+                "p50Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "p95Ms": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cases",
+                "correct",
+                "correctness",
+                "failureRate",
+                "p50Ms",
+                "p95Ms",
+                "baseline",
+                "gates"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.research.receipt"
+        }
+      },
+      "procedures": {
+        "tool-gate-measured": {
+          "goal": "Inspect the fixed real-case evidence against tool-gate-measured",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "tool-gate-measured",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-web-fetch": {
+          "goal": "Inspect the fixed real-case evidence against gate-web-fetch",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-web-fetch",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-web-read": {
+          "goal": "Inspect the fixed real-case evidence against gate-web-read",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-web-read",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-web-passages": {
+          "goal": "Inspect the fixed real-case evidence against gate-web-passages",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-web-passages",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-web-cite": {
+          "goal": "Inspect the fixed real-case evidence against gate-web-cite",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-web-cite",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-web-dedupe": {
+          "goal": "Inspect the fixed real-case evidence against gate-web-dedupe",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-web-dedupe",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-web-search": {
+          "goal": "Inspect the fixed real-case evidence against gate-web-search",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-web-search",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-web-image_search": {
+          "goal": "Inspect the fixed real-case evidence against gate-web-image_search",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-web-image_search",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-research-receipt": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-research-receipt",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-research-receipt",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-browser-decide": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-browser-decide",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-browser-decide",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-web-fetch-pdf": {
+          "goal": "Inspect the fixed real-case evidence against gate-web-fetch-pdf",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-web-fetch-pdf",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-pdf-open": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-pdf-open",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-pdf-open",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-pdf-extract_text": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-pdf-extract_text",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-pdf-extract_text",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-pdf-search": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-pdf-search",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-pdf-search",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-pdf-state": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-pdf-state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-pdf-state",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-browser-open": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-browser-open",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-browser-open",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-browser-observe": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-browser-observe",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-browser-observe",
+              "save": "observed"
+            }
+          ]
+        },
+        "gate-neyvia-browser-capture": {
+          "goal": "Inspect the fixed real-case evidence against gate-neyvia-browser-capture",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "observe-tool-gate",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "gate-neyvia-browser-capture",
+              "save": "observed"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Complete measurement is reported as passing tool quality",
+          "recovery": "Run the measured contract and every tool contract separately; preserve failed gates and compare paired baselines."
+        }
+      ],
+      "frontier": [
+        "These contracts inspect fixed real-case observations. They do not prove 49/50 answer accuracy, semantic entailment or public deployment."
+      ],
+      "guidance": [
+        "Use the byte-identical C10-tools.json copy at tool-gate/receipt.json, confined to the task runtime. Preserve raw per-case observations and the frozen corpus hash.",
+        "Run scripts/c10_tools.py for actual native tool and paired baseline measurements. The contracts below are the acceptance criteria; no new test files.",
+        "Run scripts/c10_tools.py with --ports (caller-assigned, e.g. 49041-49049), --obscura (explicit admitted engine) and --runtime-root on a fast local disk; there is no default port. --prefer-phase-prefix rx- selects the 2026-10-06 phases: 16/17 tools pass; neyvia.browser.decide is limited by the frozen LAYA relevance model (14/20), not by ports or providers."
+      ]
+    }
+  }
+}

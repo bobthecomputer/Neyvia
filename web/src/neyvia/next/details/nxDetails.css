@@ -1,0 +1,109 @@
+/* Neyvia details library (nxDetails.jsx). Tokens only; every transition is one of the
+   duration tokens with --nx-ease or a spring. The global rule in nxTokens.css turns them
+   into a cut under prefers-reduced-motion, so nothing here needs its own copy of it. */
+
+/* ---------- press (Emil Kowalski: scale 0.97 on press, never from nothing) ---------- */
+.nx :is(.nx-btn, .nx-iconbtn, .nx-copybtn).nx-press {
+  transition: transform var(--nx-snappy) var(--nx-spring-snappy), background var(--nx-fast) var(--nx-ease),
+    color var(--nx-fast) var(--nx-ease), box-shadow var(--nx-fast) var(--nx-ease), opacity var(--nx-fast) var(--nx-ease);
+}
+.nx :is(.nx-btn, .nx-iconbtn, .nx-copybtn).nx-press:active:not(:disabled) { transform: scale(0.97); }
+
+/* ---------- rolling number ---------- */
+.nx .nx-roll { display: inline-flex; font-variant-numeric: tabular-nums; }
+.nx .nx-roll-face { --nx-roll-h: 1.3em; display: inline-flex; align-items: baseline; }
+.nx .nx-roll-col {
+  position: relative; display: inline-grid; line-height: var(--nx-roll-h); overflow: hidden; /* a grid's baseline stays its first row's, unlike a clipped inline-block */
+  /* Faces fade through the air above and below, so a resting digit stays solid (mask alpha only). */
+  mask-image: linear-gradient(to bottom, transparent, var(--nx-bg) 24%, var(--nx-bg) 76%, transparent);
+}
+.nx .nx-roll-col::before { content: "0"; visibility: hidden; } /* sizer: one digit wide, and the baseline */
+.nx .nx-roll-strip {
+  position: absolute; inset: 0 0 auto 0; text-align: center; white-space: pre; line-height: var(--nx-roll-h);
+  transform: translateY(calc(var(--nx-roll-p, 10) * var(--nx-roll-h) * -1));
+  transition: transform var(--nx-settle) var(--nx-spring-settle);
+}
+/* Three bands of 0-9; the column rests in the middle one (nxDetailsModel.wheelTarget). */
+.nx .nx-roll-strip::before { content: "0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9"; }
+.nx .nx-roll-mark::before { content: attr(data-c); }
+.nx .nx-roll-strip.is-snap { transition: none; }
+.nx .nx-roll-col.is-new { animation: nx-roll-in var(--nx-med) var(--nx-ease); }
+@keyframes nx-roll-in { from { opacity: 0; transform: translateY(0.25em); } }
+
+/* ---------- meter ---------- */
+.nx .nx-meter {
+  position: relative; display: inline-block; width: 44px; height: 4px; border-radius: var(--nx-r-xs); overflow: hidden;
+  background: color-mix(in srgb, var(--nx-text) 10%, transparent); vertical-align: middle;
+}
+.nx .nx-meter > i {
+  position: absolute; inset: 0; border-radius: inherit; background: var(--nx-state-ok);
+  transform: scaleX(var(--nx-meter, 0)); transform-origin: left center;
+  transition: transform var(--nx-drift) var(--nx-spring-drift), background-color var(--nx-fast) var(--nx-ease);
+}
+.nx [dir="rtl"] .nx-meter > i { transform-origin: right center; }
+.nx .nx-meter.is-running > i { background: var(--nx-state-running); }
+.nx .nx-meter.is-needs > i { background: var(--nx-state-needs); }
+.nx .nx-meter.is-error > i { background: var(--nx-state-error); }
+.nx .nx-meter.is-wide { width: 100%; }
+
+/* ---------- confirm in place (idea: Rare UI delete-button, rareui.com) ---------- */
+.nx .nx-confirm-host { display: contents; }
+.nx .nx-confirm {
+  display: inline-flex; align-items: center; gap: var(--nx-space-4); padding: var(--nx-space-2) var(--nx-space-2) var(--nx-space-2) var(--nx-space-10); border-radius: var(--nx-r-pill);
+  background: var(--nx-raised-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+  font-size: var(--nx-fs-sm); color: var(--nx-text); white-space: nowrap;
+  animation: nx-confirm-in var(--nx-med) var(--nx-ease);
+}
+.nx .nx-confirm .nx-btn { border-radius: var(--nx-r-pill); }
+.nx .nx-confirm-q { margin-right: var(--nx-space-4); }
+@keyframes nx-confirm-in { from { opacity: 0; transform: scale(0.985); } }
+
+/* ---------- strike (idea: Rare UI task-list) ---------- */
+.nx .nx-strike {
+  --nx-strike-c: color-mix(in srgb, var(--nx-muted) 70%, transparent);
+  background-image: linear-gradient(var(--nx-strike-c), var(--nx-strike-c));
+  background-repeat: no-repeat; background-position: 0 58%; background-size: 0% 1px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  transition: background-size var(--nx-settle) var(--nx-ease), color var(--nx-settle) var(--nx-ease);
+}
+.nx .nx-strike.is-on { background-size: 100% 1px; color: var(--nx-muted); }
+
+/* ---------- copy ---------- */
+.nx .nx-copybtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--nx-space-6); min-width: 26px; height: 26px; padding: 0 var(--nx-space-6);
+  border-radius: var(--nx-r-sm); color: var(--nx-faint); font-size: var(--nx-fs-sm);
+}
+.nx .nx-copybtn.is-xs { min-width: 20px; height: 20px; padding: 0 var(--nx-space-4); border-radius: var(--nx-r-xs); }
+.nx .nx-copybtn:hover { color: var(--nx-text); background: var(--nx-hover); }
+.nx .nx-copybtn-icons { display: grid; }
+.nx .nx-copybtn-icons > .nx-icon { grid-area: 1 / 1; }
+.nx .nx-copybtn-copy { transition: opacity var(--nx-fast) var(--nx-ease), transform var(--nx-fast) var(--nx-ease); }
+.nx .nx-copybtn-check {
+  color: var(--nx-green); clip-path: inset(0 100% 0 0);
+  transition: clip-path var(--nx-snappy) var(--nx-ease);
+}
+.nx .nx-copybtn.is-done .nx-copybtn-copy { opacity: 0; transform: scale(0.96); }
+.nx .nx-copybtn.is-done .nx-copybtn-check { clip-path: inset(0 0 0 0); }
+.nx .nx-copybtn.is-done .nx-copybtn-label { color: var(--nx-text); }
+.nx .nx-copybtn.is-failed { color: var(--nx-red); }
+
+/* ---------- empty state ---------- */
+.nx .nx-blank {
+  display: grid; justify-items: center; gap: var(--nx-space-6); max-width: 360px; margin: 0 auto; padding: var(--nx-space-24) var(--nx-space-16); text-align: center;
+  animation: nx-fade var(--nx-med) var(--nx-ease);
+}
+.nx .nx-blank-mark {
+  display: grid; place-items: center; width: 36px; height: 36px; margin-bottom: var(--nx-space-4); border-radius: 50%;
+  background: var(--nx-accent-soft); color: var(--nx-accent-text);
+}
+.nx .nx-blank.is-filtered .nx-blank-mark { background: color-mix(in srgb, var(--nx-text) 6%, transparent); color: var(--nx-text-2); }
+.nx .nx-blank.is-done .nx-blank-mark { background: var(--nx-green-soft); color: var(--nx-green); }
+.nx .nx-blank-title { font-size: var(--nx-fs-md); font-weight: 600; color: var(--nx-text); }
+.nx .nx-blank-hint { max-width: 32ch; font-size: var(--nx-fs-sm); line-height: 1.5; color: var(--nx-muted); }
+.nx .nx-blank .nx-btn { margin-top: var(--nx-space-6); }
+
+/* Read by screen readers, not shown (same rule as the checklist's). */
+.nx .nx-visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: calc(-1 * var(--nx-space-1)); padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.nx .nx-roll-mark { white-space: pre; }

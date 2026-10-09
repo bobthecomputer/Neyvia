@@ -1,0 +1,580 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "ui-planning",
+  "kind": "environment",
+  "proofs": {
+    "area": "d-ui-planning",
+    "contracts": [
+      {
+        "checkedAt": [
+          "planner.build_docs_first_plan",
+          "proofs_d_ui_planning.check_plan",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "First task follows requested execute-first or docs-first policy, and UI objectives retain the preview acceptance gate.",
+        "id": "d-ui.plan-order",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "planner.build_docs_first_plan_receipt",
+          "proofs_d_ui_planning.check_plan_receipt",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "PlanReceipt preserves goal, pending task schema, checks and bounded compact lists; raw docs never enter inputs.",
+        "id": "d-ui.plan-compact",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "planner.build_docs_first_plan_receipt",
+          "proofs_d_ui_planning.check_plan_receipt",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Explicit selected skills override the brief; default skills and brief provenance survive compaction.",
+        "id": "d-ui.plan-skills",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "orchestration_language.NeyviaProgram.compile",
+          "proofs_d_ui_planning.check_compiled",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Validated unique dependency DAG compiles every step after its prerequisites; cycles fail before execution.",
+        "id": "d-ui.compiler-dag",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "orchestration_language.NeyviaProgram.compile",
+          "proofs_d_ui_planning.check_compiled",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Compiled permission envelopes preserve lane scopes and risk; external/destructive writes require approval and proof-bearing steps retain proofRequired.",
+        "id": "d-ui.compiler-authority",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "orchestration_language.NeyviaProgram.compile",
+          "proofs_d_ui_planning.check_compiled",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "SHA256 and size bind the compiled canonical typed plan.",
+        "id": "d-ui.compiler-hash",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "orchestration_language.compile_neyvia_program",
+          "orchestration_language.NeyviaProgram.compile",
+          "proofs_ui_planning_journey.self_check"
+        ],
+        "claim": "A reviewed plan keeps dependent work ordered, marks external writes for approval and proof, and rejects a dependency cycle before it can become an executable plan.",
+        "id": "p22.ui-planning.authority-journey",
+        "impact": [
+          "typed mission plans",
+          "execution approval",
+          "proof-bearing steps"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "night_mode.build_night_readiness_receipt",
+          "proofs_d_ui_planning.check_readiness",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Every failed preflight check blocks readiness; missing/short/long synthetic key statuses remain bounded and masked.",
+        "id": "d-ui.night-readiness",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "night_mode.classify_night_work",
+          "night_mode.rank_night_queue",
+          "night_mode.production_night_profile_payload",
+          "proofs_d_ui_planning.check_night_policy/check_night_queue/check_night_profile",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Production profile keeps mission execution and receipt gates; capacity/approval work defers, unknowns hold, and admitted work ranks without loss.",
+        "id": "d-ui.night-policy",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "night_mode.build_readiness_failure_message",
+          "proofs_d_ui_planning.check_notification",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Passed readiness skips notification; blocked readiness links exactly its failure count and reasons to the receipt.",
+        "id": "d-ui.night-notification",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "night_mode.write_morning_digest",
+          "proofs_d_ui_planning.check_digest",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Returned digest equals persisted JSON; counts match rows and markdown retains completed work, blocks, proof gaps and risks.",
+        "id": "d-ui.night-digest",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_analytics.publish_indicator",
+          "proofs_d_ui_planning.check_usage",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Headline shows newly used tokens with cache reads separate; unknown totals stay unknown and partial coverage remains labelled.",
+        "id": "d-ui.usage-truth",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_view_tools.call",
+          "neyvia_view_tools._arrange",
+          "proof_contracts.before_action",
+          "proofs_d_ui_planning.check_arranged",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Invalid order/widget requests refuse before durable state/events; valid layout patches preserve omitted fields and return the emitted patch.",
+        "id": "d-ui.view-arrange",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_workspace_tools.DEFINITIONS",
+          "neyvia_workspace_tools.WorkspaceTools.call",
+          "proof_contracts.before_action",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Host-grounded public view.arrange schema exposes four regions and left/right dock; pane.show exposes replay, builder and accounts.",
+        "id": "d-ui.view-schemas",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_view_tools.call",
+          "neyvia_settings.update",
+          "proof_contracts.before_action",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Scene switch/save are exclusive and cannot overwrite built-ins; invalid themes refuse; known chats float/unfloat through the durable UI bus.",
+        "id": "d-ui.view-controls",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "research.search_workspace_detailed",
+          "proofs_d_ui_planning.check_search",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Bounded search returns only root-confined positive-line text matches satisfying the glob; generated/binary files are excluded, and timeout never claims completeness.",
+        "id": "d-ui.search-bounds",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "product_catalog.ProductDescriptor.validate",
+          "product_catalog.ProductDescriptor.as_dict",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Interactive user surfaces must be shared apps with independent GitHub source, never tools.",
+        "id": "d-ui.product-boundary",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "ocr_benchmark.character_error_rate",
+          "ocr_benchmark.word_error_rate",
+          "ocr_benchmark.aggregate_scores",
+          "proofs_d_ui_planning.check_ocr_metric/check_ocr_aggregate",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Normalized equality yields zero error; aggregate quality, latency and peak VRAM retain their observations and denominator.",
+        "id": "d-ui.ocr-quality",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "ocr_benchmark.select_ocr_route",
+          "proofs_d_ui_planning.check_ocr_route",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Explicit bounded override wins; automatic routing prefers native text, then requested fast GPU path, structured GPU path, scanned GPU text, or CPU fallback.",
+        "id": "d-ui.ocr-route",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Receipt validation rejects stale source/time, mismatched history, invisible tab/modal states, undefined text, poor contrast, unsafe paths and sensitive keys. This validates receipts and does not authenticate a browser capture.",
+        "id": "d-ui.mesh-receipt",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "skill_capsules.SkillCapsuleRegistry.compile",
+          "proofs_d_ui_planning.check_capsules",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Every available bounded instruction receipt hashes current local source; compiled design capsule proof gates and complete plan hash remain bound.",
+        "id": "d-ui.design-capsules",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "capability_service.CapabilityService.execute_tool_operation",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Office operations enforce advertised operation identity and input schema; adapters lacking executable support return a truthful unavailable receipt.",
+        "id": "d-ui.office-boundary",
+        "impact": [
+          "planning receipts",
+          "UI bus",
+          "search and document tools"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "ocr_benchmark.load_candidate_registry",
+          "proofs_d_ui_planning.check_ocr_candidates",
+          "proofs_d_ui_planning.self_check"
+        ],
+        "claim": "Candidate registry requires unique identity, license and source; known production OCR identities retain their defined roles and CPU emergency fallback is ineligible for promotion.",
+        "id": "d-ui.ocr-candidates",
+        "impact": [
+          "OCR engine admission",
+          "model provenance",
+          "fallback boundary"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web_backend.FluxioWebBackend._workspace_integrity_receipt",
+          "proofs_d_ui_planning.check_integrity",
+          "proofs_d_ui_planning.orchestration_self_checks"
+        ],
+        "claim": "Integrity receipts fail closed without authoritative change evidence; read-only protection is identified separately, and observed pre/post changes preserve bounded files, state and provenance.",
+        "id": "d-ui.workspace-integrity",
+        "impact": [
+          "orchestration dependency context",
+          "workspace change receipts",
+          "read-only authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web_backend.FluxioWebBackend._apply_orchestration_workspace_evidence",
+          "proofs_d_ui_planning.check_workspace_evidence",
+          "proofs_d_ui_planning.orchestration_self_checks"
+        ],
+        "claim": "Complete before/after SHA256 snapshots identify modified, created and removed files plus the unchanged case; incomplete snapshots never fabricate content evidence or replace adapter claims.",
+        "id": "d-ui.workspace-snapshots",
+        "impact": [
+          "orchestration dependency context",
+          "workspace change receipts",
+          "read-only authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web_backend.FluxioWebBackend._dependency_context_rows",
+          "proofs_d_ui_planning.check_dependency_context",
+          "proofs_d_ui_planning.orchestration_self_checks"
+        ],
+        "claim": "Only completed dependency ancestors enter context; bounded salient reply, route and status remain ahead of raw runtime compartments/tool noise.",
+        "id": "d-ui.dependency-context",
+        "impact": [
+          "orchestration dependency context",
+          "workspace change receipts",
+          "read-only authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web_backend.FluxioWebBackend._build_neyvia_base_context",
+          "proofs_d_ui_planning.check_route_context",
+          "proofs_d_ui_planning.orchestration_self_checks"
+        ],
+        "claim": "Persisted immutable route identity/version enters base context first, ahead of bounded turn history; its sanitized projection matches the original conversation metadata.",
+        "id": "d-ui.route-context",
+        "impact": [
+          "immutable conversation routes",
+          "execution context",
+          "selected prompt profile"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web_backend._chat_prompt",
+          "proofs_d_ui_planning.check_selected_prompt",
+          "proofs_d_ui_planning.orchestration_self_checks"
+        ],
+        "claim": "The normal adaptive execution prompt preserves the explicitly selected task-profile identity, full compiled adaptive contract and original user request; authored instruction branches retain their existing precedence.",
+        "id": "d-ui.selected-profile",
+        "impact": [
+          "immutable conversation routes",
+          "execution context",
+          "selected prompt profile"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "proofs-d-planning": {
+      "title": "Planning, execution policy and receipt authority",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Source text or scratch fixture is mistaken for a real rendered product journey",
+          "recovery": "Keep rendered/desktop/provider cases pending until live DOM and state receipts prove their important paths"
+        }
+      ],
+      "frontier": [
+        "Source-only appearance/navigation assertions need rendered user journeys",
+        "Office execution requires a real installed executable adapter; runtime discovery requires reviewed local fixture executables"
+      ],
+      "guidance": [
+        "Domain postconditions run on every public production call; startup adapter is proofs_d_ui_planning.self_check",
+        "Source-only assertions are retained; metadata fixture and receipt-validator evidence never imply a browser or provider was used",
+        "Orchestration scratch batch calls the real backend content-snapshot and evidence methods with actual before/after files; it invokes no model/provider and grants no remote or publish authority."
+      ]
+    },
+    "proofs-d-research-documents": {
+      "title": "Search, OCR and Office boundaries",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Source text or scratch fixture is mistaken for a real rendered product journey",
+          "recovery": "Keep rendered/desktop/provider cases pending until live DOM and state receipts prove their important paths"
+        }
+      ],
+      "frontier": [
+        "Source-only appearance/navigation assertions need rendered user journeys",
+        "Office execution requires a real installed executable adapter; runtime discovery requires reviewed local fixture executables"
+      ],
+      "guidance": [
+        "Domain postconditions run on every public production call; startup adapter is proofs_d_ui_planning.self_check",
+        "Source-only assertions are retained; metadata fixture and receipt-validator evidence never imply a browser or provider was used"
+      ]
+    },
+    "proofs-d-ui-state": {
+      "title": "Durable view and token observations",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "providerSessionsObserved": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok",
+              "providerSessionsObserved"
+            ]
+          },
+          "tool": "neyvia.state"
+        }
+      },
+      "actions": {
+        "observe": {
+          "effect": "Read the same durable UI bus state used by real view actions",
+          "pre": "Selected workspace; no provider sessions are queried when no backend is attached",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "providerSessionsObserved"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.state",
+          "tool": "neyvia.state"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.state"
+        }
+      },
+      "procedures": {
+        "observe-local-state": {
+          "goal": "Observe durable UI state without triggering remote discovery",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "observe",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Source text or scratch fixture is mistaken for a real rendered product journey",
+          "recovery": "Keep rendered/desktop/provider cases pending until live DOM and state receipts prove their important paths"
+        }
+      ],
+      "frontier": [
+        "Source-only appearance/navigation assertions need rendered user journeys",
+        "Office execution requires a real installed executable adapter; runtime discovery requires reviewed local fixture executables"
+      ],
+      "guidance": [
+        "Domain postconditions run on every public production call; startup adapter is proofs_d_ui_planning.self_check",
+        "Source-only assertions are retained; metadata fixture and receipt-validator evidence never imply a browser or provider was used",
+        "Schema-precondition messages now identify invalid fields before legacy custom arrangement reasons; refusal plus unchanged durable state/events is the preserved behavior."
+      ]
+    }
+  }
+}

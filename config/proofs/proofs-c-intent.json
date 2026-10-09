@@ -1,0 +1,48 @@
+{
+  "area": "proofs-c-intent",
+  "module": "grant_agent.proofs_c_intent",
+  "self_check": "self_check",
+  "manuals": [],
+  "contracts": [
+    {
+      "id": "proofs-c.intent.task-tools",
+      "phase": "post",
+      "claim": "Every headless Claude turn exposes the four task tools before it runs.",
+      "checkedAt": [
+        "neyvia_intent_plan.claude_turn_args -> proofs_c_intent.check_turn"
+      ],
+      "impact": [
+        "harness launch arguments",
+        "intent checklist"
+      ]
+    },
+    {
+      "id": "proofs-c.intent.multi-ask-note",
+      "phase": "post",
+      "claim": "Long or multi-ask turns receive the intent note; simple single asks receive no checklist ceremony.",
+      "checkedAt": [
+        "neyvia_intent_plan.claude_turn_args -> proofs_c_intent.check_turn"
+      ],
+      "impact": [
+        "harness launch arguments",
+        "intent checklist"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_intent_turn_note.py",
+      "case": "test_only_multi_ask_turns_get_the_checklist_note",
+      "contracts": [
+        "proofs-c.intent.task-tools",
+        "proofs-c.intent.multi-ask-note"
+      ],
+      "checkedAt": [
+        "neyvia_intent_plan.claude_turn_args -> proofs_c_intent.check_turn"
+      ],
+      "procedure": "multi-ask",
+      "case_id": "tests/test_intent_turn_note.py::test_only_multi_ask_turns_get_the_checklist_note"
+    }
+  ],
+  "portRoles": []
+}

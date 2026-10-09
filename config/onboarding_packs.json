@@ -1,0 +1,234 @@
+{
+  "schema": "neyvia.onboarding-pack-deliveries/v1",
+  "manifests": {
+    "pack.creator-sdk": "config/onboarding_packs/pack.creator-sdk/manifest.json",
+    "pack.apple-builder": "config/onboarding_packs/pack.apple-builder/manifest.json",
+    "pack.nas-worker": "config/onboarding_packs/pack.nas-worker/manifest.json",
+    "pack.nearby-share": "config/onboarding_packs/pack.nearby-share/manifest.json",
+    "pack.folder-sync": "config/onboarding_packs/pack.folder-sync/manifest.json",
+    "pack.encrypted-chat": "config/onboarding_packs/pack.encrypted-chat/manifest.json",
+    "pack.password-vault": "config/onboarding_packs/pack.password-vault/manifest.json",
+    "pack.p2p-cache": "config/onboarding_packs/pack.p2p-cache/manifest.json",
+    "pack.documents-office": "config/onboarding_packs/pack.documents-office/manifest.json",
+    "pack.ocr-local": "config/onboarding_packs/pack.ocr-local/manifest.json",
+    "pack.android-lab": "config/onboarding_packs/pack.android-lab/manifest.json",
+    "pack.developer-toolchains": "config/onboarding_packs/pack.developer-toolchains/manifest.json",
+    "pack.models-gpu": "config/onboarding_packs/pack.models-gpu/manifest.json",
+    "pack.media-creative": "config/onboarding_packs/pack.media-creative/manifest.json",
+    "pack.mesh-control-plane": "config/onboarding_packs/pack.mesh-control-plane/manifest.json"
+  },
+  "packages": {
+    "pack.documents-office": {
+      "localComponents": false,
+      "contents": [],
+      "entrypoints": [],
+      "missing": [
+        "Provide portable Poppler, LibreOffice, LaTeX, LanguageTool and Argos payloads with redistribution provenance; resolve and lock translation/model dependencies.",
+        "Pandoc archive and LibreTranslate wheel are pinned source inputs; extraction, dependencies and scoped runtime activation remain."
+      ],
+      "sourceInputs": [
+        "inputs/pandoc-3.10.1-windows-x86_64.zip",
+        "inputs/libretranslate-1.9.6-py3-none-any.whl"
+      ]
+    },
+    "pack.ocr-local": {
+      "localComponents": false,
+      "contents": [],
+      "entrypoints": [],
+      "missing": [
+        "Provide pinned GLM-OCR model, compatible inference runtime, Tesseract and Paddle runtime/models; approve any model payload above 200 MB.",
+        "PaddleOCR and OCRmyPDF wheels are pinned inputs; native dependencies, models and runtime activation remain."
+      ],
+      "sourceInputs": [
+        "inputs/paddleocr-3.7.0-py3-none-any.whl",
+        "inputs/ocrmypdf-17.8.1-py3-none-any.whl"
+      ]
+    },
+    "pack.creator-sdk": {
+      "localComponents": true,
+      "contents": [
+        "src/grant_agent/module_marketplace.py",
+        "config/neyvia_module_manifest_schema.json",
+        "sdk/typescript/tsconfig.json",
+        "sdk/typescript/src/generated/neyvia-contracts.ts"
+      ],
+      "entrypoints": [
+        "grant_agent.module_marketplace:_canonical_manifest_sha256"
+      ],
+      "description": "Module authoring schema, TypeScript bindings and deterministic package/signing library",
+      "missing": [
+        "Build, detached signing, validation, and local/NAS seed publishing are implemented. Project templates, compatibility emulators, public OCI publishing, and a publisher-facing guided workflow remain incomplete.",
+        "External executable/runtime payloads not included: tool.cosign, tool.wasmtime, tool.syft, tool.grype."
+      ]
+    },
+    "pack.android-lab": {
+      "localComponents": false,
+      "contents": [],
+      "entrypoints": [],
+      "missing": [
+        "Select and approve Android SDK components and licenses; provide Appium server/driver lock and portable Node runtime.",
+        "scrcpy archive is pinned; extraction and physical device authorization remain."
+      ],
+      "sourceInputs": [
+        "inputs/scrcpy-win64-v4.1.zip"
+      ]
+    },
+    "pack.apple-builder": {
+      "localComponents": true,
+      "contents": [
+        "src/grant_agent/ios_studio.py",
+        "src/grant_agent/windows_ios_compiler.py",
+        "native/ios/neyvia_runtime.c",
+        "native/ios/stubs/libobjc.tbd",
+        "native/ios/stubs/libSystem.tbd",
+        "native/ios/stubs/Frameworks/UIKit.framework/UIKit.tbd"
+      ],
+      "entrypoints": [
+        "grant_agent.ios_studio:_safe_slug"
+      ],
+      "description": "Windows iOS compiler library and native runtime/link stubs",
+      "missing": [
+        "LLVM/clang Windows iOS compiler, authorized iOS SDK/signing toolchain and Xcode worker (for remote builds) are not delivered."
+      ]
+    },
+    "pack.developer-toolchains": {
+      "localComponents": false,
+      "contents": [],
+      "entrypoints": [],
+      "missing": [
+        "Provide scoped Git, Docker engine and PostgreSQL payloads; choose a scientific Python dependency lock and compatible portable environment.",
+        "DuckDB archive and Polars frontend wheel are pinned; native Polars runtime and dependency installation remain."
+      ],
+      "sourceInputs": [
+        "inputs/duckdb_cli-windows-amd64.zip",
+        "inputs/polars-1.44.2-py3-none-any.whl"
+      ]
+    },
+    "pack.models-gpu": {
+      "localComponents": false,
+      "contents": [],
+      "entrypoints": [],
+      "missing": [
+        "Choose and approve a GPU/CUDA-compatible torch build and complete dependency lock; the pinned PyPI wheel is a CPU/source input, not proof of GPU readiness.",
+        "Select authorized model weights, licenses and evaluation payloads; approve each download above 200 MB."
+      ],
+      "sourceInputs": [
+        "inputs/torch-2.14.1-cp313-cp313-win_amd64.whl",
+        "inputs/transformers-5.18.0-py3-none-any.whl"
+      ]
+    },
+    "pack.media-creative": {
+      "localComponents": false,
+      "contents": [],
+      "entrypoints": [],
+      "missing": [
+        "Approve FreeCAD portable archive (418105231 bytes, above 200 MB) before downloading.",
+        "Provide pinned FFmpeg, ImageMagick, GIMP, Blender, KiCad, OpenSCAD, Inkscape and Scribus payloads and extraction/runtime adapters.",
+        "Godot and FreeCAD source archives are pinned; extraction and engine launch verification remain."
+      ],
+      "sourceInputs": [
+        "inputs/Godot_v4.7.1-stable_win64.exe.zip",
+        "inputs/FreeCAD_1.1.0-Windows-x86_64-py311.7z"
+      ]
+    },
+    "pack.nas-worker": {
+      "localComponents": true,
+      "contents": [
+        "src/grant_agent/nas_transfer.py"
+      ],
+      "entrypoints": [
+        "grant_agent.nas_transfer:_safe_relative_destination"
+      ],
+      "description": "Verified resumable NAS transfer helper; worker service is not activated",
+      "missing": [
+        "NAS worker service/controller pairing and protected credentials are not delivered or activated."
+      ]
+    },
+    "pack.mesh-control-plane": {
+      "localComponents": false,
+      "contents": [],
+      "entrypoints": [],
+      "missing": [
+        "Approve target Linux/NAS worker and protected control-plane configuration; the pinned Linux Headscale binary does not run on Windows.",
+        "Provide private WireGuard relay, DNS/routes/policy deployment payload and protected identity; no network services are changed by this track."
+      ],
+      "sourceInputs": [
+        "inputs/headscale_0.29.4_linux_amd64"
+      ]
+    },
+    "pack.nearby-share": {
+      "localComponents": true,
+      "contents": [
+        "src/grant_agent/nearby_send.py",
+        "config/neyvia_nearby_send.json"
+      ],
+      "entrypoints": [
+        "grant_agent.nearby_send:NearbySendService.build_plan"
+      ],
+      "description": "LocalSend sender and hash-bound transfer planning library",
+      "missing": [
+        "The LocalSend v2.1 sender and optional 1.17.0 compatibility client are verified. The Neyvia receiver sidecar, text/link first-class payloads, favorite-device policy, and Windows-to-Android physical-device proof remain."
+      ]
+    },
+    "pack.folder-sync": {
+      "localComponents": true,
+      "contents": [
+        "src/grant_agent/folder_sync.py",
+        "config/neyvia_folder_sync.json"
+      ],
+      "entrypoints": [
+        "grant_agent.folder_sync:FolderSyncService.policy"
+      ],
+      "description": "Credential-hiding folder synchronization control library",
+      "missing": [
+        "The Syncthing 2.1.2 transport is staged and the authenticated, credential-hiding Neyvia control contract is implemented. Creating the isolated production identity, pairing the NAS and Android peers, proving reconnect/conflict/version-restore on physical devices, and installing the supervised demand-start service remain.",
+        "Syncthing transport executable and protected pairing state are not included."
+      ]
+    },
+    "pack.encrypted-chat": {
+      "localComponents": true,
+      "contents": [
+        "src/grant_agent/encrypted_chat.py",
+        "config/neyvia_chat.json"
+      ],
+      "entrypoints": [
+        "grant_agent.encrypted_chat:EncryptedChatService.lifecycle_snapshot"
+      ],
+      "description": "Encrypted chat enrollment/planning/history control library",
+      "missing": [
+        "The Matrix 1.157.1 compatibility stack, Element clients, and the credential-hiding Neyvia chat contract are implemented. A private NAS homeserver, protected production account and crypto store, cross-device verification, real encrypted-room send/read proof, and the native stdin/IPC sidecar remain before production activation.",
+        "Matrix homeserver/crypto-enabled sidecar and protected accounts are not included."
+      ]
+    },
+    "pack.password-vault": {
+      "localComponents": true,
+      "contents": [
+        "src/grant_agent/secret_broker.py",
+        "config/neyvia_secret_broker.json"
+      ],
+      "entrypoints": [
+        "grant_agent.secret_broker:SecretBrokerService.audit"
+      ],
+      "description": "Opaque destination-bound secret handle broker library",
+      "missing": [
+        "Vaultwarden 1.36.0 and the verified Bitwarden CLI OSS 2026.7.0 transport are selected, and the opaque destination-bound Neyvia broker is implemented. NAS Vaultwarden deployment, protected account/session provisioning, real client interoperability, fixed production destination bindings, OS credential-store integration, and physical autofill/share proof remain.",
+        "Vaultwarden server and Bitwarden client/protected session are not included."
+      ]
+    },
+    "pack.p2p-cache": {
+      "localComponents": true,
+      "contents": [
+        "src/grant_agent/p2p_cache.py",
+        "config/neyvia_p2p_cache.json"
+      ],
+      "entrypoints": [
+        "grant_agent.p2p_cache:P2PCacheService.import_object"
+      ],
+      "description": "BLAKE3 local object-cache and Iroh control library",
+      "missing": [
+        "The BLAKE3 local CAS, SQLite index, hash-bound imports, deduplication, bounded offline reads, authenticated Iroh 1.0.3/iroh-blobs 0.103.0 fetch sidecar, lazy persistent client session, and supervised approval-gated provider lifecycle are implemented. Production peer enrollment, a private relay, multi-peer scheduling, replication policy, quota/GC policy, Android binding, signed release distribution, and measured Windows-Android-NAS context latency remain.",
+        "Iroh executable/private relay and enrolled peer credentials are not included; local CAS requires blake3 and cryptography in the core Python runtime."
+      ]
+    }
+  }
+}

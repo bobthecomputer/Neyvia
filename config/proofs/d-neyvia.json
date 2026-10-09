@@ -1,0 +1,1097 @@
+{
+  "area": "d-neyvia",
+  "module": "grant_agent.proofs_d_neyvia",
+  "self_check": "self_check",
+  "manuals": [
+    "neyvia-core"
+  ],
+  "contracts": [
+    {
+      "id": "neyvia-core.prompt-selection",
+      "phase": "post",
+      "claim": "Explicit profiles take precedence; otherwise select the strongest keyword match with priority tie breaking and faithful policy metadata.",
+      "checkedAt": [
+        "neyvia_ecosystem.infer_task_prompt_profile -> proofs_d_neyvia.check_profile",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "prompt preparation"
+      ]
+    },
+    {
+      "id": "neyvia-core.prompt-preservation",
+      "phase": "invariant",
+      "claim": "Prompt preparation retains the authoritative request, provided scope/ownership/constraints and orchestration/harness/runtime boundaries; disabled rewrite returns the exact request.",
+      "checkedAt": [
+        "neyvia_ecosystem.build_adaptive_task_prompt/apply_silent_ecosystem_rewrite -> proofs_d_neyvia.check_prompt/check_rewrite",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "prompt preparation"
+      ]
+    },
+    {
+      "id": "neyvia-core.domain-policy",
+      "phase": "invariant",
+      "claim": "Study retains source-led context and four checks, architecture rich context and five; communication keeps per-action send/delete approvals and experimentation keeps Observe/Simulate/Act plus failures.",
+      "checkedAt": [
+        "neyvia_ecosystem.infer_task_prompt_profile/build_adaptive_task_prompt -> proofs_d_neyvia.check_profile/check_prompt",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "prompt preparation"
+      ]
+    },
+    {
+      "id": "neyvia-core.image-spec",
+      "phase": "post",
+      "claim": "Image preparation retains every supplied visual field including exact text/composition and never adds a coding proof budget.",
+      "checkedAt": [
+        "neyvia_ecosystem.build_image_generation_prompt -> proofs_d_neyvia.check_image",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "prompt preparation"
+      ]
+    },
+    {
+      "id": "neyvia-core.application-projection",
+      "phase": "post",
+      "claim": "Module capabilities and typed surfaces project into native manifests; only an active module binds its served entrypoint.",
+      "checkedAt": [
+        "neyvia_application_contract._module_to_manifest -> proofs_d_neyvia.check_projection",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "native applications"
+      ]
+    },
+    {
+      "id": "neyvia-core.sdk-durable",
+      "phase": "post",
+      "claim": "Successful SDK registration returns exactly saved metadata for one identity, with previously adopted services retained on update.",
+      "checkedAt": [
+        "neyvia_application_contract.register_sdk_application -> proofs_d_neyvia.check_sdk",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "native applications"
+      ]
+    },
+    {
+      "id": "neyvia-core.bundled-catalog",
+      "phase": "post",
+      "claim": "Every bundled declaration appears once with its identity/name/launch/logo/capabilities/permissions preserved and marketplace eligibility.",
+      "checkedAt": [
+        "neyvia_application_contract.bundled_application_catalog -> proofs_d_neyvia.check_bundled",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "native applications"
+      ]
+    },
+    {
+      "id": "neyvia-core.bundled-durable",
+      "phase": "post",
+      "claim": "Catalog activation matches installation storage and successful install is durably active with the declared launch route before returning.",
+      "checkedAt": [
+        "neyvia_application_contract.bundled_application_catalog/install_bundled_application -> proofs_d_neyvia.check_bundled/check_install",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "native applications"
+      ]
+    },
+    {
+      "id": "neyvia-core.browser-pending",
+      "phase": "invariant",
+      "claim": "Queued native browser actions cannot claim an unobserved native result; restored tabs lose runtime liveness and owner grants.",
+      "checkedAt": [
+        "neyvia_browser.BrowserService.__init__/queue -> proofs_d_neyvia.browser_restored/browser_queue",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "browser authority"
+      ]
+    },
+    {
+      "id": "neyvia-core.browser-authority",
+      "phase": "pre",
+      "claim": "Owner-only browser controls cannot be granted by model requests; runtime effects require the current memory-only capability.",
+      "checkedAt": [
+        "neyvia_browser.BrowserService.request/runtime -> proofs_d_neyvia.browser_owner/browser_runtime",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "browser authority"
+      ]
+    },
+    {
+      "id": "neyvia-core.browser-url",
+      "phase": "pre",
+      "claim": "Before queueing, browser navigation accepts only bounded HTTP(S) URLs without embedded credentials.",
+      "checkedAt": [
+        "neyvia_browser.web_url -> proofs_d_neyvia.browser_url",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "browser authority"
+      ]
+    },
+    {
+      "id": "neyvia-core.browser-ports",
+      "phase": "pre",
+      "claim": "Configured proof ports are a nonempty subset of assigned local proof ranges; protected runtime ports are refused without contact.",
+      "checkedAt": [
+        "browser_obscura.proof_ports -> proofs_d_neyvia.browser_ports",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "browser authority"
+      ]
+    },
+    {
+      "id": "neyvia-core.account-devices",
+      "phase": "post",
+      "claim": "Device labels are short plain platform/browser names; account commands remain allowed by the desktop bridge.",
+      "checkedAt": [
+        "neyvia_accounts.describe_device -> proofs_d_neyvia.account_device",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.account-session-binding",
+      "phase": "invariant",
+      "claim": "Successful session lookup binds its principal and public id to stored account identity, upgrading shared legacy binding before return; changed/removed identities cannot authenticate.",
+      "checkedAt": [
+        "web_auth_sessions.WebAuthSessions.lookup -> proofs_d_neyvia.account_session",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.rpc-authority",
+      "phase": "invariant",
+      "claim": "Agent-facing RPC excludes approve/cancel operator methods and reports the real verifier readiness, read-only default, signed authorization requirement and no automatic retry or personhood claim.",
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.capabilities/dispatch -> proofs_d_neyvia.rpc_capabilities/rpc_methods",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.rpc-protocol",
+      "phase": "post",
+      "claim": "RPC replies retain request identity/result; notifications emit nothing; JSONL parse and parameter errors carry the correct failure envelope and permit subsequent requests.",
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.dispatch/error_response -> proofs_d_neyvia.rpc_reply/rpc_error",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.rpc-plan",
+      "phase": "post",
+      "claim": "RPC plan compilation retains the selected behavior, resolved resource mode and compiled skill binding.",
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.plan_compile -> proofs_d_neyvia.require",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mcp-protocol",
+      "phase": "post",
+      "claim": "MCP initialization negotiates requested protocol/task augmentation; tool catalogs are ordered and stable with real synchronous and durable execution surfaces.",
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._initialize/handle -> proofs_d_neyvia.mcp_initialize/mcp_catalog",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mcp-task-durable",
+      "phase": "invariant",
+      "claim": "Task tools require augmentation and return a saved openable task; training batches persist bounded children with terminal/input-only wake policy; terminal results retain saved payload and related-task provenance.",
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool/_task_result -> proofs_d_neyvia.mcp_call_pre/mcp_call_post/mcp_task_result",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mcp-sync-budget",
+      "phase": "post",
+      "claim": "Time budget calls return the decision synchronously without task wrapping, including when reached through workspace registration.",
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool -> proofs_d_neyvia.mcp_call_post",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mcp-autonomy",
+      "phase": "post",
+      "claim": "MCP autonomy check reports the exact durable scoped policy decision and revocation returns inactive state.",
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool -> proofs_d_neyvia.mcp_call_post",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mcp-conversation",
+      "phase": "post",
+      "claim": "MCP question branches have durable read-only policy; search/context retain evidence; approved typed plans expose exactly the named saved child contracts, approval hash, parent task and concurrency governor.",
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool -> proofs_d_neyvia.mcp_call_post",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.conversation-turns",
+      "phase": "invariant",
+      "claim": "Atomic turn append retains identity/role/content and increments revision once; stale revisions and different reuse of an id fail before writes; identical idempotent replay leaves state unchanged.",
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.append_turn -> proofs_d_neyvia.conversation_revision/conversation_replay/conversation_append",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.conversation-activity",
+      "phase": "invariant",
+      "claim": "Nonmeaningful heartbeat turns cannot advance meaningful timestamps; automatic and suggested titles are persisted under their existing policy.",
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.append_turn -> proofs_d_neyvia.conversation_append",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.conversation-pages",
+      "phase": "post",
+      "claim": "Turn pages are bounded, unique and chronological with accurate metadata and a strictly exclusive earlier cursor.",
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.get_conversation_page -> proofs_d_neyvia.conversation_page",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.conversation-question",
+      "phase": "invariant",
+      "claim": "Question branches retain parent identity and initial user turn, durably read-only; host action checks permit only the declared read prefixes.",
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.create_question_branch/action_allowed -> proofs_d_neyvia.conversation_question/conversation_action",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.conversation-deletion",
+      "phase": "post",
+      "claim": "Soft deletion retains its timestamped tombstone and removes active context and search entries within the transaction.",
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.delete_conversation -> proofs_d_neyvia.conversation_delete",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.conversation-receipts",
+      "phase": "post",
+      "claim": "Receipt indexes expose only identity/time/receipt, preserve nested runtime provenance and reject cross-conversation access without exposing turn text.",
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.list_turn_receipts/get_turn_receipt -> proofs_d_neyvia.conversation_receipts",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.conversation-import",
+      "phase": "post",
+      "claim": "Legacy import reports durable conversation/turn identity growth and repeated import skips the same IDs without duplicating searchable turns.",
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.import_legacy_state -> proofs_d_neyvia.conversation_import",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.rpc-device-binding",
+      "phase": "invariant",
+      "claim": "Signed host approval traverses the actual RPC pairing/request/enqueue/claim/complete path with exact device/actor/session/run binding and an authenticated durable terminal receipt; no physical device action is claimed by scratch verification.",
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.dispatch -> proofs_d_neyvia.rpc_device_response",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.agent-config",
+      "phase": "pre",
+      "claim": "Native agent configuration requires a safe session identity, 1-64 turns and a known transport before runtime execution.",
+      "checkedAt": [
+        "neyvia_agent.NeyviaAgentConfig.validated -> proofs_d_neyvia.agent_config",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.agent-version",
+      "phase": "post",
+      "claim": "The lightweight CLI and full parser expose one readable canonical product/version line without requiring a task; the lightweight path avoids loading the agent SDK.",
+      "checkedAt": [
+        "neyvia_agent_cli.main/neyvia_agent.main -> proofs_d_neyvia.agent_version",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.hosted-entrypoint",
+      "phase": "post",
+      "claim": "Only active application projections bind browser-loadable relative, HTTPS or local HTTP entrypoints; inactive and file URL projections have no hosted endpoint.",
+      "checkedAt": [
+        "neyvia_application_contract._module_to_manifest -> proofs_d_neyvia.check_projection",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mobile-project",
+      "phase": "post",
+      "claim": "Mobile project discovery retains configured app identity and selects the first existing export in the declared priority, including Capacitor and Expo metadata.",
+      "checkedAt": [
+        "neyvia_mobile_studio.project_info -> proofs_d_neyvia.mobile_project",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mobile-injection",
+      "phase": "post",
+      "claim": "Mobile preview injects script-safe configuration before application code, answers dark/light and safe-area queries, and confines root asset references to its capability base.",
+      "checkedAt": [
+        "neyvia_mobile_studio._inject/_scheme -> proofs_d_neyvia.mobile_inject/mobile_scheme",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mobile-confinement",
+      "phase": "invariant",
+      "claim": "Preview requests remain inside the project export capability; traversal fails, SPA fallback serves only extensionless paths and the opaque sandbox never grants same-origin authority.",
+      "checkedAt": [
+        "neyvia_mobile_studio.serve_preview/_send -> proofs_d_neyvia.mobile_target/mobile_sandbox",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    },
+    {
+      "id": "neyvia-core.mobile-storage",
+      "phase": "invariant",
+      "claim": "Preview storage accepts only bounded JSON string maps, rejects malformed requests without writes and returns the durably persisted project map.",
+      "checkedAt": [
+        "neyvia_mobile_studio.serve_preview -> proofs_d_neyvia.mobile_storage_body/mobile_storage_saved",
+        "proofs_d_neyvia.self_check"
+      ],
+      "impact": [
+        "account devices and sessions"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_neyvia_auto_prompt.py",
+      "case": "test_profile_inference_distinguishes_task_nature",
+      "contracts": [
+        "neyvia-core.prompt-selection",
+        "neyvia-core.domain-policy"
+      ],
+      "checkedAt": [
+        "neyvia_ecosystem.infer_task_prompt_profile -> proofs_d_neyvia.check_profile",
+        "neyvia_ecosystem.infer_task_prompt_profile/build_adaptive_task_prompt -> proofs_d_neyvia.check_profile/check_prompt",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "prompt-preparation"
+    },
+    {
+      "test": "tests/test_neyvia_auto_prompt.py",
+      "case": "test_adaptive_rewrite_preserves_full_request_and_layer_ownership",
+      "contracts": [
+        "neyvia-core.prompt-preservation",
+        "neyvia-core.domain-policy"
+      ],
+      "checkedAt": [
+        "neyvia_ecosystem.build_adaptive_task_prompt/apply_silent_ecosystem_rewrite -> proofs_d_neyvia.check_prompt/check_rewrite",
+        "neyvia_ecosystem.infer_task_prompt_profile/build_adaptive_task_prompt -> proofs_d_neyvia.check_profile/check_prompt",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "prompt-preparation"
+    },
+    {
+      "test": "tests/test_neyvia_auto_prompt.py",
+      "case": "test_explicit_profile_overrides_keyword_inference",
+      "contracts": [
+        "neyvia-core.prompt-selection"
+      ],
+      "checkedAt": [
+        "neyvia_ecosystem.infer_task_prompt_profile -> proofs_d_neyvia.check_profile",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "prompt-preparation"
+    },
+    {
+      "test": "tests/test_neyvia_auto_prompt.py",
+      "case": "test_image_profile_compiles_visual_fields_without_agent_contract",
+      "contracts": [
+        "neyvia-core.image-spec"
+      ],
+      "checkedAt": [
+        "neyvia_ecosystem.build_image_generation_prompt -> proofs_d_neyvia.check_image",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "prompt-preparation"
+    },
+    {
+      "test": "tests/test_neyvia_domain_prompt_profiles.py",
+      "case": "test_study_profile_preserves_source_led_learning_and_small_proof_budget",
+      "contracts": [
+        "neyvia-core.domain-policy"
+      ],
+      "checkedAt": [
+        "neyvia_ecosystem.infer_task_prompt_profile/build_adaptive_task_prompt -> proofs_d_neyvia.check_profile/check_prompt",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "prompt-preparation"
+    },
+    {
+      "test": "tests/test_neyvia_domain_prompt_profiles.py",
+      "case": "test_communication_profile_stops_at_draft_without_send_approval",
+      "contracts": [
+        "neyvia-core.domain-policy",
+        "neyvia-core.prompt-preservation"
+      ],
+      "checkedAt": [
+        "neyvia_ecosystem.build_adaptive_task_prompt/apply_silent_ecosystem_rewrite -> proofs_d_neyvia.check_prompt/check_rewrite",
+        "neyvia_ecosystem.infer_task_prompt_profile/build_adaptive_task_prompt -> proofs_d_neyvia.check_profile/check_prompt",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "prompt-preparation"
+    },
+    {
+      "test": "tests/test_neyvia_domain_prompt_profiles.py",
+      "case": "test_experimentation_profile_keeps_authorization_target_and_failure_evidence",
+      "contracts": [
+        "neyvia-core.domain-policy",
+        "neyvia-core.prompt-preservation"
+      ],
+      "checkedAt": [
+        "neyvia_ecosystem.build_adaptive_task_prompt/apply_silent_ecosystem_rewrite -> proofs_d_neyvia.check_prompt/check_rewrite",
+        "neyvia_ecosystem.infer_task_prompt_profile/build_adaptive_task_prompt -> proofs_d_neyvia.check_profile/check_prompt",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "prompt-preparation"
+    },
+    {
+      "test": "tests/test_neyvia_application_runtime.py",
+      "case": "test_verified_module_projection_becomes_a_native_application",
+      "contracts": [
+        "neyvia-core.application-projection"
+      ],
+      "checkedAt": [
+        "neyvia_application_contract._module_to_manifest -> proofs_d_neyvia.check_projection",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "application-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_application_runtime.py",
+      "case": "test_inactive_native_application_binds_no_served_entrypoint",
+      "contracts": [
+        "neyvia-core.application-projection"
+      ],
+      "checkedAt": [
+        "neyvia_application_contract._module_to_manifest -> proofs_d_neyvia.check_projection",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "application-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_application_runtime.py",
+      "case": "test_sdk_reregistration_updates_metadata_and_adopts_services",
+      "contracts": [
+        "neyvia-core.sdk-durable"
+      ],
+      "checkedAt": [
+        "neyvia_application_contract.register_sdk_application -> proofs_d_neyvia.check_sdk",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "application-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_native_studios.py",
+      "case": "test_native_studios_are_real_bundled_applications",
+      "contracts": [
+        "neyvia-core.bundled-catalog"
+      ],
+      "checkedAt": [
+        "neyvia_application_contract.bundled_application_catalog -> proofs_d_neyvia.check_bundled",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "bundled-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_native_studios.py",
+      "case": "test_native_studio_installation_is_persistent",
+      "contracts": [
+        "neyvia-core.bundled-durable"
+      ],
+      "checkedAt": [
+        "neyvia_application_contract.bundled_application_catalog/install_bundled_application -> proofs_d_neyvia.check_bundled/check_install",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "bundled-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_browser.py",
+      "case": "test_open_is_pending_until_a_real_runtime_completes_it",
+      "contracts": [
+        "neyvia-core.browser-pending"
+      ],
+      "checkedAt": [
+        "neyvia_browser.BrowserService.__init__/queue -> proofs_d_neyvia.browser_restored/browser_queue",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "browser-authority"
+    },
+    {
+      "test": "tests/test_neyvia_browser.py",
+      "case": "test_model_cannot_grant_itself_owner_authority",
+      "contracts": [
+        "neyvia-core.browser-authority"
+      ],
+      "checkedAt": [
+        "neyvia_browser.BrowserService.request/runtime -> proofs_d_neyvia.browser_owner/browser_runtime",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "browser-authority"
+    },
+    {
+      "test": "tests/test_neyvia_browser.py",
+      "case": "test_forged_runtime_cannot_report_success",
+      "contracts": [
+        "neyvia-core.browser-authority"
+      ],
+      "checkedAt": [
+        "neyvia_browser.BrowserService.request/runtime -> proofs_d_neyvia.browser_owner/browser_runtime",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "browser-authority"
+    },
+    {
+      "test": "tests/test_neyvia_browser.py",
+      "case": "test_invalid_navigation_is_refused_before_queueing",
+      "contracts": [
+        "neyvia-core.browser-url"
+      ],
+      "checkedAt": [
+        "neyvia_browser.web_url -> proofs_d_neyvia.browser_url",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "browser-authority"
+    },
+    {
+      "test": "tests/test_neyvia_browser.py",
+      "case": "test_proof_ports_do_not_expand_to_protected_services",
+      "contracts": [
+        "neyvia-core.browser-ports"
+      ],
+      "checkedAt": [
+        "browser_obscura.proof_ports -> proofs_d_neyvia.browser_ports",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "browser-authority"
+    },
+    {
+      "test": "tests/test_neyvia_accounts.py",
+      "case": "test_devices_have_plain_names_and_commands_reach_the_desktop_bridge",
+      "contracts": [
+        "neyvia-core.account-devices"
+      ],
+      "checkedAt": [
+        "neyvia_accounts.describe_device -> proofs_d_neyvia.account_device",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "account-devices-sessions"
+    },
+    {
+      "test": "tests/test_neyvia_accounts.py",
+      "case": "test_sessions_from_before_per_account_binding_carry_over_once",
+      "contracts": [
+        "neyvia-core.account-session-binding"
+      ],
+      "checkedAt": [
+        "proofs_d_neyvia.self_check",
+        "web_auth_sessions.WebAuthSessions.lookup -> proofs_d_neyvia.account_session"
+      ],
+      "procedure": "account-devices-sessions"
+    },
+    {
+      "test": "tests/test_neyvia_native_rpc.py",
+      "case": "test_rpc_compiles_behavior_and_exposes_authority_boundary",
+      "contracts": [
+        "neyvia-core.rpc-authority",
+        "neyvia-core.rpc-plan"
+      ],
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.capabilities/dispatch -> proofs_d_neyvia.rpc_capabilities/rpc_methods",
+        "neyvia_native_rpc.NativeRpcServer.plan_compile -> proofs_d_neyvia.require",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "rpc-protocol-authority"
+    },
+    {
+      "test": "tests/test_neyvia_native_rpc.py",
+      "case": "test_rpc_cannot_forge_operator_cancel_path",
+      "contracts": [
+        "neyvia-core.rpc-authority"
+      ],
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.capabilities/dispatch -> proofs_d_neyvia.rpc_capabilities/rpc_methods",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "rpc-protocol-authority"
+    },
+    {
+      "test": "tests/test_neyvia_native_rpc.py",
+      "case": "test_rpc_jsonl_returns_parse_and_parameter_errors_without_crashing",
+      "contracts": [
+        "neyvia-core.rpc-protocol"
+      ],
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.dispatch/error_response -> proofs_d_neyvia.rpc_reply/rpc_error",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "rpc-protocol-authority"
+    },
+    {
+      "test": "tests/test_neyvia_native_rpc.py",
+      "case": "test_rpc_notifications_emit_no_response",
+      "contracts": [
+        "neyvia-core.rpc-protocol"
+      ],
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.dispatch/error_response -> proofs_d_neyvia.rpc_reply/rpc_error",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "rpc-protocol-authority"
+    },
+    {
+      "test": "tests/test_neyvia_native_rpc.py",
+      "case": "test_rpc_device_command_round_trip_requires_signed_host_decision_and_paired_receipt",
+      "contracts": [
+        "neyvia-core.rpc-device-binding",
+        "neyvia-core.rpc-authority"
+      ],
+      "checkedAt": [
+        "neyvia_native_rpc.NativeRpcServer.capabilities/dispatch -> proofs_d_neyvia.rpc_capabilities/rpc_methods",
+        "neyvia_native_rpc.NativeRpcServer.dispatch -> proofs_d_neyvia.rpc_device_response",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "rpc-signed-device-receipt"
+    },
+    {
+      "test": "tests/test_neyvia_mcp.py",
+      "case": "test_initialize_and_tool_list_are_mcp_shaped_and_deterministic",
+      "contracts": [
+        "neyvia-core.mcp-protocol"
+      ],
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._initialize/handle -> proofs_d_neyvia.mcp_initialize/mcp_catalog",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mcp-durable-journey"
+    },
+    {
+      "test": "tests/test_neyvia_mcp.py",
+      "case": "test_task_tool_requires_task_augmentation_and_returns_handle",
+      "contracts": [
+        "neyvia-core.mcp-task-durable"
+      ],
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool/_task_result -> proofs_d_neyvia.mcp_call_pre/mcp_call_post/mcp_task_result",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mcp-durable-journey"
+    },
+    {
+      "test": "tests/test_neyvia_mcp.py",
+      "case": "test_training_batch_persists_28_children_without_poll_loop",
+      "contracts": [
+        "neyvia-core.mcp-task-durable"
+      ],
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool/_task_result -> proofs_d_neyvia.mcp_call_pre/mcp_call_post/mcp_task_result",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mcp-durable-journey"
+    },
+    {
+      "test": "tests/test_neyvia_mcp.py",
+      "case": "test_completed_task_result_has_related_task_metadata",
+      "contracts": [
+        "neyvia-core.mcp-task-durable"
+      ],
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool/_task_result -> proofs_d_neyvia.mcp_call_pre/mcp_call_post/mcp_task_result",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mcp-durable-journey"
+    },
+    {
+      "test": "tests/test_neyvia_mcp.py",
+      "case": "test_time_budget_tool_is_synchronous",
+      "contracts": [
+        "neyvia-core.mcp-sync-budget"
+      ],
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool -> proofs_d_neyvia.mcp_call_post",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mcp-durable-journey"
+    },
+    {
+      "test": "tests/test_neyvia_mcp.py",
+      "case": "test_scoped_autonomy_grant_avoids_repeated_in_scope_approval_and_can_be_revoked",
+      "contracts": [
+        "neyvia-core.mcp-autonomy"
+      ],
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool -> proofs_d_neyvia.mcp_call_post",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mcp-durable-journey"
+    },
+    {
+      "test": "tests/test_neyvia_mcp.py",
+      "case": "test_conversation_question_context_and_constellation_tools_share_one_durable_store",
+      "contracts": [
+        "neyvia-core.mcp-conversation"
+      ],
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool -> proofs_d_neyvia.mcp_call_post",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mcp-durable-journey"
+    },
+    {
+      "test": "tests/test_neyvia_mcp.py",
+      "case": "test_mcp_typed_lead_plan_creates_named_children_and_exposes_contract",
+      "contracts": [
+        "neyvia-core.mcp-conversation"
+      ],
+      "checkedAt": [
+        "neyvia_mcp.NeyviaMCPServer._call_tool -> proofs_d_neyvia.mcp_call_post",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mcp-durable-journey"
+    },
+    {
+      "test": "tests/test_neyvia_conversations.py",
+      "case": "test_unified_history_uses_meaningful_activity_and_auto_titles",
+      "contracts": [
+        "neyvia-core.conversation-activity"
+      ],
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.append_turn -> proofs_d_neyvia.conversation_append",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "conversation-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_conversations.py",
+      "case": "test_question_branch_is_durable_and_host_enforced_read_only",
+      "contracts": [
+        "neyvia-core.conversation-question"
+      ],
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.create_question_branch/action_allowed -> proofs_d_neyvia.conversation_question/conversation_action",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "conversation-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_conversations.py",
+      "case": "test_concurrent_revision_conflict_does_not_drop_existing_turn",
+      "contracts": [
+        "neyvia-core.conversation-turns"
+      ],
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.append_turn -> proofs_d_neyvia.conversation_revision/conversation_replay/conversation_append",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "conversation-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_conversations.py",
+      "case": "test_idempotent_legacy_turn_id_replays_without_revision_or_duplicate",
+      "contracts": [
+        "neyvia-core.conversation-turns"
+      ],
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.append_turn -> proofs_d_neyvia.conversation_revision/conversation_replay/conversation_append",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "conversation-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_conversations.py",
+      "case": "test_turn_pages_return_a_bounded_tail_without_overlap",
+      "contracts": [
+        "neyvia-core.conversation-pages"
+      ],
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.get_conversation_page -> proofs_d_neyvia.conversation_page",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "conversation-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_conversations.py",
+      "case": "test_delete_removes_search_and_context_but_keeps_tombstone",
+      "contracts": [
+        "neyvia-core.conversation-deletion"
+      ],
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.delete_conversation -> proofs_d_neyvia.conversation_delete",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "conversation-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_conversations.py",
+      "case": "test_legacy_json_import_is_idempotent_and_searchable",
+      "contracts": [
+        "neyvia-core.conversation-import"
+      ],
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.import_legacy_state -> proofs_d_neyvia.conversation_import",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "conversation-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_conversations.py",
+      "case": "test_receipt_index_resolves_nested_runtime_receipts_without_turn_content",
+      "contracts": [
+        "neyvia-core.conversation-receipts"
+      ],
+      "checkedAt": [
+        "neyvia_conversations.NeyviaConversationStore.list_turn_receipts/get_turn_receipt -> proofs_d_neyvia.conversation_receipts",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "conversation-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_agent.py",
+      "case": "NeyviaAgentTests.test_version_does_not_require_a_prompt",
+      "contracts": [
+        "neyvia-core.agent-version"
+      ],
+      "checkedAt": [
+        "neyvia_agent_cli.main/neyvia_agent.main -> proofs_d_neyvia.agent_version",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "agent-entry"
+    },
+    {
+      "test": "tests/test_neyvia_agent.py",
+      "case": "NeyviaAgentTests.test_config_requires_safe_session_and_bounded_turns",
+      "contracts": [
+        "neyvia-core.agent-config"
+      ],
+      "checkedAt": [
+        "neyvia_agent.NeyviaAgentConfig.validated -> proofs_d_neyvia.agent_config",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "agent-entry"
+    },
+    {
+      "test": "tests/test_neyvia_agent.py",
+      "case": "test_lightweight_cli_answers_version_without_loading_runtime",
+      "contracts": [
+        "neyvia-core.agent-version"
+      ],
+      "checkedAt": [
+        "neyvia_agent_cli.main/neyvia_agent.main -> proofs_d_neyvia.agent_version",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "agent-entry"
+    },
+    {
+      "test": "tests/test_neyvia_serving_contract.py",
+      "case": "NeyviaServingContractTests.test_only_active_hosted_application_gets_safe_entry_point",
+      "contracts": [
+        "neyvia-core.hosted-entrypoint"
+      ],
+      "checkedAt": [
+        "neyvia_application_contract._module_to_manifest -> proofs_d_neyvia.check_projection",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "application-lifecycle"
+    },
+    {
+      "test": "tests/test_neyvia_mobile_studio.py",
+      "case": "test_capacitor_config_selects_web_dir_and_ids",
+      "contracts": [
+        "neyvia-core.mobile-project"
+      ],
+      "checkedAt": [
+        "neyvia_mobile_studio.project_info -> proofs_d_neyvia.mobile_project",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mobile-http-preview"
+    },
+    {
+      "test": "tests/test_neyvia_mobile_studio.py",
+      "case": "test_web_root_priority_and_expo_metadata",
+      "contracts": [
+        "neyvia-core.mobile-project"
+      ],
+      "checkedAt": [
+        "neyvia_mobile_studio.project_info -> proofs_d_neyvia.mobile_project",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mobile-http-preview"
+    },
+    {
+      "test": "tests/test_neyvia_mobile_studio.py",
+      "case": "test_scheme_preserves_compound_queries_and_safe_area_fallback",
+      "contracts": [
+        "neyvia-core.mobile-injection"
+      ],
+      "checkedAt": [
+        "neyvia_mobile_studio._inject/_scheme -> proofs_d_neyvia.mobile_inject/mobile_scheme",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mobile-http-preview"
+    },
+    {
+      "test": "tests/test_neyvia_mobile_studio.py",
+      "case": "test_injection_runs_before_app_and_cannot_close_script",
+      "contracts": [
+        "neyvia-core.mobile-injection"
+      ],
+      "checkedAt": [
+        "neyvia_mobile_studio._inject/_scheme -> proofs_d_neyvia.mobile_inject/mobile_scheme",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mobile-http-preview"
+    },
+    {
+      "test": "tests/test_neyvia_mobile_studio.py",
+      "case": "test_export_assets_and_spa_relative_urls_stay_inside_preview_capability",
+      "contracts": [
+        "neyvia-core.mobile-injection"
+      ],
+      "checkedAt": [
+        "neyvia_mobile_studio._inject/_scheme -> proofs_d_neyvia.mobile_inject/mobile_scheme",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mobile-http-preview"
+    },
+    {
+      "test": "tests/test_neyvia_mobile_studio.py",
+      "case": "test_preview_capability_traversal_and_spa_fallback",
+      "contracts": [
+        "neyvia-core.mobile-confinement"
+      ],
+      "checkedAt": [
+        "neyvia_mobile_studio.serve_preview/_send -> proofs_d_neyvia.mobile_target/mobile_sandbox",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mobile-http-preview"
+    },
+    {
+      "test": "tests/test_neyvia_mobile_studio.py",
+      "case": "test_storage_rejects_bad_requests",
+      "contracts": [
+        "neyvia-core.mobile-storage"
+      ],
+      "checkedAt": [
+        "neyvia_mobile_studio.serve_preview -> proofs_d_neyvia.mobile_storage_body/mobile_storage_saved",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mobile-http-preview"
+    },
+    {
+      "test": "tests/test_neyvia_mobile_studio.py",
+      "case": "test_storage_persists_strings_for_the_project",
+      "contracts": [
+        "neyvia-core.mobile-storage"
+      ],
+      "checkedAt": [
+        "neyvia_mobile_studio.serve_preview -> proofs_d_neyvia.mobile_storage_body/mobile_storage_saved",
+        "proofs_d_neyvia.self_check"
+      ],
+      "procedure": "mobile-http-preview"
+    }
+  ],
+  "frontier": [
+    "Existing account credential-file-backed CRUD is outside allowed fixture boundary; device/session SQLite checks are covered.",
+    "Application asset confinement needs serving-path proof before its final case retires.",
+    "Studio workflow rendering remains pending actual user journey."
+  ]
+}

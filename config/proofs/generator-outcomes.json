@@ -1,0 +1,52 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "generator-outcomes",
+  "module": "grant_agent.proofs_generator_outcomes",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "p22.manual-compiler",
+      "phase": "post",
+      "claim": "The current authored Connected Language manuals and skills compile in memory, match their checked-in semantic artifacts, and satisfy the indexed source and module-map consistency checks.",
+      "checkedAt": [
+        "scripts/cl_compile_manuals.py",
+        "src/grant_agent/cl/manuals.py",
+        "src/grant_agent/cl_skill.py",
+        "config/neyvia_manuals.json"
+      ],
+      "impact": [
+        "Connected Language source compilation and semantic manual artifacts"
+      ]
+    },
+    {
+      "id": "p22.module-registry",
+      "phase": "post",
+      "claim": "The source-derived module registry matches current owned files, source hashes, declared dependencies, manual references, and generated module documentation.",
+      "checkedAt": [
+        "scripts/generate_module_map.py",
+        "src/grant_agent/module_map.py",
+        "config/neyvia.modules.json",
+        "config/contract_module_map.json",
+        "config/neyvia_manuals.json"
+      ],
+      "impact": [
+        "Source-derived module ownership and generated module documentation"
+      ]
+    },
+    {
+      "id": "p22.manual-cache",
+      "phase": "post",
+      "claim": "The generated compiled-manual cache exactly matches current CL source, semantic artifacts, compiler inputs, index lines, tool owners, and procedure owners.",
+      "checkedAt": [
+        "scripts/build_fixcl_manual_cache.py",
+        "src/grant_agent/neyvia_manuals.py",
+        "src/grant_agent/cl/integration.py",
+        "src/grant_agent/cl/manuals.py",
+        "config/neyvia_manuals.json"
+      ],
+      "impact": [
+        "Generated executable manual cache and manual-first lookup"
+      ]
+    }
+  ]
+}

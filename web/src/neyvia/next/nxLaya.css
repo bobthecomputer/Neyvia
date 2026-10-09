@@ -1,0 +1,66 @@
+/* LAYA: the status-strip popover and the LAYA window (NxLaya.jsx). Colours come only from the
+   --nx-* tokens, which the window's skin (or the shell theme, in the popover) defines. */
+
+.nx .nx-laya-detail { display: grid; align-content: start; gap: var(--nx-space-10); min-width: 0; }
+.nx .nx-laya-detail.is-popover { gap: var(--nx-space-8); max-height: 420px; }
+
+/* The window: a centred column that grows to a comfortable reading width, then stops. */
+.nx .nx-laya-app { flex: 1 1 auto; min-height: 0; padding: var(--nx-space-18) var(--nx-space-20); background: var(--nx-bg); color: var(--nx-text-2); }
+.nx .nx-laya-app > .nx-laya-detail { max-width: 920px; margin: 0 auto; gap: var(--nx-space-12); }
+.nx.is-phone .nx-laya-app { padding: var(--nx-space-12); }
+
+.nx .nx-laya-card {
+  display: grid; gap: var(--nx-space-6); min-width: 0; padding: var(--nx-space-14) var(--nx-space-16);
+  border-radius: var(--nx-r-lg); background: var(--nx-panel); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+  font-size: var(--nx-fs-sm); color: var(--nx-muted);
+}
+.nx .nx-laya-detail.is-popover .nx-laya-card { padding: var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r-sm); }
+.nx .nx-laya-card p { margin: 0; line-height: 1.5; }
+
+/* Status: one sentence of state, one of reason, one action, the technical reason folded away. */
+.nx .nx-laya-health-head { display: flex; align-items: center; gap: var(--nx-space-8); min-width: 0; }
+.nx .nx-laya-health-head strong { color: var(--nx-text); font-size: var(--nx-fs-md); font-weight: 600; }
+.nx .nx-laya-health > p:not(.nx-laya-quiet):not(.nx-laya-failure) { color: var(--nx-text-2); font-size: var(--nx-fs); }
+.nx .nx-laya-quiet { color: var(--nx-muted); }
+.nx .nx-laya-actions { display: flex; flex-wrap: wrap; gap: var(--nx-space-8); margin-top: var(--nx-space-4); }
+.nx .nx-laya-failure { color: var(--nx-state-error); }
+.nx .nx-laya-details { margin-top: var(--nx-space-2); }
+.nx .nx-laya-details > summary { width: fit-content; cursor: pointer; color: var(--nx-muted); font-size: var(--nx-fs-xs); border-radius: var(--nx-r-xs); }
+.nx .nx-laya-details > summary:hover { color: var(--nx-text-2); }
+.nx .nx-laya-details > summary:focus-visible { outline: none; box-shadow: var(--nx-focus); }
+.nx .nx-laya-details dl { display: grid; gap: var(--nx-space-6); margin: var(--nx-space-8) 0 0; padding: var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r-sm); background: var(--nx-raised); }
+.nx .nx-laya-details dt { font-size: var(--nx-fs-2xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--nx-faint); }
+.nx .nx-laya-details dd { margin: 0; font-family: var(--nx-mono); font-size: var(--nx-fs-xs); color: var(--nx-text-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.nx .nx-laya-h { margin: 0; font-size: var(--nx-fs-xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--nx-faint); }
+.nx .nx-laya-card > .nx-laya-h ~ .nx-laya-h { margin-top: var(--nx-space-8); }
+.nx .nx-laya-state { display: flex; align-items: center; gap: var(--nx-space-8); color: var(--nx-text-2); }
+
+/* Figures: as many columns as fit, never fewer figures; two across on a phone or in the popover. */
+.nx .nx-laya-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--nx-space-8); }
+.nx .nx-laya-detail.is-popover .nx-laya-stats, .nx.is-phone .nx-laya-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.nx .nx-laya-stat { display: grid; gap: var(--nx-space-2); min-width: 0; padding: var(--nx-space-8) var(--nx-space-10); border-radius: var(--nx-r-sm); background: var(--nx-raised); }
+.nx .nx-laya-num { font-size: var(--nx-fs-lg); font-weight: 600; color: var(--nx-text); font-variant-numeric: tabular-nums; }
+.nx .nx-laya-num.is-ok { color: var(--nx-accent-text); }
+.nx .nx-laya-num.is-bad { color: var(--nx-state-error); }
+.nx .nx-laya-label { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+
+.nx .nx-laya-rows { display: grid; }
+.nx .nx-laya-row, .nx .nx-laya-recent { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--nx-space-12); row-gap: var(--nx-space-2); padding: var(--nx-space-6) 0; font-size: var(--nx-fs-xs); }
+.nx .nx-laya-rows > * + * { box-shadow: inset 0 var(--nx-stroke) 0 var(--nx-line); }
+.nx .nx-laya-task { flex: 1 1 160px; min-width: 0; color: var(--nx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-laya-figures { display: flex; flex-wrap: wrap; gap: var(--nx-space-12); color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+.nx .nx-laya-saved { color: var(--nx-faint); }
+.nx .nx-laya-recent { flex-wrap: nowrap; column-gap: var(--nx-space-8); }
+.nx .nx-laya-when { flex: none; margin-left: auto; color: var(--nx-faint); }
+.nx .nx-laya-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--nx-faint); flex: none; }
+.nx .nx-laya-dot.is-answered { background: var(--nx-accent); }
+.nx .nx-laya-dot.is-escalated { background: var(--nx-state-needs); }
+.nx .nx-laya-dot.is-unavailable { background: var(--nx-state-error); }
+.nx .nx-laya-note { font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-laya-empty { margin: 0 var(--nx-space-4); font-size: var(--nx-fs-sm); }
+
+.nx .nx-laya-window { display: flex; justify-content: flex-end; padding: var(--nx-space-4) var(--nx-space-8) var(--nx-space-8); border-top: 1px solid var(--nx-line); }
+.nx .nx-laya-learned { display: grid; gap: var(--nx-space-4); padding: var(--nx-space-12) var(--nx-space-16); border-radius: var(--nx-r-lg); background: var(--nx-panel); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-laya-learned > strong { color: var(--nx-text); }
+.nx .nx-laya-learned > p { margin: 0; overflow-wrap: anywhere; }

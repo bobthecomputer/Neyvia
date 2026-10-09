@@ -1,0 +1,41 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "p22-frontend-outcomes",
+  "runner": "scripts/p22_frontend_outcomes.mjs",
+  "networkContracts": [
+    "p22.message-markdown",
+    "p22.message-stream-safety"
+  ],
+  "contracts": [
+    {
+      "id": "p22.message-markdown",
+      "phase": "post",
+      "claim": "Mounted Neyvia prose renders its Markdown content and exposes model-authored images as links without fetching them",
+      "checkedAt": [
+        "web/src/neyvia/NeyviaMessageBody.jsx",
+        "web/src/neyvia/NeyviaMessageBody.css",
+        "scripts/p22_frontend_outcomes.mjs"
+      ],
+      "impact": [
+        "Assistant replies, notes preview, output reports and artifact prose"
+      ]
+    },
+    {
+      "id": "p22.message-stream-safety",
+      "phase": "post",
+      "claim": "Streaming prose hides unfinished Markdown markers and raw HTML cannot mount or execute",
+      "checkedAt": [
+        "web/src/neyvia/NeyviaMessageBody.jsx",
+        "web/src/neyvia/neyviaLiveMessages.js",
+        "scripts/p22_frontend_outcomes.mjs"
+      ],
+      "impact": [
+        "Streaming assistant replies and Markdown rendering safety"
+      ]
+    }
+  ],
+  "portRoles": [
+    48461,
+    48462
+  ]
+}

@@ -1,0 +1,444 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "critique-review",
+  "kind": "workflow",
+  "schemas": {
+    "neyvia.workflow.check": {
+      "type": "object",
+      "properties": {
+        "manual": {
+          "type": "string",
+          "enum": [
+            "hill-climb",
+            "creativity",
+            "critique-review",
+            "efficiency",
+            "research",
+            "design"
+          ]
+        },
+        "report": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "outcomeQuality": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "manual",
+        "report",
+        "evidence",
+        "outcomeQuality",
+        "tokens"
+      ]
+    },
+    "neyvia.workflow.record": {
+      "type": "object",
+      "properties": {
+        "manual": {
+          "type": "string",
+          "enum": [
+            "hill-climb",
+            "creativity",
+            "critique-review",
+            "efficiency",
+            "research",
+            "design"
+          ]
+        },
+        "report": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "outcomeQuality": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "manual",
+        "report",
+        "evidence",
+        "outcomeQuality",
+        "tokens"
+      ]
+    }
+  },
+  "chapters": {
+    "workflow": {
+      "title": "Executable critique-review method: chronological mechanism and measured quality",
+      "state": {
+        "adherence": {
+          "args": {
+            "evidence": {
+              "$input": "evidence"
+            },
+            "manual": "critique-review",
+            "outcomeQuality": {
+              "$input": "outcomeQuality"
+            },
+            "report": {
+              "$input": "report"
+            },
+            "tokens": {
+              "$input": "tokens"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "report": {
+                "type": "object"
+              },
+              "evidence": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "outcomeQuality": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "tokens": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "report",
+              "evidence",
+              "outcomeQuality",
+              "tokens"
+            ]
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "accepted": {
+                "type": "boolean"
+              },
+              "adherence": {
+                "type": "number"
+              },
+              "fitness": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "accepted",
+              "adherence",
+              "fitness",
+              "errors"
+            ],
+            "additionalProperties": true
+          },
+          "tool": "neyvia.workflow.check"
+        }
+      },
+      "actions": {
+        "check": {
+          "effect": "Validate ordered workflow evidence",
+          "pre": "Host owns task measurements and provider usage; report is bounded JSON",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "accepted": {
+                "type": "boolean"
+              },
+              "adherence": {
+                "type": "number"
+              },
+              "fitness": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "accepted",
+              "adherence",
+              "fitness",
+              "errors"
+            ],
+            "additionalProperties": true
+          },
+          "reversible": true,
+          "schema": "neyvia.workflow.check",
+          "tool": "neyvia.workflow.check"
+        },
+        "record": {
+          "effect": "Persist a validated workflow receipt under the selected task root",
+          "pre": "Host owns task measurements and provider usage; report is bounded JSON",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "accepted": {
+                "type": "boolean"
+              },
+              "adherence": {
+                "type": "number"
+              },
+              "fitness": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "accepted",
+              "adherence",
+              "fitness",
+              "errors"
+            ],
+            "additionalProperties": true
+          },
+          "reversible": false,
+          "schema": "neyvia.workflow.record",
+          "tool": "neyvia.workflow.record"
+        }
+      },
+      "checks": {
+        "adhered": {
+          "args": {
+            "evidence": {
+              "$input": "evidence"
+            },
+            "manual": "critique-review",
+            "outcomeQuality": {
+              "$input": "outcomeQuality"
+            },
+            "report": {
+              "$input": "report"
+            },
+            "tokens": {
+              "$input": "tokens"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "accepted",
+            "value": true
+          },
+          "tool": "neyvia.workflow.check"
+        }
+      },
+      "procedures": {
+        "verify-and-record": {
+          "goal": "Verify defining workflow mechanism against host evidence and persist the acceptance receipt",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "report": {
+                "type": "object"
+              },
+              "evidence": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "outcomeQuality": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "tokens": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "report",
+              "evidence",
+              "outcomeQuality",
+              "tokens"
+            ]
+          },
+          "steps": [
+            {
+              "action": "check",
+              "args": {
+                "evidence": {
+                  "$input": "evidence"
+                },
+                "manual": "critique-review",
+                "outcomeQuality": {
+                  "$input": "outcomeQuality"
+                },
+                "report": {
+                  "$input": "report"
+                },
+                "tokens": {
+                  "$input": "tokens"
+                }
+              },
+              "check": "adhered",
+              "save": "verified"
+            },
+            {
+              "action": "record",
+              "args": {
+                "evidence": {
+                  "$input": "evidence"
+                },
+                "manual": "critique-review",
+                "outcomeQuality": {
+                  "$input": "outcomeQuality"
+                },
+                "report": {
+                  "$input": "report"
+                },
+                "tokens": {
+                  "$input": "tokens"
+                }
+              },
+              "check": "adhered",
+              "save": "recorded"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "quality": {
+          "constraints": "Use an independent frozen host quality judge; self-reported quality is not evidence.",
+          "evidence": [
+            "artifact"
+          ],
+          "kind": "model",
+          "options": [
+            "accept",
+            "revise"
+          ],
+          "question": "Does the outcome satisfy the actual task, beyond recorded adherence?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "A model writes its own successful receipt, outcome score or token count",
+          "recovery": "The host supplies hash-bound local evidence files, independently judged quality and provider usage; invented IDs fail"
+        }
+      ],
+      "frontier": [
+        "Executable adherence is necessary but not sufficient for semantic quality. Outcome quality belongs to a separate frozen task judge.",
+        "Three paired tasks provide bounded evidence and cannot authorize statistical Evolver promotion."
+      ],
+      "guidance": [
+        "Compare the delivered result with the plan defining mechanism, rather than the name or appearance of a feature.",
+        "Attack your own result: record at least two failure paths and the evidence behind each; identify what was not shown.",
+        "Verification references actual host receipts. Do not claim done while a required mechanism remains missing or any linked receipt failed.",
+        "Report shape: {events:[{stage,data}],result:object}. Required chronological stages: plan, attack, verify, decision",
+        "plan{mechanism}; attack{risks:[{failure,evidence}]>=2}; verify{receipts:[host receipt IDs]}; decision{done:boolean,missing:[strings]}. Verification receipts have success:boolean.",
+        "Public tool evidence is {ID:{path:task-root-relative receipt JSON,sha256:receipt SHA256}}. Pure host evaluator evidence maps IDs to loaded measurements. Public tool outcome quality is explicitly caller-scored, never automatically verified.",
+        "Every data.receipt is a STRING naming a key in the host evidence mapping: for example {\"receipt\":\"measurement\"}. Never copy the receipt object or create a new ID. Public tool callers pass path/SHA descriptors separately; event receipt fields remain string IDs. Use the exact keys the current task supplied, not the example keys below.",
+        "Conforming shape example (replace illustrative values, IDs and decision with the actual task/evidence; do not copy its outcome): {\"events\":[{\"stage\":\"plan\",\"data\":{\"mechanism\":\"observable full task completion\"}},{\"stage\":\"attack\",\"data\":{\"risks\":[{\"failure\":\"main output lacks required wiring\",\"evidence\":\"observed source path missing\"},{\"failure\":\"failure case lacks recovery\",\"evidence\":\"captured failed journey\"}]}},{\"stage\":\"verify\",\"data\":{\"receipts\":[\"verification\"]}},{\"stage\":\"decision\",\"data\":{\"done\":false,\"missing\":[\"required wiring absent\"]}}],\"result\":{\"decision\":\"task-specific actual answer\"}}"
+      ]
+    }
+  }
+}

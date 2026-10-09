@@ -1,0 +1,353 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "proofs-b-harness",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-b-harness",
+    "manifests": [
+      "config/proofs/proofs-b-harness.json"
+    ],
+    "startup": {
+      "procedures": [
+        "blocked-late-event-cancel-and-outcomes",
+        "arm-cancel-real-deadline-late-settlement",
+        "fifo-os-slot-release",
+        "owned-process-crash-and-kernel-recovery",
+        "public-profile-gateway-instruction-catalog",
+        "owned-dead-win32-probe",
+        "early-cancellation-and-dead-owner-reconciliation",
+        "retention-hidden-owner-and-future-schema",
+        "live-malformed-and-aged-contended-lease",
+        "real-owned-process-tree-cancellation",
+        "native-detached-concurrent-start-and-cancel",
+        "owned-win32-access-failure"
+      ],
+      "runner": "grant_agent.proofs_b_harness.self_check",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.harness_jobs._atomic_write_json",
+          "grant_agent.proofs_b_harness.check_write",
+          "grant_agent.harness_jobs.HarnessJobStore.create"
+        ],
+        "claim": "A durable job keeps its id, receipt path and original request immutable; repeated identical requests reuse their receipt and conflicting requests are rejected.",
+        "id": "proofs-b.harness.identity",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_jobs.HarnessJobStore.finish",
+          "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+          "grant_agent.harness_jobs._atomic_write_json",
+          "grant_agent.proofs_b_harness.check_write",
+          "grant_agent.harness_jobs.HarnessJobStore.start",
+          "grant_agent.harness_job_worker.run_harness_job"
+        ],
+        "claim": "Completion and interruption remain terminal; blockers preserve actionable evidence until explicit cancellation; cancellation claims and stopped jobs cannot be revived by late worker events. Actual detached start is single-flight under concurrent callers; actual early-cancelled workers return before backend import; positively dead cancelling workers finalize cancelled.",
+        "id": "proofs-b.harness.lifecycle",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_job_worker._arm_runtime_budget",
+          "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+          "grant_agent.harness_jobs._atomic_write_json",
+          "grant_agent.proofs_b_harness.check_write",
+          "grant_agent.harness_jobs.HarnessJobStore.cancel",
+          "grant_agent.harness_jobs._terminate_process_tree",
+          "grant_agent.harness_job_worker._start_runtime_budget_watchdog",
+          "grant_agent.harness_job_worker._record_runtime_budget_enforcement_failure",
+          "grant_agent.harness_job_worker._record_runtime_budget_enforced"
+        ],
+        "claim": "Arming deducts durable startup delay; cancellation and settlement preserve other budget dimensions; exhausted budgets retain their original exhaustion receipt and cancelled jobs release still-active budgets. Verified owned process-tree termination stops descendants; operator cancellation releases active budgets and real deadline cancellation retains exhaustion. Actual owned-child termination denial preserves an armed active budget after failed operator cancellation; real deadline enforcement records retry attempts while denial remains, then stops the child after access restoration before its safety exit. Retry history and unrelated budget dimensions remain durable.",
+        "id": "proofs-b.harness.budget",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_jobs.HarnessJobStore._sync_admission_policy_locked",
+          "grant_agent.harness_execution_capacity.HarnessExecutionCapacity._sync_policy_locked",
+          "grant_agent.proofs_b_harness.check_write"
+        ],
+        "claim": "Admission and execution policy limits are integers within retention, may tighten across instances, cannot expand ambiently, and unreadable policies fail closed.",
+        "id": "proofs-b.harness.policy",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_jobs._with_job_observability",
+          "grant_agent.proofs_b_harness.check_observation"
+        ],
+        "claim": "Observed timings and ordered timeline phases derive from durable timestamps; receipts remain unchanged; blocked runs remain nonterminal and every list row has additive metrics.",
+        "id": "proofs-b.harness.observation",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_jobs.HarnessJobStore.create",
+          "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+          "grant_agent.proofs_b_harness.check_admission",
+          "grant_agent.harness_jobs.HarnessJobStore._reconcile_admission_receipts",
+          "grant_agent.harness_jobs.HarnessJobStore._prune"
+        ],
+        "claim": "Serialized admission counts every unresolved, blocked, unknown or unreadable receipt; terminal outcomes release capacity; concurrent creates cannot exceed the durable operator limit. Admission scans beyond the visible hundred-row list; unsupported future terminal schemas survive pruning and consume capacity.",
+        "id": "proofs-b.harness.admission",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+          "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+          "grant_agent.harness_job_worker._claim_execution_capacity",
+          "grant_agent.proofs_b_harness.check_execution_snapshot"
+        ],
+        "claim": "Only the oldest waiting job acquires bounded OS slots; legacy and unreadable active receipts reserve capacity, held and crash-released locks remain authoritative, waiting workers stay running to prohibit duplicate launch.",
+        "id": "proofs-b.harness.execution",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_jobs._exclusive_job_lock",
+          "grant_agent.harness_jobs._job_guard_path",
+          "grant_agent.harness_jobs.HarnessJobStore.load",
+          "grant_agent.harness_jobs._process_alive",
+          "grant_agent.harness_jobs._windows_process_alive",
+          "grant_agent.proofs_b_harness.check_liveness_outcome"
+        ],
+        "claim": "Mutation uses bounded stable OS guard shards; live old legacy owners and recent malformed compatibility fences remain fail closed, even with a short caller-specific wait; aged tokenized locks serialize until actual guard release, and dead owners recover. Non-destructive Win32 liveness uses observed synchronization waits or ERROR_INVALID_PARAMETER=87 as positive death; indeterminate errors retain ownership. Actual owned-child Win32 ERROR_ACCESS_DENIED=5 and unavailable command-line lookup retain live ownership and admission pressure; only that child DACL is temporarily changed, restored through the retained creation handle, and the child is reaped.",
+        "id": "proofs-b.harness.lock-recovery",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_job_worker._hard_runtime_budget_seconds",
+          "grant_agent.harness_job_worker._remaining_runtime_budget_seconds",
+          "grant_agent.proofs_b_harness.check_budget_input"
+        ],
+        "claim": "Explicit hard runtime budget priority is nested, canonical, then snake-case; booleans, invalid, negative and platform-unsupported timeouts fail closed, malformed persisted startup timestamps expire immediately.",
+        "id": "proofs-b.harness.budget-input",
+        "impact": [
+          "durable local harness actions",
+          "operator capacity and saved evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_registry.save_harness_profile",
+          "grant_agent.proofs_b_harness.check_profile"
+        ],
+        "claim": "Saved profiles contain only public route fields and credential environment-variable names; unknown raw secret fields never persist.",
+        "id": "proofs-b.harness.public-profile",
+        "impact": [
+          "harness public configuration",
+          "explicit route and credential boundaries"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_registry.harness_gateway_environment",
+          "grant_agent.proofs_b_harness.check_gateway"
+        ],
+        "claim": "Gateway overlays preserve exact explicit harness/profile/model/base routing and map runtime credential references into the correct auth surfaces; Claude CLIProxy requires explicit loopback HTTP and a present credential, while Rook derives the exact provider from its key name.",
+        "id": "proofs-b.harness.gateway",
+        "impact": [
+          "harness public configuration",
+          "explicit route and credential boundaries"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_registry._validate_instruction_path",
+          "grant_agent.harness_registry.save_harness_instruction",
+          "grant_agent.proofs_b_harness.check_instruction"
+        ],
+        "claim": "Instruction edits stay within supported workspace files, preserve prior bytes in a recoverable backup and return byte-accurate saved receipts; path escape is rejected.",
+        "id": "proofs-b.harness.instruction",
+        "impact": [
+          "harness public configuration",
+          "explicit route and credential boundaries"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.harness_registry.build_harness_catalog",
+          "grant_agent.harness_registry._probe_harness_command",
+          "grant_agent.runtimes.base.runtime_bin_candidates",
+          "grant_agent.proofs_b_harness.check_catalog"
+        ],
+        "claim": "The canonical current catalog includes all sixteen harnesses including Hermes/OpenClaw with truthful security, transport, public gateway and extension ownership; missing supplied provider configuration remains setup-required, native release probing uses intrinsic evidence and existing home uv-bin discovery remains available.",
+        "id": "proofs-b.harness.catalog",
+        "impact": [
+          "harness public configuration",
+          "explicit route and credential boundaries"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.runtimes.managed_cli.normalize_managed_cli_model"
+        ],
+        "claim": "Valid Grok custom models remain exact; a foreign Claude model requires explicit allow_custom policy and otherwise fails closed.",
+        "id": "proofs-b.harness.model-policy",
+        "impact": [
+          "harness public configuration",
+          "explicit route and credential boundaries"
+        ],
+        "phase": "invariant"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.verify.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "proofs-b-local-harness": {
+      "title": "PROOFS-b: durable Harness lifecycle and local execution",
+      "state": {
+        "latest": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "available": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok",
+              "available"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Observe existing proof receipt without replaying feature actions",
+          "pre": "Selected workspace; read latest proof receipt",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.verify.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-latest": {
+          "goal": "Read the latest verification boundary",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A host persistence proof is taken as successful model execution or rendered UI proof",
+          "recovery": "Read the case frontier; provider and UI tests remain until their real journey is covered"
+        },
+        {
+          "failure": "A blocked receipt is counted as completed",
+          "recovery": "Keep it nonterminal, actionable and consuming open-run admission until explicit cancellation"
+        }
+      ],
+      "frontier": [
+        "The finer within-Popen start/cancel race lacks a real deterministic timing signal. Six-caller native start, waiting and actual cancellation are proven.",
+        "Nested backend authentication blockers require the real provider/secret-state boundary. Public profile projections are proven without credential-file reads; authentication/inference are not claimed.",
+        "General conversation-fabric harness browser proof remains unverified; actionable blocker/capacity controls and labels are independently proven by the browser area."
+      ],
+      "guidance": [
+        "Actual host entry points: HarnessJobStore.create/load/list/finish/cancel, HarnessExecutionCapacity.try_acquire and the worker budget functions.",
+        "Startup self-check: grant_agent.proofs_b_harness.self_check(root), dispatched by neyvia.verify for area proofs-b-harness.",
+        "Procedure: create and persist; mark blocker; reject late worker events; cancel explicitly; concurrently admit to capacity; arm and expire hard budget; dispatch oldest waiter; crash owned child and recover OS guard/slot.",
+        "All procedure fixtures stay under the fresh scratch root. The owned child holds local OS locks and is deliberately terminated; it executes no provider.",
+        "The old fourteen-entry catalog test omitted current Hermes/OpenClaw; the action contract now checks the real sixteen-entry canonical catalog.",
+        "No credential files are read. Local gateway environment checks use invented in-memory sentinels; catalog projection runs with a scratch runtime home and explicit supplied status inputs.",
+        "Actual native worker launch is proved while the parent holds the only OS execution slot; the worker is verified stopped before the gate is released, so the backend/provider cannot be entered.",
+        "The history fixtures use production atomic receipt imports seeded by actual create/finish calls; real list, admission, reconciliation and pruning handle the imported hundred-row history.",
+        "Caller-specific mutation-lock timeout_seconds changes only wait duration; default ownership and ten-second wait semantics remain unchanged.",
+        "Controlled OS procedure: temporarily deny query/synchronize or termination access on one owned thirty-second self-exiting child only. Retain its creation handle, observe real access error5 and failed production stop, record watchdog retry while still denied, restore its original DACL, require actual production stop before twenty-five seconds, then reap in finally. No machine or unrelated-process security changes occur.",
+        "Case manifest: config/proofs/proofs-b-harness.json; host77/83 cases represented plus3/83 independently covered by proofs-b-browser; three retained frontiers are nested provider authentication blockers, the finer within-Popen start/cancel timing race and general conversation-fabric browser proof.",
+        "Windows receipt reads retry only actual access/sharing errors5/32/33 or CRT EACCES without a Win32 code for at most twenty attempts, fifty milliseconds apart; malformed JSON and persistent denial remain rejected. Startup holds a real exclusive native file handle, proves delayed release restores the original receipt, and proves persistent denial fails closed. A failed concurrent launch verifies and stops any owned child before releasing its execution gate."
+      ]
+    }
+  }
+}

@@ -1,0 +1,1971 @@
+{
+  "passed": true,
+  "checks": [
+    "all registered manuals grounded",
+    "rendered CL data procedure",
+    "observer reads real bytes",
+    "deterministic action and fresh verifier",
+    "judge stops before later steps",
+    "invalid judge option rejected",
+    "resume retains explicit branch decision",
+    "resume does not replay completed actions",
+    "branch decisions are logged",
+    "failed verifier halts and retains evidence",
+    "manual cannot bypass read-only nested mutation gate",
+    "frontier stays quarantined and listed",
+    "patch does not alter live manual",
+    "nested tool restriction checked before any procedure effects",
+    "observer retains caller nested-tool restriction",
+    "missing tool fails grounding",
+    "schema drift fails grounding",
+    "invalid typed step rejected",
+    "mutating verifier rejected",
+    "observer inputs validated",
+    "authorized write uses original gateway and reread verifier"
+  ],
+  "validation": {
+    "ok": true,
+    "manuals": [
+      {
+        "id": "efficiency",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "cascade",
+            "procedure": "extract-and-confirm",
+            "tools": [
+              "neyvia.efficiency.extract"
+            ]
+          },
+          {
+            "chapter": "cascade",
+            "procedure": "inspect-cost",
+            "tools": [
+              "neyvia.efficiency.metrics",
+              "neyvia.efficiency.transitions"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "cascade",
+            "state": "latency",
+            "tools": [
+              "neyvia.efficiency.metrics"
+            ]
+          },
+          {
+            "chapter": "cascade",
+            "state": "learned",
+            "tools": [
+              "neyvia.efficiency.transitions"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sidebar",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "preview-subjects",
+            "tools": [
+              "neyvia.sidebar.preview",
+              "neyvia.sidebar.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "confirm-preview",
+            "tools": [
+              "neyvia.sidebar.confirm"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "undo-grouping",
+            "tools": [
+              "neyvia.sidebar.undo"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.sidebar.state"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "computer-use",
+        "chapters": 2,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "drive",
+            "procedure": "set-field-and-verify",
+            "tools": [
+              "neyvia.cua.action",
+              "neyvia.cua.inspect",
+              "neyvia.cua.verify",
+              "neyvia.pane.show"
+            ]
+          },
+          {
+            "chapter": "test-loop",
+            "procedure": "launch-check-handoff",
+            "tools": [
+              "neyvia.cua.action",
+              "neyvia.cua.inspect",
+              "neyvia.cua.log",
+              "neyvia.cua.verify",
+              "neyvia.cua.wait",
+              "neyvia.pane.show"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "drive",
+            "state": "driver",
+            "tools": [
+              "neyvia.cua.state"
+            ]
+          },
+          {
+            "chapter": "drive",
+            "state": "windows",
+            "tools": [
+              "neyvia.cua.windows"
+            ]
+          },
+          {
+            "chapter": "test-loop",
+            "state": "log",
+            "tools": [
+              "neyvia.cua.log"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "neyvia",
+        "chapters": 8,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "apps",
+            "procedure": "locate-app-state",
+            "tools": [
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "choose-manual",
+            "tools": [
+              "neyvia.manual.index",
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "panes",
+            "procedure": "show-work-artifact",
+            "tools": [
+              "neyvia.pane.show",
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "panes",
+            "procedure": "suggest-command",
+            "tools": [
+              "neyvia.pane.show",
+              "neyvia.state",
+              "neyvia.terminal.list"
+            ]
+          },
+          {
+            "chapter": "projects",
+            "procedure": "open-project-folder",
+            "tools": [
+              "neyvia.folder.list",
+              "neyvia.folder.open",
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "runtime",
+            "procedure": "choose-ready-runtime",
+            "tools": [
+              "neyvia.runtime.list"
+            ]
+          },
+          {
+            "chapter": "sessions",
+            "procedure": "move-chat",
+            "tools": [
+              "neyvia.folder.list",
+              "neyvia.session.move",
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "sessions",
+            "procedure": "rename-and-confirm",
+            "tools": [
+              "neyvia.session.rename",
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "settings",
+            "procedure": "choose-density",
+            "tools": [
+              "neyvia.state",
+              "neyvia.view.layout"
+            ]
+          },
+          {
+            "chapter": "time",
+            "procedure": "clock",
+            "tools": [
+              "neyvia.time.now"
+            ]
+          },
+          {
+            "chapter": "time",
+            "procedure": "start-timer",
+            "tools": [
+              "neyvia.timer.read",
+              "neyvia.timer.start"
+            ]
+          },
+          {
+            "chapter": "time",
+            "procedure": "lap-and-stop",
+            "tools": [
+              "neyvia.timer.lap",
+              "neyvia.timer.read",
+              "neyvia.timer.stop"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "apps",
+            "state": "current",
+            "tools": [
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "panes",
+            "state": "current",
+            "tools": [
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "projects",
+            "state": "current",
+            "tools": [
+              "neyvia.folder.list"
+            ]
+          },
+          {
+            "chapter": "runtime",
+            "state": "current",
+            "tools": [
+              "neyvia.runtime.list"
+            ]
+          },
+          {
+            "chapter": "sessions",
+            "state": "current",
+            "tools": [
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "settings",
+            "state": "current",
+            "tools": [
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "time",
+            "state": "current",
+            "tools": [
+              "neyvia.time.now"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "neyvia-reference",
+        "chapters": 4,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "missions",
+            "procedure": "draft-mission",
+            "tools": [
+              "neyvia.mission.create",
+              "neyvia.mission.list"
+            ]
+          },
+          {
+            "chapter": "missions",
+            "procedure": "supervise-mission",
+            "tools": [
+              "neyvia.mission.control",
+              "neyvia.mission.list"
+            ]
+          },
+          {
+            "chapter": "missions",
+            "procedure": "verify-retained-status",
+            "tools": [
+              "neyvia.mission.list"
+            ]
+          },
+          {
+            "chapter": "proactivity",
+            "procedure": "triage-attention",
+            "tools": [
+              "neyvia.attention.list",
+              "neyvia.watch.list"
+            ]
+          },
+          {
+            "chapter": "proactivity",
+            "procedure": "watch-run",
+            "tools": [
+              "neyvia.watch.create",
+              "neyvia.watch.list"
+            ]
+          },
+          {
+            "chapter": "proactivity",
+            "procedure": "verify-retained-status",
+            "tools": [
+              "neyvia.watch.list"
+            ]
+          },
+          {
+            "chapter": "schedule",
+            "procedure": "remind-after",
+            "tools": [
+              "neyvia.schedule.after",
+              "neyvia.schedule.list"
+            ]
+          },
+          {
+            "chapter": "schedule",
+            "procedure": "cancel-pending",
+            "tools": [
+              "neyvia.schedule.cancel",
+              "neyvia.schedule.list"
+            ]
+          },
+          {
+            "chapter": "schedule",
+            "procedure": "verify-retained-status",
+            "tools": [
+              "neyvia.schedule.list"
+            ]
+          },
+          {
+            "chapter": "time",
+            "procedure": "clock",
+            "tools": [
+              "neyvia.time.now"
+            ]
+          },
+          {
+            "chapter": "time",
+            "procedure": "start-timer",
+            "tools": [
+              "neyvia.timer.read",
+              "neyvia.timer.start"
+            ]
+          },
+          {
+            "chapter": "time",
+            "procedure": "lap-and-stop",
+            "tools": [
+              "neyvia.timer.lap",
+              "neyvia.timer.read",
+              "neyvia.timer.stop"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "missions",
+            "state": "current",
+            "tools": [
+              "neyvia.mission.list"
+            ]
+          },
+          {
+            "chapter": "proactivity",
+            "state": "current",
+            "tools": [
+              "neyvia.attention.list"
+            ]
+          },
+          {
+            "chapter": "schedule",
+            "state": "current",
+            "tools": [
+              "neyvia.schedule.list"
+            ]
+          },
+          {
+            "chapter": "time",
+            "state": "current",
+            "tools": [
+              "neyvia.time.now"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "workspace",
+        "chapters": 3,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "files",
+            "procedure": "read-and-confirm",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "files",
+            "procedure": "replace-and-read",
+            "tools": [
+              "workspace.read",
+              "workspace.write"
+            ]
+          },
+          {
+            "chapter": "files",
+            "procedure": "find-source",
+            "tools": [
+              "workspace.search"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "choose-present-runtime",
+            "tools": [
+              "runtime.environment"
+            ]
+          },
+          {
+            "chapter": "terminal",
+            "procedure": "prove-terminal",
+            "tools": [
+              "runtime.environment",
+              "terminal.exec",
+              "workspace.read"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "files",
+            "state": "current",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "runtime.environment"
+            ]
+          },
+          {
+            "chapter": "terminal",
+            "state": "current",
+            "tools": [
+              "runtime.environment"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "pdf",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "find-and-highlight",
+            "tools": [
+              "neyvia.pdf.extract_text",
+              "neyvia.pdf.goto",
+              "neyvia.pdf.highlight",
+              "neyvia.pdf.open",
+              "neyvia.pdf.search",
+              "neyvia.pdf.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "open-and-read",
+            "tools": [
+              "neyvia.pdf.extract_text",
+              "neyvia.pdf.open",
+              "neyvia.pdf.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "verify-visible-highlight",
+            "tools": [
+              "neyvia.pdf.state"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.pdf.state"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "notes",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "capture-tagged-idea",
+            "tools": [
+              "neyvia.notes.read",
+              "neyvia.notes.write"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "write-and-pin",
+            "tools": [
+              "neyvia.notes.pin",
+              "neyvia.notes.read",
+              "neyvia.notes.write"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.notes.list"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "files",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "tidy-with-undo",
+            "tools": [
+              "neyvia.files.move",
+              "neyvia.files.stat"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "rename-and-check",
+            "tools": [
+              "neyvia.files.move",
+              "neyvia.files.stat"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "undo-last-tidy",
+            "tools": [
+              "neyvia.files.stat",
+              "neyvia.files.undo"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.files.list"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "image-studio",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "open-inspect",
+            "tools": [
+              "neyvia.image.open",
+              "neyvia.image.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "crop-for-composition",
+            "tools": [
+              "neyvia.image.crop",
+              "neyvia.image.open",
+              "neyvia.image.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "export-reviewed-image",
+            "tools": [
+              "neyvia.files.stat",
+              "neyvia.image.export",
+              "neyvia.image.state"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.image.state"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "mobile-studio",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "set-phone-frame",
+            "tools": [
+              "neyvia.mobile.preview",
+              "neyvia.mobile.status"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "build-chosen-platform",
+            "tools": [
+              "neyvia.mobile.build",
+              "neyvia.mobile.status"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.mobile.status"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "hill-climb",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "inspect-measurements",
+            "tools": [
+              "neyvia.lab.state"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.lab.state"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "awareness",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "claim-and-review",
+            "tools": [
+              "neyvia.impact",
+              "neyvia.work.claim",
+              "neyvia.work.list",
+              "neyvia.work.release"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "intent-template",
+            "tools": [
+              "neyvia.intent.checklist"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.work.list"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "onboarding",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "save-choices",
+            "tools": [
+              "neyvia.onboarding.recommend",
+              "neyvia.onboarding.save",
+              "neyvia.onboarding.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "stage-chosen-pack",
+            "tools": [
+              "neyvia.onboarding.pack"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.onboarding.state"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "agents",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "inspect-active-work",
+            "tools": [
+              "neyvia.agents.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "refresh-limits",
+            "tools": [
+              "neyvia.agents.limits"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.agents.state"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "state": "limits",
+            "tools": [
+              "neyvia.agents.limits"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cross-pc",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "read-remote-range",
+            "tools": [
+              "neyvia.devices.files.list",
+              "neyvia.devices.files.read",
+              "neyvia.devices.files.stat",
+              "neyvia.devices.list"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "take-file",
+            "tools": [
+              "neyvia.devices.files.fetch",
+              "neyvia.devices.files.stat",
+              "neyvia.devices.transfers"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "send-to-inbox",
+            "tools": [
+              "neyvia.devices.files.list",
+              "neyvia.devices.files.send",
+              "neyvia.devices.transfers",
+              "neyvia.files.stat"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "verify-taken-file",
+            "tools": [
+              "neyvia.devices.transfers",
+              "neyvia.files.stat"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "devices",
+            "tools": [
+              "neyvia.devices.list"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "state": "transfers",
+            "tools": [
+              "neyvia.devices.transfers"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "tools-depth",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "tools",
+            "procedure": "guarded-edit",
+            "tools": [
+              "workspace.patch",
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "tools",
+            "procedure": "cited-research",
+            "tools": [
+              "web.fetch",
+              "web.passages",
+              "web.read"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "tools",
+            "state": "file",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "tools",
+            "state": "document",
+            "tools": [
+              "web.read"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "design",
+        "chapters": 11,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "accessibility",
+            "procedure": "check-access",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "check-loop",
+            "procedure": "check-render",
+            "tools": [
+              "neyvia.pane.show",
+              "preview.taste",
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "check-loop",
+            "procedure": "check-component",
+            "tools": [
+              "preview.taste",
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "check-loop",
+            "procedure": "build-check",
+            "tools": [
+              "terminal.exec",
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "copy",
+            "procedure": "review-copy",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "craft",
+            "procedure": "craft-check",
+            "tools": [
+              "terminal.exec",
+              "workspace.read",
+              "workspace.write"
+            ]
+          },
+          {
+            "chapter": "direction",
+            "procedure": "find-references",
+            "tools": [
+              "ui.inspiration.search"
+            ]
+          },
+          {
+            "chapter": "layout",
+            "procedure": "phone-check",
+            "tools": [
+              "preview.taste",
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "motion",
+            "procedure": "check-motion",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "read-foundations",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "primitives",
+            "procedure": "pick-primitive",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "surfaces",
+            "procedure": "new-pane",
+            "tools": [
+              "neyvia.pane.show",
+              "neyvia.state",
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "surfaces",
+            "procedure": "new-app-screen",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "tokens-themes",
+            "procedure": "theme-component",
+            "tools": [
+              "workspace.read"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "themes",
+            "tools": [
+              "workspace.read"
+            ]
+          },
+          {
+            "chapter": "tokens-themes",
+            "state": "themes",
+            "tools": [
+              "workspace.read"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "manuals-next",
+        "chapters": 3,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "scripts",
+            "procedure": "inspect-scripts",
+            "tools": [
+              "neyvia.manual.compiled"
+            ]
+          },
+          {
+            "chapter": "versions",
+            "procedure": "inspect-history",
+            "tools": [
+              "neyvia.manual.versions"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "scripts",
+            "state": "current",
+            "tools": [
+              "neyvia.manual.compiled"
+            ]
+          },
+          {
+            "chapter": "state",
+            "state": "current",
+            "tools": [
+              "neyvia.manual.index"
+            ]
+          },
+          {
+            "chapter": "versions",
+            "state": "current",
+            "tools": [
+              "neyvia.manual.versions"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dictation",
+        "chapters": 2,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "transcribe-file",
+            "tools": [
+              "neyvia.dictation.status",
+              "neyvia.dictation.transcribe"
+            ]
+          },
+          {
+            "chapter": "prompts",
+            "procedure": "teach-a-name",
+            "tools": [
+              "neyvia.dictation.names",
+              "neyvia.dictation.process"
+            ]
+          },
+          {
+            "chapter": "prompts",
+            "procedure": "check-a-command",
+            "tools": [
+              "neyvia.dictation.process"
+            ]
+          },
+          {
+            "chapter": "prompts",
+            "procedure": "check-stays-text",
+            "tools": [
+              "neyvia.dictation.process"
+            ]
+          },
+          {
+            "chapter": "prompts",
+            "procedure": "warm-engine",
+            "tools": [
+              "neyvia.dictation.status"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "engine",
+            "tools": [
+              "neyvia.dictation.status"
+            ]
+          },
+          {
+            "chapter": "prompts",
+            "state": "engine",
+            "tools": [
+              "neyvia.dictation.status"
+            ]
+          },
+          {
+            "chapter": "prompts",
+            "state": "names",
+            "tools": [
+              "neyvia.dictation.names"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "autopilot",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "verify-run",
+            "tools": [
+              "neyvia.autopilot.get"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "run",
+            "tools": [
+              "neyvia.autopilot.get"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "outputs",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "publish-and-open",
+            "tools": [
+              "neyvia.artifact.get",
+              "neyvia.artifact.open",
+              "neyvia.artifact.publish"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "outputs",
+            "tools": [
+              "neyvia.artifact.list"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "conductor",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "jobs",
+            "procedure": "inspect-job",
+            "tools": [
+              "neyvia.conductor.get"
+            ]
+          },
+          {
+            "chapter": "jobs",
+            "procedure": "plan-goal",
+            "tools": [
+              "neyvia.conductor.plan"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "jobs",
+            "state": "jobs",
+            "tools": [
+              "neyvia.conductor.list"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "perception",
+        "chapters": 7,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "app",
+            "procedure": "read-layer",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "app",
+            "procedure": "read-and-review",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "browser",
+            "procedure": "read-layer",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "browser",
+            "procedure": "read-and-review",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "file",
+            "procedure": "read-layer",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "file",
+            "procedure": "read-and-review",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "image",
+            "procedure": "read-layer",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "image",
+            "procedure": "read-and-review",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "os",
+            "procedure": "read-layer",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "os",
+            "procedure": "read-and-review",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "video",
+            "procedure": "read-layer",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "video",
+            "procedure": "read-and-review",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "window",
+            "procedure": "read-layer",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          },
+          {
+            "chapter": "window",
+            "procedure": "read-and-review",
+            "tools": [
+              "neyvia.perception.observe",
+              "neyvia.perception.project"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "app",
+            "state": "current",
+            "tools": [
+              "neyvia.perception.observe"
+            ]
+          },
+          {
+            "chapter": "browser",
+            "state": "current",
+            "tools": [
+              "neyvia.perception.observe"
+            ]
+          },
+          {
+            "chapter": "file",
+            "state": "current",
+            "tools": [
+              "neyvia.perception.observe"
+            ]
+          },
+          {
+            "chapter": "image",
+            "state": "current",
+            "tools": [
+              "neyvia.perception.observe"
+            ]
+          },
+          {
+            "chapter": "os",
+            "state": "current",
+            "tools": [
+              "neyvia.perception.observe"
+            ]
+          },
+          {
+            "chapter": "video",
+            "state": "current",
+            "tools": [
+              "neyvia.perception.observe"
+            ]
+          },
+          {
+            "chapter": "window",
+            "state": "current",
+            "tools": [
+              "neyvia.perception.observe"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "game-dev",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "bridges",
+            "procedure": "discover-live-editors",
+            "tools": [
+              "neyvia.gamedev.sessions",
+              "neyvia.gamedev.status"
+            ]
+          },
+          {
+            "chapter": "bridges",
+            "procedure": "review-completed-action",
+            "tools": [
+              "neyvia.gamedev.receipt"
+            ]
+          },
+          {
+            "chapter": "bridges",
+            "procedure": "validate-export-before-engine-load",
+            "tools": [
+              "neyvia.gamedev.asset_validate"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "bridges",
+            "state": "live",
+            "tools": [
+              "neyvia.gamedev.status"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "nightshift",
+        "chapters": 2,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "board",
+            "procedure": "open-board",
+            "tools": [
+              "neyvia.pane.show",
+              "neyvia.state"
+            ]
+          },
+          {
+            "chapter": "board",
+            "procedure": "chain-two",
+            "tools": [
+              "neyvia.nightshift.create",
+              "neyvia.nightshift.start",
+              "neyvia.nightshift.tasks"
+            ]
+          },
+          {
+            "chapter": "board",
+            "procedure": "tick-file",
+            "tools": [
+              "neyvia.nightshift.summary",
+              "neyvia.nightshift.tick"
+            ]
+          },
+          {
+            "chapter": "board",
+            "procedure": "night-budget",
+            "tools": [
+              "neyvia.nightshift.resources"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "procedure": "read-morning",
+            "tools": [
+              "neyvia.nightshift.summary"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "board",
+            "state": "board",
+            "tools": [
+              "neyvia.nightshift.tasks"
+            ]
+          },
+          {
+            "chapter": "board",
+            "state": "morning",
+            "tools": [
+              "neyvia.nightshift.summary"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "state": "board",
+            "tools": [
+              "neyvia.nightshift.tasks"
+            ]
+          },
+          {
+            "chapter": "overview",
+            "state": "morning",
+            "tools": [
+              "neyvia.nightshift.summary"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "transparency",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "choose-detail",
+            "tools": [
+              "neyvia.view.transparency",
+              "neyvia.view.transparency.state"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "current",
+            "tools": [
+              "neyvia.view.transparency.state"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "handoff-recovery",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "intake",
+            "procedure": "stage-reviewed",
+            "tools": [
+              "neyvia.files.move",
+              "neyvia.files.stat",
+              "neyvia.notes.pin",
+              "neyvia.notes.read",
+              "neyvia.notes.write"
+            ]
+          },
+          {
+            "chapter": "intake",
+            "procedure": "record-review",
+            "tools": [
+              "neyvia.notes.pin",
+              "neyvia.notes.read",
+              "neyvia.notes.write"
+            ]
+          },
+          {
+            "chapter": "intake",
+            "procedure": "record-blocked",
+            "tools": [
+              "neyvia.notes.pin",
+              "neyvia.notes.read",
+              "neyvia.notes.write"
+            ]
+          },
+          {
+            "chapter": "intake",
+            "procedure": "capture-once",
+            "tools": [
+              "neyvia.notes.pin",
+              "neyvia.notes.read",
+              "neyvia.notes.write"
+            ]
+          },
+          {
+            "chapter": "intake",
+            "procedure": "restore-selected",
+            "tools": [
+              "neyvia.files.move",
+              "neyvia.files.stat",
+              "neyvia.notes.pin",
+              "neyvia.notes.read",
+              "neyvia.notes.write"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "intake",
+            "state": "note",
+            "tools": [
+              "neyvia.notes.list"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "mission-plan",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "orchestration",
+            "procedure": "prepare",
+            "tools": [
+              "neyvia.mission.from_plan",
+              "neyvia.mission.list"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "orchestration",
+            "state": "missions",
+            "tools": [
+              "neyvia.mission.list"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "slim-installer",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "inspect-release",
+            "tools": [
+              "workspace.read"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "receipt",
+            "tools": [
+              "workspace.read"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "remote",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "overview",
+            "procedure": "observe-allowed-window",
+            "tools": [
+              "neyvia.remote.snapshot",
+              "neyvia.remote.windows"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "overview",
+            "state": "connections",
+            "tools": [
+              "neyvia.remote.state"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "browser",
+        "chapters": 1,
+        "grounded": true,
+        "procedures": [
+          {
+            "chapter": "backend",
+            "procedure": "observe-tab",
+            "tools": [
+              "neyvia.browser.observe"
+            ]
+          },
+          {
+            "chapter": "backend",
+            "procedure": "open-native-tab",
+            "tools": [
+              "neyvia.browser.open",
+              "neyvia.browser.wait"
+            ]
+          },
+          {
+            "chapter": "backend",
+            "procedure": "promote-task",
+            "tools": [
+              "neyvia.browser.observe",
+              "neyvia.browser.promote",
+              "neyvia.browser.wait"
+            ]
+          }
+        ],
+        "observers": [
+          {
+            "chapter": "backend",
+            "state": "browser",
+            "tools": [
+              "neyvia.browser.state"
+            ]
+          },
+          {
+            "chapter": "backend",
+            "state": "page",
+            "tools": [
+              "neyvia.browser.observe"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "readRun": {
+    "ok": true,
+    "runId": "7d1ad56f0ff247cc9ad4b53537b6130e",
+    "id": "workspace",
+    "chapter": "files",
+    "procedure": "read-and-confirm",
+    "sha256": "c5205b41bec59e5f288da011fd07080b3002c9ce8715d1121ea46368d139014d",
+    "inputs": {
+      "path": "proof.txt",
+      "phrase": "cobalt orchard"
+    },
+    "nextStep": 1,
+    "results": {
+      "file": {
+        "path": "proof.txt",
+        "content": "cobalt orchard 739\n",
+        "truncated": false,
+        "offset": 0,
+        "nextOffset": null,
+        "characters": 19,
+        "bytes": 19,
+        "sha256": "6b277472b5cbc80364861518df3075745d7d92aab8b1963c3d57c81f9fac1163",
+        "coordinateUnit": "unicode_character"
+      }
+    },
+    "decisions": {},
+    "checks": [
+      {
+        "step": 0,
+        "check": "has-text",
+        "passed": true,
+        "observed": {
+          "path": "proof.txt",
+          "content": "cobalt orchard 739\n",
+          "truncated": false,
+          "offset": 0,
+          "nextOffset": null,
+          "characters": 19,
+          "bytes": 19,
+          "sha256": "6b277472b5cbc80364861518df3075745d7d92aab8b1963c3d57c81f9fac1163",
+          "coordinateUnit": "unicode_character"
+        }
+      }
+    ],
+    "status": "completed"
+  },
+  "judgeRun": {
+    "ok": true,
+    "runId": "4f60f40263784ead9ad37234909274bd",
+    "id": "workspace",
+    "chapter": "files",
+    "procedure": "replace-and-read",
+    "sha256": "c5205b41bec59e5f288da011fd07080b3002c9ce8715d1121ea46368d139014d",
+    "inputs": {
+      "path": "proof.txt",
+      "content": "cobalt orchard 739\n"
+    },
+    "nextStep": 3,
+    "results": {
+      "before": {
+        "path": "proof.txt",
+        "content": "cobalt orchard 739\n",
+        "truncated": false,
+        "offset": 0,
+        "nextOffset": null,
+        "characters": 19,
+        "bytes": 19,
+        "sha256": "6b277472b5cbc80364861518df3075745d7d92aab8b1963c3d57c81f9fac1163",
+        "coordinateUnit": "unicode_character"
+      }
+    },
+    "decisions": {
+      "replace": "leave"
+    },
+    "checks": [],
+    "status": "completed",
+    "explicitDecisions": [
+      "replace"
+    ]
+  },
+  "deniedRun": {
+    "ok": false,
+    "runId": "7eb68421712342adabc455bf1bdf3bd7",
+    "id": "workspace",
+    "chapter": "files",
+    "procedure": "replace-and-read",
+    "sha256": "c5205b41bec59e5f288da011fd07080b3002c9ce8715d1121ea46368d139014d",
+    "inputs": {
+      "path": "denied.txt",
+      "content": "must not exist"
+    },
+    "nextStep": 2,
+    "results": {
+      "before": {
+        "path": "denied.txt",
+        "content": "original protected bytes",
+        "truncated": false,
+        "offset": 0,
+        "nextOffset": null,
+        "characters": 24,
+        "bytes": 24,
+        "sha256": "6e755980297020f97ff777d90879922a203f6b0dbc6f70bacf62650bd95aa4f9",
+        "coordinateUnit": "unicode_character"
+      }
+    },
+    "decisions": {
+      "replace": "replace"
+    },
+    "checks": [],
+    "status": "failed",
+    "explicitDecisions": [
+      "replace"
+    ],
+    "error": "This Neyvia Agent run is read-only. Resume with an operator-approved mutation grant to execute this tool.",
+    "recoveryRecipes": [],
+    "frontier": {
+      "ok": false,
+      "status": "frontier",
+      "reason": "execution-failure",
+      "patchId": "25d52a4f00fc476abdfdf450993f31ac",
+      "quarantined": true,
+      "escalation": "Explorer or explicit reviewer needed; no hidden model call",
+      "observed": {
+        "runId": "7eb68421712342adabc455bf1bdf3bd7",
+        "chapter": "files",
+        "procedure": "replace-and-read",
+        "step": 2,
+        "error": "This Neyvia Agent run is read-only. Resume with an operator-approved mutation grant to execute this tool."
+      }
+    }
+  },
+  "writeRun": {
+    "ok": true,
+    "runId": "26b38131ff864b83b4f5cee47c6d8029",
+    "id": "workspace",
+    "chapter": "files",
+    "procedure": "replace-and-read",
+    "sha256": "c5205b41bec59e5f288da011fd07080b3002c9ce8715d1121ea46368d139014d",
+    "inputs": {
+      "path": "written.txt",
+      "content": "actual authorized bytes"
+    },
+    "nextStep": 3,
+    "results": {
+      "before": {
+        "path": "written.txt",
+        "content": "original writable bytes",
+        "truncated": false,
+        "offset": 0,
+        "nextOffset": null,
+        "characters": 23,
+        "bytes": 23,
+        "sha256": "b6e0045e22d902dd4331ff806e4538a534e313673e517c30bd06328b814026d3",
+        "coordinateUnit": "unicode_character"
+      },
+      "written": {
+        "ok": true,
+        "status": "completed",
+        "duration_ms": 40,
+        "receipt_id": "tool_3dd610fbade3",
+        "receipt_path": "C:\\Users\\user\\AppData\\Local\\Temp\\neyvia-manual-contracts\\c5fb0affe7ca4bceb75d62fd50b2c448\\.agent_control\\tool_receipts\\tool_3dd610fbade3_workspace.write.json",
+        "toolResult": {
+          "ok": true,
+          "status": "updated",
+          "path": "written.txt",
+          "bytes": 23,
+          "sha256": "fedbc77e3e2bd75c2b0e6248995c670b3fe119fd88808433b14603463cb1b068",
+          "readbackVerified": true,
+          "filesChanged": [
+            "written.txt"
+          ],
+          "linesAdded": 1,
+          "linesRemoved": 1,
+          "diff": "--- a/written.txt\n+++ b/written.txt\n@@ -1 +1 @@\n-original writable bytes\n+actual authorized bytes",
+          "diffTruncated": false
+        },
+        "filesChanged": [
+          "written.txt"
+        ],
+        "operationStatus": "verified",
+        "operationReceiptPath": "C:\\Users\\user\\AppData\\Local\\Temp\\neyvia-manual-contracts\\c5fb0affe7ca4bceb75d62fd50b2c448\\.agent_control\\verified_operations\\d670de67b47fdb7d20b118dcf904618b534176ad2d947a7b800bd0f21662ff79\\9e8b117db70326c112d4fc1c0778d20e811e0e61348cb665f045e179cf4900f3.json",
+        "actionId": "manual:26b38131ff864b83b4f5cee47c6d8029:2",
+        "duplicateSuppressed": false,
+        "actionReceiptPath": "C:\\Users\\user\\AppData\\Local\\Temp\\neyvia-manual-contracts\\c5fb0affe7ca4bceb75d62fd50b2c448\\.agent_control\\native_actions\\d670de67b47fdb7d20b118dcf904618b534176ad2d947a7b800bd0f21662ff79\\1c5cc14511416ad8314de9408d42b3812c5d0eb48a39436a9d10909e7d5245c7.json"
+      }
+    },
+    "decisions": {
+      "replace": "replace"
+    },
+    "checks": [
+      {
+        "step": 2,
+        "check": "written-text",
+        "passed": true,
+        "observed": {
+          "path": "written.txt",
+          "content": "actual authorized bytes",
+          "truncated": false,
+          "offset": 0,
+          "nextOffset": null,
+          "characters": 23,
+          "bytes": 23,
+          "sha256": "fedbc77e3e2bd75c2b0e6248995c670b3fe119fd88808433b14603463cb1b068",
+          "coordinateUnit": "unicode_character"
+        }
+      }
+    ],
+    "status": "completed",
+    "explicitDecisions": [
+      "replace"
+    ]
+  },
+  "patch": {
+    "ok": true,
+    "patchId": "f58aee706a0d436497a1fe472460b999",
+    "id": "workspace",
+    "baseSha256": "c5205b41bec59e5f288da011fd07080b3002c9ce8715d1121ea46368d139014d",
+    "status": "quarantined",
+    "note": "unmapped external path handling",
+    "observed": {
+      "denied": true
+    },
+    "operations": [],
+    "promotion": "manual.patch.apply requires explicit approval, reviewer, evidence and current base hash."
+  },
+  "domains": {}
+}

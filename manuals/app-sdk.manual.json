@@ -1,0 +1,617 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "app-sdk",
+  "kind": "environment",
+  "schemas": {
+    "neyvia.app_sdk.action": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object"
+        },
+        "clSource": {
+          "type": "string"
+        },
+        "native": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "project",
+        "url",
+        "name"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "url": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "name": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.app_sdk.build": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "platform": {
+          "enum": [
+            "web",
+            "pwa",
+            "expo",
+            "desktop",
+            "ios",
+            "android"
+          ]
+        }
+      },
+      "required": [
+        "project",
+        "platform"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.app_sdk.describe": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.app_sdk.new": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "web",
+            "pwa",
+            "expo",
+            "desktop"
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "name",
+        "kind"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "name": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.app_sdk.preview": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "device": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "required": [
+        "project",
+        "port"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.app_sdk.state": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.app_sdk.toolchain": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "enum": [
+            "android",
+            "ios"
+          ]
+        },
+        "project": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "platform"
+      ]
+    },
+    "neyvia.app_sdk.verify": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "clSource": {
+          "type": "string"
+        },
+        "native": {
+          "type": "object"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "project",
+        "url"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "url": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Generate, inspect and prove an app through one user and agent state",
+      "state": {
+        "app": {
+          "args": {
+            "project": {
+              "$input": "project"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.app_sdk.state"
+        }
+      },
+      "actions": {
+        "sdk.new": {
+          "effect": "Generate an app with a CL 1.1 manual, shared user/agent state and executable running-app goals. Does not install dependencies.",
+          "pre": "Explicit scoped project; runtime actions use an explicit running URL; builds use installed tools only",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.app_sdk.new",
+          "tool": "neyvia.app_sdk.new"
+        },
+        "sdk.describe": {
+          "effect": "Read an SDK app's manual, platforms and current build/verification receipts.",
+          "pre": "Explicit scoped project; runtime actions use an explicit running URL; builds use installed tools only",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.app_sdk.describe",
+          "tool": "neyvia.app_sdk.describe"
+        },
+        "sdk.state": {
+          "effect": "Read the app's persisted shared state; the user UI and agents use this exact store.",
+          "pre": "Explicit scoped project; runtime actions use an explicit running URL; builds use installed tools only",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.app_sdk.state",
+          "tool": "neyvia.app_sdk.state"
+        },
+        "sdk.action": {
+          "effect": "Apply a typed app action through its exact running reducer using T18; the same shared state updates the user UI.",
+          "pre": "Explicit scoped project; runtime actions use an explicit running URL; builds use installed tools only",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.app_sdk.action",
+          "tool": "neyvia.app_sdk.action"
+        },
+        "sdk.verify": {
+          "effect": "Run the app's goals through T18 web perception and optional T16 native inspection; failed goals refuse completion. Uses an explicit running-app URL.",
+          "pre": "Explicit scoped project; runtime actions use an explicit running URL; builds use installed tools only",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": true
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.app_sdk.verify",
+          "tool": "neyvia.app_sdk.verify"
+        },
+        "sdk.preview": {
+          "effect": "Open an SDK app in Mobile Studio's existing phone frame. port is the explicit running Neyvia backend port.",
+          "pre": "Explicit scoped project; runtime actions use an explicit running URL; builds use installed tools only",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.app_sdk.preview",
+          "tool": "neyvia.app_sdk.preview"
+        },
+        "sdk.build": {
+          "effect": "Build an SDK app using installed local tools. Offline web builds carry source hashes; unavailable native toolchains are reported, never installed.",
+          "pre": "Explicit scoped project; runtime actions use an explicit running URL; builds use installed tools only",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.app_sdk.build",
+          "tool": "neyvia.app_sdk.build"
+        },
+        "native-toolchain": {
+          "effect": "Observe the exact native build owner toolchain without starting adb, an emulator or downloads",
+          "pre": "Selected installed native platform; project optional for Android",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.app_sdk.toolchain",
+          "tool": "neyvia.app_sdk.toolchain"
+        }
+      },
+      "checks": {
+        "android-ready": {
+          "args": {
+            "platform": "android"
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ready",
+            "value": true
+          },
+          "tool": "neyvia.app_sdk.toolchain"
+        }
+      },
+      "procedures": {
+        "inspect": {
+          "goal": "Read the generated app manual and shared state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "sdk.describe",
+              "args": {
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "save": "manual"
+            },
+            {
+              "action": "sdk.state",
+              "args": {
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "save": "state"
+            }
+          ]
+        },
+        "verify-effect-sdk-new": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "web",
+                  "pwa",
+                  "expo",
+                  "desktop"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "name",
+              "kind"
+            ]
+          },
+          "steps": [
+            {
+              "action": "sdk.new",
+              "args": {
+                "kind": {
+                  "$input": "kind"
+                },
+                "name": {
+                  "$input": "name"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-sdk-action": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project",
+              "url",
+              "name"
+            ]
+          },
+          "steps": [
+            {
+              "action": "sdk.action",
+              "args": {
+                "name": {
+                  "$input": "name"
+                },
+                "project": {
+                  "$input": "project"
+                },
+                "url": {
+                  "$input": "url"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-sdk-build": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              },
+              "platform": {
+                "enum": [
+                  "web",
+                  "pwa",
+                  "expo",
+                  "desktop",
+                  "ios",
+                  "android"
+                ]
+              }
+            },
+            "required": [
+              "project",
+              "platform"
+            ]
+          },
+          "steps": [
+            {
+              "action": "sdk.build",
+              "args": {
+                "platform": {
+                  "$input": "platform"
+                },
+                "project": {
+                  "$input": "project"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "inspect-android-toolchain": {
+          "goal": "Prove Android App Factory prerequisites from the existing build owner; this does not claim an APK build or device installation",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "native-toolchain",
+              "args": {
+                "platform": "android"
+              },
+              "check": "android-ready",
+              "save": "android"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "App goal check fails",
+          "recovery": "Read exact failed goal and live receipt, repair source, rebuild and re-run; never weaken the goal to mark done"
+        },
+        {
+          "failure": "Native toolchain is unavailable",
+          "recovery": "Read needsPaul; never install or silently substitute a web build for a native build"
+        }
+      ],
+      "frontier": [
+        "Expo native packaging, device installs and signed release delivery depend on local toolchains and separate authorization"
+      ],
+      "guidance": [
+        "Generated app CL1.1 manuals define state, typed actions, runtime goal checks and procedures.",
+        "Autopilot callers set appGoal and scope neyvia.app_sdk.verify; it re-runs the live journey before completed.",
+        "app_sdk.verify and app_sdk.action mutate the explicitly scoped app; they are external actions.",
+        "Every generation/build/action/verification claims its project in the work board and releases the claim after returning."
+      ]
+    }
+  }
+}

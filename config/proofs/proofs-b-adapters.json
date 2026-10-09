@@ -1,0 +1,1241 @@
+{
+  "area": "proofs-b-adapters",
+  "manual": "proofs-b-adapters",
+  "module": "grant_agent.proofs_b_adapters",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "adapters.release.selection",
+      "phase": "invariant",
+      "claim": "Select only published channel/version releases, accept only recognized GitHub references, normalize v-prefixed numeric versions and select matching platform/checksum metadata.",
+      "checkedAt": [
+        "grant_agent.github_release_source.parse_github_ref",
+        "grant_agent.github_release_source.normalize_version",
+        "grant_agent.github_release_source.select_release",
+        "grant_agent.github_release_source.select_platform_asset",
+        "grant_agent.github_release_source.find_checksum_for",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.release.update",
+      "phase": "invariant",
+      "claim": "Update checks observe metadata without package bytes; uncertain ordering, unreachable metadata and missing platform artifacts remain unknown; installed newer versions are never downgraded.",
+      "checkedAt": [
+        "grant_agent.github_release_source.check_for_update",
+        "grant_agent.github_release_source.fetch_releases",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.release.staging",
+      "phase": "invariant",
+      "claim": "Successful staged files match reported byte count/digest and supplied publisher checksum; absent checksums remain explicitly unverified and declared size differences retain warnings. Checksum rejection preserves prior target. Actual HTTP Content-Length mismatch rejects premature EOF before atomic staging, preserving any prior valid target.",
+      "checkedAt": [
+        "grant_agent.github_release_source.download_asset",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.git.objects",
+      "phase": "invariant",
+      "claim": "Inspect/history/show/ancestry read actual Git objects and return durable receipt bytes whose digest and HEAD/output lineage match the result.",
+      "checkedAt": [
+        "grant_agent.git_reference_adapter.GitReferenceAdapter.execute",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.git.safety",
+      "phase": "invariant",
+      "claim": "Every Git action validates local helper/filter/protocol/include restrictions, attributes/object-store/worktree boundaries, consistency snapshots and network denial before issuing a success receipt.",
+      "checkedAt": [
+        "grant_agent.git_reference_adapter.GitReferenceAdapter.execute",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._config",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._attributes",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._repository",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.ocr.boundaries",
+      "phase": "invariant",
+      "claim": "OCR text repair changes only an evidenced repeated renderer prefix, complete HTML table boundary or exact repeated display-math block; nonmatching and unfinished specimens remain byte-identical.",
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_renderer_duplicate",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_table_boundary",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_formula_boundary",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.handoff.progress",
+      "phase": "invariant",
+      "claim": "Handoff packets preserve session lineage, objective, prompt stack, completed/remaining plan and next actions, including durable JSON serialization.",
+      "checkedAt": [
+        "grant_agent.handoff.create_handoff_packet",
+        "grant_agent.handoff.save_handoff_packet",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.comparison.grading",
+      "phase": "invariant",
+      "claim": "Protocol grading compares every expected field to parsed observations and exact correctness requires every field; omitted and altered fields fail.",
+      "checkedAt": [
+        "grant_agent.harness_comparison.grade_output",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.comparison.leader",
+      "phase": "invariant",
+      "claim": "Unready/security harnesses are ineligible; leaders require complete exact receipt-backed read-only route-intact samples and prefer essential capability coverage while retaining observed execution median.",
+      "checkedAt": [
+        "grant_agent.harness_comparison.eligibility",
+        "grant_agent.harness_comparison.capability_coverage",
+        "grant_agent.harness_comparison.summarize_attempts",
+        "grant_agent.harness_comparison.select_leader",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.html.scoring",
+      "phase": "invariant",
+      "claim": "Static HTML rubric sums only earned points out of 80; combined acceptance requires total at least75 and independently observed browser score at least12. Frozen prompt requires a single offline index.html and 390px.",
+      "checkedAt": [
+        "grant_agent.html_site_benchmark.grade_html",
+        "grant_agent.html_site_benchmark.combine_score",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.workflow.publication",
+      "phase": "invariant",
+      "claim": "Every publication audit reads actual workflow files and rejects git push including shell continuation, PR mutation, write APIs, blanket write permission and retired native branch regardless of read-only declared permissions.",
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.sync.compatibility",
+      "phase": "invariant",
+      "claim": "Compatibility reports actual local file identity and hashes; hashVerified is true only when installed digest matches nonempty expected digest. Public transport reports credential availability without exposing the key.",
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.compatibility_snapshot",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "adapter result bytes",
+        "manual proofs-b-adapters chapter",
+        "caller observations"
+      ]
+    },
+    {
+      "id": "adapters.git.readiness",
+      "phase": "invariant",
+      "claim": "A tool with a valid contract becomes execution-ready only with a currently hash/version-verified actual adapter and no execution prerequisites; production readiness additionally requires Boolean validated evidence and no production prerequisites. Discovery preserves agentReady while filtering live execution readiness.",
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload",
+        "grant_agent.tool_manifest_registry.ToolManifest.readiness_as_dict",
+        "grant_agent.tool_manifest_registry.ToolManifestRegistry._runtime_readiness",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "capability discovery readiness",
+        "native adapter admission",
+        "production claims"
+      ]
+    },
+    {
+      "id": "adapters.git.artifact-registration",
+      "phase": "invariant",
+      "claim": "Capability service executes the actual pinned local Git operation, validates output and registers real hash/lineage-bound receipts; bad declared digests or output lineage are rejected before artifact graph mutation.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation",
+        "grant_agent.capability_service.CapabilityService._register_adapter_artifacts",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "impact": [
+        "artifact graph",
+        "native Git receipts",
+        "capability result schema"
+      ]
+    },
+    {
+      "id": "adapters.sync.policy",
+      "phase": "pre",
+      "claim": "Folder paths stay under configured roots, ignores cannot include other files, and inbound versioning is required from the supported local set; unsafe choices are rejected before provider requests.",
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.build_folder_plan",
+        "grant_agent.folder_sync.FolderSyncService._allowed_folder_path",
+        "grant_agent.folder_sync.FolderSyncService._validate_ignore_patterns",
+        "grant_agent.folder_sync.FolderSyncService._validated_versioning",
+        "grant_agent.proofs_b_adapters.check_result"
+      ],
+      "impact": [
+        "local sync folder boundaries",
+        "provider requests",
+        "versioning authority"
+      ]
+    },
+    {
+      "id": "adapters.sync.native-runtime",
+      "phase": "pre",
+      "claim": "Startup requires the prepared task-local Syncthing v2.1.5 executable SHA-256; missing or mismatched bytes fail closed without downloading. The owned child uses only GUI48473 and TCP48474, with discovery, relays, NAT and upgrades disabled, and is stopped in finally.",
+      "checkedAt": [
+        "grant_agent.proofs_b_adapters._verified_native_executable",
+        "grant_agent.proofs_b_adapters._native_sync_check",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "impact": [
+        "folder relationship authority",
+        "native REST configuration",
+        "persisted plans and receipts",
+        "owned task-local process"
+      ]
+    },
+    {
+      "id": "adapters.sync.plan-activation",
+      "phase": "invariant",
+      "claim": "Persisted hashed plans configure actual paused folders and ignores only with approval; activation requires separate deletion-propagation approval, supported inbound versioning and actual unpaused readback. Returned receipts match their persisted bytes.",
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.build_folder_plan",
+        "grant_agent.folder_sync.FolderSyncService.apply_folder_plan",
+        "grant_agent.folder_sync.FolderSyncService.resume_folder",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "impact": [
+        "folder relationship authority",
+        "native REST configuration",
+        "persisted plans and receipts",
+        "owned task-local process"
+      ]
+    },
+    {
+      "id": "adapters.sync.stale",
+      "phase": "pre",
+      "claim": "A changed native folder/ignore baseline causes stale_plan before mutation and reports distinct expected and actual baseline hashes.",
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.apply_folder_plan",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "impact": [
+        "folder relationship authority",
+        "native REST configuration",
+        "persisted plans and receipts",
+        "owned task-local process"
+      ]
+    },
+    {
+      "id": "adapters.sync.rollback",
+      "phase": "post",
+      "claim": "When native ignores fail after folder creation, restore the previous relationship and independently read back restoration; the native procedure proves absent-folder restoration using a real owned filesystem collision.",
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.apply_folder_plan",
+        "grant_agent.folder_sync.FolderSyncService._restore_folder",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "impact": [
+        "folder relationship authority",
+        "native REST configuration",
+        "persisted plans and receipts",
+        "owned task-local process"
+      ]
+    },
+    {
+      "id": "adapters.sync.recovery",
+      "phase": "pre",
+      "claim": "Recovery requires approval, the exact folder ID confirmation and the matching native sendonly/receiveonly mode. Persisted requested receipts describe accepted native requests, never completed remote file recovery.",
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService._dangerous_recovery",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "impact": [
+        "folder relationship authority",
+        "native REST configuration",
+        "persisted plans and receipts",
+        "owned task-local process"
+      ]
+    },
+    {
+      "id": "adapters.sync.discovery",
+      "phase": "invariant",
+      "claim": "The real capability manifest exposes sync.compatibility through tool.neyvia-folder-sync as sync.health; executing its typed operation reports the actual pinned native executable hash without credential exposure.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation",
+        "grant_agent.folder_sync.FolderSyncService.compatibility_snapshot",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "impact": [
+        "folder relationship authority",
+        "native REST configuration",
+        "persisted plans and receipts",
+        "owned task-local process"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_compatibility_is_hash_verified_and_secret_free",
+      "contracts": [
+        "adapters.sync.compatibility"
+      ],
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.compatibility_snapshot",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.sync.compatibility"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_real_object_only_workflow_is_bounded_redacted_and_receipted",
+      "contracts": [
+        "adapters.git.objects"
+      ],
+      "checkedAt": [
+        "grant_agent.git_reference_adapter.GitReferenceAdapter.execute",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.objects"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_rejects_local_helpers_filters_protocols_and_partial_clone",
+      "contracts": [
+        "adapters.git.safety"
+      ],
+      "checkedAt": [
+        "grant_agent.git_reference_adapter.GitReferenceAdapter.execute",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._config",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._attributes",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._repository",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.safety"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_rejects_repository_and_info_attributes",
+      "contracts": [
+        "adapters.git.safety"
+      ],
+      "checkedAt": [
+        "grant_agent.git_reference_adapter.GitReferenceAdapter.execute",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._config",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._attributes",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._repository",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.safety"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_rejects_external_or_lazy_object_storage",
+      "contracts": [
+        "adapters.git.safety"
+      ],
+      "checkedAt": [
+        "grant_agent.git_reference_adapter.GitReferenceAdapter.execute",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._config",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._attributes",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._repository",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.safety"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_rejects_linked_worktrees",
+      "contracts": [
+        "adapters.git.safety"
+      ],
+      "checkedAt": [
+        "grant_agent.git_reference_adapter.GitReferenceAdapter.execute",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._config",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._attributes",
+        "grant_agent.git_reference_adapter.GitReferenceAdapter._repository",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.safety"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_github_references_are_recognised_in_every_common_form",
+      "contracts": [
+        "adapters.release.selection"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.parse_github_ref",
+        "grant_agent.github_release_source.normalize_version",
+        "grant_agent.github_release_source.select_release",
+        "grant_agent.github_release_source.select_platform_asset",
+        "grant_agent.github_release_source.find_checksum_for",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.selection"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_non_github_references_are_declined_rather_than_guessed",
+      "contracts": [
+        "adapters.release.selection"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.parse_github_ref",
+        "grant_agent.github_release_source.normalize_version",
+        "grant_agent.github_release_source.select_release",
+        "grant_agent.github_release_source.select_platform_asset",
+        "grant_agent.github_release_source.find_checksum_for",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.selection"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_draft_releases_are_never_offered",
+      "contracts": [
+        "adapters.release.selection"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.parse_github_ref",
+        "grant_agent.github_release_source.normalize_version",
+        "grant_agent.github_release_source.select_release",
+        "grant_agent.github_release_source.select_platform_asset",
+        "grant_agent.github_release_source.find_checksum_for",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.selection"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_stable_channel_excludes_prereleases",
+      "contracts": [
+        "adapters.release.selection"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.parse_github_ref",
+        "grant_agent.github_release_source.normalize_version",
+        "grant_agent.github_release_source.select_release",
+        "grant_agent.github_release_source.select_platform_asset",
+        "grant_agent.github_release_source.find_checksum_for",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.selection"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_versions_compare_regardless_of_v_prefix",
+      "contracts": [
+        "adapters.release.selection"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.parse_github_ref",
+        "grant_agent.github_release_source.normalize_version",
+        "grant_agent.github_release_source.select_release",
+        "grant_agent.github_release_source.select_platform_asset",
+        "grant_agent.github_release_source.find_checksum_for",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.selection"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_platform_asset_selection_and_checksum_pairing",
+      "contracts": [
+        "adapters.release.selection"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.parse_github_ref",
+        "grant_agent.github_release_source.normalize_version",
+        "grant_agent.github_release_source.select_release",
+        "grant_agent.github_release_source.select_platform_asset",
+        "grant_agent.github_release_source.find_checksum_for",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.selection"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_update_check_downloads_metadata_only",
+      "contracts": [
+        "adapters.release.update"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.check_for_update",
+        "grant_agent.github_release_source.fetch_releases",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.update"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_matching_version_reports_current",
+      "contracts": [
+        "adapters.release.update"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.check_for_update",
+        "grant_agent.github_release_source.fetch_releases",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.update"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_newer_installed_version_is_current_and_never_offered_a_downgrade",
+      "contracts": [
+        "adapters.release.update"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.check_for_update",
+        "grant_agent.github_release_source.fetch_releases",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.update"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_versions_with_unknown_order_are_not_guessed_as_updates",
+      "contracts": [
+        "adapters.release.update"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.check_for_update",
+        "grant_agent.github_release_source.fetch_releases",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.update"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_a_failed_check_is_unknown_and_never_up_to_date",
+      "contracts": [
+        "adapters.release.update"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.check_for_update",
+        "grant_agent.github_release_source.fetch_releases",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.update"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_a_release_without_an_artifact_for_this_platform_is_not_offered",
+      "contracts": [
+        "adapters.release.update"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.check_for_update",
+        "grant_agent.github_release_source.fetch_releases",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.update"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_download_verifies_the_publisher_checksum",
+      "contracts": [
+        "adapters.release.staging"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.download_asset",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.staging"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_a_corrupted_download_is_discarded_not_staged",
+      "contracts": [
+        "adapters.release.staging"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.download_asset",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.staging"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_an_unverifiable_download_is_labelled_rather_than_assumed_good",
+      "contracts": [
+        "adapters.release.staging"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.download_asset",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.staging"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_a_size_mismatch_is_surfaced_as_a_warning",
+      "contracts": [
+        "adapters.release.staging"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.download_asset",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.staging"
+    },
+    {
+      "test": "tests/test_github_workflow_publication_integrity.py",
+      "case": "WorkflowPublicationIntegrityTests.test_repository_workflows_are_free_of_unattended_source_mutation",
+      "contracts": [
+        "adapters.workflow.publication"
+      ],
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "procedure": "adapters.workflow.publication"
+    },
+    {
+      "test": "tests/test_github_workflow_publication_integrity.py",
+      "case": "WorkflowPublicationIntegrityTests.test_git_push_fails_closed_even_if_declared_token_is_read_only",
+      "contracts": [
+        "adapters.workflow.publication"
+      ],
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "procedure": "adapters.workflow.publication"
+    },
+    {
+      "test": "tests/test_github_workflow_publication_integrity.py",
+      "case": "WorkflowPublicationIntegrityTests.test_shell_continuation_cannot_hide_git_push",
+      "contracts": [
+        "adapters.workflow.publication"
+      ],
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "procedure": "adapters.workflow.publication"
+    },
+    {
+      "test": "tests/test_github_workflow_publication_integrity.py",
+      "case": "WorkflowPublicationIntegrityTests.test_control_plane_mutation_fails_closed",
+      "contracts": [
+        "adapters.workflow.publication"
+      ],
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "procedure": "adapters.workflow.publication"
+    },
+    {
+      "test": "tests/test_github_workflow_publication_integrity.py",
+      "case": "WorkflowPublicationIntegrityTests.test_pull_request_mutation_fails_closed",
+      "contracts": [
+        "adapters.workflow.publication"
+      ],
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "procedure": "adapters.workflow.publication"
+    },
+    {
+      "test": "tests/test_github_workflow_publication_integrity.py",
+      "case": "WorkflowPublicationIntegrityTests.test_write_all_is_rejected_before_any_mutation_is_added",
+      "contracts": [
+        "adapters.workflow.publication"
+      ],
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "procedure": "adapters.workflow.publication"
+    },
+    {
+      "test": "tests/test_github_workflow_publication_integrity.py",
+      "case": "WorkflowPublicationIntegrityTests.test_retired_native_branch_is_rejected_even_without_write_permission",
+      "contracts": [
+        "adapters.workflow.publication"
+      ],
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "procedure": "adapters.workflow.publication"
+    },
+    {
+      "test": "tests/test_github_workflow_publication_integrity.py",
+      "case": "WorkflowPublicationIntegrityTests.test_read_only_validation_is_allowed",
+      "contracts": [
+        "adapters.workflow.publication"
+      ],
+      "checkedAt": [
+        "scripts/check_workflow_publication_integrity.py:audit_workflows",
+        "grant_agent.proofs_b_adapters.self_check:actual_repository_workflow_audit"
+      ],
+      "procedure": "adapters.workflow.publication"
+    },
+    {
+      "test": "tests/test_glm_ocr_adapter.py",
+      "case": "test_renderer_duplicate_repair_preserves_first_complete_page",
+      "contracts": [
+        "adapters.ocr.boundaries"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_renderer_duplicate",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_table_boundary",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_formula_boundary",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.ocr.boundaries"
+    },
+    {
+      "test": "tests/test_glm_ocr_adapter.py",
+      "case": "test_renderer_duplicate_repair_does_not_cut_genuine_markdown",
+      "contracts": [
+        "adapters.ocr.boundaries"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_renderer_duplicate",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_table_boundary",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_formula_boundary",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.ocr.boundaries"
+    },
+    {
+      "test": "tests/test_glm_ocr_adapter.py",
+      "case": "test_table_boundary_repair_keeps_only_balanced_table",
+      "contracts": [
+        "adapters.ocr.boundaries"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_renderer_duplicate",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_table_boundary",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_formula_boundary",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.ocr.boundaries"
+    },
+    {
+      "test": "tests/test_glm_ocr_adapter.py",
+      "case": "test_table_boundary_repair_rejects_incomplete_markup",
+      "contracts": [
+        "adapters.ocr.boundaries"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_renderer_duplicate",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_table_boundary",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_formula_boundary",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.ocr.boundaries"
+    },
+    {
+      "test": "tests/test_glm_ocr_adapter.py",
+      "case": "test_formula_boundary_repair_keeps_one_exact_display_math_block",
+      "contracts": [
+        "adapters.ocr.boundaries"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_renderer_duplicate",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_table_boundary",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_formula_boundary",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.ocr.boundaries"
+    },
+    {
+      "test": "tests/test_glm_ocr_adapter.py",
+      "case": "test_formula_boundary_repair_rejects_different_second_block",
+      "contracts": [
+        "adapters.ocr.boundaries"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_renderer_duplicate",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_table_boundary",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._repair_glm_formula_boundary",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.ocr.boundaries"
+    },
+    {
+      "test": "tests/test_handoff.py",
+      "case": "HandoffTests.test_packet_contains_progress",
+      "contracts": [
+        "adapters.handoff.progress"
+      ],
+      "checkedAt": [
+        "grant_agent.handoff.create_handoff_packet",
+        "grant_agent.handoff.save_handoff_packet",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.handoff.progress"
+    },
+    {
+      "test": "tests/test_harness_comparison.py",
+      "case": "test_protocol_grades_exact_fields_and_negative_control",
+      "contracts": [
+        "adapters.comparison.grading"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_comparison.grade_output",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.comparison.grading"
+    },
+    {
+      "test": "tests/test_harness_comparison.py",
+      "case": "test_eligibility_excludes_unready_and_security_harnesses",
+      "contracts": [
+        "adapters.comparison.leader"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_comparison.eligibility",
+        "grant_agent.harness_comparison.capability_coverage",
+        "grant_agent.harness_comparison.summarize_attempts",
+        "grant_agent.harness_comparison.select_leader",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.comparison.leader"
+    },
+    {
+      "test": "tests/test_harness_comparison.py",
+      "case": "test_leader_rule_prefers_complete_native_evidence_without_hiding_speed",
+      "contracts": [
+        "adapters.comparison.leader"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_comparison.eligibility",
+        "grant_agent.harness_comparison.capability_coverage",
+        "grant_agent.harness_comparison.summarize_attempts",
+        "grant_agent.harness_comparison.select_leader",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.comparison.leader"
+    },
+    {
+      "test": "tests/test_harness_comparison.py",
+      "case": "test_missing_attempt_disqualifies_candidate",
+      "contracts": [
+        "adapters.comparison.leader"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_comparison.eligibility",
+        "grant_agent.harness_comparison.capability_coverage",
+        "grant_agent.harness_comparison.summarize_attempts",
+        "grant_agent.harness_comparison.select_leader",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.comparison.leader"
+    },
+    {
+      "test": "tests/test_harness_comparison.py",
+      "case": "test_failed_zero_score_sample_cannot_be_a_measured_leader",
+      "contracts": [
+        "adapters.comparison.leader"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_comparison.eligibility",
+        "grant_agent.harness_comparison.capability_coverage",
+        "grant_agent.harness_comparison.summarize_attempts",
+        "grant_agent.harness_comparison.select_leader",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.comparison.leader"
+    },
+    {
+      "test": "tests/test_html_site_benchmark.py",
+      "case": "test_negative_control_fails",
+      "contracts": [
+        "adapters.html.scoring"
+      ],
+      "checkedAt": [
+        "grant_agent.html_site_benchmark.grade_html",
+        "grant_agent.html_site_benchmark.combine_score",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.html.scoring"
+    },
+    {
+      "test": "tests/test_html_site_benchmark.py",
+      "case": "test_complete_static_contract_scores_well",
+      "contracts": [
+        "adapters.html.scoring"
+      ],
+      "checkedAt": [
+        "grant_agent.html_site_benchmark.grade_html",
+        "grant_agent.html_site_benchmark.combine_score",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.html.scoring"
+    },
+    {
+      "test": "tests/test_html_site_benchmark.py",
+      "case": "test_frozen_prompt_requires_exact_single_file_offline_result",
+      "contracts": [
+        "adapters.html.scoring"
+      ],
+      "checkedAt": [
+        "grant_agent.html_site_benchmark.grade_html",
+        "grant_agent.html_site_benchmark.combine_score",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.html.scoring"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_service_executes_and_registers_verified_receipt",
+      "contracts": [
+        "adapters.git.artifact-registration"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation",
+        "grant_agent.capability_service.CapabilityService._register_adapter_artifacts",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.artifact-registration"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_live_execution_readiness_keeps_v1_agent_ready_and_blocks_prerequisites",
+      "contracts": [
+        "adapters.git.readiness"
+      ],
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload",
+        "grant_agent.tool_manifest_registry.ToolManifest.readiness_as_dict",
+        "grant_agent.tool_manifest_registry.ToolManifestRegistry._runtime_readiness",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.readiness"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_production_validated_requires_a_real_boolean",
+      "contracts": [
+        "adapters.git.readiness"
+      ],
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload",
+        "grant_agent.tool_manifest_registry.ToolManifest.readiness_as_dict",
+        "grant_agent.tool_manifest_registry.ToolManifestRegistry._runtime_readiness",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.readiness"
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_artifact_registration_rejects_bad_hash_and_lineage",
+      "contracts": [
+        "adapters.git.artifact-registration"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation",
+        "grant_agent.capability_service.CapabilityService._register_adapter_artifacts",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.git.artifact-registration"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_rate_limiting_is_reported_as_unknown_with_its_cause",
+      "contracts": [
+        "adapters.release.update"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.check_for_update",
+        "grant_agent.github_release_source.fetch_releases",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.update"
+    },
+    {
+      "test": "tests/test_github_release_source.py",
+      "case": "test_interrupted_download_preserves_previous_valid_target",
+      "contracts": [
+        "adapters.release.staging"
+      ],
+      "checkedAt": [
+        "grant_agent.github_release_source.download_asset",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters.self_check"
+      ],
+      "procedure": "adapters.release.staging"
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_policy_rejects_external_versioner_include_and_outside_path",
+      "contracts": [
+        "adapters.sync.policy"
+      ],
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.build_folder_plan",
+        "grant_agent.folder_sync.FolderSyncService._allowed_folder_path",
+        "grant_agent.folder_sync.FolderSyncService._validate_ignore_patterns",
+        "grant_agent.folder_sync.FolderSyncService._validated_versioning",
+        "grant_agent.proofs_b_adapters.check_result"
+      ],
+      "procedure": "folder-policy-rejections"
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_plan_apply_and_explicit_activation_are_end_to_end",
+      "contracts": [
+        "adapters.sync.plan-activation",
+        "adapters.sync.native-runtime"
+      ],
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.build_folder_plan",
+        "grant_agent.folder_sync.FolderSyncService.apply_folder_plan",
+        "grant_agent.folder_sync.FolderSyncService.resume_folder",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "procedure": "adapters.sync.plan-activation"
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_stale_plan_is_rejected_without_mutation",
+      "contracts": [
+        "adapters.sync.stale",
+        "adapters.sync.native-runtime"
+      ],
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.apply_folder_plan",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "procedure": "adapters.sync.stale"
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_partial_apply_restores_previous_state",
+      "contracts": [
+        "adapters.sync.rollback",
+        "adapters.sync.native-runtime"
+      ],
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService.apply_folder_plan",
+        "grant_agent.folder_sync.FolderSyncService._restore_folder",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "procedure": "adapters.sync.rollback"
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_dangerous_recovery_requires_exact_id_and_matching_mode",
+      "contracts": [
+        "adapters.sync.recovery",
+        "adapters.sync.native-runtime"
+      ],
+      "checkedAt": [
+        "grant_agent.folder_sync.FolderSyncService._dangerous_recovery",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "procedure": "adapters.sync.recovery"
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_typed_capability_operation_is_discoverable",
+      "contracts": [
+        "adapters.sync.discovery",
+        "adapters.sync.native-runtime"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation",
+        "grant_agent.folder_sync.FolderSyncService.compatibility_snapshot",
+        "grant_agent.proofs_b_adapters.check_result",
+        "grant_agent.proofs_b_adapters._native_sync_check"
+      ],
+      "procedure": "adapters.sync.discovery"
+    }
+  ],
+  "frontier": [
+    "Syncthing remote plan/apply/rollback, activation, detailed health, events and recovery require a real isolated Syncthing service; no service is impersonated.",
+    "GLM redesign jobs, changed UI artifact verification and OpenClaw reply/handoff paths require the real selected provider; no provider is substituted.",
+    "The repository Git manifest has no verified pin or typed operations; scratch pinning proves local registration/readiness and does not provision the repository's real manifest. Concurrent mutation/deadline and unavailable symlink creation remain uncovered.",
+    "Local HTTP protocol specimens prove 429 uncertainty and premature EOF rejection; actual GitHub connectivity/publication remains unobserved.",
+    "HTML scoring proves a static rubric and browser score gate; rendering, keyboard behavior, mobile overflow and visual quality remain separate browser evidence.",
+    "Harness comparison checks score existing observations; they do not prove any provider produced those observations."
+  ],
+  "frontierCases": [
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_health_cache_expensive_status_and_event_sanitization",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_health_surfaces_real_folder_errors_and_route_split",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_folder_status_soft_degrades_without_faking_health",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_folder_sync.py",
+      "case": "test_health_returns_structured_unavailable_when_endpoint_down",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_rejects_workspace_or_object_symlink_when_supported",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_one_deadline_covers_non_subprocess_inspection",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_ref_or_config_change_during_request_is_rejected",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_git_reference_adapter.py",
+      "case": "test_real_manifest_is_live_evaluated_and_object_only",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_glm_ui_redesign_proof.py",
+      "case": "GlmUiRedesignProofTests.test_proof_harness_copies_ui_writes_brief_and_requires_changed_artifacts",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_glm_ui_redesign_proof.py",
+      "case": "GlmUiRedesignProofTests.test_metadata_only_changes_do_not_pass_the_proof",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    },
+    {
+      "test": "tests/test_glm_ui_redesign_proof.py",
+      "case": "GlmUiRedesignProofTests.test_handoff_artifact_can_satisfy_reply_when_openclaw_has_no_chat_reply",
+      "reason": "Complete original boundary not observed by the current local procedure; retain original case."
+    }
+  ],
+  "portRoles": [48473, 48474]
+}

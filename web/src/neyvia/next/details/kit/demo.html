@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Details kit</title>
+<link rel="stylesheet" href="./details.css">
+<style>
+  /* The page around the details: what a generated app looks like (A1's web template). */
+  :root { color-scheme: light dark; font: 16px system-ui, sans-serif; color: var(--nxd-text); background: #0f1512; --page-light: none; --card-shadow: inset 0 0 0 1px var(--nxd-line); }
+  /* Morning: paper lit from the top-left, cards casting forest shade down-right. */
+  @media (prefers-color-scheme: light) { :root { background: #f5f1e6;
+    --page-light: radial-gradient(800px 460px at -6% -12%, rgba(255, 190, 80, 0.16), transparent 60%), radial-gradient(900px 540px at 106% 110%, rgba(58, 119, 75, 0.12), transparent 62%);
+    --card-shadow: 0 0 0 1px rgba(42, 54, 32, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.95), 1px 2px 3px -1px rgba(30, 50, 28, 0.1), 7px 15px 30px -18px rgba(30, 50, 28, 0.26); } }
+  body { margin: 0; min-height: 100vh; background: var(--page-light); }
+  main { display: grid; gap: 20px; width: min(30rem, 100% - 32px); margin: 0 auto; padding: 32px 0 48px; }
+  section { display: grid; gap: 10px; padding: 16px; border-radius: 14px; background: var(--nxd-raised); box-shadow: var(--card-shadow); }
+  h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+  h2 { margin: 0; font-size: 0.8rem; font-weight: 600; color: var(--nxd-muted); }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  #count { font-size: 2.4rem; font-weight: 600; }
+  ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  label { display: flex; align-items: center; gap: 8px; min-height: 28px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 4px 0 10px; border-radius: 999px; font-size: 0.85em; box-shadow: inset 0 0 0 1px var(--nxd-line); }
+  .chip button { width: 24px; height: 24px; border: 0; border-radius: 50%; background: transparent; color: var(--nxd-muted); cursor: pointer; font: inherit; }
+  .skeleton { height: 32px; border-radius: 10px; background: var(--nxd-track); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Details kit</h1>
+  <section aria-labelledby="h-count">
+    <h2 id="h-count">Count</h2>
+    <div class="row"><span id="count"></span>
+      <button type="button" class="nxd-btn nxd-press" data-add="1">Add 1</button>
+      <button type="button" class="nxd-btn nxd-press" data-add="27">Add 27</button>
+      <button type="button" class="nxd-btn nxd-press" data-add="-1">Take 1</button>
+    </div>
+    <div class="row"><span>Step <span id="step"></span> of 4</span><span id="meter"></span>
+      <button type="button" class="nxd-btn nxd-press" id="next">Next step</button></div>
+  </section>
+  <section aria-labelledby="h-tasks">
+    <h2 id="h-tasks">Tasks</h2>
+    <ul id="tasks"></ul>
+    <div class="row"><span class="chip"><span>Old draft</span><button type="button" id="delete" aria-label="Delete Old draft">×</button></span>
+      <button type="button" id="copy"></button></div>
+  </section>
+  <section aria-labelledby="h-load">
+    <h2 id="h-load">Loading and empty</h2>
+    <div class="row"><button type="button" class="nxd-btn nxd-press" data-load="150">Load quickly</button>
+      <button type="button" class="nxd-btn nxd-press" data-load="1800">Load slowly</button></div>
+    <div id="result"></div>
+  </section>
+</main>
+<script type="module">
+  import { calmLoading, confirmInPlace, copyButton, emptyState, meter, rollingNumber, strike } from "./details.js";
+
+  let count = 98;
+  let step = 2;
+  const show = () => { rollingNumber(document.querySelector("#count"), count); rollingNumber(document.querySelector("#step"), step);
+    meter(document.querySelector("#meter"), { value: step, max: 4, label: "Steps done" }); };
+  show();
+  document.querySelectorAll("[data-add]").forEach(button => button.addEventListener("click", () => { count = Math.max(0, count + Number(button.dataset.add)); show(); }));
+  document.querySelector("#next").addEventListener("click", () => { step = (step + 1) % 5; show(); });
+
+  const tasks = document.querySelector("#tasks");
+  for (const [text, done] of [["Read the notes", true], ["Write the summary", false], ["Check the links", false]]) {
+    const item = document.createElement("li");
+    item.innerHTML = `<label><input type="checkbox"${done ? " checked" : ""}><span></span></label>`;
+    const words = item.querySelector("span");
+    words.textContent = text;
+    strike(words, done);
+    item.querySelector("input").addEventListener("change", event => strike(words, event.target.checked));
+    tasks.append(item);
+  }
+
+  const chip = document.querySelector(".chip");
+  confirmInPlace(document.querySelector("#delete"), { question: "Delete Old draft?", doneText: "Old draft deleted", onConfirm: () => chip.remove() });
+  copyButton(document.querySelector("#copy"), "npm run build", { label: "Copy the command", showLabel: true });
+
+  const result = document.querySelector("#result");
+  result.replaceChildren(emptyState({ title: "Nothing loaded yet", hint: "Load something to see it here." }));
+  const skeleton = Object.assign(document.createElement("div"), { className: "skeleton", role: "status", ariaLabel: "Loading" });
+  const loading = calmLoading({ show: () => result.replaceChildren(skeleton), hide: () => {} });
+  document.querySelectorAll("[data-load]").forEach(button => button.addEventListener("click", () => {
+    const ms = Number(button.dataset.load);
+    loading.start();
+    setTimeout(() => {
+      loading.stop();
+      result.replaceChildren(emptyState({ tone: "done", title: `Loaded in ${ms / 1000} s`, hint: "Short waits never show the loading bar." }));
+    }, ms);
+  }));
+</script>
+</body>
+</html>

@@ -1,0 +1,2028 @@
+{
+  "portRoles": [],
+  "area": "a-cli",
+  "manual": "onboarding",
+  "module": "grant_agent.proofs_a_cli",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "a-cli.catalog.classify",
+      "phase": "post",
+      "claim": "CLI state follows platform, detection, verified install route, authentication issues and update metadata; unknown readiness is never invented.",
+      "checkedAt": [
+        "grant_agent.cli_catalog.classify",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "optional runtime readiness"
+      ]
+    },
+    {
+      "id": "a-cli.catalog.fact",
+      "phase": "post",
+      "claim": "Unknown declared facts stay null with unverified confidence; present facts retain their supplied confidence.",
+      "checkedAt": [
+        "grant_agent.cli_catalog._fact",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "publisher/source confidence"
+      ]
+    },
+    {
+      "id": "a-cli.catalog.size",
+      "phase": "post",
+      "claim": "A runtime without a declared npm package has no fabricated package size and explains the missing measurement.",
+      "checkedAt": [
+        "grant_agent.cli_catalog.resolve_package_size",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "download size approval"
+      ]
+    },
+    {
+      "id": "a-cli.catalog.actions",
+      "phase": "post",
+      "claim": "Actions match readiness state and managed install ownership; unsupported or unavailable runtimes offer skip.",
+      "checkedAt": [
+        "grant_agent.cli_catalog._actions_for",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "managed runtime controls"
+      ]
+    },
+    {
+      "id": "a-cli.catalog.recommend",
+      "phase": "post",
+      "claim": "Recommendations follow goal affinity order, exclude unsupported/unavailable entries, deduplicate and explain each result within the requested bound.",
+      "checkedAt": [
+        "grant_agent.cli_catalog.recommend",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "setup recommendations"
+      ]
+    },
+    {
+      "id": "a-cli.mods.launch",
+      "phase": "post",
+      "claim": "Plugin launch environment requires selected service state, respects disabled setting and preserves other plugin paths after one Neyvia plugin path.",
+      "checkedAt": [
+        "grant_agent.claude_code_mods.launch_env",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "Claude Code process launch"
+      ]
+    },
+    {
+      "id": "a-cli.mods.report",
+      "phase": "post",
+      "claim": "Validated reports bound run history and ordered unique edited files; checklist text is normalized and bounded and unknown statuses are removed.",
+      "checkedAt": [
+        "grant_agent.claude_code_mods.record_report inside report lock",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "Claude Code run state"
+      ]
+    },
+    {
+      "id": "a-cli.cursor.text",
+      "phase": "post",
+      "claim": "Cursor message text uses structured text fragments in order, then event fallback keys and delta; result messages retain their real text.",
+      "checkedAt": [
+        "grant_agent.cursor_bridge._message_text",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "Cursor transcript parsing"
+      ]
+    },
+    {
+      "id": "a-cli.archive.summary",
+      "phase": "post",
+      "claim": "Real parsed MIME headers, plain body preview and attachment names/types/byte counts come from the supplied message.",
+      "checkedAt": [
+        "grant_agent.communication_archive._message_summary",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "archive preview"
+      ]
+    },
+    {
+      "id": "a-cli.archive.inspect",
+      "phase": "post",
+      "claim": "Archive preview is bounded with exact preview/attachment counts, digest and truncation explanation; unsupported MSG needs an adapter without inferred content.",
+      "checkedAt": [
+        "grant_agent.communication_archive.inspect_communication_archive",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "archive inspection"
+      ]
+    },
+    {
+      "id": "a-cli.archive.import",
+      "phase": "post",
+      "claim": "Explicitly initiated local imports persist the real parser summary and source digest; unsupported formats do not import.",
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.import_communication_archive",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "durable communication import"
+      ]
+    },
+    {
+      "id": "a-cli.crash.submit",
+      "phase": "post",
+      "claim": "Submission persists exactly one task per mission/idempotency key and preserves original payload on duplicate; local restart and 28-task batch preserve each queued row.",
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.submit_task",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "durable task admission"
+      ]
+    },
+    {
+      "id": "a-cli.crash.claim",
+      "phase": "post",
+      "claim": "Claimed tasks have working state, execution owner, lease and incremented attempts.",
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.claim_next",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "task ownership"
+      ]
+    },
+    {
+      "id": "a-cli.crash.transition",
+      "phase": "post",
+      "claim": "Transitions return the requested state, retain supplied checkpoint/result/error, clear non-working ownership and reject prohibited terminal rewrite.",
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.transition_task",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "task lifecycle"
+      ]
+    },
+    {
+      "id": "a-cli.crash.recover",
+      "phase": "post",
+      "claim": "Recovered task IDs are unique with durable interrupted-recovery events; expired owned work requeues after restart.",
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.recover_interrupted",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "coordinator recovery"
+      ]
+    },
+    {
+      "id": "a-cli.crash.result",
+      "phase": "post",
+      "claim": "Result-set items have a durable unique dedupe key preserving original identity and content.",
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.add_result_item",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "result deduplication"
+      ]
+    },
+    {
+      "id": "a-cli.crash.summary",
+      "phase": "post",
+      "claim": "Result summary totals equal status counts and sample projection respects the bounded limit.",
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.summarize_result_set",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "compact result observer"
+      ]
+    },
+    {
+      "id": "a-cli.crash.time",
+      "phase": "post",
+      "claim": "Deadline decisions reserve verification time and skip optional work only when insufficient time remains; required work reports risk.",
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.time_snapshot",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "deadline policy"
+      ]
+    },
+    {
+      "id": "a-cli.crash.autonomy",
+      "phase": "post",
+      "claim": "Allowed actions stay within active inherited lease action/root/spend/destructive/public limits; startup procedure exercises scope, expiry and revocation.",
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.autonomy_allows",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "scoped autonomy"
+      ]
+    },
+    {
+      "id": "a-cli.installer.action",
+      "phase": "post",
+      "claim": "Managed runtime actions require current approval, persist receipts, preserve existing launcher and manifest on failure/collision, retain previous install on repair and remove only owned paths on uninstall.",
+      "checkedAt": [
+        "grant_agent.cli_installer._installer_locked",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.installer.integrity",
+      "phase": "post",
+      "claim": "Package archive must remain inside staging and equal the declared SHA-512 before install or promotion.",
+      "checkedAt": [
+        "grant_agent.cli_installer._verified_package_archive",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.root",
+      "phase": "post",
+      "claim": "Scheduler root follows configured cluster/control root; explicitly opting out preserves requested legacy root.",
+      "checkedAt": [
+        "grant_agent.cluster.resolve_cluster_root",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.capabilities",
+      "phase": "post",
+      "claim": "Efficient controller advertises self-repair but no frontend build; browser verification requires a passing dependency receipt and existing declared executable. Capacity zero means unlimited.",
+      "checkedAt": [
+        "grant_agent.cluster.build_local_worker_capabilities",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.job",
+      "phase": "post",
+      "claim": "Canonical active job deduplication persists at most one active row per nonempty key.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.upsert_job",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.claim",
+      "phase": "post",
+      "claim": "Claims return exact job/lease/host affinity; serialized admission obeys capacity, and scans past incompatible jobs without a fixed queue cap.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.claim_next_job",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.choose",
+      "phase": "post",
+      "claim": "Selected hosts are online and provide declared required capabilities; startup validates preference for healthy workstation over controller storage.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.choose_host",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.lease",
+      "phase": "post",
+      "claim": "New lease owns exactly the queued job on its selected host and cannot overlap another active writer in the same workspace.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._create_lease within transaction",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.load",
+      "phase": "post",
+      "claim": "Persisted host load equals durable active leases of leased/running jobs immediately after admission and completion.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._refresh_host_load_db",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.stale",
+      "phase": "post",
+      "claim": "Every expired heartbeat marked stale removes advertised online availability and clears load.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.mark_stale_hosts within transaction",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.expire",
+      "phase": "post",
+      "claim": "Expired leases no longer own a running job; restart recovery requeues the job and clears lease affinity.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.expire_stale_leases within transaction",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.roles",
+      "phase": "post",
+      "claim": "Planner/browser capability authority follows declared route role and phase rather than prompt mentions of verification.",
+      "checkedAt": [
+        "grant_agent.runtime_supervisor._cluster_required_capabilities",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.worker",
+      "phase": "post",
+      "claim": "Local workers advertise explicit capacity even when idle and persist terminal job state matching actual execution with a terminal event.",
+      "checkedAt": [
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.environment",
+      "phase": "post",
+      "claim": "Actual child environment binds the job's authoritative control root without changing configured cluster root.",
+      "checkedAt": [
+        "grant_agent.worker.execute_job before subprocess dispatch",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.execute",
+      "phase": "post",
+      "claim": "Executable job success matches actual child return code; failed children cannot report completion.",
+      "checkedAt": [
+        "grant_agent.worker.execute_job",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.threads",
+      "phase": "post",
+      "claim": "Unlimited worker attempts create independent thread/admission/completion channels; startup admits twelve overlapping owned attempts without a fixed threadpool ceiling.",
+      "checkedAt": [
+        "grant_agent.worker._start_unlimited_worker_attempt",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.lifecycle",
+      "phase": "post",
+      "claim": "Each worker lifecycle write persists its exact host/status/error; one-shot success/failure both stop and release the owned PID file.",
+      "checkedAt": [
+        "grant_agent.worker._write_worker_state",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "local managed runtime and durable coordination"
+      ]
+    },
+    {
+      "id": "a-cli.assets.config",
+      "phase": "post",
+      "claim": "MCP configuration exposes names and presence only, with an explicit safe root field allowlist.",
+      "checkedAt": [
+        "grant_agent.codex_import.CodexAssetImporter._safe_config",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "MCP configuration exposes names and presence only, with an explicit safe root field allowlist."
+      ]
+    },
+    {
+      "id": "a-cli.assets.audit",
+      "phase": "post",
+      "claim": "Asset inventory counts match discovered scoped files and system skills stay ineligible for import.",
+      "checkedAt": [
+        "grant_agent.codex_import.CodexAssetImporter.audit",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "Asset inventory counts match discovered scoped files and system skills stay ineligible for import."
+      ]
+    },
+    {
+      "id": "a-cli.assets.import",
+      "phase": "post",
+      "claim": "Copied personal skills remain disabled, exclude sensitive filenames and raw sessions, and have a scoped digest verified catalog consumed by both skill summaries.",
+      "checkedAt": [
+        "grant_agent.codex_import.CodexAssetImporter.import_assets",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "Copied personal skills remain disabled, exclude sensitive filenames and raw sessions, and have a scoped digest verified catalog consumed by both skill summaries."
+      ]
+    },
+    {
+      "id": "a-cli.setup.state",
+      "phase": "post",
+      "claim": "First-run goals, reviewed permissions and skipped runtimes persist exactly across reload.",
+      "checkedAt": [
+        "grant_agent.progressive_setup.update_first_run_state",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "First-run goals, reviewed permissions and skipped runtimes persist exactly across reload."
+      ]
+    },
+    {
+      "id": "a-cli.setup.view",
+      "phase": "post",
+      "claim": "The shell opens before optional CLI setup; essential readiness and skipped runtime selections determine resumable mission setup.",
+      "checkedAt": [
+        "grant_agent.progressive_setup.build_progressive_setup",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "The shell opens before optional CLI setup; essential readiness and skipped runtime selections determine resumable mission setup."
+      ]
+    },
+    {
+      "id": "a-cli.continuity.attempt",
+      "phase": "post",
+      "claim": "Successful action identities and evidence persist before restart suppresses duplicate completed attempts.",
+      "checkedAt": [
+        "grant_agent.continuity_policy.MissionContinuityStore.record_tool_attempt",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "Successful action identities and evidence persist before restart suppresses duplicate completed attempts."
+      ]
+    },
+    {
+      "id": "a-cli.continuity.recovery",
+      "phase": "post",
+      "claim": "Restart recovery retains completed action identities for safe continuation.",
+      "checkedAt": [
+        "grant_agent.continuity_policy.MissionContinuityStore.recover",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "Restart recovery retains completed action identities for safe continuation."
+      ]
+    },
+    {
+      "id": "a-cli.continuity.verification",
+      "phase": "post",
+      "claim": "Transfers require target existence and size or hash verification.",
+      "checkedAt": [
+        "grant_agent.continuity_policy.proportional_verification",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "Transfers require target existence and size or hash verification."
+      ]
+    },
+    {
+      "id": "a-cli.continuity.gpu-label",
+      "phase": "post",
+      "claim": "GPU controls classify destructive, stop, resume and start labels before inspection.",
+      "checkedAt": [
+        "grant_agent.continuity_policy.classify_gpu_control_action",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "GPU controls classify destructive, stop, resume and start labels before inspection."
+      ]
+    },
+    {
+      "id": "a-cli.continuity.gpu",
+      "phase": "post",
+      "claim": "GPU decisions enforce cost and capacity, preserve checkpoint preference and paid or destructive approval, and bound unchanged observations with a state-change override.",
+      "checkedAt": [
+        "grant_agent.continuity_policy.MissionContinuityStore.evaluate_gpu_action",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "impact": [
+        "GPU decisions enforce cost and capacity, preserve checkpoint preference and paid or destructive approval, and bound unchanged observations with a state-change override."
+      ]
+    },
+    {
+      "id": "a-cli.catalog.selection",
+      "phase": "post",
+      "claim": "Catalog size lookup is restricted to explicitly selected runtimes; the optional catalog permits continuing without a CLI.",
+      "checkedAt": [
+        "grant_agent.cli_catalog.build_catalog",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "Catalog size lookup is restricted to explicitly selected runtimes; the optional catalog permits continuing without a CLI."
+      ]
+    },
+    {
+      "id": "a-cli.mods.skills",
+      "phase": "post",
+      "claim": "Generated Claude plugin skills match the current owning manuals exactly on every successful generation/check.",
+      "checkedAt": [
+        "scripts/build_claude_plugin_skills.py main success boundary",
+        "grant_agent.proofs_a_cli"
+      ],
+      "impact": [
+        "Generated Claude plugin skills match the current owning manuals exactly on every successful generation/check."
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.rehome",
+      "phase": "post",
+      "claim": "Shared queue recovery retains legacy lineage and leaves the mission-local database row unchanged.",
+      "checkedAt": [
+        "grant_agent.runtime_supervisor.DelegatedRuntimeSupervisor._sync_cluster_state before assignment",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "Shared queue recovery retains legacy lineage and leaves the mission-local database row unchanged."
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.queued",
+      "phase": "post",
+      "claim": "A queued delegated session keeps its step in progress without consuming attempts or acknowledging unfinished work.",
+      "checkedAt": [
+        "grant_agent.fluxio_harness.FluxioHarness._reconcile_delegated_sessions queued branch",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "A queued delegated session keeps its step in progress without consuming attempts or acknowledging unfinished work."
+      ]
+    },
+    {
+      "id": "a-cli.scheduler.unlimited-loop",
+      "phase": "post",
+      "claim": "Unlimited worker admission uses independent thread/claim channels without a fixed pool and preserves durable local completion.",
+      "checkedAt": [
+        "grant_agent.worker.main unlimited admission boundary",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "impact": [
+        "Unlimited worker admission uses independent thread/claim channels without a fixed pool and preserves durable local completion."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.engine",
+      "phase": "post",
+      "claim": "Engine dispatch preserves explicit empty verification, selected harness and execution policy, saved concurrency, and runtime/handoff preferences.",
+      "checkedAt": [
+        "grant_agent.cli._invoke_engine",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Engine dispatch preserves explicit empty verification, selected harness and execution policy, saved concurrency, and runtime/handoff preferences."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.budget",
+      "phase": "post",
+      "claim": "Relative timers and objective deadlines override hour hints, persist a deadline and require continuous execution until blocked.",
+      "checkedAt": [
+        "grant_agent.cli._mission_budget_settings",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Relative timers and objective deadlines override hour hints, persist a deadline and require continuous execution until blocked."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.continue",
+      "phase": "post",
+      "claim": "Delegated runtime activity pauses the mission loop to prevent repeated execution.",
+      "checkedAt": [
+        "grant_agent.cli._mission_should_continue_after_result",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Delegated runtime activity pauses the mission loop to prevent repeated execution."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.poll",
+      "phase": "post",
+      "claim": "Continuous missions poll at a positive interval; pause mode uses no repeating interval.",
+      "checkedAt": [
+        "grant_agent.cli._mission_poll_interval_seconds",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Continuous missions poll at a positive interval; pause mode uses no repeating interval."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.docs",
+      "phase": "post",
+      "claim": "Product missions completing with documentation-only changes become durably blocked with the specific missing-product-change reason.",
+      "checkedAt": [
+        "grant_agent.cli._sync_mission_from_result",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Product missions completing with documentation-only changes become durably blocked with the specific missing-product-change reason."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.queue",
+      "phase": "post",
+      "claim": "Bundled worker resumes identify one active durable job with authoritative control root, workspace root and composer provenance.",
+      "checkedAt": [
+        "grant_agent.cli._queue_cluster_mission_resume",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Bundled worker resumes identify one active durable job with authoritative control root, workspace root and composer provenance."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.dispatch",
+      "phase": "post",
+      "claim": "Background dispatch suppresses duplicate owned active processes and queues cluster work from the authoritative mission store.",
+      "checkedAt": [
+        "grant_agent.cli._launch_async_mission_resume",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Background dispatch suppresses duplicate owned active processes and queues cluster work from the authoritative mission store."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.pid",
+      "phase": "post",
+      "claim": "Windows process detection accepts only successful CSV output containing the requested PID; localized absence is not liveness.",
+      "checkedAt": [
+        "grant_agent.cli._tasklist_has_pid",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Windows process detection accepts only successful CSV output containing the requested PID; localized absence is not liveness."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.workspace",
+      "phase": "post",
+      "claim": "Workspace preferences persist before output and selected full snapshots reflect saved values; skip snapshot avoids its expensive producer.",
+      "checkedAt": [
+        "grant_agent.cli.cmd_workspace_save before output",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Workspace preferences persist before output and selected full snapshots reflect saved values; skip snapshot avoids its expensive producer."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.spawn",
+      "phase": "post",
+      "claim": "Detached mission children receive no interactive input and get a new POSIX session when the selected platform requires it.",
+      "checkedAt": [
+        "grant_agent.cli._launch_async_mission_resume before subprocess.Popen",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Detached mission children receive no interactive input and get a new POSIX session when the selected platform requires it."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.stop",
+      "phase": "post",
+      "claim": "Stopping a mission preserves terminal delegated history and stops only unfinished sessions.",
+      "checkedAt": [
+        "grant_agent.cli.cmd_mission_action stop branch",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Stopping a mission preserves terminal delegated history and stops only unfinished sessions."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.watchdog",
+      "phase": "post",
+      "claim": "Scoped one-shot watchdog passes preserve active ongoing loop identity and counts; ongoing passes retain own liveness.",
+      "checkedAt": [
+        "grant_agent.cli._run_mission_watchdog_pass before state write",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Scoped one-shot watchdog passes preserve active ongoing loop identity and counts; ongoing passes retain own liveness."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.started",
+      "phase": "post",
+      "claim": "Successful mission starts persist their mission and requested relative timer.",
+      "checkedAt": [
+        "grant_agent.cli.cmd_mission_start",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Successful mission starts persist their mission and requested relative timer."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.mark-dispatch",
+      "phase": "post",
+      "claim": "Mission state becomes running after permitted dispatch and blocked after a blocked receipt.",
+      "checkedAt": [
+        "grant_agent.cli._mark_mission_resume_dispatched",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Mission state becomes running after permitted dispatch and blocked after a blocked receipt."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.compact",
+      "phase": "post",
+      "claim": "Compact mission action receipts preserve mission state and dispatch while omitting the full snapshot.",
+      "checkedAt": [
+        "grant_agent.cli._compact_mission_action_payload",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Compact mission action receipts preserve mission state and dispatch while omitting the full snapshot."
+      ]
+    },
+    {
+      "id": "a-cli.preferences.cycle",
+      "phase": "post",
+      "claim": "Mission engine cycles forward the remaining enforced budget, continuous-mode handoff policy and an existing safe checkpoint.",
+      "checkedAt": [
+        "grant_agent.cli._run_mission_engine_cycles after engine dispatch",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "impact": [
+        "Mission engine cycles forward the remaining enforced budget, continuous-mode handoff policy and an existing safe checkpoint."
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_detected_and_healthy_is_ready",
+      "contracts": [
+        "a-cli.catalog.classify"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.classify",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_detected_and_healthy_is_ready"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_detected_with_update_recommends_update",
+      "contracts": [
+        "a-cli.catalog.classify"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.classify",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_detected_with_update_recommends_update"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_installed_but_unauthenticated_is_not_ready",
+      "contracts": [
+        "a-cli.catalog.classify"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.classify",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_installed_but_unauthenticated_is_not_ready"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_absent_with_install_hint_is_installable",
+      "contracts": [
+        "a-cli.catalog.classify"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.classify",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_absent_with_install_hint_is_installable"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_absent_without_install_route_is_not_offered_as_installable",
+      "contracts": [
+        "a-cli.catalog.classify"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.classify",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_absent_without_install_route_is_not_offered_as_installable"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_unsupported_platform_is_reported_as_such",
+      "contracts": [
+        "a-cli.catalog.classify"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.classify",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_unsupported_platform_is_reported_as_such"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_every_state_has_a_label_and_actions",
+      "contracts": [
+        "a-cli.catalog.actions"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog._actions_for",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_every_state_has_a_label_and_actions"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_unknown_publisher_is_marked_unverified_not_invented",
+      "contracts": [
+        "a-cli.catalog.fact"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog._fact",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_unknown_publisher_is_marked_unverified_not_invented"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_size_is_not_invented_for_entries_without_a_package",
+      "contracts": [
+        "a-cli.catalog.size"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.resolve_package_size",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_size_is_not_invented_for_entries_without_a_package"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_recommendations_are_capped_and_explainable",
+      "contracts": [
+        "a-cli.catalog.recommend"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.recommend",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_recommendations_are_capped_and_explainable"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_recommendations_never_include_unavailable_runtimes",
+      "contracts": [
+        "a-cli.catalog.recommend"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.recommend",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_catalog.py::test_recommendations_never_include_unavailable_runtimes"
+    },
+    {
+      "test": "tests/test_claude_code_mods.py",
+      "case": "test_launch_env_defaults_on_and_follows_the_setting",
+      "contracts": [
+        "a-cli.mods.launch"
+      ],
+      "checkedAt": [
+        "grant_agent.claude_code_mods.launch_env",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_claude_code_mods.py::test_launch_env_defaults_on_and_follows_the_setting"
+    },
+    {
+      "test": "tests/test_claude_code_mods.py",
+      "case": "test_reports_are_validated_and_bounded",
+      "contracts": [
+        "a-cli.mods.report"
+      ],
+      "checkedAt": [
+        "grant_agent.claude_code_mods.record_report inside report lock",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_claude_code_mods.py::test_reports_are_validated_and_bounded"
+    },
+    {
+      "test": "tests/test_cursor_bridge.py",
+      "case": "CursorBridgeTests.test_message_text_extracts_cursor_content_arrays",
+      "contracts": [
+        "a-cli.cursor.text"
+      ],
+      "checkedAt": [
+        "grant_agent.cursor_bridge._message_text",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cursor_bridge.py::CursorBridgeTests.test_message_text_extracts_cursor_content_arrays"
+    },
+    {
+      "test": "tests/test_cursor_bridge.py",
+      "case": "CursorBridgeTests.test_message_text_extracts_result_text",
+      "contracts": [
+        "a-cli.cursor.text"
+      ],
+      "checkedAt": [
+        "grant_agent.cursor_bridge._message_text",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cursor_bridge.py::CursorBridgeTests.test_message_text_extracts_result_text"
+    },
+    {
+      "test": "tests/test_communication_archive.py",
+      "case": "test_eml_inspection_reads_real_headers_body_and_attachment_metadata",
+      "contracts": [
+        "a-cli.archive.summary",
+        "a-cli.archive.inspect"
+      ],
+      "checkedAt": [
+        "grant_agent.communication_archive._message_summary",
+        "grant_agent.proofs_a_cli",
+        "grant_agent.communication_archive.inspect_communication_archive",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_communication_archive.py::test_eml_inspection_reads_real_headers_body_and_attachment_metadata"
+    },
+    {
+      "test": "tests/test_communication_archive.py",
+      "case": "test_maildir_preview_is_bounded_and_reports_truncation",
+      "contracts": [
+        "a-cli.archive.inspect"
+      ],
+      "checkedAt": [
+        "grant_agent.communication_archive.inspect_communication_archive",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_communication_archive.py::test_maildir_preview_is_bounded_and_reports_truncation"
+    },
+    {
+      "test": "tests/test_communication_archive.py",
+      "case": "test_durable_import_requires_explicit_user_action_and_real_parser",
+      "contracts": [
+        "a-cli.archive.import",
+        "a-cli.archive.inspect"
+      ],
+      "checkedAt": [
+        "grant_agent.ecosystem_fabric.NeyviaEcosystemFabric.import_communication_archive",
+        "grant_agent.proofs_a_cli",
+        "grant_agent.communication_archive.inspect_communication_archive",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_communication_archive.py::test_durable_import_requires_explicit_user_action_and_real_parser"
+    },
+    {
+      "test": "tests/test_crashproof.py",
+      "case": "test_submit_is_idempotent_and_persists_across_restart",
+      "contracts": [
+        "a-cli.crash.submit"
+      ],
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.submit_task",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_crashproof.py::test_submit_is_idempotent_and_persists_across_restart"
+    },
+    {
+      "test": "tests/test_crashproof.py",
+      "case": "test_expired_work_is_requeued_after_coordinator_loss",
+      "contracts": [
+        "a-cli.crash.claim",
+        "a-cli.crash.recover"
+      ],
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.claim_next",
+        "grant_agent.proofs_a_cli",
+        "grant_agent.crashproof.CrashProofStore.recover_interrupted",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_crashproof.py::test_expired_work_is_requeued_after_coordinator_loss"
+    },
+    {
+      "test": "tests/test_crashproof.py",
+      "case": "test_transition_checkpoints_and_invalid_terminal_rewrite",
+      "contracts": [
+        "a-cli.crash.transition"
+      ],
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.transition_task",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_crashproof.py::test_transition_checkpoints_and_invalid_terminal_rewrite"
+    },
+    {
+      "test": "tests/test_crashproof.py",
+      "case": "test_result_sets_deduplicate_and_return_compact_summary",
+      "contracts": [
+        "a-cli.crash.result",
+        "a-cli.crash.summary"
+      ],
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.add_result_item",
+        "grant_agent.proofs_a_cli",
+        "grant_agent.crashproof.CrashProofStore.summarize_result_set",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_crashproof.py::test_result_sets_deduplicate_and_return_compact_summary"
+    },
+    {
+      "test": "tests/test_crashproof.py",
+      "case": "test_time_snapshot_skips_optional_work_and_reserves_verification",
+      "contracts": [
+        "a-cli.crash.time"
+      ],
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.time_snapshot",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_crashproof.py::test_time_snapshot_skips_optional_work_and_reserves_verification"
+    },
+    {
+      "test": "tests/test_crashproof.py",
+      "case": "test_autonomy_lease_is_scoped_expiring_revocable_and_inherited",
+      "contracts": [
+        "a-cli.crash.autonomy"
+      ],
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.autonomy_allows",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_crashproof.py::test_autonomy_lease_is_scoped_expiring_revocable_and_inherited"
+    },
+    {
+      "test": "tests/test_crashproof.py",
+      "case": "test_sparse_28_model_batch_needs_no_model_wake_while_work_is_running",
+      "contracts": [
+        "a-cli.crash.submit"
+      ],
+      "checkedAt": [
+        "grant_agent.crashproof.CrashProofStore.submit_task",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_crashproof.py::test_sparse_28_model_batch_needs_no_model_wake_while_work_is_running"
+    },
+    {
+      "test": "tests/test_cli_installer.py",
+      "case": "test_managed_install_is_approval_gated_and_keeps_system_path_unchanged",
+      "contracts": [
+        "a-cli.installer.action",
+        "a-cli.installer.integrity"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_installer._installer_locked",
+        "grant_agent.proofs_a_cli_scheduler",
+        "grant_agent.cli_installer._verified_package_archive",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_installer.py::test_managed_install_is_approval_gated_and_keeps_system_path_unchanged"
+    },
+    {
+      "test": "tests/test_cli_installer.py",
+      "case": "test_repair_retains_previous_install_and_uninstall_removes_only_managed_files",
+      "contracts": [
+        "a-cli.installer.action"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_installer._installer_locked",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_installer.py::test_repair_retains_previous_install_and_uninstall_removes_only_managed_files"
+    },
+    {
+      "test": "tests/test_cli_installer.py",
+      "case": "test_failed_repair_preserves_previous_launcher",
+      "contracts": [
+        "a-cli.installer.action"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_installer._installer_locked",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_installer.py::test_failed_repair_preserves_previous_launcher"
+    },
+    {
+      "test": "tests/test_cli_installer.py",
+      "case": "test_integrity_mismatch_never_replaces_the_active_launcher",
+      "contracts": [
+        "a-cli.installer.action",
+        "a-cli.installer.integrity"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_installer._installer_locked",
+        "grant_agent.proofs_a_cli_scheduler",
+        "grant_agent.cli_installer._verified_package_archive",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_installer.py::test_integrity_mismatch_never_replaces_the_active_launcher"
+    },
+    {
+      "test": "tests/test_cli_installer.py",
+      "case": "test_unmanaged_launcher_collision_is_blocked_before_download",
+      "contracts": [
+        "a-cli.installer.action"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_installer._installer_locked",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_installer.py::test_unmanaged_launcher_collision_is_blocked_before_download"
+    },
+    {
+      "test": "tests/test_cli_installer.py",
+      "case": "test_other_managed_runtime_cannot_claim_the_same_launcher",
+      "contracts": [
+        "a-cli.installer.action"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_installer._installer_locked",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_installer.py::test_other_managed_runtime_cannot_claim_the_same_launcher"
+    },
+    {
+      "test": "tests/test_cli_installer.py",
+      "case": "test_launcher_promotion_failure_rolls_manifest_and_launcher_back",
+      "contracts": [
+        "a-cli.installer.action"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_installer._installer_locked",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cli_installer.py::test_launcher_promotion_failure_rolls_manifest_and_launcher_back"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_efficient_nas_worker_advertises_bounded_self_repair",
+      "contracts": [
+        "a-cli.scheduler.capabilities"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.build_local_worker_capabilities",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_efficient_nas_worker_advertises_bounded_self_repair"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_stale_worker_is_marked_offline",
+      "contracts": [
+        "a-cli.scheduler.stale"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.mark_stale_hosts within transaction",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_stale_worker_is_marked_offline"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_scheduler_prefers_healthy_workstation_over_nas",
+      "contracts": [
+        "a-cli.scheduler.choose"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.choose_host",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_scheduler_prefers_healthy_workstation_over_nas"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_expired_lease_requeues_job",
+      "contracts": [
+        "a-cli.scheduler.expire"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.expire_stale_leases within transaction",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_expired_lease_requeues_job"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_file_scope_conflict_prevents_duplicate_write_lease",
+      "contracts": [
+        "a-cli.scheduler.lease"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._create_lease within transaction",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_file_scope_conflict_prevents_duplicate_write_lease"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_worker_claim_scans_past_fifty_incompatible_jobs",
+      "contracts": [
+        "a-cli.scheduler.claim"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.claim_next_job",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_worker_claim_scans_past_fifty_incompatible_jobs"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_host_capacity_allows_two_isolated_mission_worktrees",
+      "contracts": [
+        "a-cli.scheduler.claim",
+        "a-cli.scheduler.load"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.claim_next_job",
+        "grant_agent.proofs_a_cli_scheduler",
+        "grant_agent.cluster.ClusterRegistry._refresh_host_load_db",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_host_capacity_allows_two_isolated_mission_worktrees"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_unlimited_host_claims_more_than_ten_isolated_jobs",
+      "contracts": [
+        "a-cli.scheduler.claim",
+        "a-cli.scheduler.load"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.claim_next_job",
+        "grant_agent.proofs_a_cli_scheduler",
+        "grant_agent.cluster.ClusterRegistry._refresh_host_load_db",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_unlimited_host_claims_more_than_ten_isolated_jobs"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_unlimited_worker_attempts_have_no_fixed_thread_pool_ceiling",
+      "contracts": [
+        "a-cli.scheduler.threads"
+      ],
+      "checkedAt": [
+        "grant_agent.worker._start_unlimited_worker_attempt",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_unlimited_worker_attempts_have_no_fixed_thread_pool_ceiling"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_fake_worker_claims_and_completes_job_with_receipt",
+      "contracts": [
+        "a-cli.scheduler.worker",
+        "a-cli.scheduler.execute"
+      ],
+      "checkedAt": [
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.proofs_a_cli_scheduler",
+        "grant_agent.worker.execute_job",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_fake_worker_claims_and_completes_job_with_receipt"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_worker_once_persists_lifecycle_state_and_releases_pid",
+      "contracts": [
+        "a-cli.scheduler.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.worker._write_worker_state",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_worker_once_persists_lifecycle_state_and_releases_pid"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_worker_once_records_unexpected_poll_failure",
+      "contracts": [
+        "a-cli.scheduler.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.worker._write_worker_state",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_worker_once_records_unexpected_poll_failure"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_mission_registry_resolves_to_configured_shared_root",
+      "contracts": [
+        "a-cli.scheduler.root"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.resolve_cluster_root",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_mission_registry_resolves_to_configured_shared_root"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_active_job_dedupe_reuses_one_canonical_job",
+      "contracts": [
+        "a-cli.scheduler.job"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.upsert_job",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_active_job_dedupe_reuses_one_canonical_job"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_efficient_nas_advertises_browser_only_from_passing_receipt",
+      "contracts": [
+        "a-cli.scheduler.capabilities"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.build_local_worker_capabilities",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_efficient_nas_advertises_browser_only_from_passing_receipt"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_planner_prompt_mentions_verify_without_requiring_browser",
+      "contracts": [
+        "a-cli.scheduler.roles"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_supervisor._cluster_required_capabilities",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_planner_prompt_mentions_verify_without_requiring_browser"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_worker_claim_advertises_explicit_pool_capacity",
+      "contracts": [
+        "a-cli.scheduler.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_worker_claim_advertises_explicit_pool_capacity"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_host_load_is_authoritative_immediately_after_each_lease",
+      "contracts": [
+        "a-cli.scheduler.load"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._refresh_host_load_db",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_host_load_is_authoritative_immediately_after_each_lease"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_worker_applies_job_control_root_without_moving_cluster_root",
+      "contracts": [
+        "a-cli.scheduler.environment",
+        "a-cli.scheduler.execute"
+      ],
+      "checkedAt": [
+        "grant_agent.worker.execute_job before subprocess dispatch",
+        "grant_agent.proofs_a_cli_scheduler",
+        "grant_agent.worker.execute_job",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_worker_applies_job_control_root_without_moving_cluster_root"
+    },
+    {
+      "test": "tests/test_codex_import.py",
+      "case": "CodexImportTests.test_audit_redacts_config_and_classifies_assets",
+      "case_id": "tests/test_codex_import.py::CodexImportTests.test_audit_redacts_config_and_classifies_assets",
+      "contracts": [
+        "a-cli.assets.config",
+        "a-cli.assets.audit"
+      ],
+      "checkedAt": [
+        "grant_agent.codex_import.CodexAssetImporter._safe_config",
+        "grant_agent.proofs_a_cli_lifecycle",
+        "grant_agent.codex_import.CodexAssetImporter.audit"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_codex_import.py",
+      "case": "CodexImportTests.test_import_copies_safe_personal_skills_and_links_plugin_skills",
+      "case_id": "tests/test_codex_import.py::CodexImportTests.test_import_copies_safe_personal_skills_and_links_plugin_skills",
+      "contracts": [
+        "a-cli.assets.import"
+      ],
+      "checkedAt": [
+        "grant_agent.codex_import.CodexAssetImporter.import_assets",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_codex_completion_contracts.py",
+      "case": "ProgressiveSetupTests.test_first_run_is_resumable_and_optional_clis_do_not_block_the_shell",
+      "case_id": "tests/test_codex_completion_contracts.py::ProgressiveSetupTests.test_first_run_is_resumable_and_optional_clis_do_not_block_the_shell",
+      "contracts": [
+        "a-cli.setup.state",
+        "a-cli.setup.view"
+      ],
+      "checkedAt": [
+        "grant_agent.progressive_setup.update_first_run_state",
+        "grant_agent.proofs_a_cli_lifecycle",
+        "grant_agent.progressive_setup.build_progressive_setup"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_codex_completion_contracts.py",
+      "case": "MissionContinuityTests.test_restart_recovery_suppresses_completed_duplicate",
+      "case_id": "tests/test_codex_completion_contracts.py::MissionContinuityTests.test_restart_recovery_suppresses_completed_duplicate",
+      "contracts": [
+        "a-cli.continuity.attempt",
+        "a-cli.continuity.recovery",
+        "a-cli.continuity.verification"
+      ],
+      "checkedAt": [
+        "grant_agent.continuity_policy.MissionContinuityStore.record_tool_attempt",
+        "grant_agent.proofs_a_cli_lifecycle",
+        "grant_agent.continuity_policy.MissionContinuityStore.recover",
+        "grant_agent.continuity_policy.proportional_verification"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_codex_completion_contracts.py",
+      "case": "MissionContinuityTests.test_gpu_policy_prefers_checkpoint_and_requires_paid_start_approval",
+      "case_id": "tests/test_codex_completion_contracts.py::MissionContinuityTests.test_gpu_policy_prefers_checkpoint_and_requires_paid_start_approval",
+      "contracts": [
+        "a-cli.continuity.gpu"
+      ],
+      "checkedAt": [
+        "grant_agent.continuity_policy.MissionContinuityStore.evaluate_gpu_action",
+        "grant_agent.proofs_a_cli_lifecycle"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_codex_completion_contracts.py",
+      "case": "MissionContinuityTests.test_gpu_policy_classifies_release_and_bounds_repetitive_observation",
+      "case_id": "tests/test_codex_completion_contracts.py::MissionContinuityTests.test_gpu_policy_classifies_release_and_bounds_repetitive_observation",
+      "contracts": [
+        "a-cli.continuity.gpu",
+        "a-cli.continuity.gpu-label"
+      ],
+      "checkedAt": [
+        "grant_agent.continuity_policy.classify_gpu_control_action",
+        "grant_agent.proofs_a_cli_lifecycle",
+        "grant_agent.continuity_policy.MissionContinuityStore.evaluate_gpu_action"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_catalog.py",
+      "case": "test_size_lookup_can_be_limited_to_the_selected_runtime",
+      "case_id": "tests/test_cli_catalog.py::test_size_lookup_can_be_limited_to_the_selected_runtime",
+      "contracts": [
+        "a-cli.catalog.selection"
+      ],
+      "checkedAt": [
+        "grant_agent.cli_catalog.build_catalog",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_claude_code_mods.py",
+      "case": "test_plugin_skills_match_the_manuals",
+      "case_id": "tests/test_claude_code_mods.py::test_plugin_skills_match_the_manuals",
+      "contracts": [
+        "a-cli.mods.skills"
+      ],
+      "checkedAt": [
+        "scripts/build_claude_plugin_skills.py main success boundary",
+        "grant_agent.proofs_a_cli"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_legacy_mission_job_is_rehomed_without_mutating_legacy_db",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_legacy_mission_job_is_rehomed_without_mutating_legacy_db",
+      "contracts": [
+        "a-cli.scheduler.rehome",
+        "a-cli.scheduler.job"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.upsert_job",
+        "grant_agent.proofs_a_cli_scheduler",
+        "grant_agent.runtime_supervisor.DelegatedRuntimeSupervisor._sync_cluster_state before assignment"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_queued_session_remains_active_instead_of_becoming_blocked",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_queued_session_remains_active_instead_of_becoming_blocked",
+      "contracts": [
+        "a-cli.scheduler.queued"
+      ],
+      "checkedAt": [
+        "grant_agent.fluxio_harness.FluxioHarness._reconcile_delegated_sessions queued branch",
+        "grant_agent.proofs_a_cli_scheduler"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cluster_rate_blocker_regression.py",
+      "case": "ClusterRateBlockerRegressionTests.test_mission_resume_queues_from_authoritative_control_root",
+      "case_id": "tests/test_cluster_rate_blocker_regression.py::ClusterRateBlockerRegressionTests.test_mission_resume_queues_from_authoritative_control_root",
+      "contracts": [
+        "a-cli.preferences.dispatch",
+        "a-cli.preferences.queue"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._queue_cluster_mission_resume",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli._launch_async_mission_resume"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cluster_scheduler.py",
+      "case": "ClusterSchedulerTests.test_worker_main_unlimited_mode_admits_twelve_jobs_concurrently",
+      "case_id": "tests/test_cluster_scheduler.py::ClusterSchedulerTests.test_worker_main_unlimited_mode_admits_twelve_jobs_concurrently",
+      "contracts": [
+        "a-cli.scheduler.unlimited-loop",
+        "a-cli.scheduler.claim",
+        "a-cli.scheduler.load",
+        "a-cli.scheduler.threads",
+        "a-cli.scheduler.lifecycle",
+        "a-cli.scheduler.execute"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.claim_next_job",
+        "grant_agent.proofs_a_cli_scheduler",
+        "grant_agent.cluster.ClusterRegistry._refresh_host_load_db",
+        "grant_agent.worker.execute_job",
+        "grant_agent.worker._start_unlimited_worker_attempt",
+        "grant_agent.worker._write_worker_state",
+        "grant_agent.worker.main unlimited admission boundary"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_docs_only_guard.py",
+      "case": "CliDocsOnlyGuardTests.test_docs_only_completed_result_is_blocked",
+      "case_id": "tests/test_cli_docs_only_guard.py::CliDocsOnlyGuardTests.test_docs_only_completed_result_is_blocked",
+      "contracts": [
+        "a-cli.preferences.docs"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._sync_mission_from_result",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_workspace_save_persists_runtime_contract_preferences",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_workspace_save_persists_runtime_contract_preferences",
+      "contracts": [
+        "a-cli.preferences.workspace"
+      ],
+      "checkedAt": [
+        "grant_agent.cli.cmd_workspace_save before output",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_workspace_save_can_skip_expensive_snapshot",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_workspace_save_can_skip_expensive_snapshot",
+      "contracts": [
+        "a-cli.preferences.workspace"
+      ],
+      "checkedAt": [
+        "grant_agent.cli.cmd_workspace_save before output",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_invoke_engine_honors_legacy_harness_preference",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_invoke_engine_honors_legacy_harness_preference",
+      "contracts": [
+        "a-cli.preferences.engine"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._invoke_engine",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_resume_forwards_persisted_parallel_agents",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_resume_forwards_persisted_parallel_agents",
+      "contracts": [
+        "a-cli.preferences.engine"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._invoke_engine",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_fluxio_resume_uses_mission_state_without_forwarding_unknown_argument",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_fluxio_resume_uses_mission_state_without_forwarding_unknown_argument",
+      "contracts": [
+        "a-cli.preferences.engine"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._invoke_engine",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_start_promotes_deadline_objective_to_long_run_contract",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_start_promotes_deadline_objective_to_long_run_contract",
+      "contracts": [
+        "a-cli.preferences.started",
+        "a-cli.preferences.budget",
+        "a-cli.preferences.cycle"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._mission_budget_settings",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli.cmd_mission_start",
+        "grant_agent.cli._run_mission_engine_cycles after engine dispatch"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_start_accepts_relative_stop_minutes_timer",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_start_accepts_relative_stop_minutes_timer",
+      "contracts": [
+        "a-cli.preferences.started",
+        "a-cli.preferences.budget",
+        "a-cli.preferences.cycle"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._mission_budget_settings",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli.cmd_mission_start",
+        "grant_agent.cli._run_mission_engine_cycles after engine dispatch"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_start_accepts_per_run_model_route_overrides",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_start_accepts_per_run_model_route_overrides",
+      "contracts": [
+        "a-cli.preferences.started",
+        "a-cli.preferences.engine",
+        "a-cli.preferences.cycle"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._invoke_engine",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli.cmd_mission_start",
+        "grant_agent.cli._run_mission_engine_cycles after engine dispatch"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_resume_uses_latest_checkpoint_for_continuity",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_resume_uses_latest_checkpoint_for_continuity",
+      "contracts": [
+        "a-cli.preferences.cycle",
+        "a-cli.preferences.engine"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._invoke_engine",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli._run_mission_engine_cycles after engine dispatch"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_budget_settings_parses_days_timer_from_objective",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_budget_settings_parses_days_timer_from_objective",
+      "contracts": [
+        "a-cli.preferences.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._mission_budget_settings",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_loop_pauses_while_delegated_runtime_is_running",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_loop_pauses_while_delegated_runtime_is_running",
+      "contracts": [
+        "a-cli.preferences.continue",
+        "a-cli.preferences.poll"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._mission_should_continue_after_result",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli._mission_poll_interval_seconds"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_loop_stops_when_delegated_runtime_running_but_pause_mode",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_loop_stops_when_delegated_runtime_running_but_pause_mode",
+      "contracts": [
+        "a-cli.preferences.continue",
+        "a-cli.preferences.poll"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._mission_should_continue_after_result",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli._mission_poll_interval_seconds"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_start_launch_async_dispatches_background_resume",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_start_launch_async_dispatches_background_resume",
+      "contracts": [
+        "a-cli.preferences.started",
+        "a-cli.preferences.mark-dispatch",
+        "a-cli.preferences.queue"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._queue_cluster_mission_resume",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli.cmd_mission_start",
+        "grant_agent.cli._mark_mission_resume_dispatched"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_launch_async_mission_resume_skips_duplicate_active_worker",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_launch_async_mission_resume_skips_duplicate_active_worker",
+      "contracts": [
+        "a-cli.preferences.dispatch"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._launch_async_mission_resume",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_launch_async_mission_resume_detaches_posix_child",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_launch_async_mission_resume_detaches_posix_child",
+      "contracts": [
+        "a-cli.preferences.spawn"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._launch_async_mission_resume before subprocess.Popen",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_launch_async_mission_resume_queues_bundled_worker_job_when_selected",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_launch_async_mission_resume_queues_bundled_worker_job_when_selected",
+      "contracts": [
+        "a-cli.preferences.dispatch",
+        "a-cli.preferences.queue"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._queue_cluster_mission_resume",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli._launch_async_mission_resume"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_windows_pid_check_rejects_localized_no_task_output",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_windows_pid_check_rejects_localized_no_task_output",
+      "contracts": [
+        "a-cli.preferences.pid"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._tasklist_has_pid",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_action_resume_launch_async_dispatches_background_worker",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_action_resume_launch_async_dispatches_background_worker",
+      "contracts": [
+        "a-cli.preferences.mark-dispatch",
+        "a-cli.preferences.compact",
+        "a-cli.preferences.queue"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._queue_cluster_mission_resume",
+        "grant_agent.proofs_a_cli_preferences",
+        "grant_agent.cli._mark_mission_resume_dispatched",
+        "grant_agent.cli._compact_mission_action_payload"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_mission_stop_preserves_terminal_session_history",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_mission_stop_preserves_terminal_session_history",
+      "contracts": [
+        "a-cli.preferences.stop"
+      ],
+      "checkedAt": [
+        "grant_agent.cli.cmd_mission_action stop branch",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_one_shot_watchdog_preserves_active_ongoing_supervisor",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_one_shot_watchdog_preserves_active_ongoing_supervisor",
+      "contracts": [
+        "a-cli.preferences.watchdog"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._run_mission_watchdog_pass before state write",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_cli_preferences.py",
+      "case": "CliPreferenceTests.test_ongoing_watchdog_pass_writes_process_alive",
+      "case_id": "tests/test_cli_preferences.py::CliPreferenceTests.test_ongoing_watchdog_pass_writes_process_alive",
+      "contracts": [
+        "a-cli.preferences.watchdog"
+      ],
+      "checkedAt": [
+        "grant_agent.cli._run_mission_watchdog_pass before state write",
+        "grant_agent.proofs_a_cli_preferences"
+      ],
+      "procedure": "self_check"
+    }
+  ],
+  "frontier": [
+    "tests/test_codex_completion_contracts.py::RuntimeUiContractTests.test_managed_cli_surface_uses_the_durable_runtime_turn: Original source-string checks for the classic managed CLI surface require a rendered durable runtime turn and awaited action journey before deletion; no rendered legacy UI proof is claimed in this area.",
+    "Controlled provider/installer transports prove orchestration and durable state, not authenticated provider service execution.",
+    "POSIX detach option is exercised through production dispatch with an inert child transport on Windows; native POSIX session semantics are outside this receipt."
+  ],
+  "sourceFiles": [
+    "config/constitution.json",
+    "config/modes.json",
+    "config/profiles.json",
+    "config/personas.json",
+    "config/skills.json",
+    "config/neyvia_manuals.json",
+    "scripts/build_claude_plugin_skills.py",
+    "plugins/neyvia/skills/neyvia/SKILL.md",
+    "plugins/neyvia/skills/neyvia-pdf/SKILL.md",
+    "plugins/neyvia/skills/neyvia-image-studio/SKILL.md",
+    "plugins/neyvia/skills/neyvia-lab/SKILL.md"
+  ],
+  "pending": [
+    {
+      "test": "tests/test_codex_completion_contracts.py",
+      "case": "RuntimeUiContractTests.test_managed_cli_surface_uses_the_durable_runtime_turn",
+      "case_id": "tests/test_codex_completion_contracts.py::RuntimeUiContractTests.test_managed_cli_surface_uses_the_durable_runtime_turn",
+      "reason": "Original source-string checks for the classic managed CLI surface require a rendered durable runtime turn and awaited action journey before deletion; no rendered legacy UI proof is claimed in this area."
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "neyvia.components/v1",
+  "comment": "What Neyvia can install or keep current on this PC. components_status_command merges this with live state. Groups are the onboarding sections: core, claude-mod, codex-skills, optional.",
+  "components": [
+    {
+      "id": "python-env",
+      "group": "core",
+      "title": "Neyvia core runtime",
+      "summary": "The private Python environment Neyvia's backend runs in. Re-synced automatically when an update changes its pinned packages.",
+      "unlocks": ["Everything in Neyvia"],
+      "required": true,
+      "autoUpdate": true,
+      "actions": ["update"],
+      "updatePath": "Applied by the desktop app before the backend starts; checks the SHA-256 of the bundled backend-requirements.txt."
+    },
+    {
+      "id": "claude-mod",
+      "group": "claude-mod",
+      "title": "Add Neyvia to my Claude Code",
+      "summary": "Installs Neyvia's plugin into your own Claude Code: Neyvia's tools, manuals, live status and the optional stop gate, on your plan limits.",
+      "unlocks": ["Claude Code driven and watched from Neyvia", "Neyvia tools inside Claude Code"],
+      "needs": ["Claude Code installed on this PC"],
+      "autoUpdate": true,
+      "actions": ["install", "update", "remove"],
+      "updatePath": "Refreshed with each Neyvia update; run /reload-plugins in a running Claude Code, or restart it."
+    },
+    {
+      "id": "codex-skills",
+      "group": "codex-skills",
+      "title": "Neyvia skills for Codex",
+      "summary": "Copies Neyvia's Codex skills into your Codex skills folder as neyvia-* and keeps them current. Your own skills are never touched.",
+      "unlocks": ["Neyvia's design, review and image skills inside Codex"],
+      "needs": ["Codex installed on this PC (a skills folder is created if missing)"],
+      "autoUpdate": true,
+      "actions": ["install", "update", "remove"],
+      "updatePath": "Refreshed with each Neyvia update. Only folders Neyvia installed (marked .neyvia-skill.json) are changed."
+    },
+    {
+      "id": "laya-weights",
+      "group": "optional",
+      "title": "LAYA model weights",
+      "summary": "The local LAYA model that lets Neyvia see apps and answer routine decisions without the big model.",
+      "unlocks": ["LAYA seeing apps", "Cheaper routine decisions"],
+      "autoUpdate": false,
+      "actions": [],
+      "updatePath": "Version check only. The weights are referenced in place from config/laya.json and are never downloaded by Neyvia tonight."
+    },
+    {
+      "id": "dictation",
+      "group": "optional",
+      "title": "Dictation engine",
+      "summary": "Local speech to text (Phonon-2) used by the voice button.",
+      "unlocks": ["Voice prompts"],
+      "autoUpdate": false,
+      "actions": [],
+      "updatePath": "Version check only. The engine lives in its own folder; update it there (git pull) and restart it from Neyvia."
+    },
+    {
+      "id": "gamedev-bridges",
+      "group": "optional",
+      "title": "Godot, Unity and Blender bridges",
+      "summary": "Editor add-ons that let Neyvia look at and drive a game project.",
+      "unlocks": ["Game-dev scenes in Neyvia"],
+      "autoUpdate": false,
+      "actions": [],
+      "updatePath": "Version check only. Copy the add-on again from this build when its version here is newer than the one in your project."
+    },
+    {
+      "id": "app-updater",
+      "group": "core",
+      "title": "Neyvia desktop updates",
+      "summary": "Where the desktop app looks for new releases.",
+      "unlocks": ["Automatic app updates"],
+      "autoUpdate": false,
+      "actions": ["check"],
+      "updatePath": "Release endpoint check. The slim installer has no self-update; it receives updates through the signed base pack."
+    }
+  ]
+}

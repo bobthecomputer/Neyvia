@@ -1,0 +1,134 @@
+/* PDF app (Documents suite). Pages sit on the stage like paper; our marks
+   (search hits, highlights) are overlays in PDF space, scaled with the page. */
+
+.nx .nx-pdf { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.nx .nx-pdf-bar {
+  flex: none; display: flex; align-items: center; gap: var(--nx-space-2); min-height: 40px; padding: var(--nx-space-4) var(--nx-space-8); flex-wrap: nowrap; overflow: hidden;
+  border-bottom: 1px solid var(--nx-line); font-size: var(--nx-fs-sm); color: var(--nx-muted);
+}
+.nx .nx-pdf-name { max-width: 160px; margin: 0 var(--nx-space-4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--nx-text-2); font-weight: 500; }
+.nx .nx-pdf-sep { width: 1px; height: 18px; margin: 0 var(--nx-space-6); background: var(--nx-line); }
+.nx .nx-pdf-spacer { flex: 1 1 auto; }
+.nx .nx-pdf-pagefield { display: inline-flex; align-items: center; gap: var(--nx-space-5); font-variant-numeric: tabular-nums; }
+.nx .nx-pdf-pagefield input {
+  width: 38px; height: 24px; border-radius: var(--nx-r-xs); text-align: center; color: var(--nx-text);
+  background: color-mix(in srgb, var(--nx-text) 5%, transparent); box-shadow: var(--nx-paper-shadow);
+}
+.nx .nx-pdf-zoom { min-width: 42px; text-align: center; font-variant-numeric: tabular-nums; }
+.nx .nx-pdf-search {
+  display: inline-flex; align-items: center; gap: var(--nx-space-6); height: 26px; padding: 0 var(--nx-space-8); border-radius: var(--nx-r-sm); flex: 0 1 168px; width: auto; min-width: 72px;
+  background: color-mix(in srgb, var(--nx-text) 5%, transparent); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+}
+.nx .nx-pdf-search:focus-within { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-accent-hi); }
+.nx .nx-pdf-search input { flex: 1 1 auto; min-width: 0; color: var(--nx-text); }
+.nx .nx-pdf-hits { font-size: var(--nx-fs-xs); color: var(--nx-faint); font-variant-numeric: tabular-nums; }
+
+.nx .nx-pdf-body { flex: 1 1 auto; min-height: 0; display: flex; }
+.nx .nx-pdf-scroll {
+  flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: var(--nx-space-16); padding: var(--nx-space-20) var(--nx-space-28) var(--nx-space-40);
+  background: color-mix(in srgb, var(--nx-bg) 80%, var(--nx-bg)); outline: none;
+}
+.nx .nx-pdf-scroll.is-drop { box-shadow: inset 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi); }
+.nx .nx-pdf-page {
+  position: relative; flex: none; background: var(--nx-paper); border-radius: var(--nx-r-xxs);
+  box-shadow: var(--nx-paper-shadow);
+}
+.nx .nx-pdf-canvas { display: block; border-radius: var(--nx-r-xxs); }
+.nx .nx-pdf-page-number { position: absolute; right: -24px; bottom: 2px; font-size: var(--nx-fs-xs); color: var(--nx-faint); font-variant-numeric: tabular-nums; }
+.nx .nx-pdf-page-error { position: absolute; inset: auto 12px 12px; color: var(--nx-paper-error); font-size: var(--nx-fs-sm); }
+
+.nx .nx-pdf-marks { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.nx .nx-pdf-mark { position: absolute; border-radius: var(--nx-r-xxs); background: var(--nx-mark-user); mix-blend-mode: multiply; }
+.nx .nx-pdf-mark.is-model { background: var(--nx-mark-model); box-shadow: inset 0 calc(-1 * var(--nx-stroke)) 0 color-mix(in srgb, var(--nx-accent) 80%, transparent); }
+.nx .nx-pdf-hit { position: absolute; border-radius: var(--nx-r-xxs); background: var(--nx-mark-search); }
+.nx .nx-pdf-hit.is-active { background: var(--nx-mark-search-active); box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-mark-search-line); }
+
+/* pdf.js text layer: invisible, selectable text over the canvas (from pdf.js's pdf_viewer.css). */
+.nx .nx-pdf-page .textLayer {
+  position: absolute; inset: 0; overflow: clip; opacity: 1; line-height: 1; text-align: initial; z-index: 1;
+  -webkit-text-size-adjust: none; text-size-adjust: none; forced-color-adjust: none; transform-origin: 0 0; caret-color: var(--nx-paper-caret);
+  --min-font-size: 1;
+  --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+  --min-font-size-inv: calc(1 / var(--min-font-size));
+}
+.nx .nx-pdf-page .textLayer :is(span, br) { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+.nx .nx-pdf-page .textLayer > :not(.markedContent),
+.nx .nx-pdf-page .textLayer .markedContent span:not(.markedContent) {
+  z-index: 1; --font-height: 0; font-size: calc(var(--text-scale-factor) * var(--font-height));
+  --scale-x: 1; --rotate: 0deg; transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+}
+.nx .nx-pdf-page .textLayer .markedContent { display: contents; }
+.nx .nx-pdf-page .textLayer ::selection { background: var(--nx-paper-selection); color: transparent; }
+.nx .nx-pdf-page .textLayer .endOfContent { display: block; position: absolute; inset: 100% 0 0; z-index: 0; cursor: default; user-select: none; }
+
+.nx .nx-pdf-empty { margin: auto; display: grid; justify-items: center; gap: var(--nx-space-10); max-width: 380px; text-align: center; color: var(--nx-muted); }
+.nx .nx-pdf-empty > .nx-icon { color: var(--nx-faint); }
+.nx .nx-pdf-empty strong { color: var(--nx-text); font-size: var(--nx-fs-lg); font-weight: 600; }
+.nx .nx-pdf-empty p { line-height: 1.5; }
+
+.nx .nx-pdf-marks-list {
+  flex: none; width: 240px; padding: var(--nx-space-12) var(--nx-space-10); display: flex; flex-direction: column; gap: var(--nx-space-4);
+  border-left: 1px solid var(--nx-line); background: var(--nx-sidebar); font-size: var(--nx-fs-sm);
+  animation: nx-canopy-in var(--nx-settle) var(--nx-spring-settle) both;
+}
+.nx .nx-pdf-marks-list > strong { margin: 0 var(--nx-space-4) var(--nx-space-6); color: var(--nx-text); font-weight: 600; }
+.nx .nx-pdf-marks-list > p { margin: 0 var(--nx-space-4); color: var(--nx-faint); line-height: 1.45; }
+.nx .nx-pdf-markrow { display: flex; align-items: flex-start; gap: var(--nx-space-4); border-radius: var(--nx-r-sm); }
+.nx .nx-pdf-markrow:hover { background: var(--nx-hover); }
+.nx .nx-pdf-markrow > button:first-child {
+  flex: 1 1 auto; min-width: 0; display: grid; gap: var(--nx-space-2); padding: var(--nx-space-6); text-align: left; color: var(--nx-text-2);
+  overflow: hidden; text-overflow: ellipsis; border-left: 3px solid var(--nx-mark-user-line); border-radius: 0 var(--nx-r-xs) var(--nx-r-xs) 0;
+}
+.nx .nx-pdf-markrow.is-model > button:first-child { border-left-color: var(--nx-mark-model-line); }
+.nx .nx-pdf-markrow > button:first-child span { font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-pdf-markrow > button:last-child { display: grid; place-items: center; width: 24px; height: 24px; margin: var(--nx-space-4) var(--nx-space-2) 0 0; border-radius: var(--nx-r-xs); color: var(--nx-faint); }
+.nx .nx-pdf-markrow > button:last-child:hover { color: var(--nx-state-error); background: var(--nx-hover); }
+
+/* Docked beside the chat the stage is narrower: keep the toolbar on one line. */
+@container (max-width: 760px) { .nx .nx-pdf-name { display: none; } }
+.nx .nx-pdf { container-type: inline-size; }
+
+/* Opening: a sheet of paper with a few soft text lines and one slow sheen where the first page
+   will be, never a bare spinner. Plain boxes, so every engine draws the same sheet. */
+.nx .nx-pdf-ghost {
+  position: relative; overflow: hidden; display: grid; align-content: start; gap: 9px; box-sizing: border-box;
+  width: min(300px, 70cqw); aspect-ratio: 210 / 297; padding: 11% 12%; border-radius: var(--nx-r-xxs);
+  box-shadow: var(--nx-paper-shadow-light); background: var(--nx-paper);
+}
+.nx .nx-pdf-ghost > i { display: block; height: 6px; border-radius: 3px; background: var(--nx-scrim); opacity: 0.5; }
+.nx .nx-pdf-ghost > i:first-child { height: 9px; width: 58%; margin-bottom: 6px; }
+.nx .nx-pdf-ghost > i:nth-child(2) { width: 92%; } .nx .nx-pdf-ghost > i:nth-child(3) { width: 84%; }
+.nx .nx-pdf-ghost > i:nth-child(4) { width: 88%; } .nx .nx-pdf-ghost > i:nth-child(5) { width: 54%; }
+.nx .nx-pdf-ghost::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(100deg, transparent 30%, var(--nx-paper-sheen) 50%, transparent 70%);
+  animation: nx-pdf-sheen var(--nx-pulse) var(--nx-ease-loop) infinite;
+}
+@keyframes nx-pdf-sheen { to { transform: translateX(100%); } }
+.nx[data-nx-motion="reduce"] .nx-pdf-ghost::after { animation: none; opacity: 0; }
+.nx .nx-pdf-error-actions { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: var(--nx-space-8); }
+
+/* One toolbar row at every width: the less-needed controls fold away as the pane narrows. */
+.nx .nx-pdf-zoomgroup, .nx .nx-pdf-matchnav { display: inline-flex; align-items: center; gap: var(--nx-space-2); flex: none; }
+.nx .nx-pdf-bar > :is(.nx-iconbtn, .nx-btn, .nx-pdf-pagefield) { flex: none; }
+@container (max-width: 620px) {
+  .nx .nx-pdf-highlight .nx-btn-label, .nx .nx-pdf-sep.is-late { display: none; }
+  .nx .nx-pdf-matchnav:not(:has(:enabled)) { display: none; }
+}
+@container (max-width: 440px) {
+  .nx .nx-pdf-zoomgroup, .nx .nx-pdf-sep { display: none; }
+  .nx .nx-pdf-search { flex: 1 1 auto; }
+}
+
+/* ---------- Roomy toolbar and desk at full screen ---------- */
+@container (min-width: 1000px) {
+  .nx .nx-pdf-bar { min-height: 52px; padding: var(--nx-space-8) var(--nx-space-16); gap: var(--nx-space-4); font-size: var(--nx-fs-md); }
+  .nx .nx-pdf-name { max-width: 420px; font-family: var(--nx-display); font-size: var(--nx-fs-lg); font-weight: var(--nx-display-weight); color: var(--nx-text); }
+  .nx .nx-pdf-pagefield input { width: 52px; height: 32px; font-size: var(--nx-fs-md); }
+  .nx .nx-pdf-zoom { min-width: 56px; font-size: var(--nx-fs-md); color: var(--nx-text); }
+  .nx .nx-pdf-search { flex: 0 1 300px; height: 34px; padding: 0 var(--nx-space-12); font-size: var(--nx-fs-md); }
+  .nx .nx-pdf-hits { font-size: var(--nx-fs-sm); }
+  .nx .nx-pdf-marks-list { width: 320px; padding: var(--nx-space-16) var(--nx-space-14); font-size: var(--nx-fs-md); }
+  .nx .nx-pdf-empty strong { font-size: var(--nx-fs-xl); font-family: var(--nx-display); font-weight: var(--nx-display-weight); }
+  .nx .nx-pdf-empty { font-size: var(--nx-fs-md); }
+}

@@ -1,0 +1,722 @@
+{
+  "manuals": [
+    {
+      "manual": "agents",
+      "chapterId": "proofs_a_sessions",
+      "chapter": {
+        "title": "Connected sessions: workspace, protocol, transcript and HTTP proofs",
+        "state": {},
+        "actions": {},
+        "checks": {},
+        "procedures": {},
+        "frontier": [
+          "Only the two named positive/failed Git push cases in pending remain unmapped in the original broker/API/workspace share.",
+          "No live provider/account execution, actual product cookie issuance or external GitHub authority is claimed by finite protocol, account-status, CLI-loading and cookie transport boundaries."
+        ],
+        "guidance": [
+          "Use the selected task root and explicit permitted service port; never infer provider authority from finite transport or executable-presence observations.",
+          "Startup self-check runs invoke the production path. All external provider/account authority and actual product cookie issuance remain distinct from these protocol receipts.",
+          "state / scope: Observe the selected local workspace/session, its provider availability, active owner, current run and persisted seen cursor. Current capability state and event cursor belong to the persistent broker.",
+          "actions / observe: List/read pages, unread markers, workspace diffs and media; use literal confirmation before local Git changes. Send/control requests preserve run/session identity and retry state.",
+          "checks / runtime: Native host guards validate every observation, mapping, filter/pagination result, projected hook/refusal, owner recovery, watchdog selection and HTTP/desktop receipt.",
+          "procedures / self_check: Invoke a-sessions production self_check in a guarded isolated process: real scratch Git and SQLite, owned subprocess identities, finite CLI/protocol boundaries, actual loopback HTTP/SSE on explicit 48469, hidden desktop bridge envelopes and both stream disposal paths.",
+          "judge / retirement: Retire an original case only with its mapped runtime contracts and a successful current-source receipt; exact migration notes describe expanded current fields, fingerprint options and reasoning notices."
+        ],
+        "judge": {},
+        "pitfalls": [
+          {
+            "failure": "Scratch directories below a checkout can observe the parent repository.",
+            "recovery": "Use GIT_CEILING_DIRECTORIES in the confined child before repository observations."
+          }
+        ]
+      },
+      "contracts": [
+        {
+          "id": "sessions.workspace.state",
+          "phase": "post",
+          "claim": "Git status, branch, detached/upstream identity, line counts, rename/stage metadata, bounded changes and current worktree exactly project observed repository data.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace.workspace_state",
+            "grant_agent.connected_sessions.workspace._compute_state",
+            "grant_agent.proofs_a_sessions.check_state"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.workspace.cache",
+          "phase": "invariant",
+          "claim": "The workspace observer returns a detached JSON copy of its cached observation within TTL; invalidate(cwd) drops that workspace and PR cache.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace.workspace_state",
+            "grant_agent.connected_sessions.workspace.invalidate"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.workspace.diff",
+          "phase": "post",
+          "claim": "The file observer resolves paths inside the real repository and bounds patch bytes with a visible truncation marker; nonexistent workspaces and escapes are refused before diff.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace._safe_relpath",
+            "grant_agent.connected_sessions.workspace.file_diff",
+            "grant_agent.proofs_a_sessions.check_diff"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.workspace.confirm",
+          "phase": "pre",
+          "claim": "Repository mutations accept literal True confirmation only; refusals happen before any repository command or mutation.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace.git_action"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.workspace.action",
+          "phase": "post",
+          "claim": "Repository actions project actual command exit status, stdout/stderr, visible timeout and bounded output; commit messages are literal arguments and invalid empty/oversized messages are refused.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace.git_action",
+            "grant_agent.connected_sessions.workspace._action_result",
+            "grant_agent.proofs_a_sessions.check_action"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.workspace.remote",
+          "phase": "invariant",
+          "claim": "GitHub identities use supported canonical GitHub URLs and userinfo is removed before remote state reaches clients.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace._github_from_remote",
+            "grant_agent.connected_sessions.workspace._strip_credentials",
+            "grant_agent.proofs_a_sessions.check_remote"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.workspace.checks",
+          "phase": "post",
+          "claim": "GitHub checks preserve unknown for absent rollups; failure outranks pending, which outranks passing.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace._checks_summary",
+            "grant_agent.proofs_a_sessions.check_rollup"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.folders.catalogue",
+          "phase": "post",
+          "claim": "Project and linked-worktree branch/remote identity matches Git HEAD/config/commondir observations; ordinary folders remain nonrepositories.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.folders._git_info",
+            "grant_agent.connected_sessions.folders.local_projects",
+            "grant_agent.proofs_a_sessions.check_folder_info"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.folders.filter",
+          "phase": "post",
+          "claim": "Recent/local folders preserve input order and apply exact query projection and respective 8/30 limits.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.folders.candidates",
+            "grant_agent.proofs_a_sessions.check_candidates"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.folders.availability",
+          "phase": "pre",
+          "claim": "Absent GitHub CLI is reported unavailable and repositories stay empty without any account access.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.folders.github_status",
+            "grant_agent.connected_sessions.folders.github_repos",
+            "grant_agent.connected_sessions.folders.github_candidates"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.folders.confirm",
+          "phase": "pre",
+          "claim": "Clone and worktree require confirmation, constrained repository and branch names, and an actual Git repository; unsafe requests fail before processes or directories are created.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.folders.clone",
+            "grant_agent.connected_sessions.folders.create_worktree"
+          ],
+          "impact": [
+            "connected session workspace/folder receipts",
+            "local repository boundaries"
+          ]
+        },
+        {
+          "id": "sessions.events.stamp",
+          "phase": "post",
+          "claim": "Each broker event retains causal order and session identity with one increasing cursor and the actual host device identity.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.events.EventBuffer.publish",
+            "grant_agent.proofs_a_sessions.check_event_publish"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.events.bounds",
+          "phase": "invariant",
+          "claim": "Published events and the cursor ring obey event/count/byte budgets; evicted bytes exactly reduce the recorded ring total and oversized strings expose truncation while short metadata survives.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.events.EventBuffer.publish",
+            "grant_agent.proofs_a_sessions.check_event_publish"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.events.cursor",
+          "phase": "post",
+          "claim": "An observer returns exactly the ordered retained events after its cursor, or resync outside retained range; initial/new subscribers receive no past events.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.events.EventBuffer._since",
+            "grant_agent.proofs_a_sessions.check_event_buffer"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.events.wait",
+          "phase": "post",
+          "claim": "Blocking observers wake on publish/close or timeout; new subscribers return at once, and each result passes the same locked cursor contract.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.events.EventBuffer.wait",
+            "grant_agent.connected_sessions.events.EventBuffer._since"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.run.lifecycle",
+          "phase": "invariant",
+          "claim": "Provider state transitions preserve state, pending request, error and control flags; terminal states expose no active controls or requests. Approval identity is consumed once only after a successful adapter answer; stopping a retired run does not interrupt again.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+            "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+            "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+            "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+            "grant_agent.proofs_a_sessions.check_state_transition",
+            "grant_agent.proofs_a_sessions.check_run_record"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.run.request",
+          "phase": "pre",
+          "claim": "Successful send/new returns the requested durable run and session identity; request fingerprints reject conflicting replay and one active run owns each session. Refused messages/host/session/adapter requests fail before a provider turn starts.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker.ConnectedBroker.send",
+            "grant_agent.connected_sessions.broker.ConnectedBroker.new",
+            "grant_agent.connected_sessions.runs.RunStore.has_request",
+            "grant_agent.connected_sessions.runs.RunStore.claim",
+            "grant_agent.proofs_a_sessions.check_broker_request"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.codex.sequence",
+          "phase": "post",
+          "claim": "A Codex sequence is its stable turn ordinal times 8192 plus bounded position times four plus subslot, retaining exact JSON integer ordering.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.codex_items.make_seq",
+            "grant_agent.proofs_a_sessions.check_seq",
+            "grant_agent.connected_sessions.codex_items.uuid7_ms",
+            "grant_agent.connected_sessions.codex_items.ordinal_from_seq",
+            "grant_agent.connected_sessions.codex_items.map_turns",
+            "grant_agent.proofs_a_sessions.check_uuid_clock",
+            "grant_agent.proofs_a_sessions.check_codex_turns"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.codex.text",
+          "phase": "post",
+          "claim": "Codex text preserves short input verbatim and clips long UTF-8 input on complete characters, with the exact omitted-character marker.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.codex_items.clip",
+            "grant_agent.proofs_a_sessions.check_clip",
+            "grant_agent.connected_sessions.codex_items.map_thread_item",
+            "grant_agent.connected_sessions.codex_items.public_request",
+            "grant_agent.proofs_a_sessions.check_codex_item",
+            "grant_agent.proofs_a_sessions.check_public_request"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.neyvia.category",
+          "phase": "post",
+          "claim": "Unlabeled/native runtime aliases are native; external or mixed routes are hybrid, with no invented single runtime for mixed routes.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.classify",
+            "grant_agent.proofs_a_sessions.check_native_category",
+            "grant_agent.connected_sessions.neyvia.conversation_runtime",
+            "grant_agent.proofs_a_sessions.check_native_runtime"
+          ],
+          "impact": [
+            "connected session stream/store/protocol receipts"
+          ]
+        },
+        {
+          "id": "sessions.api.authority",
+          "phase": "pre",
+          "claim": "Connected reads require an authenticated session and provider/file mutations require the host owner; an anonymous/guest refusal happens before stream subscription or dispatch.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.api.serve_connected_get",
+            "grant_agent.connected_sessions.api.respond_connected_command"
+          ],
+          "impact": [
+            "connected session TCP HTTP SSE authority and event transport"
+          ]
+        },
+        {
+          "id": "sessions.api.response",
+          "phase": "post",
+          "claim": "Connected command success envelopes retain the exact dispatch result; coded refusals retain HTTP status/code/owner details, and unexpected failures use bounded internal_error envelopes.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.api.respond_connected_command",
+            "grant_agent.proofs_a_sessions.check_http_response"
+          ],
+          "impact": [
+            "connected session TCP HTTP SSE authority and event transport"
+          ]
+        },
+        {
+          "id": "sessions.api.state_root",
+          "phase": "pre",
+          "claim": "A supplied expected state folder must resolve to the active backend root before connected command dispatch.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.api._check_state_root"
+          ],
+          "impact": [
+            "connected session TCP HTTP SSE authority and event transport"
+          ]
+        },
+        {
+          "id": "sessions.api.media",
+          "phase": "post",
+          "claim": "Authenticated media preserves actual bytes and allowed MIME, falls back to octet-stream for unknown MIME, sends no-store/nosniff/sandbox, and forces nonimage downloads with quoted filename.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.api._serve_media"
+          ],
+          "impact": [
+            "connected session TCP HTTP SSE authority and event transport"
+          ]
+        },
+        {
+          "id": "sessions.api.sse",
+          "phase": "post",
+          "claim": "Every streamed frame preserves its exact broker event and cursor; Last-Event-ID takes precedence over query cursor, resync is explicit, and subscription lifetime follows the live socket.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.api._serve_events",
+            "grant_agent.proofs_a_sessions.check_sse"
+          ],
+          "impact": [
+            "connected session TCP HTTP SSE authority and event transport"
+          ]
+        },
+        {
+          "id": "sessions.workspace.github",
+          "phase": "post",
+          "claim": "Only the finite/public gh CLI interface is used: authenticated GitHub repositories project PR identity/state/checks from exact JSON, absent PR is not an error, and unavailable/signed-out CLI prevents PR reads/creation. PR create uses literal title/body and projects only its actual command output.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace._gh_state",
+            "grant_agent.connected_sessions.workspace._pull_request",
+            "grant_agent.connected_sessions.workspace.git_action",
+            "grant_agent.proofs_a_sessions.check_github_result",
+            "grant_agent.proofs_a_sessions.check_cli_invocation"
+          ],
+          "impact": [
+            "Git workspace observations and explicit confirmed command boundaries"
+          ]
+        },
+        {
+          "id": "sessions.workspace.cli",
+          "phase": "pre",
+          "claim": "Workspace children disable credential prompts and token extraction; hidden Windows options apply to every actual child launch, confirmed over real Git and finite CLI processes in the scratch procedure.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.workspace._run",
+            "grant_agent.connected_sessions.workspace._run_capped",
+            "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+            "grant_agent.proofs_a_sessions.check_cli_invocation"
+          ],
+          "impact": [
+            "Git workspace observations and explicit confirmed command boundaries"
+          ]
+        },
+        {
+          "id": "sessions.codex.diff",
+          "phase": "post",
+          "claim": "Full-source change counts and relative paths survive bounded unified patch projection.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.codex_items.diff_from_changes",
+            "grant_agent.proofs_a_sessions.check_codex_diff"
+          ],
+          "impact": [
+            "Codex session transcript and approval protocol"
+          ]
+        },
+        {
+          "id": "sessions.codex.permissions",
+          "phase": "post",
+          "claim": "Advertised permission modes map exactly to read-only, workspace-write or full access; unknown modes grant no authority.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.codex_items.permission_modes",
+            "grant_agent.connected_sessions.codex_items.permission_mode_for",
+            "grant_agent.connected_sessions.codex_items.turn_permission_params",
+            "grant_agent.connected_sessions.codex_items.thread_permission_params",
+            "grant_agent.proofs_a_sessions.check_permission"
+          ],
+          "impact": [
+            "Codex session transcript and approval protocol"
+          ]
+        },
+        {
+          "id": "sessions.codex.requests",
+          "phase": "post",
+          "claim": "Approval replies grant only the requested action or turn; question and elicitation replies preserve their exact wire shape.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.codex_items.public_request",
+            "grant_agent.connected_sessions.codex_items.server_request_result",
+            "grant_agent.proofs_a_sessions.check_request_wire",
+            "grant_agent.proofs_a_sessions.check_public_request"
+          ],
+          "impact": [
+            "Codex session transcript and approval protocol"
+          ]
+        },
+        {
+          "id": "sessions.codex.media",
+          "phase": "post",
+          "claim": "Connected media tokens equal SHA-256 of the reference and agree with chat-media descriptors.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.codex_items.media_token",
+            "grant_agent.proofs_a_sessions.check_media_token"
+          ],
+          "impact": [
+            "Codex session transcript and approval protocol"
+          ]
+        },
+        {
+          "id": "sessions.neyvia.summary",
+          "phase": "post",
+          "claim": "Native, hybrid, unlabeled, archived, waiting and orchestration conversations preserve store identity and project/workspace metadata; controls reflect native goal and read-only orchestration boundaries.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia._summary",
+            "grant_agent.proofs_a_sessions.check_native_summary"
+          ],
+          "impact": [
+            "Neyvia connected conversation listing and transcript paging"
+          ]
+        },
+        {
+          "id": "sessions.neyvia.page",
+          "phase": "post",
+          "claim": "Native history pages preserve stable ordered distinct sequence numbers, exclusive cursor windows, delivered cursor and earlier-history flags.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.read",
+            "grant_agent.proofs_a_sessions.check_native_page"
+          ],
+          "impact": [
+            "Neyvia connected conversation listing and transcript paging"
+          ]
+        },
+        {
+          "id": "sessions.broker.read",
+          "phase": "post",
+          "claim": "Every page and live item bounds observed tool output, rewrites host attachment paths to served identities, preserves safe served URLs, and retains session/current-run identity; full output is separately bounded on demand.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker.read",
+            "grant_agent.connected_sessions.broker.tool_output",
+            "grant_agent.connected_sessions.broker._tidy_item",
+            "grant_agent.proofs_a_sessions.check_tidy_item",
+            "grant_agent.proofs_a_sessions.check_full_output",
+            "grant_agent.proofs_a_sessions.check_broker_page"
+          ],
+          "impact": [
+            "Connected transcript pages and attachment retrieval"
+          ]
+        },
+        {
+          "id": "sessions.broker.media",
+          "phase": "post",
+          "claim": "Media chooses the adapter media or read_media hook, retains its bytes/MIME/name receipt, and reports missing or coded refusals with 404.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker.media",
+            "grant_agent.proofs_a_sessions.check_media_result"
+          ],
+          "impact": [
+            "Connected transcript pages and attachment retrieval"
+          ]
+        },
+        {
+          "id": "sessions.broker.options",
+          "phase": "post",
+          "claim": "Turn options preserve bounded model, effort, permission, fork and image selections; only print/terminal transports are admitted.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker._turn_options",
+            "grant_agent.proofs_a_sessions.check_turn_options"
+          ],
+          "impact": [
+            "Connected turn transport and option boundary"
+          ]
+        },
+        {
+          "id": "sessions.api.poll",
+          "phase": "post",
+          "claim": "HTTP long poll clamps the requested wait and returns exactly the observed event list, cursor and optional resync flag; temporary subscribers are always released.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.api.handle_connected_command",
+            "grant_agent.proofs_a_sessions.check_poll"
+          ],
+          "impact": [
+            "HTTP events and subscriber lifecycle"
+          ]
+        },
+        {
+          "id": "sessions.events.subscription",
+          "phase": "post",
+          "claim": "Every HTTP or command subscription owns a unique token within the configured cap and releases it on success, refusal, disconnect or broker closure.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker.subscription",
+            "grant_agent.proofs_a_sessions.check_subscription"
+          ],
+          "impact": [
+            "HTTP events and subscriber lifecycle"
+          ]
+        },
+        {
+          "id": "sessions.codex.origin",
+          "phase": "post",
+          "claim": "Automation/proof/temp path patterns are classified as harness origin while ordinary and missing workspace paths remain user origin.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.codex_items.classify_origin",
+            "grant_agent.proofs_a_sessions.check_origin"
+          ],
+          "impact": [
+            "Persisted Codex activity and automation classification"
+          ]
+        },
+        {
+          "id": "sessions.codex.rollout",
+          "phase": "post",
+          "claim": "Only complete JSON dictionary rows from the bounded rollout tail are read; recent start/terminal markers and staleness deadlines determine active-turn attribution without reading full histories.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.codex_items.read_tail_rows",
+            "grant_agent.connected_sessions.codex_items.rollout_activity",
+            "grant_agent.proofs_a_sessions.check_tail_read",
+            "grant_agent.proofs_a_sessions.check_rollout_activity"
+          ],
+          "impact": [
+            "Persisted Codex activity and automation classification"
+          ]
+        },
+        {
+          "id": "sessions.neyvia.tools",
+          "phase": "post",
+          "claim": "Tool classification follows ordered category rules; readable nested command/file output, exit codes, durations and unresolved finished calls preserve recorded outcomes within 8 KB.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia_items.tool_category",
+            "grant_agent.connected_sessions.neyvia_items.tool_item",
+            "grant_agent.proofs_a_sessions.check_native_tool_category",
+            "grant_agent.proofs_a_sessions.check_native_tool"
+          ],
+          "impact": [
+            "Native connected transcript tool, reasoning and activity receipts"
+          ]
+        },
+        {
+          "id": "sessions.neyvia.items",
+          "phase": "post",
+          "claim": "Every persisted native turn uses stable ordered distinct slots, preserves its main text and failure/cancel outcome, and exposes only bounded public/provider-labelled reasoning; excess activity has an explicit omission receipt.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia_items.turn_items",
+            "grant_agent.connected_sessions.neyvia_items.activity_segments",
+            "grant_agent.proofs_a_sessions.check_native_turn",
+            "grant_agent.proofs_a_sessions.check_native_segments"
+          ],
+          "impact": [
+            "Native connected transcript tool, reasoning and activity receipts"
+          ]
+        },
+        {
+          "id": "sessions.api.forward",
+          "phase": "post",
+          "claim": "Desktop commands call only the configured loopback service with the expected state root; HTTP failures retain machine codes in the Tauri data envelope.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.forward.forward_connected_command",
+            "grant_agent.proofs_a_sessions.check_forward_request",
+            "grant_agent.proofs_a_sessions.check_forward_result"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.api.allowlist",
+          "phase": "post",
+          "claim": "Every current connected command is eligible for desktop dispatch; the parity contract is checked before each connected command.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.api.handle_connected_command",
+            "grant_agent.proofs_a_sessions.check_connected_allowlist"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.broker.catalogue",
+          "phase": "post",
+          "claim": "Catalogue projects observed adapter rows exactly through archive, harness, normalized app, category and case-insensitive query filters, stable newest-first sorting, bounded pagination and truthful sources.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker.list_sessions",
+            "grant_agent.proofs_a_sessions.check_broker_list"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.broker.unread",
+          "phase": "post",
+          "claim": "Unread is true only for an observed sequence beyond the persisted seen sequence or an activity timestamp beyond the persisted seen timestamp; first inventory observation baselines existing history.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.seen.SeenStore.unread",
+            "grant_agent.proofs_a_sessions.check_unread"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.broker.controls",
+          "phase": "post",
+          "claim": "Goal and provider options retain the exact JSON projection of the adapter hook; compact, answer, stop and steer preserve session/run identity and terminal control safety.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker.goal",
+            "grant_agent.connected_sessions.broker.provider_options",
+            "grant_agent.connected_sessions.broker.compact",
+            "grant_agent.connected_sessions.broker.answer",
+            "grant_agent.connected_sessions.broker.stop",
+            "grant_agent.connected_sessions.broker.steer",
+            "grant_agent.proofs_a_sessions.check_control_projection",
+            "grant_agent.proofs_a_sessions.check_run_record"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.broker.refusals",
+          "phase": "post",
+          "claim": "Coded adapter exceptions retain their code, status, message and owner detail; uncoded failures receive the documented fallback without burning retryable pending requests.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.registry.as_connected",
+            "grant_agent.proofs_a_sessions.check_adapter_refusal"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.broker.registry",
+          "phase": "post",
+          "claim": "An accepted adapter has all required methods and the selected app identity; incomplete, absent or failing modules/factories become unavailable sources with a reason.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.registry.Registry._check",
+            "grant_agent.proofs_a_sessions.check_registry_adapter"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.run.watchdog",
+          "phase": "post",
+          "claim": "Only queued/running runs with no stop request and output older than the selected limit enter watchdog interruption; waiting approvals and questions are exempt.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker._watchdog",
+            "grant_agent.proofs_a_sessions.check_watchdog_selection"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.run.recovery",
+          "phase": "post",
+          "claim": "Recovered dead or recycled owners become durable interrupted runs with no pending request and an explicit no-resend error; replay cannot send a recovered request again.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.broker.recover",
+            "grant_agent.proofs_a_sessions.check_recovered_runs"
+          ],
+          "impact": [
+            "Connected sessions service state, authority, ownership and client receipts"
+          ]
+        },
+        {
+          "id": "sessions.opencode.inventory",
+          "phase": "post",
+          "claim": "Saved native OpenCode history keeps messages and truthful missing-reasoning notices in stable exclusive pages; observed native CLI presence selects capability/billing/reason fields without claiming provider execution.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.opencode.OpenCodeAdapter.capabilities",
+            "grant_agent.connected_sessions.opencode.OpenCodeAdapter.read",
+            "grant_agent.proofs_a_sessions.check_opencode_capabilities",
+            "grant_agent.proofs_a_sessions.check_opencode_page"
+          ],
+          "impact": [
+            "OpenCode local history and conditional control capability catalogue"
+          ]
+        }
+      ]
+    }
+  ]
+}

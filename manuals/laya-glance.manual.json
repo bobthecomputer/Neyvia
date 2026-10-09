@@ -1,0 +1,813 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "laya-glance",
+  "kind": "environment",
+  "proofs": {
+    "area": "scene-core",
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.scene_core.judge",
+          "grant_agent.laya_glance_contracts.observe"
+        ],
+        "claim": "Actual before/after DOM and canvas observations bind typed defects to nodes and fixes.",
+        "id": "layag.scene-predicates",
+        "impact": [
+          "src/grant_agent/scene_core",
+          "src/grant_agent/laya_glance.py",
+          "src/grant_agent/perception_scene.js"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.laya_glance_proof.run",
+          "grant_agent.laya_glance.glance"
+        ],
+        "claim": "From pixels alone, the black PDF page, see-through panels and clipped chips are caught on recorded before captures and absent on the after captures.",
+        "id": "layag.pixel-before-after",
+        "impact": [
+          "src/grant_agent/laya_glance_image.py",
+          "src/grant_agent/laya_glance.py",
+          "src/grant_agent/laya_glance_proof.py",
+          "manuals/cl/laya-glance.cl"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.scene_core.normalize",
+          "grant_agent.scene_core.check_predicates",
+          "grant_agent.scene_core.judge"
+        ],
+        "claim": "An out-of-repo caller judges its own raw scene with its own predicates through the shared judge; predicates are validated data and never executed.",
+        "id": "core.sdk-seam",
+        "impact": [
+          "src/grant_agent/scene_core/__init__.py",
+          "src/grant_agent/neyvia_laya_capabilities.py",
+          "src/neyvia_sdk/client.py",
+          "packages/neyvia-sdk/index.js"
+        ],
+        "phase": "invariant"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.laya.glance": {
+      "type": "object",
+      "properties": {
+        "scene": {
+          "type": "object"
+        },
+        "handle": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "screenshot": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "fuzzy": {
+          "type": "boolean"
+        }
+      },
+      "required": []
+    },
+    "neyvia.laya.glance_contracts": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.laya.glance_learn": {
+      "type": "object",
+      "properties": {
+        "screenshot": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "label": {
+          "enum": [
+            "broken",
+            "fine"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "source": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "surface": {
+          "type": "string",
+          "maxLength": 16000
+        }
+      },
+      "required": [
+        "screenshot",
+        "label",
+        "reason",
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "screenshot": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "reason": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "source": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.laya.glance_lesson": {
+      "type": "object",
+      "properties": {
+        "scene": {
+          "type": "object"
+        },
+        "node": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "predicate": {
+          "enum": [
+            "clipped-text",
+            "raw-error",
+            "encoded-path",
+            "internal-id",
+            "overlap",
+            "unreadable-contrast"
+          ]
+        },
+        "label": {
+          "enum": [
+            "broken",
+            "fine"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "source": {
+          "type": "string",
+          "maxLength": 16000
+        }
+      },
+      "required": [
+        "scene",
+        "node",
+        "predicate",
+        "label",
+        "reason",
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "node": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "reason": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "source": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.laya.glance_proof": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.laya.judge": {
+      "type": "object",
+      "properties": {
+        "scene": {
+          "type": "object"
+        },
+        "user": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "domain": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "predicates": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "maxItems": 500
+        },
+        "record": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "scene"
+      ]
+    },
+    "neyvia.scene.episode": {
+      "type": "object",
+      "properties": {
+        "scene": {
+          "type": "object"
+        },
+        "label": {},
+        "reason": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "source": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "user": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "layer": {
+          "enum": [
+            "corrective",
+            "personal"
+          ]
+        }
+      },
+      "required": [
+        "scene",
+        "label",
+        "reason",
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "label": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "reason": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "source": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.scene.improve": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "source": {
+          "type": "object"
+        },
+        "budget": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "domain",
+        "source",
+        "budget"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "domain": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.scene.transcribe": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "source": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "domain",
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "domain": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.scene.vocabulary": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "maxLength": 16000
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "domain": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "scene": {
+      "title": "One Scene core: transcribe, predicates, instant examples and guarded improvement",
+      "state": {},
+      "actions": {
+        "scene-transcribe": {
+          "effect": "Transcribe one domain source through its registered adapter into a shared CL Scene.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scene.transcribe",
+          "tool": "neyvia.scene.transcribe"
+        },
+        "scene-vocabulary": {
+          "effect": "Read the registered domain predicates and named fix patterns.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scene.vocabulary",
+          "tool": "neyvia.scene.vocabulary"
+        },
+        "laya-judge": {
+          "effect": "Apply one shared predicate evaluator and instant episodic admission to a Scene. Out-of-repo callers may pass a raw scene with its domain and their own predicates (same shape, data only, never executed).",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.laya.judge",
+          "tool": "neyvia.laya.judge"
+        },
+        "scene-improve": {
+          "effect": "Apply only explicitly budgeted reversible adapter fixes; trading is human review only.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scene.improve",
+          "tool": "neyvia.scene.improve"
+        },
+        "scene-episode": {
+          "effect": "Write a labelled Scene episode immediately without training.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.scene.episode",
+          "tool": "neyvia.scene.episode"
+        },
+        "laya-glance_contracts": {
+          "effect": "Observe real headless DOM/canvas cases for the CL scene predicates.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.laya.glance_contracts",
+          "tool": "neyvia.laya.glance_contracts"
+        },
+        "laya-glance": {
+          "effect": "Apply the CL broken-UI vocabulary to a perception scene or immutable handle. Unknown facts request one model look.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.laya.glance",
+          "tool": "neyvia.laya.glance"
+        },
+        "laya-glance_proof": {
+          "effect": "Glance the recorded before/after fix captures from pixels alone: black PDF page, see-through panels, clipped composer chips.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.laya.glance_proof",
+          "tool": "neyvia.laya.glance_proof"
+        },
+        "laya-glance_lesson": {
+          "effect": "Teach one node instantly: broken adds the defect to similar text, fine suppresses a false alarm. No training.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.laya.glance_lesson",
+          "tool": "neyvia.laya.glance_lesson"
+        },
+        "laya-glance_learn": {
+          "effect": "Write one labelled screenshot episode; no training or head consolidation.",
+          "pre": "Registered adapter; source is observed data; mutations need caller authority",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.laya.glance_learn",
+          "tool": "neyvia.laya.glance_learn"
+        }
+      },
+      "checks": {
+        "live-predicates": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "passed",
+            "value": true
+          },
+          "tool": "neyvia.laya.glance_contracts"
+        },
+        "pixel-before-after": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "passed",
+            "value": true
+          },
+          "tool": "neyvia.laya.glance_proof"
+        },
+        "external-predicates": {
+          "args": {
+            "domain": "sdk-probe",
+            "predicates": [
+              {
+                "condition": {
+                  "all": [
+                    {
+                      "field": "kind",
+                      "op": "eq",
+                      "value": "position"
+                    },
+                    {
+                      "field": "measurements.exposure",
+                      "op": "gt",
+                      "value": 0.25
+                    }
+                  ]
+                },
+                "evidence": [
+                  "measurements.exposure",
+                  "measurements.limit"
+                ],
+                "fix": {
+                  "action": "config.reduce-size",
+                  "arguments": {
+                    "review": "human"
+                  }
+                },
+                "id": "risk-limit-breach",
+                "severity": "error"
+              },
+              {
+                "condition": {
+                  "field": "attributes.note",
+                  "op": "eq",
+                  "value": "0"
+                },
+                "evidence": [
+                  "attributes.note"
+                ],
+                "fix": {
+                  "action": "review",
+                  "arguments": {}
+                },
+                "id": "code-as-data",
+                "severity": "error"
+              },
+              {
+                "condition": {
+                  "all": [
+                    {
+                      "field": "kind",
+                      "op": "eq",
+                      "value": "quote"
+                    },
+                    {
+                      "field": "measurements.ageSeconds",
+                      "op": "gt",
+                      "value": 60
+                    }
+                  ]
+                },
+                "evidence": [
+                  "measurements.ageSeconds"
+                ],
+                "fix": {
+                  "action": "data.refresh",
+                  "arguments": {}
+                },
+                "id": "stale-data",
+                "severity": "warning"
+              }
+            ],
+            "record": false,
+            "scene": {
+              "nodes": [
+                {
+                  "attributes": {
+                    "symbol": "BTC-USD"
+                  },
+                  "id": "book",
+                  "kind": "position",
+                  "measurements": {
+                    "exposure": 0.31,
+                    "limit": 0.25
+                  }
+                },
+                {
+                  "attributes": {
+                    "note": "__import__('os').system('calc')"
+                  },
+                  "id": "feed",
+                  "kind": "quote",
+                  "measurements": {
+                    "ageSeconds": 2
+                  }
+                }
+              ]
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": "findings",
+            "schema": {
+              "items": {
+                "properties": {
+                  "node": {
+                    "const": "book"
+                  },
+                  "predicate": {
+                    "const": "risk-limit-breach"
+                  }
+                },
+                "required": [
+                  "predicate",
+                  "node"
+                ],
+                "type": "object"
+              },
+              "maxItems": 1,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "tool": "neyvia.laya.judge"
+        }
+      },
+      "procedures": {
+        "prove-scenes": {
+          "goal": "Exercise actual headless DOM/canvas observations and compare before/after defect outcomes",
+          "inputs": {
+            "type": "object",
+            "properties": {}
+          },
+          "steps": [
+            {
+              "action": "laya-glance_contracts",
+              "args": {},
+              "check": "live-predicates",
+              "save": "observed"
+            }
+          ]
+        },
+        "prove-pixels": {
+          "goal": "Glance the recorded before/after fix captures from pixels: the black PDF page, see-through panels and clipped chips are caught before and absent after",
+          "inputs": {
+            "type": "object",
+            "properties": {}
+          },
+          "steps": [
+            {
+              "action": "laya-glance_proof",
+              "args": {},
+              "check": "pixel-before-after",
+              "save": "proof"
+            }
+          ]
+        },
+        "prove-sdk-seam": {
+          "goal": "Judge a caller-transcribed scene with caller-supplied predicates (the out-of-repo SDK seam): one exact finding, code-shaped text stays data",
+          "inputs": {
+            "type": "object",
+            "properties": {}
+          },
+          "steps": [
+            {
+              "action": "laya-judge",
+              "args": {
+                "domain": "sdk-probe",
+                "predicates": [
+                  {
+                    "condition": {
+                      "all": [
+                        {
+                          "field": "kind",
+                          "op": "eq",
+                          "value": "position"
+                        },
+                        {
+                          "field": "measurements.exposure",
+                          "op": "gt",
+                          "value": 0.25
+                        }
+                      ]
+                    },
+                    "evidence": [
+                      "measurements.exposure",
+                      "measurements.limit"
+                    ],
+                    "fix": {
+                      "action": "config.reduce-size",
+                      "arguments": {
+                        "review": "human"
+                      }
+                    },
+                    "id": "risk-limit-breach",
+                    "severity": "error"
+                  },
+                  {
+                    "condition": {
+                      "field": "attributes.note",
+                      "op": "eq",
+                      "value": "0"
+                    },
+                    "evidence": [
+                      "attributes.note"
+                    ],
+                    "fix": {
+                      "action": "review",
+                      "arguments": {}
+                    },
+                    "id": "code-as-data",
+                    "severity": "error"
+                  },
+                  {
+                    "condition": {
+                      "all": [
+                        {
+                          "field": "kind",
+                          "op": "eq",
+                          "value": "quote"
+                        },
+                        {
+                          "field": "measurements.ageSeconds",
+                          "op": "gt",
+                          "value": 60
+                        }
+                      ]
+                    },
+                    "evidence": [
+                      "measurements.ageSeconds"
+                    ],
+                    "fix": {
+                      "action": "data.refresh",
+                      "arguments": {}
+                    },
+                    "id": "stale-data",
+                    "severity": "warning"
+                  }
+                ],
+                "record": false,
+                "scene": {
+                  "nodes": [
+                    {
+                      "attributes": {
+                        "symbol": "BTC-USD"
+                      },
+                      "id": "book",
+                      "kind": "position",
+                      "measurements": {
+                        "exposure": 0.31,
+                        "limit": 0.25
+                      }
+                    },
+                    {
+                      "attributes": {
+                        "note": "__import__('os').system('calc')"
+                      },
+                      "id": "feed",
+                      "kind": "quote",
+                      "measurements": {
+                        "ageSeconds": 2
+                      }
+                    }
+                  ]
+                }
+              },
+              "check": "external-predicates",
+              "save": "verdict"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Missing style or geometry fact",
+          "recovery": "Preserve unknown and request one model look; never infer a clean screen."
+        }
+      ],
+      "frontier": [
+        "UI fixes edit a web source tree, never a live window: CSS/token overrides computed from the finding and recorded library patches (laya-ui-fix.cl); improve keeps one only when a fresh private render shows strictly fewer findings with no guard regression. A perception scene or screenshot alone stays proposal-only. Engine adapters register separately.",
+        "Pixel-only recall is low for overlap (icon collisions), off-screen controls and phone peek sheets whose foreign text lies wholly inside the sheet; a clean pixel verdict is therefore never admitted and escalates to one model look.",
+        "A screenshot glance takes about 0.5 s (OCR ~0.2 s, pixel facts ~0.25 s, judge ~6 ms); the DOM+screenshot gate glance adds the render."
+      ],
+      "guidance": [
+        "Broken means a see-through surface, clipped text, raw error, encoded path or internal id, blank expected render, unintended overlap, unreadable contrast, or an off-screen control. Crisp predicates cite observed facts; fuzzy judgement uses instant episodes at nominal 0.95. No training runs or new heads.",
+        "Transcribe from the perception DOM graph when the app is live; a screenshot alone is read by local OCR plus measured pixel facts. With both, the screenshot cross-checks DOM coverage and fills contrast, and pixel findings count only where their calibrated precision reaches 0.95.",
+        "Teach with laya.glance_lesson (one node, effective on the next glance) or laya.glance_learn (one labelled screenshot, updates calibration). Lessons apply only to text-intrinsic predicates; see-through, off-screen and blank renders depend on layout."
+      ]
+    }
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "portRoles": [48461, 48462],
+  "area": "dictation",
+  "manual": "dictation",
+  "module": "grant_agent.proofs_dictation",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "dictation.names.persisted",
+      "phase": "post",
+      "claim": "Name add/remove persists exactly the requested aliases and the names observer reports persisted plus built-in aliases.",
+      "checkedAt": [
+        "grant_agent.neyvia_dictation.names",
+        "grant_agent.proofs_dictation.after"
+      ],
+      "impact": [
+        ".neyvia/dictation-names.json",
+        "dictation.process",
+        "dictation stream/finalization"
+      ]
+    },
+    {
+      "id": "dictation.names.scoped",
+      "phase": "invariant",
+      "claim": "Names are read and written only under the selected state root; a name taught in one workspace does not change another workspace's prompt policy.",
+      "checkedAt": [
+        "grant_agent.neyvia_dictation.names",
+        "grant_agent.proofs_dictation.after",
+        "grant_agent.proofs_dictation.self_check"
+      ],
+      "impact": [
+        "workspace dictation policy",
+        "other workspaces"
+      ]
+    },
+    {
+      "id": "dictation.prompt.structure",
+      "phase": "post",
+      "claim": "The prompt is assembled only from ordered text segments; preview is required and stable/provisional match finality. An unfinished hypothesis is literal and has no editor commands.",
+      "checkedAt": [
+        "grant_agent.neyvia_prompt_dictation.process_prompt",
+        "grant_agent.neyvia_dictation.process",
+        "grant_agent.proofs_dictation.check_prompt"
+      ],
+      "impact": [
+        "composer preview",
+        "Notes prompt",
+        "desktop and HTTP dictation"
+      ]
+    },
+    {
+      "id": "dictation.prompt.commands",
+      "phase": "post",
+      "claim": "Known whole and terminal spoken commands become ordered command segments instead of prompt words; emitted commands equal the command segments. Quoted text remains literal in scratch procedures.",
+      "checkedAt": [
+        "grant_agent.neyvia_prompt_dictation.process_prompt",
+        "grant_agent.proofs_dictation.check_prompt"
+      ],
+      "impact": [
+        "editor spoken commands",
+        "send preview"
+      ]
+    },
+    {
+      "id": "dictation.prompt.route",
+      "phase": "invariant",
+      "claim": "French and mixed utterances select qwen, while English and unknown select phonon2; the French utterance goal is exercised by the shared parser.",
+      "checkedAt": [
+        "grant_agent.neyvia_prompt_dictation.process_prompt",
+        "grant_agent.proofs_dictation.check_prompt"
+      ],
+      "impact": [
+        "speech engine routing",
+        "local fallback availability"
+      ]
+    },
+    {
+      "id": "dictation.stream.preallocation",
+      "phase": "pre",
+      "claim": "Unknown stream operations, invalid ids, oversized chunks, odd PCM and negative sequences are rejected before any settings lookup, session allocation, timer or speech-engine call.",
+      "checkedAt": [
+        "grant_agent.neyvia_dictation.stream",
+        "grant_agent.proofs_dictation.validate_stream"
+      ],
+      "impact": [
+        "stream sessions",
+        "PCM memory",
+        "speech engine calls"
+      ]
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_dictation_providers.Transcript",
+        "grant_agent.neyvia_dictation.stream",
+        "grant_agent.proofs_dictation.provider_checks"
+      ],
+      "claim": "Live words from a streaming provider only grow in order: deltas of the segment being heard stay provisional, a segment locks only when it and every earlier one are complete, and a locked segment is never edited. Checked with the recorded sample fed in 250 ms pieces to a scripted provider.",
+      "id": "dictation.provider.partials",
+      "impact": [
+        "live dictation words",
+        "stable/grey split",
+        "Voice settings provider choice"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_dictation_providers.OpenAIStream.finish",
+        "grant_agent.neyvia_dictation.stream",
+        "grant_agent.proofs_dictation.provider_checks"
+      ],
+      "claim": "Release commits the provider's audio, waits for the completed segments, and returns one final text that still goes through the prompt policy and preview.",
+      "id": "dictation.provider.finalise",
+      "impact": [
+        "final dictation text",
+        "send preview"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_dictation_providers.choose",
+        "grant_agent.neyvia_dictation._stream_step",
+        "grant_agent.proofs_dictation.provider_checks"
+      ],
+      "claim": "A provider that is not usable (no key, local-only on, address not api.openai.com, Codex signed in with a ChatGPT plan, or a connection that drops mid-dictation) never loses speech: the local engine takes over with all audio heard so far, numbered from zero, and one plain sentence says so.",
+      "id": "dictation.provider.fallback",
+      "impact": [
+        "dictation provider choice",
+        "local engine",
+        "network policy"
+      ],
+      "phase": "invariant"
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_neyvia_prompt_dictation.py",
+      "case": "test_names_are_scoped_and_commands_do_not_become_prompt_words",
+      "contracts": [
+        "dictation.names.persisted",
+        "dictation.names.scoped",
+        "dictation.prompt.commands",
+        "dictation.prompt.structure"
+      ],
+      "checkedAt": [
+        "grant_agent.neyvia_dictation.names",
+        "grant_agent.neyvia_dictation.process",
+        "grant_agent.neyvia_prompt_dictation.process_prompt",
+        "grant_agent.proofs_dictation.self_check:names_procedure"
+      ]
+    },
+    {
+      "test": "tests/test_neyvia_prompt_dictation.py",
+      "case": "test_french_utterance_routes_to_multilingual_recognizer",
+      "contracts": [
+        "dictation.prompt.route"
+      ],
+      "checkedAt": [
+        "grant_agent.neyvia_prompt_dictation.process_prompt",
+        "grant_agent.proofs_dictation.self_check:french_procedure"
+      ]
+    },
+    {
+      "test": "tests/test_neyvia_prompt_dictation.py",
+      "case": "test_rejected_audio_does_not_allocate_a_stream",
+      "contracts": [
+        "dictation.stream.preallocation"
+      ],
+      "checkedAt": [
+        "grant_agent.neyvia_dictation.stream",
+        "grant_agent.proofs_dictation.self_check:stream_procedure"
+      ]
+    }
+  ],
+  "frontier": [
+    "Live speech-engine status, start, transcription and warm-engine manual procedures require an authorized ASR service; policy scratch checks never start or contact one.",
+    "The French self-check proves parser route selection and does not claim real multilingual speech recognition or engine reachability."
+  ]
+}

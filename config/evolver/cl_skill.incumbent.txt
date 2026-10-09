@@ -1,0 +1,151 @@
+CL 1
+-- design-craft: CL-Skill compiled from the T23 seed set (docs/standard/cl-skill.md, Appendix A)
+-- and Neyvia's design manual (manuals/design.manual.json). Neyvia's direction wins every conflict.
+-- Runner: python -m grant_agent.cl_skill check --skill manuals/skills/design-craft.cl --files <jsx> <css> [--url <design-lab url>] [--journal <run.cl>]
+
+-- L0
+L design-craft v1 tools:skill.design-craft src:docs/standard/cl-skill.md -- build or review a Neyvia UI component so tokens, motion, copy, access and honesty are checked, not hoped
+
+-- L1
+T hit{file:path line:int text:str}
+T render{overflowPx:int contrastFails:int unnamed:int smallTargets:int collisions:int typefaces:int tinyText:int measured:int wrappedControls:int wrappedLabels:[str]}
+A ui.scan(pattern:str in?:css|jsx|all=all) -> [hit] -- regex over the produced files, comments removed
+I ui.scan reads:files
+A ui.durations() -> [hit{ms:num}] -- literal ms/s in transition and animation declarations; var(--nx-*) is fine
+I ui.durations reads:files
+A ui.offscale(props:[word] scale:[num]) -> [hit] -- px/rem values of those properties that are not on the scale
+I ui.offscale reads:files
+A ui.hovermotion() -> [hit] -- :hover rules that move things outside @media (hover: hover)
+I ui.hovermotion reads:files
+A ui.unscoped() -> [hit] -- selectors that do not start with .nx
+I ui.unscoped reads:files
+A ui.copy(pattern:str) -> [hit] -- words a person reads (JSX text, label/title/aria-label/placeholder, label: fields) matching pattern
+I ui.copy reads:files
+A ui.render(theme:light|dark viewport:desktop|phone) -> render -- taste-lens probe of the rendered page (design lab honours theme)
+I ui.render reads:url cost:"3-6s per theme and viewport"
+A design-craft.build(files:[path] url?:url) -> [path] ~ -- write the component; every check below runs on the result
+I design-craft.build writes:files ui:"design lab, then the shell" deps:[nxTokens.css nxThemes.css nxPrimitives.jsx manuals/design.manual.json] undo:"git checkout -- files"
+
+-- it must run at all (added after the pilot run: a duplicate declaration rendered nothing and every rendered check was undecided)
+A ui.compile() -> [hit] -- esbuild transform of each produced file; syntax and duplicate-declaration errors
+I ui.compile reads:files
+C design-craft.build compiles: len(ui.compile())==0 -- block neyvia/design#check-loop: the files compile; a file that does not compile renders nothing
+X design-craft.build compiles -> read the error line, fix it (e.g. rename the inner component that shadows the default export), run the check again
+
+-- tokens and colour (Neyvia tokens-themes; taste-skill 4.2; antislop glow; beautiful-shadows as tokens)
+C design-craft.build raw-colour: len(ui.scan(pattern:"#[0-9a-fA-F]{3,8}\\b|\\b(rgba?|hsla?)\\(" in:all))==0 -- block neyvia/design#tokens-themes: colours, tints and shadows come from tokens, never hex/rgb/hsl
+C design-craft.build inline-style-colour: len(ui.scan(pattern:"style=\\{\\{[^}]*(color|background|border|boxShadow)" in:jsx))==0 -- block neyvia/design#tokens-themes: no colour in inline styles
+C design-craft.build font-size-token: len(ui.scan(pattern:"font-size\\s*:\\s*[0-9.]+(px|rem|em)" in:css))==0 -- warn neyvia/design#tokens-themes: type sizes are --nx-fs-* tokens
+C design-craft.build radius-scale: len(ui.offscale(props:[border-radius] scale:[0 5 7 10 14 16 999]))==0 -- warn taste-skill#4.4+neyvia: one radius scale (--nx-r-xs..pill, 14-16 for cards)
+C design-craft.build spacing-scale: len(ui.offscale(props:[padding padding-top padding-bottom padding-left padding-right padding-inline padding-block margin margin-top margin-bottom margin-left margin-right gap row-gap column-gap] scale:[0 1 2 4 6 8 10 12 14 16 20 24 32 40 48]))==0 -- warn neyvia/design#layout: spacing steps 2,4,6,8,10,12,14,16,20,24 (+32/40/48 for page rhythm)
+C design-craft.build solid-borders: len(ui.scan(pattern:"(^|[;{\\s])border(-(top|right|bottom|left))?\\s*:\\s*[0-9.]+px\\s+solid" in:css))==0 -- warn neyvia/design#tokens-themes: draw lines as inset 0 0 0 1px var(--nx-line) so sizes don't shift
+C design-craft.build glow: len(ui.scan(pattern:"background-clip\\s*:\\s*text|text-shadow|drop-shadow\\(|box-shadow\\s*:[^;]*\\b0\\s+0\\s+[1-9][0-9]*px\\s+[0-9]+px" in:css))==0 -- warn antislop#glow+taste-skill#9.A: no glow, neon or gradient text
+C design-craft.build decor-blur: len(ui.scan(pattern:"backdrop-filter|filter\\s*:\\s*blur" in:css))==0 -- note neyvia/design#direction: blur only where something real shows through
+C design-craft.build uppercase: len(ui.scan(pattern:"text-transform\\s*:\\s*uppercase|letter-spacing\\s*:\\s*0?\\.[1-9]" in:css))==0 -- warn taste-skill#4.7-eyebrow+frontend-design: no tracked uppercase eyebrows; uppercase only through .nx-tag
+C design-craft.build scoped: len(ui.unscoped())==0 -- warn neyvia/design#overview: every selector starts with .nx .nx-<area>
+
+-- motion (Emil Kowalski emil-design-eng/review-animations/animate; apple-design; Neyvia motion)
+C design-craft.build transition-all: len(ui.scan(pattern:"transition(-property)?\\s*:\\s*all\\b" in:css))==0 -- block emil/review-animations#7: name the properties; never transition: all
+C design-craft.build literal-duration: len(ui.durations())==0 -- block neyvia/design#motion: durations are tokens (--nx-fast/med/snappy/settle/drift), never literal ms or s
+C design-craft.build scale-zero: len(ui.scan(pattern:"scale\\(\\s*0(\\.0+)?\\s*\\)" in:all))==0 -- block emil/review-animations#5: nothing appears from nothing; start at scale(0.96-0.985) with opacity 0
+C design-craft.build ease-in: len(ui.scan(pattern:"\\bease-in\\b(?!-out)" in:all))==0 -- block emil/review-animations#3: ease-in delays the moment the user watches; use var(--nx-ease) or a spring token
+C design-craft.build layout-animated: len(ui.scan(pattern:"transition(-property)?\\s*:[^;]*\\b(width|height|max-height|margin|padding|top|left|right|bottom)\\b" in:css))==0 -- warn emil/review-animations#7: animate transform and opacity only
+C design-craft.build hover-motion: len(ui.hovermotion())==0 -- warn emil/emil-design-eng#touch: hover movement only inside @media (hover: hover) and (pointer: fine)
+C design-craft.build stagger: len(ui.scan(pattern:"(animation|transition)-delay|:nth-child\\([^)]*\\)[^{]*\\{[^}]*delay" in:css))==0 -- warn neyvia/design#motion: lists don't stagger (Neyvia overrides Emil's stagger advice)
+C design-craft.build loops: len(ui.scan(pattern:"\\binfinite\\b" in:css))==0 -- warn neyvia/design#motion: no custom loops; live state is StatusDot pulse or NxGrowingTree
+C design-craft.build js-motion-reduced: len(ui.scan(pattern:"requestAnimationFrame|\\.animate\\(|framer-motion|motion/react" in:jsx))==0 or len(ui.scan(pattern:"prefers-reduced-motion" in:all))>0 -- block emil+addy/accessibility#2.3: JS motion checks prefers-reduced-motion
+C design-craft.build will-change: len(ui.scan(pattern:"will-change" in:css))==0 -- note ibelick/baseline-ui: no will-change outside an active animation
+
+-- structure and access (Addy Osmani accessibility; antislop hard gate; baseline-ui; Neyvia accessibility/primitives)
+C design-craft.build outline-none: len(ui.scan(pattern:"outline\\s*:\\s*(none|0)\\b" in:css))==0 -- block antislop#R-32+neyvia/design#accessibility: never remove focus; the .nx ring applies
+C design-craft.build clickable-div: len(ui.scan(pattern:"<(div|span|li)\\b(?:[^>{}]|\\{[^{}]*\\})*\\bonClick=" in:jsx))==0 -- block neyvia/design#primitives: actions are <button type=button> or Button/IconButton
+C design-craft.build button-type: len(ui.scan(pattern:"<button(?!(?:[^>{}]|\\{[^{}]*\\})*\\btype=)[\\s>]" in:jsx))==0 -- warn neyvia/design#accessibility: raw buttons say type=button
+C design-craft.build iconbutton-label: len(ui.scan(pattern:"<IconButton\\b(?!(?:[^>{}]|\\{[^{}]*\\})*\\blabel=)(?:[^>{}]|\\{[^{}]*\\})*>" in:jsx))==0 -- block addy/accessibility#4.1.2: icon-only controls have a label
+C design-craft.build button-icon-child: len(ui.scan(pattern:"<(Button|IconButton)\\b(?:[^>{}]|\\{[^{}]*\\})*>\\s*<Icon\\b" in:jsx))==0 -- block neyvia/design#primitives: pass icon={Check} to Button; an <Icon> child lands inside the label span and stacks above the words
+C design-craft.build hand-svg: len(ui.scan(pattern:"<svg\\b" in:jsx))==0 -- warn neyvia/design#primitives: icons are lucide through Icon, never drawn inline
+C design-craft.build disclosure-state: len(ui.scan(pattern:"set(Open|Expanded|Show\\w*)\\(" in:jsx))==0 or len(ui.scan(pattern:"aria-expanded" in:jsx))>0 -- warn addy/accessibility#4.1.2: a toggle that shows/hides says aria-expanded
+C design-craft.build dead-control: len(ui.scan(pattern:"onClick=\\{\\(\\)\\s*=>\\s*\\{\\s*\\}\\}|onClick=\\{\\(\\)\\s*=>\\s*null\\}|href=\"#\"" in:jsx))==0 -- block antislop#R-26: every control does something real, or it is not there
+C design-craft.build placeholder-label: len(ui.scan(pattern:"<input\\b(?!(?:[^>{}]|\\{[^{}]*\\})*(aria-label|aria-labelledby|\\bid=))(?:[^>{}]|\\{[^{}]*\\})*placeholder=" in:jsx))==0 -- warn jakub/better-writing#placeholders: a placeholder is an example, never the only label
+C design-craft.build paste-block: len(ui.scan(pattern:"onPaste=" in:jsx))==0 -- note ibelick/baseline-ui: never block paste
+C design-craft.build fixed-width: len(ui.scan(pattern:"(^|[^-])width:\\s*([4-9][0-9]{2}|[0-9]{4,})px|min-width:\\s*([4-9][0-9]{2}|[0-9]{4,})px|overflow-x:\\s*scroll|100vh" in:css))==0 -- block neyvia/design#layout: no fixed widths over 400px, no sideways scroll, dvh over vh
+
+-- copy (Jakub Krehel better-writing; i-have-adhd; frontend-design writing; Neyvia copy)
+C design-craft.build exclaim: len(ui.copy(pattern:"!"))==0 -- warn neyvia/design#copy+jakub/better-writing: no exclamation marks
+C design-craft.build click-here: len(ui.copy(pattern:"(?i)click here|^learn more$|^here$"))==0 -- warn jakub/better-writing#links: links name their destination
+C design-craft.build apology: len(ui.copy(pattern:"(?i)\\b(oops|uh oh|sorry|something went wrong|an error occurred)\\b|^error:"))==0 -- warn jakub/better-writing#errors+adhd#8: say what failed and the next step, no apology
+C design-craft.build buzzwords: len(ui.copy(pattern:"(?i)\\b(seamless(ly)?|unleash|elevate|revolutioni[sz]e|next-gen|cutting[- ]edge|supercharge|effortless(ly)?|magic(al)?|powerful|blazing)\\b"))==0 -- warn taste-skill#9.D+antislop: concrete verbs, no marketing words
+C design-craft.build jargon: len(ui.copy(pattern:"(?i)\\b(payload|session id|null|undefined|thread|authenticate|diff|stdout|exit code)\\b"))==0 -- warn neyvia/design#copy: Paul's words (chat, PC, changes, sign in)
+C design-craft.build title-case: len(ui.copy(pattern:"^[A-Z][a-z]+( (?:[A-Z][a-z]+|[a-z]{1,3}))* [A-Z][a-z]+$"))==0 -- warn jakub/better-writing#capitalization: sentence case everywhere
+C design-craft.build emoji: len(ui.copy(pattern:"[\\u2600-\\u27BF\\U0001F300-\\U0001FAFF]"))==0 -- warn neyvia/design#copy: no emoji
+C design-craft.build em-dash: len(ui.copy(pattern:"\\u2014"))==0 -- note taste-skill#9.G+antislop#R-02: no em dash in UI words (note only: a Neyvia preference, not a rule)
+C design-craft.build concat-copy: len(ui.scan(pattern:"[\"'`][A-Za-z][^\"'`]* [\"'`]\\s*\\+\\s*\\w+\\s*\\+\\s*[\"'`]" in:jsx))==0 -- warn jakub/better-writing#plain: no sentences glued around variables; use a template with plurals
+C design-craft.build fake-data: len(ui.copy(pattern:"(?i)\\b(john doe|jane doe|acme|lorem ipsum|99\\.9+%|10k\\+ users)\\b"))==0 -- block antislop#R-17/R-38+taste-skill#9.D: no invented names, numbers or claims
+
+-- rendered (taste lens probe; Neyvia check-loop; WCAG 2.2 via Addy Osmani)
+C design-craft.build contrast-light: ui.render(theme:light viewport:desktop).contrastFails==0 -- block addy/accessibility#1.4.3+neyvia: 4.5:1 body, 3:1 large text, in Morning
+C design-craft.build contrast-dark: ui.render(theme:dark viewport:desktop).contrastFails==0 -- block addy/accessibility#1.4.3+neyvia: same in Forest
+C design-craft.build names: ui.render(theme:dark viewport:desktop).unnamed==0 -- block addy/accessibility#4.1.2: every control has an accessible name
+C design-craft.build phone-overflow: ui.render(theme:light viewport:phone).overflowPx<=1 -- block neyvia/design#layout+antislop#R-03: nothing wider than 390px
+C design-craft.build collisions: ui.render(theme:light viewport:phone).collisions==0 -- block neyvia/design#check-loop: no text on text
+C design-craft.build control-wrap: ui.render(theme:light viewport:desktop).wrappedControls==0 -- block neyvia/design#check-loop: a short control keeps icon and label on one line (added after run 1: checks passed while both buttons stacked their icon above the label)
+C design-craft.build control-wrap-phone: ui.render(theme:light viewport:phone).wrappedControls==0 -- warn neyvia/design#layout+taste-skill#4.5: button labels fit on one line at phone width
+C design-craft.build targets: ui.render(theme:light viewport:phone).smallTargets==0 -- warn addy/accessibility#2.5.8: tap targets 24px or more (36px icon buttons on phone)
+
+-- L2
+J motion-need none|feedback|entrance|live-state: "How often will Paul see this, and what does motion explain?" -- emil frequency gate: keyboard-initiated or 100+/day = none; feedback = colour/shadow on --nx-fast, press scale(0.97) on --nx-snappy; entrance = nx-pop-in/nx-fade; live-state = StatusDot pulse. Popovers scale from their trigger (transform-origin), modals from centre; exit faster than enter
+J emphasis primary|status|none: "Which one element carries the emphasis on this component?" -- frontend-design 'spend boldness in one place': one filled primary per area, the sun only for the screen's hero action; everything else quiet
+J removal keep|remove: "For each border, pill, label, icon and helper line: what information, state or action does it carry?" -- MengTo audit-ai-design-slop removal test; if removing it loses nothing, remove it (Neyvia: 20-40% fewer boxes)
+J states complete|missing: "Does it show first load, empty, error (with Try again), long names and many rows?" -- antislop R-27 + Neyvia surfaces: honest empty state with one next action; never invented data
+J copy-voice keep|rewrite: "Would Paul say these words out loud? Is every button a verb, every confirm the consequence, every toggle its ON state?" -- jakub better-writing + i-have-adhd: lead with the action, one idea per line, same word for the same thing
+P build(files:[path] url?:url): read(web/src/neyvia/next/nxTokens.css); read(web/src/neyvia/next/nxPrimitives.jsx); J motion-need; J emphasis; J states; design-craft.build(files url) C raw-colour C literal-duration C transition-all; J removal; J copy-voice; ui.render(theme:light viewport:desktop); ui.render(theme:dark viewport:desktop); ui.render(theme:light viewport:phone)
+P audit(files:[path] url:url): ui.render(theme:light viewport:desktop); ui.render(theme:dark viewport:phone); J removal; J copy-voice -- review only: evidence-backed findings, subtraction first, P0-P3, no rewrite
+X design-craft.build raw-colour -> use the token (var(--nx-raised), color-mix(in srgb, var(--nx-gold) 18%, transparent)); a missing colour becomes a named token in all four theme blocks
+X design-craft.build literal-duration -> transition: transform var(--nx-snappy) var(--nx-spring-snappy), opacity var(--nx-fast) var(--nx-ease)
+X design-craft.build transition-all -> list the properties: transition: background-color var(--nx-fast) var(--nx-ease), box-shadow var(--nx-fast) var(--nx-ease)
+X design-craft.build scale-zero -> start entrances at opacity 0 + scale(0.985) + translateY(4px); reuse nx-pop-in
+X design-craft.build ease-in -> var(--nx-ease) for one-shot, --nx-spring-* for movement
+X design-craft.build layout-animated -> animate transform/opacity; for height use grid-template-rows 0fr->1fr without transition, or no motion
+X design-craft.build hover-motion -> wrap in @media (hover: hover) and (pointer: fine); keep colour-only hover outside
+X design-craft.build stagger -> drop the delays; the list appears at once
+X design-craft.build outline-none -> delete it; .nx :focus-visible already draws var(--nx-focus)
+X design-craft.build clickable-div -> Button / IconButton from nxPrimitives.jsx, or <button type="button">
+X design-craft.build iconbutton-label -> IconButton label="Verb the thing" (becomes aria-label and tooltip)
+X design-craft.build spacing-scale -> snap to 2/4/6/8/10/12/14/16/20/24
+X design-craft.build radius-scale -> var(--nx-r-sm) controls, var(--nx-r-lg) cards, var(--nx-r-pill) counts
+X design-craft.build font-size-token -> var(--nx-fs-xs|sm|fs|md|lg|xl)
+X design-craft.build uppercase -> sentence case; if a tiny label is truly needed use .nx-tag
+X design-craft.build solid-borders -> box-shadow: inset 0 0 0 1px var(--nx-line)
+X design-craft.build contrast-light -> body text var(--nx-text-2), small labels var(--nx-muted); never --nx-faint under 12px
+X design-craft.build phone-overflow -> minmax(0, 1fr), min-width: 0, flex-wrap, text-overflow: ellipsis on the offender
+X design-craft.build apology -> "Couldn't <verb> <thing>. <next step>." e.g. "Couldn't reach your PC. Check it's on, then try again."
+X design-craft.build button-icon-child -> <Button variant="primary" icon={Check} onClick={...}>Allow once</Button>
+X design-craft.build control-wrap -> use the icon prop, keep the label short, let the row wrap (flex-wrap) instead of the button
+X design-craft.build inline-style-colour -> move the colour into the component CSS with a token; inline style only for computed geometry
+X design-craft.build js-motion-reduced -> const reduce = useMedia("(prefers-reduced-motion: reduce)"); skip the movement when reduce is true
+X design-craft.build dead-control -> wire the control to a real handler or remove it; a not-yet-built action shows "Coming" as text, not a button
+X design-craft.build fixed-width -> max-width or min(720px, 100%); minmax(0, 1fr) tracks; 100dvh instead of 100vh
+X design-craft.build fake-data -> use real state or an honest empty state; examples in a specimen use real Neyvia names (Codex, Neyvia-next, build/cache)
+X design-craft.build contrast-dark -> body text var(--nx-text-2), labels var(--nx-muted); check the tint behind the text in Forest
+X design-craft.build names -> IconButton label="…" or aria-label on the raw control; the visible text counts as the name
+X design-craft.build collisions -> allow wrapping, drop the less important label at this width, or restack the row
+X design-craft.build title-case -> sentence case: "Allow once", "Show details"
+F focus-not-obscured (WCAG 2.4.11) needs a Tab-walk probe -> taste lens journey
+F drag alternative for Arrange mode (WCAG 2.5.7) -> layout manual
+F press feedback: Button/IconButton have no :active scale yet (only .nx-send) -> motion chapter, shared nxShell.css
+F interruptible gesture motion (apple-design §3, velocity handoff) for the docked chat and sheets -> motion chapter
+M design-craft "never animate from scale(0); popovers scale from their trigger" src:github.com/emilkowalski/skills@e8a175d/skills/review-animations/STANDARDS.md license:MIT author:"Emil Kowalski" state:verified
+M design-craft "frequency gate: no animation on keyboard-initiated or 100+/day actions" src:github.com/emilkowalski/skills@e8a175d/skills/emil-design-eng/SKILL.md license:MIT author:"Emil Kowalski" state:verified
+M design-craft "interruptibility and enter/exit along the same path" src:github.com/emilkowalski/skills@e8a175d/skills/apple-design/SKILL.md license:MIT author:"Emil Kowalski" state:quarantine
+M design-craft "spend boldness in one place; structure devices encode information" src:github.com/anthropics/skills@8a1541c/skills/frontend-design/SKILL.md license:Apache-2.0 author:Anthropic state:verified
+M design-craft "verb-first buttons; confirm repeats the consequence; toggles name the ON state; errors say how to fix" src:github.com/jakubkrehel/skills@267330e/skills/better-writing/SKILL.md license:MIT author:"Jakub Krehel" state:verified
+M design-craft "lead with the next action; restate state; cap visible lists at 5" src:github.com/ayghri/i-have-adhd@839872f/skills/i-have-adhd/SKILL.md license:MIT author:"Ayoub Ghriss" state:verified
+M design-craft "WCAG 2.2: target size 24px, focus not obscured, dragging alternative" src:github.com/addyosmani/web-quality-skills@afa8da9/skills/accessibility/SKILL.md license:MIT author:"Addy Osmani" state:verified
+M design-craft "dead controls, fabricated data and missing states are hard failures" src:github.com/miqdadbadjuber/anti-slop@91f12ec/antislop.md license:MIT author:"Miqdad Badjuber" state:verified
+M design-craft "eyebrow restraint; one radius scale; no fake names or numbers" src:github.com/Leonxlnx/taste-skill@ce26fc2/skills/taste-skill/SKILL.md license:MIT author:Leonxlnx state:verified
+M design-craft "removal test, evidence per finding, P0-P3, subtraction first" src:github.com/MengTo/Skills@d5bd3a7/agent-skills/ui/audit-ai-design-slop/SKILL.md license:MIT author:"Meng To" state:verified
+M design-craft "layered neutral elevation: 1px ring + stacked soft layers, one strength per state" src:github.com/MengTo/Skills@d5bd3a7/agent-skills/web-design/beautiful-shadows/SKILL.md license:MIT author:"Meng To" state:verified
+M design-craft "no will-change at rest; never block paste; dvh over vh" src:github.com/ibelick/ui-skills@ebf5f26/skills/baseline-ui/SKILL.md license:MIT author:"Julien Thibeaut" state:verified
+V P build -> harness:codex why:"writes files; checks are script"
+V C design-craft.build -> script why:"every C is a regex or probe; no model needed"
+V J motion-need -> model:small why:"four options, frequency and purpose are in the brief"
+V J removal -> model:large why:"needs to look at the screenshots"

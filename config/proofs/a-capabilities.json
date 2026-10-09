@@ -1,0 +1,2053 @@
+{
+  "area": "a-capabilities",
+  "module": "grant_agent.proofs_a_capabilities",
+  "self_check": "self_check",
+  "manuals": [
+    "agents",
+    "tools-depth",
+    "handoff-recovery",
+    "proofs"
+  ],
+  "contracts": [
+    {
+      "id": "a.behavior-plan",
+      "phase": "post",
+      "claim": "Every compiled behavior plan binds its selected capsule and all executable content to a canonical SHA256 planHash.",
+      "checkedAt": [
+        "grant_agent.behavior_capsules.BehaviorCapsuleRegistry.compile -> check_behavior",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.behavior-cache",
+      "phase": "invariant",
+      "claim": "Cache hits reuse the identical compiled plan; failed compiles may increase misses without adding entries and do not poison subsequent valid compilation.",
+      "checkedAt": [
+        "grant_agent.behavior_capsules.BehaviorCapsuleRegistry.compile -> check_behavior",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.behavior-gates",
+      "phase": "invariant",
+      "claim": "Learned behavior coordinates stay in [0,1] and retain the capsule executable proof gates.",
+      "checkedAt": [
+        "grant_agent.behavior_capsules.BehaviorCapsuleRegistry.compile -> check_behavior",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.challenge-catalog",
+      "phase": "post",
+      "claim": "Challenge catalog names equal loaded configured presets.",
+      "checkedAt": [
+        "grant_agent.challenge_presets.ChallengePresetRegistry.list_names -> check_challenges",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.challenge-selection",
+      "phase": "post",
+      "claim": "Selectors rank objective token matches and fall back to configured order within top_k.",
+      "checkedAt": [
+        "grant_agent.challenge_presets.ChallengePreset.pick_selectors -> check_selectors",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.checkpoint-durable",
+      "phase": "goal",
+      "claim": "Saved checkpoints reread as the complete record with no atomic-write temporary tails.",
+      "checkedAt": [
+        "grant_agent.checkpoints.CheckpointStore.save -> check_checkpoint",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.permission-modes",
+      "phase": "pre",
+      "claim": "Read/review/local/high-risk decisions obey explicit approvals and workspace scope.",
+      "checkedAt": [
+        "grant_agent.capability_runtime.CapabilityPermissionEngine.decide -> check_permissions",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.catalog-observer",
+      "phase": "post",
+      "claim": "Catalog summaries equal loaded packs and capabilities; schemas expand only when requested.",
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.snapshot -> check_catalog",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.catalog-routing",
+      "phase": "post",
+      "claim": "Search returns bounded unique real capabilities without eager input schemas.",
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.search -> check_search",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.catalog-adapter",
+      "phase": "invariant",
+      "claim": "Capability descriptions bind their selected adapter and its detected availability.",
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.describe -> check_description",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.artifact-durable",
+      "phase": "post",
+      "claim": "Artifact graph persists the returned record and its hash and size bind actual file bytes.",
+      "checkedAt": [
+        "grant_agent.artifact_graph.ArtifactGraph.register -> check_graph_registration",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.artifact-relations",
+      "phase": "post",
+      "claim": "Persisted artifact relations reference distinct registered endpoints.",
+      "checkedAt": [
+        "grant_agent.artifact_graph.ArtifactGraph.relate -> check_graph_relation",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.artifact-lineage",
+      "phase": "post",
+      "claim": "Lineage retains the selected artifact and coherent counts and relation endpoints.",
+      "checkedAt": [
+        "grant_agent.artifact_graph.ArtifactGraph.lineage -> check_graph_lineage",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.treasury-boundary",
+      "phase": "invariant",
+      "claim": "Typed recovery remains review-required without file bodies, transcripts, activation, trust elevation or publication.",
+      "checkedAt": [
+        "grant_agent.legacy_asset_treasury.CapabilityTreasury.snapshot -> check_treasury",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "bounded local capability actions",
+        "agent/operator evidence",
+        "recoverable scratch state"
+      ]
+    },
+    {
+      "id": "a.factory-draft",
+      "phase": "goal",
+      "claim": "A ready factory job has five completed stages, passed static verification, a matching registered application and draft-only activation/publication boundaries.",
+      "checkedAt": [
+        "grant_agent.app_factory.AppFactory.create/resume -> grant_agent.proofs_a_capabilities.check_factory_job",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.factory-package",
+      "phase": "post",
+      "claim": "Generated archives match their recorded SHA256 bytes; desktop drafts retain real Tauri scaffolds and inactive bundling.",
+      "checkedAt": [
+        "grant_agent.app_factory.AppFactory.create/resume -> grant_agent.proofs_a_capabilities.check_factory_job",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.factory-paths",
+      "phase": "pre",
+      "claim": "Creation stays inside the selected workspace and refuses occupied destinations; preview serves only generated dist assets.",
+      "checkedAt": [
+        "grant_agent.app_factory._safe_child; grant_agent.app_factory.AppFactory.create/resolve_preview_asset -> grant_agent.proofs_a_capabilities.check_preview_asset",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.surface-manifest",
+      "phase": "pre",
+      "claim": "Optional application surfaces remain undeclared when absent; unproven mobile builds are rejected and declared surfaces obey the persisted schema.",
+      "checkedAt": [
+        "grant_agent.application_surface.validate_application_surface_manifest -> grant_agent.proofs_a_capabilities.check_surface_validation",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.surface-authority",
+      "phase": "invariant",
+      "claim": "Ready targets require host-injected receipt authority outside the editable workspace and verified bound readiness evidence; desktop readiness requires an actual platform signature.",
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.__init__/_target_status -> grant_agent.proofs_a_capabilities.check_surface_target",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.surface-plan",
+      "phase": "post",
+      "claim": "Launch planning never executes/builds/installs/publishes; ready plans require bound single-use approval and current target evidence.",
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.plan_launch -> grant_agent.proofs_a_capabilities.check_launch_plan",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.surface-receipt",
+      "phase": "invariant",
+      "claim": "Trusted external receipts bind signature, expected kind, identity and raw byte hash; consumed or tampered approvals fail closed.",
+      "checkedAt": [
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_receipt/_verify_path -> grant_agent.proofs_a_capabilities.check_authority_receipt",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.surface-lifecycle",
+      "phase": "invariant",
+      "claim": "Trusted lifecycle is a monotonic signed receipt hash chain; editable reports never become trusted and verified state binds current process/listener evidence.",
+      "checkedAt": [
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_lifecycle_stream -> grant_agent.proofs_a_capabilities.check_lifecycle_stream; grant_agent.application_surface.ApplicationSurfaceService._lifecycle_status -> grant_agent.proofs_a_capabilities.check_lifecycle_status",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.surface-log",
+      "phase": "post",
+      "claim": "Log observation redacts secrets, drops partial tail lines and returns no lines for blocked or missing hooks.",
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService._read_log -> grant_agent.proofs_a_capabilities.check_log_observer",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local application drafts",
+        "authority receipts",
+        "protected workspace state"
+      ]
+    },
+    {
+      "id": "a.capability-plan",
+      "phase": "post",
+      "claim": "Compiled plans bind canonical stages and selected capability IDs to their hash, defer schemas, and derive readiness from modeled authority and actual adapter availability.",
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityPlanner.plan -> grant_agent.proofs_a_capabilities.check_capability_plan",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local capability action semantics",
+        "durable scratch plans and runs",
+        "deferred schemas and authority admission"
+      ]
+    },
+    {
+      "id": "a.capability-preview",
+      "phase": "post",
+      "claim": "Every preview mutation persists the exact ordered run record; terminal runs end with a completed result event.",
+      "checkedAt": [
+        "grant_agent.capability_runtime.CapabilityRunStore.create/append_preview/finish -> grant_agent.proofs_a_capabilities.check_run_record",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local capability action semantics",
+        "durable scratch plans and runs",
+        "deferred schemas and authority admission"
+      ]
+    },
+    {
+      "id": "a.capability-pack",
+      "phase": "pre",
+      "claim": "Custom packs require explicit approval, stay inside scoped storage, and reload only valid durable definitions.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.save_pack -> grant_agent.proofs_a_capabilities.check_pack_save",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local capability action semantics",
+        "durable scratch plans and runs",
+        "deferred schemas and authority admission"
+      ]
+    },
+    {
+      "id": "a.capability-admission",
+      "phase": "pre",
+      "claim": "Execution reports delegation or approval requirements without synthesizing successful agent work.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_capability -> grant_agent.proofs_a_capabilities.check_capability_execution",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local capability action semantics",
+        "durable scratch plans and runs",
+        "deferred schemas and authority admission"
+      ]
+    },
+    {
+      "id": "a.adapter-execution",
+      "phase": "invariant",
+      "claim": "Adapter execution support requires a registered real handler; success requires that detected handler.",
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.descriptor/execute -> grant_agent.proofs_a_capabilities.check_adapter_execution",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local capability action semantics",
+        "durable scratch plans and runs",
+        "deferred schemas and authority admission"
+      ]
+    },
+    {
+      "id": "a.adapter-file-inspection",
+      "phase": "post",
+      "claim": "Built-in inspection size and SHA256 bind the actual selected file bytes.",
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> grant_agent.proofs_a_capabilities.check_adapter_execution",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local capability action semantics",
+        "durable scratch plans and runs",
+        "deferred schemas and authority admission"
+      ]
+    },
+    {
+      "id": "a.capability-ui-schema",
+      "phase": "invariant",
+      "claim": "The UI contract retains behavioral command and lifecycle declarations and the declared visual implementation owner.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.ui_contract -> grant_agent.proofs_a_capabilities.check_ui_contract",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "impact": [
+        "local capability action semantics",
+        "durable scratch plans and runs",
+        "deferred schemas and authority admission"
+      ]
+    },
+    {
+      "id": "a.evolution-stagnation",
+      "phase": "invariant",
+      "claim": "Repair thresholds and repeated zero lift select repair/branch with human review; usage alone never raises trust.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._recommendation -> check_recommendation",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.evolution-sealed",
+      "phase": "invariant",
+      "claim": "Every trial projection retains inactive candidate state and hashes binding sealed Markdown and metadata.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.evolution-receipts",
+      "phase": "post",
+      "claim": "Trial evidence has unique run identities; typed receipt comparisons exclude transcripts and bind derived measurements to the exact sealed package.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.evolution-forge",
+      "phase": "pre",
+      "claim": "Forge scorecards and acceptance gates derive from bounded replay cases; expanded authority blocks acceptance and candidates remain inactive.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.evolution-inactive",
+      "phase": "post",
+      "claim": "Materialization writes scoped inactive sealed bytes; withdrawal retains the package and a digest-bound rollback receipt while projections never activate it.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.materialize_skill_candidate/rollback_skill_materialization -> check_materialization_write",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.evolution-lease",
+      "phase": "invariant",
+      "claim": "Only current proof leases permit promotion; current leases retain bound digests and passed dependency signals without activation or transcripts.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._assess_proof_lease -> check_lease",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.evolution-handoff",
+      "phase": "goal",
+      "claim": "App handoffs bind the exact inactive package and a current proof lease to an explicitly reviewed local draft, without activating app or skill.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.prepare_app_factory_handoff -> check_handoff",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.evolution-outcome",
+      "phase": "post",
+      "claim": "Only ready typed synthesis becomes idempotent learning evidence without raising trust.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.accept_constellation_outcome -> check_constellation",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.evolution-friction",
+      "phase": "post",
+      "claim": "App outcome imports bind sealed receipt digests and typed measurements, count duplicate identities once, separate measured duration from operator estimates, and require recurrent friction before reviewed repair proposals.",
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.import_capability_run_bundle/_app_outcome_learning -> check_app_import/check_app_learning",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "receipt-bound skill lineage",
+        "inactive package and app drafts",
+        "renewable proof and private-text boundary"
+      ]
+    },
+    {
+      "id": "a.app-state",
+      "phase": "post",
+      "claim": "Session writes persist exact nonvolatile state and preserve file bytes and modification time when unchanged.",
+      "checkedAt": [
+        "grant_agent.app_capability_standard._save_session_state -> grant_agent.proofs_a_app_standard.checked_state_save",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ],
+      "impact": [
+        "connected observation only",
+        "local storage and rendered generated app actions",
+        "explicit review and inactive boundary"
+      ]
+    },
+    {
+      "id": "a.app-observation",
+      "phase": "post",
+      "claim": "Connected snapshots retain one session and handshake per manifest and grant only declared capabilities.",
+      "checkedAt": [
+        "grant_agent.app_capability_standard.build_connected_apps_snapshot -> grant_agent.proofs_a_app_standard.check_snapshot",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ],
+      "impact": [
+        "connected observation only",
+        "local storage and rendered generated app actions",
+        "explicit review and inactive boundary"
+      ]
+    },
+    {
+      "id": "a.app-storage",
+      "phase": "invariant",
+      "claim": "Read-only storage plans retain explicit approval/automatic policy, bounded ready directions, control metadata and activation guidance even when mapped roots are absent.",
+      "checkedAt": [
+        "grant_agent.app_capability_standard._synology_bridge_plan/_build_synology_fast_sync_session -> grant_agent.proofs_a_app_standard.check_storage_plan/check_storage_session",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ],
+      "impact": [
+        "connected observation only",
+        "local storage and rendered generated app actions",
+        "explicit review and inactive boundary"
+      ]
+    },
+    {
+      "id": "a.app-cloud",
+      "phase": "pre",
+      "claim": "Cloud discovery keeps writes approval-gated and derives target readiness from declared login or mounted-root presence, with no raw credential content.",
+      "checkedAt": [
+        "grant_agent.app_capability_standard._cloud_drive_bridge_plan -> grant_agent.proofs_a_app_standard.check_cloud_plan",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ],
+      "impact": [
+        "connected observation only",
+        "local storage and rendered generated app actions",
+        "explicit review and inactive boundary"
+      ]
+    },
+    {
+      "id": "a.factory-notes-ui",
+      "phase": "post",
+      "claim": "Every generated notes mutation checks typed unique entries and exact local persistence; rendering checks its filtered rows and empty state against saved entries.",
+      "checkedAt": [
+        "grant_agent.app_factory._web_files generated saveItems/render -> a.factory-notes-ui",
+        "grant_agent.proofs_a_factory_browser.self_check"
+      ],
+      "impact": [
+        "connected observation only",
+        "local storage and rendered generated app actions",
+        "explicit review and inactive boundary"
+      ]
+    },
+    {
+      "id": "a.factory-guided-ui",
+      "phase": "post",
+      "claim": "Every generated workflow save/export checks unique run identity, reviewed package binding, proof/completed-step gates and inactive boundaries with exact local persistence.",
+      "checkedAt": [
+        "grant_agent.app_factory._capability_web_files generated saveRuns/guardRuns/buildBundle -> a.factory-guided-ui",
+        "grant_agent.proofs_a_factory_browser.self_check"
+      ],
+      "impact": [
+        "connected observation only",
+        "local storage and rendered generated app actions",
+        "explicit review and inactive boundary"
+      ]
+    },
+    {
+      "id": "a.authored-tool",
+      "phase": "post",
+      "claim": "Valid authored tools require approval and exact scoped durable manifests; delegated drafts never imply an available executor.",
+      "checkedAt": [
+        "grant_agent.tool_factory.AuthoredToolStore.save -> check_authored_save",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.authored-argv",
+      "phase": "post",
+      "claim": "Actual authored command results preserve scalar argv count, scoped working directory and exit/parse truth; shell characters remain literal input.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService._execute_command_tool -> check_authored_command",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.cu-metrics",
+      "phase": "post",
+      "claim": "Computer Use metrics bind receipt repetition, classified flow success, deterministic agreement, declared URL-source counts, bounded direct latency percentiles and compact receipt bytes.",
+      "checkedAt": [
+        "grant_agent.computer_use_twin.summarize_cu_receipts -> check_metrics",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.cu-replay",
+      "phase": "invariant",
+      "claim": "Persisted replay runs cannot earn live proof or comparative claims and returned receipts match their durable records.",
+      "checkedAt": [
+        "grant_agent.computer_use_twin.ComputerUseTwinService.run -> check_twin_run",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.cu-portable",
+      "phase": "pre",
+      "claim": "Queued isolated workers carry portable specs/receipts with NAS fallback forbidden and write resulting artifacts beneath the worker root.",
+      "checkedAt": [
+        "grant_agent.computer_use_twin.ComputerUseTwinService.dispatch/execute_cluster_twin_job -> check_dispatch/check_worker",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.cu-verifier",
+      "phase": "pre",
+      "claim": "Verification requires approval and functional-change claims require passed live evidence; replay cannot earn change or comparison claims.",
+      "checkedAt": [
+        "grant_agent.computer_use_verifier.ComputerUseVerifierService.verify -> check_verification",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.tool-readiness",
+      "phase": "invariant",
+      "claim": "Typed tool readiness binds healthy verified pins and operations; snapshots keep exact counts and defer operations while execution readiness requires evaluated runtime identity.",
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload/ToolManifestRegistry.snapshot/search -> check_tool_manifest/check_tool_snapshot/check_tool_search",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.tool-reference",
+      "phase": "invariant",
+      "claim": "Each loaded pinned Pandoc reference binds actual repository bytes to its SHA256 and retains explicit Letter page geometry, one-inch margins, heading/table/compact styles and keep-lines formatting.",
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload -> check_tool_manifest",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.tool-typed",
+      "phase": "post",
+      "claim": "Successful tool operations validate input/output schemas and bind their receipt to the pinned package identity.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation -> check_operation",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.tool-private",
+      "phase": "invariant",
+      "claim": "Chat, secret broker and P2P compatibility projections exclude private token/path/endpoint/ticket fields and explicit exposure flags.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation -> check_operation",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.pdf-bounded",
+      "phase": "post",
+      "claim": "Installed Poppler output preserves its selected PDF source, bounded text size and correct truncation declaration.",
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> check_pdf",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.android-approval",
+      "phase": "pre",
+      "claim": "Available Android mutation handlers reject unapproved actions before launching any device command.",
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> check_pdf",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.adapter-session",
+      "phase": "invariant",
+      "claim": "External session registration/heartbeat/disconnect projections never expose the stored heartbeat verifier hash; session presence does not imply an in-process executor.",
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.register_session/heartbeat_session/disconnect_session -> check_adapter_private",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.tool-workspace",
+      "phase": "pre",
+      "claim": "Direct marketplace tool paths must remain within the selected active workspace before an executable can be invoked.",
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._resolve_existing_workspace_path -> check_direct_path",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.capability-benchmark",
+      "phase": "post",
+      "claim": "Benchmark budget status follows measured p95 and declared budget; ten-times claims require a retained baseline.",
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.benchmark -> check_benchmark",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    },
+    {
+      "id": "a.factory-lineage",
+      "phase": "post",
+      "claim": "A reviewed guided app copies the exact sealed skill/metadata, has no new application permissions, retains inactive digest-bound lineage and a ready durable handoff receipt.",
+      "checkedAt": [
+        "grant_agent.app_factory.AppFactory.create_from_capability_handoff -> grant_agent.proofs_a_capabilities.check_factory_lineage",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ],
+      "impact": [
+        "authored and pinned tool execution",
+        "private typed operation boundaries",
+        "honest replay and worker receipts",
+        "reviewed local app lineage"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_behavior_capsules.py",
+      "case": "test_design_task_compiles_rendered_critic_contract",
+      "contracts": [
+        "a.behavior-plan",
+        "a.behavior-gates"
+      ],
+      "checkedAt": [
+        "grant_agent.behavior_capsules.BehaviorCapsuleRegistry.compile -> check_behavior",
+        "grant_agent.behavior_capsules.BehaviorCapsuleRegistry.compile -> check_behavior",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_behavior_capsules.py::test_design_task_compiles_rendered_critic_contract"
+    },
+    {
+      "test": "tests/test_behavior_capsules.py",
+      "case": "test_compile_cache_is_real_and_observable",
+      "contracts": [
+        "a.behavior-cache"
+      ],
+      "checkedAt": [
+        "grant_agent.behavior_capsules.BehaviorCapsuleRegistry.compile -> check_behavior",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_behavior_capsules.py::test_compile_cache_is_real_and_observable"
+    },
+    {
+      "test": "tests/test_behavior_capsules.py",
+      "case": "test_learned_adjustment_is_bounded_and_cannot_reduce_proof_contract",
+      "contracts": [
+        "a.behavior-gates"
+      ],
+      "checkedAt": [
+        "grant_agent.behavior_capsules.BehaviorCapsuleRegistry.compile -> check_behavior",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_behavior_capsules.py::test_learned_adjustment_is_bounded_and_cannot_reduce_proof_contract"
+    },
+    {
+      "test": "tests/test_challenge_presets.py",
+      "case": "ChallengePresetTests.test_registry_loads_requested_presets",
+      "contracts": [
+        "a.challenge-catalog"
+      ],
+      "checkedAt": [
+        "grant_agent.challenge_presets.ChallengePresetRegistry.list_names -> check_challenges",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_challenge_presets.py::ChallengePresetTests.test_registry_loads_requested_presets"
+    },
+    {
+      "test": "tests/test_challenge_presets.py",
+      "case": "ChallengePresetTests.test_selector_pick",
+      "contracts": [
+        "a.challenge-selection"
+      ],
+      "checkedAt": [
+        "grant_agent.challenge_presets.ChallengePreset.pick_selectors -> check_selectors",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_challenge_presets.py::ChallengePresetTests.test_selector_pick"
+    },
+    {
+      "test": "tests/test_checkpoints.py",
+      "case": "CheckpointTests.test_checkpoint_save_and_load",
+      "contracts": [
+        "a.checkpoint-durable"
+      ],
+      "checkedAt": [
+        "grant_agent.checkpoints.CheckpointStore.save -> check_checkpoint",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_checkpoints.py::CheckpointTests.test_checkpoint_save_and_load"
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_catalog_is_valid_broad_and_schema_deferred",
+      "contracts": [
+        "a.catalog-observer"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.snapshot -> check_catalog",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_capability_os.py::test_catalog_is_valid_broad_and_schema_deferred"
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_search_routes_domain_requests",
+      "contracts": [
+        "a.catalog-routing"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.search -> check_search",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_capability_os.py::test_search_routes_domain_requests"
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_describe_loads_one_schema_and_real_adapter_state",
+      "contracts": [
+        "a.catalog-adapter"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.describe -> check_description",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_capability_os.py::test_describe_loads_one_schema_and_real_adapter_state"
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_permission_engine_matches_existing_product_modes",
+      "contracts": [
+        "a.permission-modes"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_runtime.CapabilityPermissionEngine.decide -> check_permissions",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_capability_os.py::test_permission_engine_matches_existing_product_modes"
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_artifact_graph_hashes_persists_and_returns_lineage",
+      "contracts": [
+        "a.artifact-durable",
+        "a.artifact-relations",
+        "a.artifact-lineage"
+      ],
+      "checkedAt": [
+        "grant_agent.artifact_graph.ArtifactGraph.register -> check_graph_registration",
+        "grant_agent.artifact_graph.ArtifactGraph.relate -> check_graph_relation",
+        "grant_agent.artifact_graph.ArtifactGraph.lineage -> check_graph_lineage",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_capability_os.py::test_artifact_graph_hashes_persists_and_returns_lineage"
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_artifact_graph_rejects_unknown_or_self_relations",
+      "contracts": [
+        "a.artifact-relations"
+      ],
+      "checkedAt": [
+        "grant_agent.artifact_graph.ArtifactGraph.relate -> check_graph_relation",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_capability_os.py::test_artifact_graph_rejects_unknown_or_self_relations"
+    },
+    {
+      "test": "tests/test_capability_treasury.py",
+      "case": "test_treasury_recovers_typed_value_without_storing_file_bodies",
+      "contracts": [
+        "a.treasury-boundary"
+      ],
+      "checkedAt": [
+        "grant_agent.legacy_asset_treasury.CapabilityTreasury.snapshot -> check_treasury",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_capability_treasury.py::test_treasury_recovers_typed_value_without_storing_file_bodies"
+    },
+    {
+      "test": "tests/test_app_factory.py",
+      "case": "test_factory_desktop_job_contains_tauri_shell_and_resumes_idempotently",
+      "contracts": [
+        "a.factory-draft",
+        "a.factory-package"
+      ],
+      "checkedAt": [
+        "grant_agent.app_factory.AppFactory.create/resume -> grant_agent.proofs_a_capabilities.check_factory_job",
+        "grant_agent.app_factory.AppFactory.create/resume -> grant_agent.proofs_a_capabilities.check_factory_job",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_app_factory.py::test_factory_desktop_job_contains_tauri_shell_and_resumes_idempotently"
+    },
+    {
+      "test": "tests/test_app_factory.py",
+      "case": "test_factory_refuses_escape_overwrite_and_unsafe_preview_paths",
+      "contracts": [
+        "a.factory-paths"
+      ],
+      "checkedAt": [
+        "grant_agent.app_factory._safe_child; grant_agent.app_factory.AppFactory.create/resolve_preview_asset -> grant_agent.proofs_a_capabilities.check_preview_asset",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_app_factory.py::test_factory_refuses_escape_overwrite_and_unsafe_preview_paths"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_optional_surface_is_valid_when_not_declared",
+      "contracts": [
+        "a.surface-manifest"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.validate_application_surface_manifest -> grant_agent.proofs_a_capabilities.check_surface_validation",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_optional_surface_is_valid_when_not_declared"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_schema_file_and_runtime_schema_accept_the_same_surface",
+      "contracts": [
+        "a.surface-manifest"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.validate_application_surface_manifest -> grant_agent.proofs_a_capabilities.check_surface_validation",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_schema_file_and_runtime_schema_accept_the_same_surface"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_default_service_keeps_workspace_forgery_unproven",
+      "contracts": [
+        "a.surface-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.__init__/_target_status -> grant_agent.proofs_a_capabilities.check_surface_target",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_default_service_keeps_workspace_forgery_unproven"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_external_web_and_approval_receipts_make_plan_ready",
+      "contracts": [
+        "a.surface-plan",
+        "a.surface-receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.plan_launch -> grant_agent.proofs_a_capabilities.check_launch_plan",
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_receipt/_verify_path -> grant_agent.proofs_a_capabilities.check_authority_receipt",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_external_web_and_approval_receipts_make_plan_ready"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_capability_service_accepts_only_host_injected_authority",
+      "contracts": [
+        "a.surface-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.__init__/_target_status -> grant_agent.proofs_a_capabilities.check_surface_target",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_capability_service_accepts_only_host_injected_authority"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_consumed_or_tampered_approval_fails_closed",
+      "contracts": [
+        "a.surface-receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_receipt/_verify_path -> grant_agent.proofs_a_capabilities.check_authority_receipt",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_consumed_or_tampered_approval_fails_closed"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_web_receipt_requires_trusted_browser_or_health_verifier",
+      "contracts": [
+        "a.surface-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.__init__/_target_status -> grant_agent.proofs_a_capabilities.check_surface_target",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_web_receipt_requires_trusted_browser_or_health_verifier"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_plan_hash_binds_external_receipt_hash",
+      "contracts": [
+        "a.surface-receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_receipt/_verify_path -> grant_agent.proofs_a_capabilities.check_authority_receipt",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_plan_hash_binds_external_receipt_hash"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_workspace_lifecycle_report_and_live_pid_never_become_trusted",
+      "contracts": [
+        "a.surface-lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_lifecycle_stream -> grant_agent.proofs_a_capabilities.check_lifecycle_stream; grant_agent.application_surface.ApplicationSurfaceService._lifecycle_status -> grant_agent.proofs_a_capabilities.check_lifecycle_status",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_workspace_lifecycle_report_and_live_pid_never_become_trusted"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_external_lifecycle_chain_binds_process_and_web_listener",
+      "contracts": [
+        "a.surface-lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_lifecycle_stream -> grant_agent.proofs_a_capabilities.check_lifecycle_stream; grant_agent.application_surface.ApplicationSurfaceService._lifecycle_status -> grant_agent.proofs_a_capabilities.check_lifecycle_status",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_external_lifecycle_chain_binds_process_and_web_listener"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_lifecycle_chain_with_wrong_previous_hash_fails_closed",
+      "contracts": [
+        "a.surface-lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_lifecycle_stream -> grant_agent.proofs_a_capabilities.check_lifecycle_stream; grant_agent.application_surface.ApplicationSurfaceService._lifecycle_status -> grant_agent.proofs_a_capabilities.check_lifecycle_status",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_lifecycle_chain_with_wrong_previous_hash_fails_closed"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_signed_lifecycle_with_non_integer_sequence_fails_closed",
+      "contracts": [
+        "a.surface-lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ExternalReceiptAuthority.verify_lifecycle_stream -> grant_agent.proofs_a_capabilities.check_lifecycle_stream; grant_agent.application_surface.ApplicationSurfaceService._lifecycle_status -> grant_agent.proofs_a_capabilities.check_lifecycle_status",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_signed_lifecycle_with_non_integer_sequence_fails_closed"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_observability_drops_partial_tail_and_redacts_boundary_secret",
+      "contracts": [
+        "a.surface-log"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService._read_log -> grant_agent.proofs_a_capabilities.check_log_observer",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_observability_drops_partial_tail_and_redacts_boundary_secret"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_observability_never_emits_a_secret_cut_by_tail_start",
+      "contracts": [
+        "a.surface-log"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService._read_log -> grant_agent.proofs_a_capabilities.check_log_observer",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_observability_never_emits_a_secret_cut_by_tail_start"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_authority_ledger_cannot_be_inside_editable_workspace",
+      "contracts": [
+        "a.surface-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.__init__/_target_status -> grant_agent.proofs_a_capabilities.check_surface_target",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_authority_ledger_cannot_be_inside_editable_workspace"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_mobile_available_build_is_rejected",
+      "contracts": [
+        "a.surface-manifest"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.validate_application_surface_manifest -> grant_agent.proofs_a_capabilities.check_surface_validation",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_mobile_available_build_is_rejected"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_catalog_does_not_invent_surfaces",
+      "contracts": [
+        "a.surface-manifest"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.validate_application_surface_manifest -> grant_agent.proofs_a_capabilities.check_surface_validation",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_catalog_does_not_invent_surfaces"
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_capability_service_accepts_host_provisioned_verifier",
+      "contracts": [
+        "a.surface-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.__init__/_target_status -> grant_agent.proofs_a_capabilities.check_surface_target",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "case_id": "tests/test_application_surface.py::test_capability_service_accepts_host_provisioned_verifier"
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_plan_compiles_stages_permissions_and_honest_missing_adapters",
+      "case_id": "tests/test_capability_os.py::test_plan_compiles_stages_permissions_and_honest_missing_adapters",
+      "contracts": [
+        "a.capability-plan"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityPlanner.plan -> grant_agent.proofs_a_capabilities.check_capability_plan",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_adapter_discovery_never_equates_presence_with_execution_permission",
+      "case_id": "tests/test_capability_os.py::test_adapter_discovery_never_equates_presence_with_execution_permission",
+      "contracts": [
+        "a.adapter-execution"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.descriptor/execute -> grant_agent.proofs_a_capabilities.check_adapter_execution",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_builtin_adapter_executes_real_file_inspection",
+      "case_id": "tests/test_capability_os.py::test_builtin_adapter_executes_real_file_inspection",
+      "contracts": [
+        "a.adapter-file-inspection"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> grant_agent.proofs_a_capabilities.check_adapter_execution",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_run_preview_lifecycle_is_durable_and_terminal",
+      "case_id": "tests/test_capability_os.py::test_run_preview_lifecycle_is_durable_and_terminal",
+      "contracts": [
+        "a.capability-preview"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_runtime.CapabilityRunStore.create/append_preview/finish -> grant_agent.proofs_a_capabilities.check_run_record",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_execute_capability_fails_closed_for_agent_delegation_and_approval",
+      "case_id": "tests/test_capability_os.py::test_execute_capability_fails_closed_for_agent_delegation_and_approval",
+      "contracts": [
+        "a.capability-admission"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_capability -> grant_agent.proofs_a_capabilities.check_capability_execution",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_progressive_tools_expose_search_describe_plan_and_lineage",
+      "case_id": "tests/test_capability_os.py::test_progressive_tools_expose_search_describe_plan_and_lineage",
+      "contracts": [
+        "a.catalog-routing",
+        "a.capability-plan"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.search -> check_search",
+        "grant_agent.proofs_a_capabilities.self_check",
+        "grant_agent.capability_catalog.CapabilityPlanner.plan -> grant_agent.proofs_a_capabilities.check_capability_plan"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_custom_pack_validation_requires_approval_and_reloads_catalog",
+      "case_id": "tests/test_capability_os.py::test_custom_pack_validation_requires_approval_and_reloads_catalog",
+      "contracts": [
+        "a.capability-pack"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.save_pack -> grant_agent.proofs_a_capabilities.check_pack_save",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_invalid_custom_pack_file_does_not_break_builtin_catalog",
+      "case_id": "tests/test_capability_os.py::test_invalid_custom_pack_file_does_not_break_builtin_catalog",
+      "contracts": [
+        "a.catalog-observer",
+        "a.capability-pack"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.snapshot -> check_catalog",
+        "grant_agent.proofs_a_capabilities.self_check",
+        "grant_agent.capability_service.CapabilityService.save_pack -> grant_agent.proofs_a_capabilities.check_pack_save"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_ui_contract_is_behavioral_and_leaves_visuals_to_cursor",
+      "case_id": "tests/test_capability_os.py::test_ui_contract_is_behavioral_and_leaves_visuals_to_cursor",
+      "contracts": [
+        "a.capability-ui-schema"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.ui_contract -> grant_agent.proofs_a_capabilities.check_ui_contract",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_mcp_progressive_surface_discovers_and_calls_capability_tools",
+      "case_id": "tests/test_capability_os.py::test_mcp_progressive_surface_discovers_and_calls_capability_tools",
+      "contracts": [
+        "a.catalog-routing"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.search -> check_search",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_web_backend_exposes_stable_capability_commands",
+      "case_id": "tests/test_capability_os.py::test_web_backend_exposes_stable_capability_commands",
+      "contracts": [
+        "a.catalog-routing",
+        "a.capability-plan",
+        "a.capability-preview",
+        "a.capability-ui-schema"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.search -> check_search",
+        "grant_agent.proofs_a_capabilities.self_check",
+        "grant_agent.capability_catalog.CapabilityPlanner.plan -> grant_agent.proofs_a_capabilities.check_capability_plan",
+        "grant_agent.capability_runtime.CapabilityRunStore.create/append_preview/finish -> grant_agent.proofs_a_capabilities.check_run_record",
+        "grant_agent.capability_service.CapabilityService.ui_contract -> grant_agent.proofs_a_capabilities.check_ui_contract"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_warm_search_meets_local_catalog_budget",
+      "case_id": "tests/test_capability_os.py::test_warm_search_meets_local_catalog_budget",
+      "contracts": [
+        "a.catalog-routing"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.search -> check_search",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_desktop_receipt_cannot_fake_platform_signature",
+      "case_id": "tests/test_application_surface.py::test_desktop_receipt_cannot_fake_platform_signature",
+      "contracts": [
+        "a.surface-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.application_surface.ApplicationSurfaceService.__init__/_target_status -> grant_agent.proofs_a_capabilities.check_surface_target",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_app_outcomes_require_bound_receipts_before_friction_proposals",
+      "case_id": "tests/test_capability_evolution.py::test_app_outcomes_require_bound_receipts_before_friction_proposals",
+      "contracts": [
+        "a.evolution-friction",
+        "a.evolution-handoff",
+        "a.evolution-lease"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.import_capability_run_bundle/_app_outcome_learning -> check_app_import/check_app_learning",
+        "grant_agent.proofs_a_capability_evolution.self_check",
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.prepare_app_factory_handoff -> check_handoff",
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._assess_proof_lease -> check_lease"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_snapshot_routes_repeated_zero_lift_to_branch_not_reinforce",
+      "case_id": "tests/test_capability_evolution.py::test_snapshot_routes_repeated_zero_lift_to_branch_not_reinforce",
+      "contracts": [
+        "a.evolution-stagnation"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._recommendation -> check_recommendation",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_receipt_bound_comparisons_derive_metrics_and_exclude_transcripts",
+      "case_id": "tests/test_capability_evolution.py::test_receipt_bound_comparisons_derive_metrics_and_exclude_transcripts",
+      "contracts": [
+        "a.evolution-receipts"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_receipt_comparison_rejects_forged_or_mismatched_sources",
+      "case_id": "tests/test_capability_evolution.py::test_receipt_comparison_rejects_forged_or_mismatched_sources",
+      "contracts": [
+        "a.evolution-receipts"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_trial_requires_comparable_verified_operator_value_before_acceptance",
+      "case_id": "tests/test_capability_evolution.py::test_trial_requires_comparable_verified_operator_value_before_acceptance",
+      "contracts": [
+        "a.evolution-sealed",
+        "a.evolution-forge"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_counterfactual_forge_seals_receipt_replays_before_acceptance",
+      "case_id": "tests/test_capability_evolution.py::test_counterfactual_forge_seals_receipt_replays_before_acceptance",
+      "contracts": [
+        "a.evolution-forge",
+        "a.evolution-receipts"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_skill_candidate_must_be_sealed_before_evidence_and_cannot_mutate",
+      "case_id": "tests/test_capability_evolution.py::test_skill_candidate_must_be_sealed_before_evidence_and_cannot_mutate",
+      "contracts": [
+        "a.evolution-sealed",
+        "a.evolution-receipts"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_accepted_skill_materializes_inactive_and_rolls_back_without_overwrite",
+      "case_id": "tests/test_capability_evolution.py::test_accepted_skill_materializes_inactive_and_rolls_back_without_overwrite",
+      "contracts": [
+        "a.evolution-inactive",
+        "a.evolution-handoff",
+        "a.evolution-lease"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.materialize_skill_candidate/rollback_skill_materialization -> check_materialization_write",
+        "grant_agent.proofs_a_capability_evolution.self_check",
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.prepare_app_factory_handoff -> check_handoff",
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._assess_proof_lease -> check_lease"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_proof_lease_detects_drift_and_renews_only_from_fresh_receipt",
+      "case_id": "tests/test_capability_evolution.py::test_proof_lease_detects_drift_and_renews_only_from_fresh_receipt",
+      "contracts": [
+        "a.evolution-lease"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._assess_proof_lease -> check_lease",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_counterfactual_forge_holds_broader_candidate_authority",
+      "case_id": "tests/test_capability_evolution.py::test_counterfactual_forge_holds_broader_candidate_authority",
+      "contracts": [
+        "a.evolution-forge"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution._trial_from_row -> check_trial",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_evolution.py",
+      "case": "test_constellation_outcome_only_records_ready_typed_evidence",
+      "case_id": "tests/test_capability_evolution.py::test_constellation_outcome_only_records_ready_typed_evidence",
+      "contracts": [
+        "a.evolution-outcome"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.accept_constellation_outcome -> check_constellation",
+        "grant_agent.proofs_a_capability_evolution.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_app_capability_standard.py",
+      "case": "AppCapabilityStandardTests.test_build_connected_apps_snapshot_does_not_rewrite_state_when_nothing_changed",
+      "case_id": "tests/test_app_capability_standard.py::AppCapabilityStandardTests.test_build_connected_apps_snapshot_does_not_rewrite_state_when_nothing_changed",
+      "contracts": [
+        "a.app-state",
+        "a.app-observation"
+      ],
+      "checkedAt": [
+        "grant_agent.app_capability_standard._save_session_state -> grant_agent.proofs_a_app_standard.checked_state_save",
+        "grant_agent.proofs_a_app_standard.self_check",
+        "grant_agent.app_capability_standard.build_connected_apps_snapshot -> grant_agent.proofs_a_app_standard.check_snapshot"
+      ]
+    },
+    {
+      "test": "tests/test_app_capability_standard.py",
+      "case": "AppCapabilityStandardTests.test_synology_fast_sync_bridge_uses_http_status_when_available",
+      "case_id": "tests/test_app_capability_standard.py::AppCapabilityStandardTests.test_synology_fast_sync_bridge_uses_http_status_when_available",
+      "contracts": [
+        "a.app-storage"
+      ],
+      "checkedAt": [
+        "grant_agent.app_capability_standard._synology_bridge_plan/_build_synology_fast_sync_session -> grant_agent.proofs_a_app_standard.check_storage_plan/check_storage_session",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_app_capability_standard.py",
+      "case": "AppCapabilityStandardTests.test_synology_fast_sync_reports_activation_required_when_mapping_is_inactive",
+      "case_id": "tests/test_app_capability_standard.py::AppCapabilityStandardTests.test_synology_fast_sync_reports_activation_required_when_mapping_is_inactive",
+      "contracts": [
+        "a.app-storage"
+      ],
+      "checkedAt": [
+        "grant_agent.app_capability_standard._synology_bridge_plan/_build_synology_fast_sync_session -> grant_agent.proofs_a_app_standard.check_storage_plan/check_storage_session",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_app_capability_standard.py",
+      "case": "AppCapabilityStandardTests.test_synology_fast_sync_can_enable_automatic_bidirectional_policy",
+      "case_id": "tests/test_app_capability_standard.py::AppCapabilityStandardTests.test_synology_fast_sync_can_enable_automatic_bidirectional_policy",
+      "contracts": [
+        "a.app-storage"
+      ],
+      "checkedAt": [
+        "grant_agent.app_capability_standard._synology_bridge_plan/_build_synology_fast_sync_session -> grant_agent.proofs_a_app_standard.check_storage_plan/check_storage_session",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_app_capability_standard.py",
+      "case": "AppCapabilityStandardTests.test_synology_fast_sync_still_builds_session_when_cowork_root_is_missing",
+      "case_id": "tests/test_app_capability_standard.py::AppCapabilityStandardTests.test_synology_fast_sync_still_builds_session_when_cowork_root_is_missing",
+      "contracts": [
+        "a.app-storage"
+      ],
+      "checkedAt": [
+        "grant_agent.app_capability_standard._synology_bridge_plan/_build_synology_fast_sync_session -> grant_agent.proofs_a_app_standard.check_storage_plan/check_storage_session",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_app_capability_standard.py",
+      "case": "AppCapabilityStandardTests.test_cloud_drive_bridge_reports_google_login_and_requires_approval",
+      "case_id": "tests/test_app_capability_standard.py::AppCapabilityStandardTests.test_cloud_drive_bridge_reports_google_login_and_requires_approval",
+      "contracts": [
+        "a.app-cloud"
+      ],
+      "checkedAt": [
+        "grant_agent.app_capability_standard._cloud_drive_bridge_plan -> grant_agent.proofs_a_app_standard.check_cloud_plan",
+        "grant_agent.proofs_a_app_standard.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_app_factory.py",
+      "case": "test_factory_creates_a_real_verified_local_app",
+      "case_id": "tests/test_app_factory.py::test_factory_creates_a_real_verified_local_app",
+      "contracts": [
+        "a.factory-draft",
+        "a.factory-package",
+        "a.factory-notes-ui"
+      ],
+      "checkedAt": [
+        "grant_agent.app_factory.AppFactory.create/resume -> grant_agent.proofs_a_capabilities.check_factory_job",
+        "grant_agent.proofs_a_capabilities.self_check",
+        "grant_agent.app_factory._web_files generated saveItems/render -> a.factory-notes-ui",
+        "grant_agent.proofs_a_factory_browser.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_app_factory.py",
+      "case": "test_web_backend_exposes_factory_catalog_create_and_build_boundary",
+      "case_id": "tests/test_app_factory.py::test_web_backend_exposes_factory_catalog_create_and_build_boundary",
+      "contracts": [
+        "a.factory-draft"
+      ],
+      "checkedAt": [
+        "grant_agent.app_factory.AppFactory.create/resume -> grant_agent.proofs_a_capabilities.check_factory_job",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_pandoc_reference_document_is_pinned_and_has_explicit_page_geometry",
+      "case_id": "tests/test_capability_os.py::test_pandoc_reference_document_is_pinned_and_has_explicit_page_geometry",
+      "contracts": [
+        "a.tool-reference"
+      ],
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload -> check_tool_manifest",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_tool_manifest_requires_hash_health_and_typed_operations_to_be_ready",
+      "case_id": "tests/test_capability_os.py::test_tool_manifest_requires_hash_health_and_typed_operations_to_be_ready",
+      "contracts": [
+        "a.tool-readiness"
+      ],
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload/ToolManifestRegistry.snapshot/search -> check_tool_manifest/check_tool_snapshot/check_tool_search",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_capability_snapshot_includes_honest_tool_suite_readiness",
+      "case_id": "tests/test_capability_os.py::test_capability_snapshot_includes_honest_tool_suite_readiness",
+      "contracts": [
+        "a.tool-readiness"
+      ],
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload/ToolManifestRegistry.snapshot/search -> check_tool_manifest/check_tool_snapshot/check_tool_search",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_tool_suite_search_defers_operations_and_finds_verified_pandoc",
+      "case_id": "tests/test_capability_os.py::test_tool_suite_search_defers_operations_and_finds_verified_pandoc",
+      "contracts": [
+        "a.tool-readiness"
+      ],
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload/ToolManifestRegistry.snapshot/search -> check_tool_manifest/check_tool_snapshot/check_tool_search",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_marketplace_direct_tool_handlers_reject_paths_outside_workspace",
+      "case_id": "tests/test_capability_os.py::test_marketplace_direct_tool_handlers_reject_paths_outside_workspace",
+      "contracts": [
+        "a.tool-workspace"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry._resolve_existing_workspace_path -> check_direct_path",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_external_adapter_session_is_scoped_secretless_and_disconnectable",
+      "case_id": "tests/test_capability_os.py::test_external_adapter_session_is_scoped_secretless_and_disconnectable",
+      "contracts": [
+        "a.adapter-session"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.register_session/heartbeat_session/disconnect_session -> check_adapter_private",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_pdf_adapter_executes_a_bounded_real_handler",
+      "case_id": "tests/test_capability_os.py::test_pdf_adapter_executes_a_bounded_real_handler",
+      "contracts": [
+        "a.pdf-bounded"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> check_pdf",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_android_adapter_requires_explicit_approval_for_device_mutations",
+      "case_id": "tests/test_capability_os.py::test_android_adapter_requires_explicit_approval_for_device_mutations",
+      "contracts": [
+        "a.android-approval"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> check_pdf",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_benchmark_emits_budget_and_ten_x_claim_policy",
+      "case_id": "tests/test_capability_os.py::test_benchmark_emits_budget_and_ten_x_claim_policy",
+      "contracts": [
+        "a.capability-benchmark"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.benchmark -> check_benchmark",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_tool_factory_adapts_validates_and_persists_mcp_definition",
+      "case_id": "tests/test_capability_os.py::test_tool_factory_adapts_validates_and_persists_mcp_definition",
+      "contracts": [
+        "a.authored-tool"
+      ],
+      "checkedAt": [
+        "grant_agent.tool_factory.AuthoredToolStore.save -> check_authored_save",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_authored_command_tool_executes_real_argv_without_shell",
+      "case_id": "tests/test_capability_os.py::test_authored_command_tool_executes_real_argv_without_shell",
+      "contracts": [
+        "a.authored-argv"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService._execute_command_tool -> check_authored_command",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_computer_use_twin_metrics_measure_accuracy_determinism_and_compactness",
+      "case_id": "tests/test_capability_os.py::test_computer_use_twin_metrics_measure_accuracy_determinism_and_compactness",
+      "contracts": [
+        "a.cu-metrics"
+      ],
+      "checkedAt": [
+        "grant_agent.computer_use_twin.summarize_cu_receipts -> check_metrics",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_computer_use_twin_replay_is_labeled_and_cannot_make_live_claim",
+      "case_id": "tests/test_capability_os.py::test_computer_use_twin_replay_is_labeled_and_cannot_make_live_claim",
+      "contracts": [
+        "a.cu-replay"
+      ],
+      "checkedAt": [
+        "grant_agent.computer_use_twin.ComputerUseTwinService.run -> check_twin_run",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_computer_use_twin_can_queue_another_browser_worker_without_nas_fallback",
+      "case_id": "tests/test_capability_os.py::test_computer_use_twin_can_queue_another_browser_worker_without_nas_fallback",
+      "contracts": [
+        "a.cu-portable"
+      ],
+      "checkedAt": [
+        "grant_agent.computer_use_twin.ComputerUseTwinService.dispatch/execute_cluster_twin_job -> check_dispatch/check_worker",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_primary_computer_use_verifier_replay_cannot_count_as_live_change_proof",
+      "case_id": "tests/test_capability_os.py::test_primary_computer_use_verifier_replay_cannot_count_as_live_change_proof",
+      "contracts": [
+        "a.cu-verifier"
+      ],
+      "checkedAt": [
+        "grant_agent.computer_use_verifier.ComputerUseVerifierService.verify -> check_verification",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_portable_computer_use_worker_job_does_not_depend_on_controller_paths",
+      "case_id": "tests/test_capability_os.py::test_portable_computer_use_worker_job_does_not_depend_on_controller_paths",
+      "contracts": [
+        "a.cu-portable",
+        "a.cu-replay"
+      ],
+      "checkedAt": [
+        "grant_agent.computer_use_twin.ComputerUseTwinService.dispatch/execute_cluster_twin_job -> check_dispatch/check_worker",
+        "grant_agent.proofs_a_capability_tools.self_check",
+        "grant_agent.computer_use_twin.ComputerUseTwinService.run -> check_twin_run"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_catalog_file_is_json_and_has_unique_ids",
+      "case_id": "tests/test_capability_os.py::test_catalog_file_is_json_and_has_unique_ids",
+      "contracts": [
+        "a.tool-readiness",
+        "a.catalog-observer"
+      ],
+      "checkedAt": [
+        "grant_agent.tool_manifest_registry.ToolManifest.from_payload/ToolManifestRegistry.snapshot/search -> check_tool_manifest/check_tool_snapshot/check_tool_search",
+        "grant_agent.proofs_a_capability_tools.self_check",
+        "grant_agent.capability_catalog.CapabilityRegistry.snapshot -> check_catalog",
+        "grant_agent.proofs_a_capabilities.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_encrypted_chat_typed_compatibility_operation_hides_secrets",
+      "case_id": "tests/test_capability_os.py::test_encrypted_chat_typed_compatibility_operation_hides_secrets",
+      "contracts": [
+        "a.tool-typed",
+        "a.tool-private"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation -> check_operation",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_secret_broker_typed_compatibility_operation_hides_private_state",
+      "case_id": "tests/test_capability_os.py::test_secret_broker_typed_compatibility_operation_hides_private_state",
+      "contracts": [
+        "a.tool-typed",
+        "a.tool-private"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation -> check_operation",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_p2p_cache_typed_compatibility_reports_verified_unconfigured_sidecar",
+      "case_id": "tests/test_capability_os.py::test_p2p_cache_typed_compatibility_reports_verified_unconfigured_sidecar",
+      "contracts": [
+        "a.tool-typed"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation -> check_operation",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_p2p_provider_typed_status_is_sanitized_and_inactive_by_default",
+      "case_id": "tests/test_capability_os.py::test_p2p_provider_typed_status_is_sanitized_and_inactive_by_default",
+      "contracts": [
+        "a.tool-typed",
+        "a.tool-private"
+      ],
+      "checkedAt": [
+        "grant_agent.capability_service.CapabilityService.execute_tool_operation -> check_operation",
+        "grant_agent.proofs_a_capability_tools.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_app_factory.py",
+      "case": "test_factory_carries_a_reviewed_inactive_skill_into_a_guided_app",
+      "case_id": "tests/test_app_factory.py::test_factory_carries_a_reviewed_inactive_skill_into_a_guided_app",
+      "contracts": [
+        "a.factory-lineage",
+        "a.factory-guided-ui",
+        "a.evolution-handoff"
+      ],
+      "checkedAt": [
+        "grant_agent.app_factory.AppFactory.create_from_capability_handoff -> grant_agent.proofs_a_capabilities.check_factory_lineage",
+        "grant_agent.proofs_a_capability_evolution.self_check",
+        "grant_agent.app_factory._capability_web_files generated saveRuns/guardRuns/buildBundle -> a.factory-guided-ui",
+        "grant_agent.proofs_a_factory_browser.self_check",
+        "grant_agent.capability_evolution.NeyviaCapabilityEvolution.prepare_app_factory_handoff -> check_handoff"
+      ]
+    }
+  ],
+  "frontier": [
+    "Retain the ten exact pending cases listed below. Generated notes and renewed guided AppFactory workflows have real Chromium receipts; the legacy Constellation panel and Solentir preview journeys remain unobserved."
+  ],
+  "sourceFiles": [
+    "config/capability_packs.json",
+    "config/challenge_presets.json",
+    "config/neyvia_application_surface_schema.json",
+    "config/neyvia_behavior_capsules.json",
+    "config/tool_suite_lock.json"
+  ],
+  "pending": [
+    {
+      "test": "tests/test_app_capability_standard.py",
+      "case": "AppCapabilityStandardTests.test_build_connected_apps_snapshot_uses_live_reference_app_and_follow_on_solantir",
+      "case_id": "tests/test_app_capability_standard.py::AppCapabilityStandardTests.test_build_connected_apps_snapshot_uses_live_reference_app_and_follow_on_solantir",
+      "reason": "Original fixture asserts live Solentir preview/source registrations, but the actual sibling application/runtime is outside this selected worktree and has not been served/observed. Local finite storage observation does not cover its reference app or preview journey."
+    },
+    {
+      "test": "tests/test_app_factory.py",
+      "case": "test_web_backend_builds_only_from_its_reviewed_capability_capsule",
+      "case_id": "tests/test_app_factory.py::test_web_backend_builds_only_from_its_reviewed_capability_capsule",
+      "reason": "Production command calls global _provider_presence credential readers. No credential files may be read in this task. Real reviewed service-to-factory capsule flow is covered directly, but the complete backend callback path remains unobserved without a safe explicit provider-observation seam."
+    },
+    {
+      "test": "tests/test_application_surface.py",
+      "case": "test_observability_rejects_symlink_hook",
+      "case_id": "tests/test_application_surface.py::test_observability_rejects_symlink_hook",
+      "reason": "Actual disposable symlink creation returned WinError1314 (missing Windows symlink privilege). No elevation/global developer-mode changes attempted; exact symlink refusal journey remains unproven."
+    },
+    {
+      "test": "tests/test_capability_evolution_ui.py",
+      "case": "test_constellation_hosts_the_capability_compounding_loop",
+      "case_id": "tests/test_capability_evolution_ui.py::test_constellation_hosts_the_capability_compounding_loop",
+      "reason": "Source-string test spans the legacy real Constellation capability-evolution panel and shell action wiring. Generated AppFactory Chromium journeys do not render or operate that product surface; retain until the actual panel workflow is observed."
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_tool_suite_lock_inventory_is_valid_and_operations_are_deferred",
+      "case_id": "tests/test_capability_os.py::test_tool_suite_lock_inventory_is_valid_and_operations_are_deferred",
+      "reason": "Original full ownership equality is currently false: tool lock declares planned game.godot-project and game.roblox-project absent from the capability catalog. Existing action guards cover readiness/deferred operations but this mapping gap needs a substantive feature ownership decision; no capability was fabricated for retirement."
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_real_pandoc_tool_operation_is_schema_and_artifact_aware",
+      "case_id": "tests/test_capability_os.py::test_real_pandoc_tool_operation_is_schema_and_artifact_aware",
+      "reason": "Detected Pandoc executable missing at configured D:/Neyvia/apps/pandoc/3.10.1/pandoc-3.10.1/pandoc.exe; PATH fallback unavailable. Real conversion/AST/schema/artifact journey cannot run without a permitted installation."
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_real_libreoffice_tool_operation_is_isolated_and_verified",
+      "case_id": "tests/test_capability_os.py::test_real_libreoffice_tool_operation_is_isolated_and_verified",
+      "reason": "Configured LibreOfficePortable executable missing; no soffice/libreoffice on PATH. Actual isolated-profile conversion/rendering proof remains unavailable."
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_real_marketplace_wasmtime_operation_is_resource_bounded",
+      "case_id": "tests/test_capability_os.py::test_real_marketplace_wasmtime_operation_is_resource_bounded",
+      "reason": "Managed Wasmtime execution installation absent on this worker; no real module execution/fuel/memory receipt is claimed."
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_real_marketplace_syft_and_grype_operations_share_a_valid_sbom",
+      "case_id": "tests/test_capability_os.py::test_real_marketplace_syft_and_grype_operations_share_a_valid_sbom",
+      "reason": "Managed Syft/Grype installations absent; no real SBOM generation and bounded database vulnerability scan receipt can be produced."
+    },
+    {
+      "test": "tests/test_capability_os.py",
+      "case": "test_real_marketplace_defender_operation_is_no_remediation_and_hashed",
+      "case_id": "tests/test_capability_os.py::test_real_marketplace_defender_operation_is_no_remediation_and_hashed",
+      "reason": "Locked Defender module runtime is not execution-ready on this worker; a real no-remediation scan and artifact hash receipt remain unproven."
+    }
+  ]
+,
+  "portRoles": [48461, 48462]
+}

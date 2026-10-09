@@ -1,0 +1,11 @@
+# edge_fixture_c7d_local
+
+Owned local completion fixtures, with exact invariant/effect bindings.
+
+- **Public API:** `blocker`, `main`, `run`.
+- **Manual:** [neyvia.cl](../../manuals/cl/neyvia.cl).
+- **Contracts:** `run modules.verify-map()`.
+- **Outcome contracts:** No outcome binding yet.
+- **Dependencies:** [backend.__init__](../backend.__init__/README.md), [backend.capability_service](../backend.capability_service/README.md), [backend.delivery_receipt](../backend.delivery_receipt/README.md), [backend.edge_contracts](../backend.edge_contracts/README.md), [backend.edge_fixture_core](../backend.edge_fixture_core/README.md), [backend.edge_fixture_local](../backend.edge_fixture_local/README.md), [backend.edge_fixture_missions](../backend.edge_fixture_missions/README.md), [backend.edge_fixture_native](../backend.edge_fixture_native/README.md), [backend.efficient_workflow](../backend.efficient_workflow/README.md), [backend.models](../backend.models/README.md), [backend.native_tools](../backend.native_tools/README.md), [backend.neyvia_accounts](../backend.neyvia_accounts/README.md), [backend.neyvia_agent](../backend.neyvia_agent/README.md), [backend.neyvia_application_contract](../backend.neyvia_application_contract/README.md), [backend.neyvia_files_tools](../backend.neyvia_files_tools/README.md), [backend.neyvia_mcp](../backend.neyvia_mcp/README.md), [backend.neyvia_notes_tools](../backend.neyvia_notes_tools/README.md), [backend.neyvia_settings](../backend.neyvia_settings/README.md), [backend.neyvia_version](../backend.neyvia_version/README.md), [backend.neyvia_view_tools](../backend.neyvia_view_tools/README.md), [backend.neyvia_workspace_tools](../backend.neyvia_workspace_tools/README.md), [backend.openai_adapter](../backend.openai_adapter/README.md), [backend.proof_contracts](../backend.proof_contracts/README.md), [backend.proof_credential_guard](../backend.proof_credential_guard/README.md), [backend.proof_ports](../backend.proof_ports/README.md), [backend.subprocess_utils](../backend.subprocess_utils/README.md), [backend.tool_factory](../backend.tool_factory/README.md), [backend.ui_command_bus](../backend.ui_command_bus/README.md), [backend.web_backend](../backend.web_backend/README.md).
+- **Owner:** Neyvia / neyvia.
+- **Files:** [src/grant_agent/edge_fixture_c7d_local.py](../../src/grant_agent/edge_fixture_c7d_local.py).

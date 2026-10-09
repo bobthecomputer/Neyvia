@@ -1,0 +1,813 @@
+.neyvia-overlay[data-neyvia-panel="marketplace"] {
+  --market-bg: var(--nx-bg);
+  --market-surface: var(--nx-bg);
+  --market-surface-raised: var(--nx-bg);
+  --market-border: var(--nx-line-strong);
+  --market-text: var(--nx-text);
+  --market-muted: var(--nx-text-2);
+  --market-accent: var(--nx-text);
+  --market-accent-ink: var(--nx-muted);
+  --market-good: var(--nx-accent);
+  --market-warn: var(--nx-accent);
+  --market-blocked: var(--nx-state-running);
+}
+
+.fluxos-shell[data-neyvia-appearance="light"]
+  .neyvia-overlay[data-neyvia-panel="marketplace"] {
+  --market-bg: var(--nx-raised);
+  --market-surface: var(--nx-raised);
+  --market-surface-raised: var(--nx-raised);
+  --market-border: var(--nx-line-strong);
+  --market-text: var(--nx-muted);
+  --market-muted: var(--nx-muted);
+  --market-accent: var(--nx-accent);
+  --market-accent-ink: var(--nx-text);
+  --market-good: var(--nx-accent);
+  --market-warn: var(--nx-state-running);
+  --market-blocked: var(--nx-red);
+}
+
+.neyvia-marketplace-dialog {
+  background: var(--market-bg);
+  color: var(--market-text);
+}
+
+.neyvia-marketplace-dialog > header {
+  border-bottom-color: var(--market-border);
+}
+
+.neyvia-marketplace {
+  display: grid;
+  gap: var(--nx-space-16);
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  min-height: min(680px, calc(100vh - 180px));
+}
+
+.neyvia-marketplace-toolbar,
+.neyvia-marketplace-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-8);
+}
+
+.neyvia-marketplace-toolbar {
+  justify-content: space-between;
+}
+
+.neyvia-marketplace-toolbar button,
+.neyvia-marketplace-tabs button,
+.neyvia-marketplace-list button,
+.neyvia-marketplace-activation button {
+  border: 1px solid var(--market-border);
+  background: transparent;
+  color: var(--market-text);
+  border-radius: var(--nx-r-sm);
+  font: inherit;
+}
+
+.neyvia-marketplace-toolbar > button,
+.neyvia-marketplace-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-7);
+  min-height: 30px;
+  padding: 0 var(--nx-space-12);
+  white-space: nowrap;
+}
+
+/* Sections read as one quiet segmented bar (nx-seg recipe); it scrolls sideways on a phone. */
+.neyvia-marketplace-tabs {
+  flex: 0 1 auto;
+  min-width: 0;
+  gap: var(--nx-space-2);
+  padding: var(--nx-space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-radius: var(--nx-r-sm);
+  background: color-mix(in srgb, var(--nx-text) 4%, transparent);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+}
+
+.neyvia-marketplace .neyvia-marketplace-tabs button {
+  flex: none;
+  min-height: 28px;
+  border: 0;
+  border-radius: var(--nx-r-xs);
+  color: var(--nx-muted);
+  font-size: var(--nx-fs-sm);
+  font-weight: 500;
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+
+.neyvia-marketplace .neyvia-marketplace-tabs button:hover {
+  background: var(--nx-hover);
+  color: var(--nx-text);
+}
+
+.neyvia-marketplace .neyvia-marketplace-tabs button[aria-selected="true"] {
+  background: var(--nx-raised-2);
+  color: var(--nx-text);
+  box-shadow: var(--nx-lift-1), inset 0 0 0 var(--nx-stroke) var(--nx-line);
+}
+
+.neyvia-marketplace > .neyvia-marketplace-toolbar > button {
+  flex: none;
+  border: 0;
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+  color: var(--nx-text-2);
+  font-size: var(--nx-fs);
+  font-weight: 500;
+}
+
+.neyvia-marketplace > .neyvia-marketplace-toolbar > button:hover:not(:disabled) {
+  background: var(--nx-hover);
+  color: var(--nx-text);
+}
+
+.neyvia-marketplace button:focus-visible,
+.neyvia-marketplace input:focus-visible {
+  outline: 3px solid var(--market-accent);
+  outline-offset: 2px;
+}
+
+.neyvia-marketplace button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.neyvia-marketplace-disclosure,
+.neyvia-marketplace-errors {
+  border-left: 3px solid var(--market-border);
+  padding: var(--nx-space-10) var(--nx-space-12);
+  background: color-mix(in srgb, var(--market-surface-raised) 78%, transparent);
+}
+
+.neyvia-marketplace-disclosure[data-tone="warn"] {
+  border-left-color: var(--market-warn);
+}
+
+.neyvia-marketplace-disclosure strong,
+.neyvia-marketplace-disclosure p,
+.neyvia-marketplace-errors p {
+  margin: 0;
+}
+
+.neyvia-marketplace-disclosure p,
+.neyvia-marketplace-errors p {
+  margin-top: var(--nx-space-3);
+  color: var(--market-muted);
+  font-size: var(--nx-fs);
+}
+
+.neyvia-marketplace-errors {
+  border-left-color: var(--market-blocked);
+}
+
+.neyvia-marketplace-summary {
+  display: flex;
+  gap: var(--nx-space-20);
+  padding: var(--nx-space-4) 0 var(--nx-space-14);
+  border-bottom: 1px solid var(--market-border);
+}
+
+.neyvia-marketplace-summary > div {
+  display: grid;
+  gap: var(--nx-space-1);
+}
+
+.neyvia-marketplace-summary strong {
+  font-size: var(--nx-fs-xl);
+  line-height: 1;
+}
+
+.neyvia-marketplace-summary span,
+.neyvia-marketplace-kicker {
+  color: var(--market-muted);
+  font-size: var(--nx-fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.neyvia-marketplace-search {
+  display: grid;
+  gap: var(--nx-space-5);
+  margin: var(--nx-space-14) 0;
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+}
+
+.neyvia-marketplace-search input {
+  min-height: 40px;
+  width: min(480px, 100%);
+  border: 1px solid var(--market-border);
+  border-radius: var(--nx-r-sm);
+  background: var(--market-surface);
+  color: var(--market-text);
+  padding: var(--nx-space-8) var(--nx-space-11);
+  font: inherit;
+}
+
+.neyvia-marketplace-split {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
+  gap: var(--nx-space-18);
+  align-items: start;
+}
+
+.neyvia-marketplace-list,
+.neyvia-marketplace-tools,
+.neyvia-marketplace-permissions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.neyvia-marketplace-list {
+  display: grid;
+  gap: var(--nx-space-6);
+  max-height: 560px;
+  overflow: auto;
+}
+
+.neyvia-marketplace-list button {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--nx-space-14);
+  width: 100%;
+  padding: var(--nx-space-10);
+  text-align: left;
+}
+
+.neyvia-marketplace-list button:hover,
+.neyvia-marketplace-list button[aria-current="true"] {
+  border-color: var(--market-accent);
+  background: var(--market-surface-raised);
+}
+
+.neyvia-marketplace-list button > span {
+  display: grid;
+  gap: var(--nx-space-3);
+  min-width: 0;
+}
+
+.neyvia-marketplace-list small {
+  overflow: hidden;
+  color: var(--market-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.neyvia-marketplace-list em,
+.neyvia-marketplace-status,
+.neyvia-marketplace-gate-heading > span {
+  align-self: start;
+  border: 1px solid currentColor;
+  border-radius: var(--nx-r-pill);
+  padding: var(--nx-space-2) var(--nx-space-7);
+  color: var(--market-muted);
+  font-size: var(--nx-fs-xs);
+  font-style: normal;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.neyvia-marketplace [data-tone="good"] {
+  color: var(--market-good);
+}
+
+.neyvia-marketplace [data-tone="warn"] {
+  color: var(--market-warn);
+}
+
+.neyvia-marketplace [data-tone="blocked"] {
+  color: var(--market-blocked);
+}
+
+.neyvia-marketplace-detail {
+  display: grid;
+  gap: var(--nx-space-18);
+  border-left: 1px solid var(--market-border);
+  padding-left: var(--nx-space-18);
+}
+
+.neyvia-marketplace-detail > header,
+.neyvia-marketplace-section-heading,
+.neyvia-marketplace-gate-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--nx-space-18);
+}
+
+.neyvia-marketplace-detail h3,
+.neyvia-marketplace-detail h4,
+.neyvia-marketplace-gate-heading h3 {
+  margin: var(--nx-space-2) 0 0;
+}
+
+.neyvia-marketplace-detail > header p,
+.neyvia-marketplace-detail section > p,
+.neyvia-marketplace-gate-note {
+  margin: var(--nx-space-5) 0 0;
+  color: var(--market-muted);
+  font-size: var(--nx-fs);
+}
+
+.neyvia-marketplace-detail code,
+.neyvia-marketplace-tools code {
+  overflow-wrap: anywhere;
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+}
+
+.neyvia-marketplace-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--nx-space-12);
+  margin: 0;
+  padding: var(--nx-space-12) 0;
+  border-block: 1px solid var(--market-border);
+}
+
+.neyvia-marketplace-facts div {
+  display: grid;
+  gap: var(--nx-space-3);
+}
+
+.neyvia-marketplace-facts dt {
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+}
+
+.neyvia-marketplace-facts dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.neyvia-marketplace-evidence {
+  margin-top: var(--nx-space-10);
+  border-top: 1px solid var(--market-border);
+}
+
+.neyvia-marketplace-evidence-row {
+  display: grid;
+  grid-template-columns: 130px minmax(120px, 0.5fr) minmax(0, 1.5fr);
+  gap: var(--nx-space-12);
+  align-items: baseline;
+  padding: var(--nx-space-9) 0;
+  border-bottom: 1px solid var(--market-border);
+}
+
+.neyvia-marketplace-evidence-row > span,
+.neyvia-marketplace-evidence-row > p {
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+}
+
+.neyvia-marketplace-evidence-row > p {
+  margin: 0;
+}
+
+.neyvia-marketplace-permissions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nx-space-6);
+  margin-top: var(--nx-space-8);
+}
+
+.neyvia-marketplace-permissions li {
+  border: 1px solid var(--market-border);
+  border-radius: var(--nx-r-pill);
+  padding: var(--nx-space-4) var(--nx-space-8);
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+}
+
+.neyvia-marketplace-activation {
+  display: grid;
+  gap: var(--nx-space-10);
+  padding-top: var(--nx-space-12);
+  border-top: 1px solid var(--market-border);
+}
+
+.neyvia-marketplace-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nx-space-8);
+}
+
+.neyvia-marketplace-activation button {
+  min-height: 38px;
+  padding: var(--nx-space-8) var(--nx-space-12);
+}
+
+.neyvia-marketplace-activation button:not(:disabled) {
+  border-color: var(--market-accent);
+  background: var(--market-accent);
+  color: var(--market-accent-ink);
+}
+
+.neyvia-marketplace-activation button[data-marketplace-action="disable"]:not(:disabled),
+.neyvia-marketplace-activation button[data-marketplace-action="rollback"]:not(:disabled) {
+  background: transparent;
+  color: var(--market-text);
+}
+
+.neyvia-marketplace-activation p {
+  margin: 0;
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+}
+
+.neyvia-marketplace-action-error {
+  color: var(--market-blocked) !important;
+}
+
+.neyvia-marketplace-install {
+  display: grid;
+  gap: var(--nx-space-10);
+  padding: var(--nx-space-14);
+  border: 1px solid var(--market-border);
+  background: var(--market-surface);
+  border-radius: var(--nx-r);
+}
+
+.neyvia-marketplace-install label {
+  display: grid;
+  gap: var(--nx-space-4);
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+}
+
+.neyvia-marketplace-install input {
+  min-height: 36px;
+  padding: var(--nx-space-8) var(--nx-space-10);
+  border: 1px solid var(--market-border);
+  border-radius: var(--nx-r-sm);
+  background: var(--market-surface-raised);
+  color: var(--market-text);
+  font: inherit;
+}
+
+.neyvia-marketplace-install button {
+  justify-self: start;
+  min-height: 38px;
+  padding: var(--nx-space-8) var(--nx-space-12);
+  border: 1px solid var(--market-accent);
+  border-radius: var(--nx-r-sm);
+  background: var(--market-accent);
+  color: var(--market-accent-ink);
+  font: inherit;
+}
+
+.neyvia-marketplace-empty {
+  display: grid;
+  place-items: center;
+  min-height: 230px;
+  border: 1px dashed var(--market-border);
+  color: var(--market-muted);
+  text-align: center;
+}
+
+.neyvia-marketplace-empty p {
+  max-width: 44ch;
+  margin: 0;
+  font-size: var(--nx-fs);
+}
+
+.neyvia-marketplace-gate-heading {
+  padding-bottom: var(--nx-space-14);
+  border-bottom: 1px solid var(--market-border);
+}
+
+.neyvia-marketplace-gate-note {
+  max-width: 78ch;
+}
+
+.neyvia-marketplace-tools {
+  display: grid;
+  gap: 0;
+  margin: var(--nx-space-18) 0;
+  border-top: 1px solid var(--market-border);
+}
+
+.neyvia-marketplace-tools li {
+  display: grid;
+  grid-template-columns: 10px minmax(150px, 0.45fr) minmax(0, 1fr);
+  gap: var(--nx-space-12);
+  align-items: center;
+  padding: var(--nx-space-11) 0;
+  border-bottom: 1px solid var(--market-border);
+}
+
+.neyvia-marketplace-tools li > span {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--nx-r-pill);
+  background: currentColor;
+}
+
+.neyvia-marketplace-tools p {
+  margin: var(--nx-space-2) 0 0;
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+}
+
+@media (max-width: 860px) {
+  .neyvia-marketplace-split {
+    grid-template-columns: 1fr;
+  }
+
+  .neyvia-marketplace-list {
+    max-height: 220px;
+  }
+
+  .neyvia-marketplace-detail {
+    border-top: 1px solid var(--market-border);
+    border-left: 0;
+    padding-top: var(--nx-space-16);
+    padding-left: 0;
+  }
+
+  .neyvia-marketplace-evidence-row {
+    grid-template-columns: 1fr;
+    gap: var(--nx-space-3);
+  }
+}
+
+@media (max-width: 560px) {
+  .neyvia-marketplace > .neyvia-marketplace-toolbar {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .neyvia-marketplace-activation {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .neyvia-marketplace-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .neyvia-marketplace-summary {
+    justify-content: space-between;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neyvia-marketplace *,
+  .neyvia-marketplace *::before,
+  .neyvia-marketplace *::after {
+    scroll-behavior: auto;
+    transition: none !important;
+  }
+}
+
+/* Applications tab: the two developer propositions kept visibly distinct. */
+.neyvia-marketplace-propositions {
+  list-style: none;
+  margin: var(--nx-space-12) 0;
+  padding: 0;
+  display: grid;
+  gap: var(--nx-space-10);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.neyvia-marketplace-propositions li {
+  display: grid;
+  gap: var(--nx-space-5);
+  padding: var(--nx-space-12);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-r);
+}
+
+.neyvia-marketplace-propositions li[data-application-kind="ecosystem-native"] {
+  border-color: var(--nx-accent);
+}
+
+.neyvia-marketplace-propositions p,
+.neyvia-marketplace-propositions small {
+  margin: 0;
+  font-size: var(--nx-fs-sm);
+  opacity: 0.78;
+}
+
+.neyvia-marketplace-propositions code {
+  font-size: var(--nx-fs-xs);
+  opacity: 0.6;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-marketplace-applications {
+  list-style: none;
+  margin: var(--nx-space-8) 0 var(--nx-space-16);
+  padding: 0;
+  display: grid;
+  gap: var(--nx-space-10);
+}
+
+.neyvia-marketplace-applications li {
+  display: grid;
+  gap: var(--nx-space-6);
+  padding: var(--nx-space-12);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-r);
+}
+
+.neyvia-marketplace-applications li > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--nx-space-10);
+}
+
+.neyvia-marketplace-applications p {
+  margin: 0;
+  font-size: var(--nx-fs-sm);
+  opacity: 0.8;
+}
+
+.neyvia-marketplace-applications dl {
+  display: grid;
+  gap: var(--nx-space-4);
+  margin: 0;
+  font-size: var(--nx-fs-sm);
+}
+
+.neyvia-marketplace-applications dl div {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) minmax(0, 1fr);
+  gap: var(--nx-space-8);
+}
+
+.neyvia-marketplace-applications dt {
+  opacity: 0.55;
+  text-transform: uppercase;
+  font-size: var(--nx-fs-2xs);
+  letter-spacing: 0.04em;
+}
+
+.neyvia-marketplace-applications dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-marketplace-application-problems {
+  margin: var(--nx-space-4) 0 0;
+  padding-left: var(--nx-space-16);
+  font-size: var(--nx-fs-sm);
+  color: var(--nx-state-caution);
+}
+
+.neyvia-marketplace-app-catalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: var(--nx-space-10);
+  margin: var(--nx-space-14) 0 var(--nx-space-18);
+  padding: 0;
+  list-style: none;
+}
+
+.neyvia-marketplace-app-catalog > li {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-areas:
+    "icon copy"
+    "actions actions";
+  gap: var(--nx-space-10) var(--nx-space-12);
+  min-height: 188px;
+  padding: var(--nx-space-14);
+  border: 1px solid var(--market-border);
+  border-radius: var(--nx-r);
+  background: var(--market-surface);
+}
+
+.neyvia-marketplace-app-catalog > li[data-application-installed="true"] {
+  border-color: color-mix(in srgb, var(--market-accent) 48%, var(--market-border));
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--market-accent) 8%, transparent), transparent 52%),
+    var(--market-surface);
+}
+
+.neyvia-marketplace-app-icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid color-mix(in srgb, var(--market-text) 13%, transparent);
+  border-radius: var(--nx-r);
+  background: color-mix(in srgb, var(--market-text) 5%, transparent);
+  color: var(--market-text);
+}
+
+.neyvia-marketplace-app-icon img {
+  border-radius: var(--nx-r);
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.neyvia-marketplace-app-copy {
+  grid-area: copy;
+  display: grid;
+  align-content: start;
+  gap: var(--nx-space-4);
+  min-width: 0;
+}
+
+.neyvia-marketplace-app-copy small {
+  color: var(--market-muted);
+  font-size: var(--nx-fs-xs);
+  font-weight: 760;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.neyvia-marketplace-app-copy strong {
+  font-size: var(--nx-fs-lg);
+}
+
+.neyvia-marketplace-app-copy p,
+.neyvia-marketplace-app-copy em {
+  margin: 0;
+  color: var(--market-muted);
+  font-size: var(--nx-fs-sm);
+  font-style: normal;
+  line-height: 1.45;
+}
+
+.neyvia-marketplace-app-copy em {
+  font-size: var(--nx-fs-xs);
+  opacity: 0.78;
+}
+
+.neyvia-marketplace-app-actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-7);
+  margin-top: auto;
+}
+
+.neyvia-marketplace-app-actions > span {
+  margin-right: auto;
+  color: var(--market-muted);
+  font-size: var(--nx-fs-xs);
+  font-weight: 760;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.neyvia-marketplace-app-actions > span[data-tone="good"] {
+  color: var(--market-good);
+}
+
+.neyvia-marketplace-app-actions button {
+  min-height: 34px;
+  padding: 0 var(--nx-space-11);
+  border: 1px solid var(--market-border);
+  border-radius: var(--nx-r-sm);
+  background: transparent;
+  color: var(--market-text);
+  font: inherit;
+  font-size: var(--nx-fs-sm);
+  font-weight: 720;
+}
+
+.neyvia-marketplace-app-actions button[data-application-action="install"],
+.neyvia-marketplace-app-actions button[data-application-action="open"] {
+  border-color: var(--market-accent);
+  background: var(--market-accent);
+  color: var(--market-accent-ink);
+}
+
+.neyvia-marketplace-application-message {
+  margin: calc(-1 * var(--nx-space-7)) 0 var(--nx-space-14);
+  color: var(--market-good);
+  font-size: var(--nx-fs-sm);
+}
+
+@media (max-width: 620px) {
+  .neyvia-marketplace-app-catalog {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- full-pane layout: the store uses the room the pane gives it ---------- */
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] { padding: var(--nx-space-24) var(--nx-space-32); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .neyvia-marketplace-dialog { width: min(1440px, 100%); margin-inline: auto; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .neyvia-marketplace-dialog > header h2 { font-family: var(--nx-display); font-size: var(--nx-fs-title, 28px); font-weight: var(--nx-display-weight, 600); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .neyvia-marketplace-dialog > header p { font-size: var(--nx-fs-md); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--nx-space-16); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-card { padding: var(--nx-space-18); gap: var(--nx-space-12); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-icon { width: 48px; height: 48px; border-radius: var(--nx-r-lg); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-icon > svg { width: 24px; height: 24px; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-icon.is-glyph > svg { width: 24px; height: 24px; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-icon.is-lg { width: 64px; height: 64px; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-icon.is-glyph.is-lg > svg { width: 32px; height: 32px; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-card-title strong { font-size: var(--nx-fs-lg); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="marketplace"] .nx-store-card-summary { font-size: var(--nx-fs-md); line-height: 1.5; color: var(--nx-text-2); }

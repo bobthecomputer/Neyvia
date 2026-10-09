@@ -1,0 +1,1500 @@
+{
+  "area": "proofs-b-harness",
+  "manual": "proofs-b-harness",
+  "module": "grant_agent.proofs_b_harness",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "proofs-b.harness.identity",
+      "phase": "invariant",
+      "claim": "A durable job keeps its id, receipt path and original request immutable; repeated identical requests reuse their receipt and conflicting requests are rejected.",
+      "checkedAt": [
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs.HarnessJobStore.create"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.lifecycle",
+      "phase": "invariant",
+      "claim": "Completion and interruption remain terminal; blockers preserve actionable evidence until explicit cancellation; cancellation claims and stopped jobs cannot be revived by late worker events. Actual detached start is single-flight under concurrent callers; actual early-cancelled workers return before backend import; positively dead cancelling workers finalize cancelled.",
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs.HarnessJobStore.start",
+        "grant_agent.harness_job_worker.run_harness_job"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.budget",
+      "phase": "invariant",
+      "claim": "Arming deducts durable startup delay; cancellation and settlement preserve other budget dimensions; exhausted budgets retain their original exhaustion receipt and cancelled jobs release still-active budgets. Verified owned process-tree termination stops descendants; operator cancellation releases active budgets and real deadline cancellation retains exhaustion. Actual owned-child termination denial preserves an armed active budget after failed operator cancellation; real deadline enforcement records retry attempts while denial remains, then stops the child after access restoration before its safety exit. Retry history and unrelated budget dimensions remain durable.",
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs.HarnessJobStore.cancel",
+        "grant_agent.harness_jobs._terminate_process_tree",
+        "grant_agent.harness_job_worker._start_runtime_budget_watchdog",
+        "grant_agent.harness_job_worker._record_runtime_budget_enforcement_failure",
+        "grant_agent.harness_job_worker._record_runtime_budget_enforced"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.policy",
+      "phase": "invariant",
+      "claim": "Admission and execution policy limits are integers within retention, may tighten across instances, cannot expand ambiently, and unreadable policies fail closed.",
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore._sync_admission_policy_locked",
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity._sync_policy_locked",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.observation",
+      "phase": "invariant",
+      "claim": "Observed timings and ordered timeline phases derive from durable timestamps; receipts remain unchanged; blocked runs remain nonterminal and every list row has additive metrics.",
+      "checkedAt": [
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.admission",
+      "phase": "invariant",
+      "claim": "Serialized admission counts every unresolved, blocked, unknown or unreadable receipt; terminal outcomes release capacity; concurrent creates cannot exceed the durable operator limit. Admission scans beyond the visible hundred-row list; unsupported future terminal schemas survive pruning and consume capacity.",
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.proofs_b_harness.check_admission",
+        "grant_agent.harness_jobs.HarnessJobStore._reconcile_admission_receipts",
+        "grant_agent.harness_jobs.HarnessJobStore._prune"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.execution",
+      "phase": "invariant",
+      "claim": "Only the oldest waiting job acquires bounded OS slots; legacy and unreadable active receipts reserve capacity, held and crash-released locks remain authoritative, waiting workers stay running to prohibit duplicate launch.",
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.lock-recovery",
+      "phase": "invariant",
+      "claim": "Mutation uses bounded stable OS guard shards; live old legacy owners and recent malformed compatibility fences remain fail closed, even with a short caller-specific wait; aged tokenized locks serialize until actual guard release, and dead owners recover. Non-destructive Win32 liveness uses observed synchronization waits or ERROR_INVALID_PARAMETER=87 as positive death; indeterminate errors retain ownership. Actual owned-child Win32 ERROR_ACCESS_DENIED=5 and unavailable command-line lookup retain live ownership and admission pressure; only that child DACL is temporarily changed, restored through the retained creation handle, and the child is reaped.",
+      "checkedAt": [
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._process_alive",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.budget-input",
+      "phase": "invariant",
+      "claim": "Explicit hard runtime budget priority is nested, canonical, then snake-case; booleans, invalid, negative and platform-unsupported timeouts fail closed, malformed persisted startup timestamps expire immediately.",
+      "checkedAt": [
+        "grant_agent.harness_job_worker._hard_runtime_budget_seconds",
+        "grant_agent.harness_job_worker._remaining_runtime_budget_seconds",
+        "grant_agent.proofs_b_harness.check_budget_input"
+      ],
+      "impact": [
+        "durable local harness actions",
+        "operator capacity and saved evidence"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.public-profile",
+      "phase": "invariant",
+      "claim": "Saved profiles contain only public route fields and credential environment-variable names; unknown raw secret fields never persist.",
+      "checkedAt": [
+        "grant_agent.harness_registry.save_harness_profile",
+        "grant_agent.proofs_b_harness.check_profile"
+      ],
+      "impact": [
+        "harness public configuration",
+        "explicit route and credential boundaries"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.gateway",
+      "phase": "invariant",
+      "claim": "Gateway overlays preserve exact explicit harness/profile/model/base routing and map runtime credential references into the correct auth surfaces; Claude CLIProxy requires explicit loopback HTTP and a present credential, while Rook derives the exact provider from its key name.",
+      "checkedAt": [
+        "grant_agent.harness_registry.harness_gateway_environment",
+        "grant_agent.proofs_b_harness.check_gateway"
+      ],
+      "impact": [
+        "harness public configuration",
+        "explicit route and credential boundaries"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.instruction",
+      "phase": "invariant",
+      "claim": "Instruction edits stay within supported workspace files, preserve prior bytes in a recoverable backup and return byte-accurate saved receipts; path escape is rejected.",
+      "checkedAt": [
+        "grant_agent.harness_registry._validate_instruction_path",
+        "grant_agent.harness_registry.save_harness_instruction",
+        "grant_agent.proofs_b_harness.check_instruction"
+      ],
+      "impact": [
+        "harness public configuration",
+        "explicit route and credential boundaries"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.catalog",
+      "phase": "invariant",
+      "claim": "The canonical current catalog includes all sixteen harnesses including Hermes/OpenClaw with truthful security, transport, public gateway and extension ownership; missing supplied provider configuration remains setup-required, native release probing uses intrinsic evidence and existing home uv-bin discovery remains available.",
+      "checkedAt": [
+        "grant_agent.harness_registry.build_harness_catalog",
+        "grant_agent.harness_registry._probe_harness_command",
+        "grant_agent.runtimes.base.runtime_bin_candidates",
+        "grant_agent.proofs_b_harness.check_catalog"
+      ],
+      "impact": [
+        "harness public configuration",
+        "explicit route and credential boundaries"
+      ]
+    },
+    {
+      "id": "proofs-b.harness.model-policy",
+      "phase": "invariant",
+      "claim": "Valid Grok custom models remain exact; a foreign Claude model requires explicit allow_custom policy and otherwise fails closed.",
+      "checkedAt": [
+        "grant_agent.runtimes.managed_cli.normalize_managed_cli_model"
+      ],
+      "impact": [
+        "harness public configuration",
+        "explicit route and credential boundaries"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_blocked_runs_hold_capacity_without_losing_evidence",
+      "case_id": "tests/test_harness_job_admission.py::test_blocked_runs_hold_capacity_without_losing_evidence",
+      "contracts": [
+        "proofs-b.harness.admission",
+        "proofs-b.harness.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_admission",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_terminal_job_releases_admission_capacity",
+      "case_id": "tests/test_harness_job_admission.py::test_terminal_job_releases_admission_capacity",
+      "contracts": [
+        "proofs-b.harness.admission"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.proofs_b_harness.check_admission"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_unreadable_job_receipt_fails_closed_for_admission",
+      "case_id": "tests/test_harness_job_admission.py::test_unreadable_job_receipt_fails_closed_for_admission",
+      "contracts": [
+        "proofs-b.harness.admission"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.proofs_b_harness.check_admission"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_concurrent_creates_never_oversubscribe_operator_limit",
+      "case_id": "tests/test_harness_job_admission.py::test_concurrent_creates_never_oversubscribe_operator_limit",
+      "contracts": [
+        "proofs-b.harness.admission"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.proofs_b_harness.check_admission"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_open_job_limit_is_explicit_and_bounded_by_visible_retention",
+      "case_id": "tests/test_harness_job_admission.py::test_open_job_limit_is_explicit_and_bounded_by_visible_retention",
+      "contracts": [
+        "proofs-b.harness.policy"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity._sync_policy_locked",
+        "grant_agent.harness_jobs.HarnessJobStore._sync_admission_policy_locked",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_store_wide_policy_keeps_stricter_limit_authoritative_across_instances",
+      "case_id": "tests/test_harness_job_admission.py::test_store_wide_policy_keeps_stricter_limit_authoritative_across_instances",
+      "contracts": [
+        "proofs-b.harness.policy"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity._sync_policy_locked",
+        "grant_agent.harness_jobs.HarnessJobStore._sync_admission_policy_locked",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_unreadable_admission_policy_fails_closed",
+      "case_id": "tests/test_harness_job_admission.py::test_unreadable_admission_policy_fails_closed",
+      "contracts": [
+        "proofs-b.harness.policy"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity._sync_policy_locked",
+        "grant_agent.harness_jobs.HarnessJobStore._sync_admission_policy_locked",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_windows_current_process_liveness_probe_is_non_destructive",
+      "case_id": "tests/test_harness_job_admission.py::test_windows_current_process_liveness_probe_is_non_destructive",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_blocked_lifecycle.py",
+      "case": "test_backend_blocker_remains_blocked_and_actionable",
+      "case_id": "tests/test_harness_job_blocked_lifecycle.py::test_backend_blocker_remains_blocked_and_actionable",
+      "contracts": [
+        "proofs-b.harness.lifecycle",
+        "proofs-b.harness.observation"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_blocked_lifecycle.py",
+      "case": "test_blocked_job_cannot_be_revived_or_overwritten_by_late_worker_events",
+      "case_id": "tests/test_harness_job_blocked_lifecycle.py::test_blocked_job_cannot_be_revived_or_overwritten_by_late_worker_events",
+      "contracts": [
+        "proofs-b.harness.lifecycle",
+        "proofs-b.harness.observation"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_blocked_lifecycle.py",
+      "case": "test_operator_can_explicitly_cancel_a_blocked_run_without_fake_process_stop",
+      "case_id": "tests/test_harness_job_blocked_lifecycle.py::test_operator_can_explicitly_cancel_a_blocked_run_without_fake_process_stop",
+      "contracts": [
+        "proofs-b.harness.lifecycle",
+        "proofs-b.harness.observation"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_blocked_lifecycle.py",
+      "case": "test_backend_interruption_is_not_flattened_to_failure",
+      "case_id": "tests/test_harness_job_blocked_lifecycle.py::test_backend_interruption_is_not_flattened_to_failure",
+      "contracts": [
+        "proofs-b.harness.lifecycle",
+        "proofs-b.harness.observation"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_blocked_lifecycle.py",
+      "case": "test_hard_runtime_error_still_remains_failed",
+      "case_id": "tests/test_harness_job_blocked_lifecycle.py::test_hard_runtime_error_still_remains_failed",
+      "contracts": [
+        "proofs-b.harness.lifecycle",
+        "proofs-b.harness.observation"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_budget_cancellation.py",
+      "case": "test_cancel_without_live_worker_releases_active_budget",
+      "case_id": "tests/test_harness_job_budget_cancellation.py::test_cancel_without_live_worker_releases_active_budget",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_budget_cancellation.py",
+      "case": "test_worker_acknowledged_operator_cancel_releases_active_budget",
+      "case_id": "tests/test_harness_job_budget_cancellation.py::test_worker_acknowledged_operator_cancel_releases_active_budget",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lifecycle.py",
+      "case": "test_mark_started_never_revives_a_cancelling_job",
+      "case_id": "tests/test_harness_job_lifecycle.py::test_mark_started_never_revives_a_cancelling_job",
+      "contracts": [
+        "proofs-b.harness.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lifecycle.py",
+      "case": "test_finish_cannot_overwrite_a_cancellation_claim",
+      "case_id": "tests/test_harness_job_lifecycle.py::test_finish_cannot_overwrite_a_cancellation_claim",
+      "contracts": [
+        "proofs-b.harness.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lock_recovery.py",
+      "case": "test_tokenized_orphan_is_reclaimed_after_crash_even_if_pid_was_reused",
+      "case_id": "tests/test_harness_job_lock_recovery.py::test_tokenized_orphan_is_reclaimed_after_crash_even_if_pid_was_reused",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lock_recovery.py",
+      "case": "test_dead_legacy_owner_is_reclaimed_without_waiting_for_age",
+      "case_id": "tests/test_harness_job_lock_recovery.py::test_dead_legacy_owner_is_reclaimed_without_waiting_for_age",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lock_recovery.py",
+      "case": "test_advisory_guard_files_are_bounded_by_stable_shards",
+      "case_id": "tests/test_harness_job_lock_recovery.py::test_advisory_guard_files_are_bounded_by_stable_shards",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_hard_runtime_budget_normalization",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_hard_runtime_budget_normalization",
+      "contracts": [
+        "proofs-b.harness.budget-input"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._hard_runtime_budget_seconds",
+        "grant_agent.harness_job_worker._remaining_runtime_budget_seconds",
+        "grant_agent.proofs_b_harness.check_budget_input"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_invalid_explicit_hard_runtime_budget_fails_closed",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_invalid_explicit_hard_runtime_budget_fails_closed",
+      "contracts": [
+        "proofs-b.harness.budget-input"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._hard_runtime_budget_seconds",
+        "grant_agent.harness_job_worker._remaining_runtime_budget_seconds",
+        "grant_agent.proofs_b_harness.check_budget_input"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_remaining_runtime_budget_deducts_worker_startup_delay",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_remaining_runtime_budget_deducts_worker_startup_delay",
+      "contracts": [
+        "proofs-b.harness.budget-input"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._hard_runtime_budget_seconds",
+        "grant_agent.harness_job_worker._remaining_runtime_budget_seconds",
+        "grant_agent.proofs_b_harness.check_budget_input"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_arm_runtime_budget_is_atomic_and_preserves_nested_dimensions",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_arm_runtime_budget_is_atomic_and_preserves_nested_dimensions",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_arm_runtime_budget_refuses_to_overwrite_cancellation",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_arm_runtime_budget_refuses_to_overwrite_cancellation",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_expiry_claim_is_atomic_and_preserves_other_budget_dimensions",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_expiry_claim_is_atomic_and_preserves_other_budget_dimensions",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_expiry_claim_cannot_stamp_a_terminal_job",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_expiry_claim_cannot_stamp_a_terminal_job",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_watchdog_claims_exhaustion_before_process_tree_cancel",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_watchdog_claims_exhaustion_before_process_tree_cancel",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_watchdog_disarm_prevents_late_cancellation",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_watchdog_disarm_prevents_late_cancellation",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_watchdog_does_not_rewrite_terminal_job",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_watchdog_does_not_rewrite_terminal_job",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_settlement_preserves_other_budget_dimensions",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_settlement_preserves_other_budget_dimensions",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_settlement_never_overwrites_exhaustion",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_settlement_never_overwrites_exhaustion",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget_limits.py",
+      "case": "test_budget_rejects_platform_unsupported_watchdog_timeout",
+      "case_id": "tests/test_harness_job_runtime_budget_limits.py::test_budget_rejects_platform_unsupported_watchdog_timeout",
+      "contracts": [
+        "proofs-b.harness.budget-input"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._hard_runtime_budget_seconds",
+        "grant_agent.harness_job_worker._remaining_runtime_budget_seconds",
+        "grant_agent.proofs_b_harness.check_budget_input"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_jobs.py",
+      "case": "test_job_observability_derives_real_durations_and_timeline",
+      "case_id": "tests/test_harness_jobs.py::test_job_observability_derives_real_durations_and_timeline",
+      "contracts": [
+        "proofs-b.harness.observation"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_jobs.py",
+      "case": "test_job_observability_is_additive_for_legacy_receipts",
+      "case_id": "tests/test_harness_jobs.py::test_job_observability_is_additive_for_legacy_receipts",
+      "contracts": [
+        "proofs-b.harness.observation"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_jobs.py",
+      "case": "test_job_list_exposes_observability_for_every_row",
+      "case_id": "tests/test_harness_jobs.py::test_job_list_exposes_observability_for_every_row",
+      "contracts": [
+        "proofs-b.harness.observation"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._with_job_observability",
+        "grant_agent.proofs_b_harness.check_observation"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_fifo_prevents_newer_waiter_from_leapfrogging",
+      "case_id": "tests/test_harness_execution_capacity.py::test_fifo_prevents_newer_waiter_from_leapfrogging",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_running_limit_queues_until_slot_is_released",
+      "case_id": "tests/test_harness_execution_capacity.py::test_running_limit_queues_until_slot_is_released",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_legacy_running_worker_reserves_capacity_during_rollout",
+      "case_id": "tests/test_harness_execution_capacity.py::test_legacy_running_worker_reserves_capacity_during_rollout",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_unreadable_job_state_fails_closed_for_execution",
+      "case_id": "tests/test_harness_execution_capacity.py::test_unreadable_job_state_fails_closed_for_execution",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_execution_policy_can_tighten_but_not_ambiently_expand",
+      "case_id": "tests/test_harness_execution_capacity.py::test_execution_policy_can_tighten_but_not_ambiently_expand",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_kernel_slot_is_released_when_worker_process_crashes",
+      "case_id": "tests/test_harness_execution_capacity.py::test_kernel_slot_is_released_when_worker_process_crashes",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_release_receipt_tracks_first_slot_truthfully",
+      "case_id": "tests/test_harness_execution_capacity.py::test_release_receipt_tracks_first_slot_truthfully",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_waiting_transition_does_not_revive_cancelling_job",
+      "case_id": "tests/test_harness_execution_capacity.py::test_waiting_transition_does_not_revive_cancelling_job",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_running_waiter_is_dispatchable_without_becoming_legacy_capacity",
+      "case_id": "tests/test_harness_execution_capacity.py::test_running_waiter_is_dispatchable_without_becoming_legacy_capacity",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_late_legacy_worker_cannot_oversubscribe_remaining_new_slot",
+      "case_id": "tests/test_harness_execution_capacity.py::test_late_legacy_worker_cannot_oversubscribe_remaining_new_slot",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity.py",
+      "case": "test_waiting_worker_stays_running_so_retry_cannot_spawn_duplicate",
+      "case_id": "tests/test_harness_execution_capacity.py::test_waiting_worker_stays_running_so_retry_cannot_spawn_duplicate",
+      "contracts": [
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.proofs_b_harness.check_execution_snapshot"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_native_harness_catalog_probe_uses_intrinsic_release_evidence",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_native_harness_catalog_probe_uses_intrinsic_release_evidence",
+      "contracts": [
+        "proofs-b.harness.catalog"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry._probe_harness_command",
+        "grant_agent.harness_registry.build_harness_catalog",
+        "grant_agent.proofs_b_harness.check_catalog",
+        "grant_agent.runtimes.base.runtime_bin_candidates"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_native_profile_maps_chat_gateway_without_storing_secret",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_native_profile_maps_chat_gateway_without_storing_secret",
+      "contracts": [
+        "proofs-b.harness.public-profile",
+        "proofs-b.harness.gateway"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry.harness_gateway_environment",
+        "grant_agent.harness_registry.save_harness_profile",
+        "grant_agent.proofs_b_harness.check_gateway",
+        "grant_agent.proofs_b_harness.check_profile"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_runtime_discovery_includes_uv_tool_bin",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_runtime_discovery_includes_uv_tool_bin",
+      "contracts": [
+        "proofs-b.harness.catalog"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry._probe_harness_command",
+        "grant_agent.harness_registry.build_harness_catalog",
+        "grant_agent.proofs_b_harness.check_catalog",
+        "grant_agent.runtimes.base.runtime_bin_candidates"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_catalog_exposes_the_full_truthful_harness_set",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_catalog_exposes_the_full_truthful_harness_set",
+      "contracts": [
+        "proofs-b.harness.catalog"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry._probe_harness_command",
+        "grant_agent.harness_registry.build_harness_catalog",
+        "grant_agent.proofs_b_harness.check_catalog",
+        "grant_agent.runtimes.base.runtime_bin_candidates"
+      ],
+      "procedure": "self_check",
+      "note": "Current catalog has sixteen harnesses; the old exact fourteen-entry assertion omitted Hermes and OpenClaw."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_instruction_editor_is_workspace_bounded_and_keeps_backup",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_instruction_editor_is_workspace_bounded_and_keeps_backup",
+      "contracts": [
+        "proofs-b.harness.instruction"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry._validate_instruction_path",
+        "grant_agent.harness_registry.save_harness_instruction",
+        "grant_agent.proofs_b_harness.check_instruction"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_profile_stores_no_secret_and_builds_claude_gateway_environment",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_profile_stores_no_secret_and_builds_claude_gateway_environment",
+      "contracts": [
+        "proofs-b.harness.public-profile",
+        "proofs-b.harness.gateway"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry.harness_gateway_environment",
+        "grant_agent.harness_registry.save_harness_profile",
+        "grant_agent.proofs_b_harness.check_gateway",
+        "grant_agent.proofs_b_harness.check_profile"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_claude_cliproxy_profile_is_explicit_loopback_and_secret_free",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_claude_cliproxy_profile_is_explicit_loopback_and_secret_free",
+      "contracts": [
+        "proofs-b.harness.public-profile",
+        "proofs-b.harness.gateway"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry.harness_gateway_environment",
+        "grant_agent.harness_registry.save_harness_profile",
+        "grant_agent.proofs_b_harness.check_gateway",
+        "grant_agent.proofs_b_harness.check_profile"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_claude_cliproxy_profile_rejects_remote_proxy_and_missing_credential",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_claude_cliproxy_profile_rejects_remote_proxy_and_missing_credential",
+      "contracts": [
+        "proofs-b.harness.gateway"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry.harness_gateway_environment",
+        "grant_agent.proofs_b_harness.check_gateway"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_grok_profile_maps_openai_compatible_proxy",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_grok_profile_maps_openai_compatible_proxy",
+      "contracts": [
+        "proofs-b.harness.public-profile",
+        "proofs-b.harness.gateway"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry.harness_gateway_environment",
+        "grant_agent.harness_registry.save_harness_profile",
+        "grant_agent.proofs_b_harness.check_gateway",
+        "grant_agent.proofs_b_harness.check_profile"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_grok_custom_models_and_explicit_claude_gateway_aliases",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_grok_custom_models_and_explicit_claude_gateway_aliases",
+      "contracts": [
+        "proofs-b.harness.model-policy"
+      ],
+      "checkedAt": [
+        "grant_agent.runtimes.managed_cli.normalize_managed_cli_model"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_deepseek_harness_reports_missing_provider_and_maps_secret_reference",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_deepseek_harness_reports_missing_provider_and_maps_secret_reference",
+      "contracts": [
+        "proofs-b.harness.catalog",
+        "proofs-b.harness.public-profile",
+        "proofs-b.harness.gateway"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry._probe_harness_command",
+        "grant_agent.harness_registry.build_harness_catalog",
+        "grant_agent.harness_registry.harness_gateway_environment",
+        "grant_agent.harness_registry.save_harness_profile",
+        "grant_agent.proofs_b_harness.check_catalog",
+        "grant_agent.proofs_b_harness.check_gateway",
+        "grant_agent.proofs_b_harness.check_profile",
+        "grant_agent.runtimes.base.runtime_bin_candidates"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_registry.py",
+      "case": "HarnessRegistryTests.test_rook_profile_maps_exact_provider_without_persisting_the_secret",
+      "case_id": "tests/test_harness_registry.py::HarnessRegistryTests.test_rook_profile_maps_exact_provider_without_persisting_the_secret",
+      "contracts": [
+        "proofs-b.harness.public-profile",
+        "proofs-b.harness.gateway"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_registry.harness_gateway_environment",
+        "grant_agent.harness_registry.save_harness_profile",
+        "grant_agent.proofs_b_harness.check_gateway",
+        "grant_agent.proofs_b_harness.check_profile"
+      ],
+      "procedure": "self_check",
+      "note": "Local configuration projection; does not claim authentication or provider execution."
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_admission_reconciles_stale_receipts_outside_visible_list_window",
+      "case_id": "tests/test_harness_job_admission.py::test_admission_reconciles_stale_receipts_outside_visible_list_window",
+      "contracts": [
+        "proofs-b.harness.admission",
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.harness_jobs.HarnessJobStore._prune",
+        "grant_agent.harness_jobs.HarnessJobStore._reconcile_admission_receipts",
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_admission",
+        "grant_agent.proofs_b_harness.check_liveness_outcome"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_prune_preserves_future_schema_receipt_even_if_it_claims_terminal",
+      "case_id": "tests/test_harness_job_admission.py::test_prune_preserves_future_schema_receipt_even_if_it_claims_terminal",
+      "contracts": [
+        "proofs-b.harness.admission"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.harness_jobs.HarnessJobStore._prune",
+        "grant_agent.harness_jobs.HarnessJobStore._reconcile_admission_receipts",
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.proofs_b_harness.check_admission"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_windows_liveness_helper_is_fail_closed_by_contract",
+      "case_id": "tests/test_harness_job_admission.py::test_windows_liveness_helper_is_fail_closed_by_contract",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_windows_invalid_parameter_liveness_probe_is_positive_death_evidence",
+      "case_id": "tests/test_harness_job_admission.py::test_windows_invalid_parameter_liveness_probe_is_positive_death_evidence",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_budget_cancellation.py",
+      "case": "test_confirmed_process_tree_cancel_releases_active_budget",
+      "case_id": "tests/test_harness_job_budget_cancellation.py::test_confirmed_process_tree_cancel_releases_active_budget",
+      "contracts": [
+        "proofs-b.harness.budget",
+        "proofs-b.harness.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_job_worker._start_runtime_budget_watchdog",
+        "grant_agent.harness_job_worker.run_harness_job",
+        "grant_agent.harness_jobs.HarnessJobStore.cancel",
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs.HarnessJobStore.start",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.harness_jobs._terminate_process_tree",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_budget_cancellation.py",
+      "case": "test_runtime_budget_exhaustion_survives_shared_cancel_path",
+      "case_id": "tests/test_harness_job_budget_cancellation.py::test_runtime_budget_exhaustion_survives_shared_cancel_path",
+      "contracts": [
+        "proofs-b.harness.budget",
+        "proofs-b.harness.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker._arm_runtime_budget",
+        "grant_agent.harness_job_worker._claim_runtime_budget_exhaustion",
+        "grant_agent.harness_job_worker._start_runtime_budget_watchdog",
+        "grant_agent.harness_job_worker.run_harness_job",
+        "grant_agent.harness_jobs.HarnessJobStore.cancel",
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs.HarnessJobStore.start",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.harness_jobs._terminate_process_tree",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lifecycle.py",
+      "case": "test_start_is_single_flight_under_concurrent_callers",
+      "case_id": "tests/test_harness_job_lifecycle.py::test_start_is_single_flight_under_concurrent_callers",
+      "contracts": [
+        "proofs-b.harness.lifecycle",
+        "proofs-b.harness.execution"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_execution_capacity.HarnessExecutionCapacity.try_acquire",
+        "grant_agent.harness_job_worker._claim_execution_capacity",
+        "grant_agent.harness_job_worker._mark_waiting_for_execution_capacity",
+        "grant_agent.harness_job_worker.run_harness_job",
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs.HarnessJobStore.start",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_execution_snapshot",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lifecycle.py",
+      "case": "test_stale_cancelling_job_reconciles_as_cancelled_not_interrupted",
+      "case_id": "tests/test_harness_job_lifecycle.py::test_stale_cancelling_job_reconciles_as_cancelled_not_interrupted",
+      "contracts": [
+        "proofs-b.harness.lifecycle",
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker.run_harness_job",
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs.HarnessJobStore.start",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lifecycle.py",
+      "case": "test_worker_does_not_execute_after_cancellation_was_claimed",
+      "case_id": "tests/test_harness_job_lifecycle.py::test_worker_does_not_execute_after_cancellation_was_claimed",
+      "contracts": [
+        "proofs-b.harness.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_job_worker.run_harness_job",
+        "grant_agent.harness_jobs.HarnessJobStore.finish",
+        "grant_agent.harness_jobs.HarnessJobStore.mark_started",
+        "grant_agent.harness_jobs.HarnessJobStore.start",
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lock_recovery.py",
+      "case": "test_live_legacy_lock_is_never_stolen_only_because_it_is_old",
+      "case_id": "tests/test_harness_job_lock_recovery.py::test_live_legacy_lock_is_never_stolen_only_because_it_is_old",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lock_recovery.py",
+      "case": "test_current_protocol_serializes_even_when_compatibility_mtime_is_ancient",
+      "case_id": "tests/test_harness_job_lock_recovery.py::test_current_protocol_serializes_even_when_compatibility_mtime_is_ancient",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_lock_recovery.py",
+      "case": "test_recent_malformed_compatibility_lock_fails_safe",
+      "case_id": "tests/test_harness_job_lock_recovery.py::test_recent_malformed_compatibility_lock_fails_safe",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs.HarnessJobStore.load",
+        "grant_agent.harness_jobs._exclusive_job_lock",
+        "grant_agent.harness_jobs._job_guard_path",
+        "grant_agent.harness_jobs._process_alive",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_live_worker_with_unavailable_identity_lookup_remains_fail_closed",
+      "case_id": "tests/test_harness_job_admission.py::test_live_worker_with_unavailable_identity_lookup_remains_fail_closed",
+      "contracts": [
+        "proofs-b.harness.admission",
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome",
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.proofs_b_harness.check_admission"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_permission_denied_liveness_probe_remains_fail_closed",
+      "case_id": "tests/test_harness_job_admission.py::test_permission_denied_liveness_probe_remains_fail_closed",
+      "contracts": [
+        "proofs-b.harness.admission",
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome",
+        "grant_agent.harness_jobs.HarnessJobStore.create",
+        "grant_agent.harness_jobs.HarnessJobStore._capacity_snapshot",
+        "grant_agent.proofs_b_harness.check_admission"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_admission.py",
+      "case": "test_windows_access_denied_liveness_probe_fails_closed",
+      "case_id": "tests/test_harness_job_admission.py::test_windows_access_denied_liveness_probe_fails_closed",
+      "contracts": [
+        "proofs-b.harness.lock-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs._windows_process_alive",
+        "grant_agent.proofs_b_harness.check_liveness_outcome"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_budget_cancellation.py",
+      "case": "test_failed_process_tree_stop_keeps_budget_active_for_later_enforcement",
+      "case_id": "tests/test_harness_job_budget_cancellation.py::test_failed_process_tree_stop_keeps_budget_active_for_later_enforcement",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs.HarnessJobStore.cancel",
+        "grant_agent.harness_jobs._terminate_process_tree",
+        "grant_agent.harness_job_worker._start_runtime_budget_watchdog",
+        "grant_agent.harness_job_worker._record_runtime_budget_enforcement_failure",
+        "grant_agent.harness_job_worker._record_runtime_budget_enforced"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_budget_cancellation.py",
+      "case": "test_watchdog_enforces_active_budget_after_operator_cancel_stop_failure",
+      "case_id": "tests/test_harness_job_budget_cancellation.py::test_watchdog_enforces_active_budget_after_operator_cancel_stop_failure",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs.HarnessJobStore.cancel",
+        "grant_agent.harness_jobs._terminate_process_tree",
+        "grant_agent.harness_job_worker._start_runtime_budget_watchdog",
+        "grant_agent.harness_job_worker._record_runtime_budget_enforcement_failure",
+        "grant_agent.harness_job_worker._record_runtime_budget_enforced"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_harness_job_runtime_budget.py",
+      "case": "test_watchdog_retries_transient_cancellation_failure",
+      "case_id": "tests/test_harness_job_runtime_budget.py::test_watchdog_retries_transient_cancellation_failure",
+      "contracts": [
+        "proofs-b.harness.budget"
+      ],
+      "checkedAt": [
+        "grant_agent.harness_jobs._atomic_write_json",
+        "grant_agent.proofs_b_harness.check_write",
+        "grant_agent.harness_jobs.HarnessJobStore.cancel",
+        "grant_agent.harness_jobs._terminate_process_tree",
+        "grant_agent.harness_job_worker._start_runtime_budget_watchdog",
+        "grant_agent.harness_job_worker._record_runtime_budget_enforcement_failure",
+        "grant_agent.harness_job_worker._record_runtime_budget_enforced"
+      ],
+      "procedure": "self_check"
+    }
+  ],
+  "frontier": [
+    {
+      "test": "tests/test_harness_job_blocked_lifecycle.py",
+      "case": "test_direct_worker_propagates_nested_blocked_status",
+      "reason": "Worker early cancellation and real launch/wait/cancel passed without backend import. The real backend initializes provider-secret state and a real nested authentication blocker requires a provider route; forbidden credential-file access/provider launches were not substituted with the legacy fake backend."
+    },
+    {
+      "test": "tests/test_harness_job_lifecycle.py",
+      "case": "test_cancel_waits_for_start_claim_and_stops_the_claimed_tree",
+      "reason": "Actual six-caller detached start launched one worker, then actual verified tree cancellation stopped it behind a held OS execution gate. The finer within-Popen start-claim/cancel race still lacks a real deterministic timing signal; legacy fake-Popen timing is retained."
+    },
+    {
+      "test": "tests/test_harness_blocked_ui_contract.py",
+      "case": "test_general_harness_browser_proof_does_not_assume_terminal_state",
+      "reason": "General harness browser proof loop and its screenshots have not run; source assertion retained until real browser equivalent exists."
+    }
+  ],
+  "migratedByOtherArea": [
+    {
+      "test": "tests/test_harness_blocked_ui_contract.py",
+      "case": "test_blocked_harness_run_is_actionable_without_becoming_terminal",
+      "manifest": "config/proofs/proofs-b-browser.json",
+      "area": "proofs-b-browser"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity_ui_contract.py",
+      "case": "test_execution_capacity_wait_is_not_presented_as_active_execution",
+      "manifest": "config/proofs/proofs-b-browser.json",
+      "area": "proofs-b-browser"
+    },
+    {
+      "test": "tests/test_harness_execution_capacity_ui_contract.py",
+      "case": "test_waiting_run_labels_use_durable_wait_reason",
+      "manifest": "config/proofs/proofs-b-browser.json",
+      "area": "proofs-b-browser"
+    }
+  ],
+  "portRoles": []
+}

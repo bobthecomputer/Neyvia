@@ -1,0 +1,2577 @@
+{
+  "area": "proofs-e-sv",
+  "module": "grant_agent.proofs_e_sv",
+  "self_check": "self_check",
+  "manuals": [
+    "agents",
+    "hill-climb",
+    "perception",
+    "tools-depth"
+  ],
+  "contracts": [
+    {
+      "id": "sv.subagent.advisory-bounds",
+      "phase": "invariant",
+      "claim": "Subagent receipts remain advisory, normalize role/status/confidence and bound prompts, inspected paths and finding evidence.",
+      "checkedAt": [
+        "grant_agent.sub_agent_receipts.build_sub_agent_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.suite.summary",
+      "phase": "invariant",
+      "claim": "Suite averages, pass rate and preset count exactly reflect supplied observed rows, including the empty suite.",
+      "checkedAt": [
+        "grant_agent.suite_report.build_suite_summary -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "hill-climb",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.suite.artifacts",
+      "phase": "invariant",
+      "claim": "Successful suite artifact writing returns paths whose JSON preserves all input evidence and whose human report lists every preset.",
+      "checkedAt": [
+        "grant_agent.suite_report.write_suite_artifacts -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "hill-climb",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.retrieval",
+      "phase": "invariant",
+      "claim": "Skill retrieval returns only the highest ranked overlapping skills within the requested slice, or the ranked defaults when no token overlaps.",
+      "checkedAt": [
+        "grant_agent.skills.SkillRegistry.retrieve -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.capsule",
+      "phase": "invariant",
+      "claim": "Compiled skill plans bind normalized behavior vectors, executable gates/scopes and instruction availability receipts to a canonical SHA-256; available text alone does not claim enforced behavior.",
+      "checkedAt": [
+        "grant_agent.skill_capsules.SkillCapsuleRegistry.compile -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.discovery",
+      "phase": "invariant",
+      "claim": "Project SKILL.md definitions take precedence over same-id personal guidance, with one discoverable row per skill ID.",
+      "checkedAt": [
+        "grant_agent.skill_library.load_codex_home_skill_rows -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.brief",
+      "phase": "invariant",
+      "claim": "Task skill briefs preserve mission attribution, bounded selections, permissions, relevant failure/success history and compact descriptions rather than embedding full instruction text.",
+      "checkedAt": [
+        "grant_agent.skill_library.SkillLibrary.build_skill_brief -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.feedback",
+      "phase": "invariant",
+      "claim": "Skill slice feedback persists bounded attributed rows; high-loss slices repair and stagnant low-loss slices may branch without manufacturing improvement.",
+      "checkedAt": [
+        "grant_agent.skill_library.SkillLibrary.record_slice_feedback -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.feedback-summary",
+      "phase": "invariant",
+      "claim": "Repeated zero-lift low-loss slices remain review/stagnant and are ineligible for promotion; feedback cannot bypass human promotion review.",
+      "checkedAt": [
+        "grant_agent.skill_library.SkillLibrary._feedback_summary -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.suggestions.priority",
+      "phase": "invariant",
+      "claim": "A pending plan step remains the first bounded continuation suggestion and generated suggestions contain no duplicates.",
+      "checkedAt": [
+        "grant_agent.vibe_suggestions.build_vibe_next_steps -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.suggestions.signals",
+      "phase": "invariant",
+      "claim": "Repository metadata projects nonnegative file counts and Boolean project/readme presence with no extra fields.",
+      "checkedAt": [
+        "grant_agent.vibe_suggestions.collect_repo_signals -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.verification.result",
+      "phase": "invariant",
+      "claim": "Every requested verification command has one explicit outcome; high-risk commands return blocked/126 and actual child timeouts return timeout/124 with diagnostics.",
+      "checkedAt": [
+        "grant_agent.verification.VerificationRunner.run -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.verification.normalize",
+      "phase": "invariant",
+      "claim": "Pytest command spelling uses the selected Python executable; unrelated command text remains intact.",
+      "checkedAt": [
+        "grant_agent.verification._normalize_verification_command -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.verification.discovery",
+      "phase": "invariant",
+      "claim": "Default verification command declarations reflect project/source/test/package metadata and actual interpreter availability, with an explicit fallback when unavailable. Discovery never executes the declared verification commands.",
+      "checkedAt": [
+        "grant_agent.verification.detect_default_verification_commands -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ladder.capacity",
+      "phase": "invariant",
+      "claim": "Heavy builds require gateway and time; browser verification additionally requires an operator. Absence cannot silently grant capacity.",
+      "checkedAt": [
+        "grant_agent.verification_ladder.build_verification_capacity_policy -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ladder.plan",
+      "phase": "invariant",
+      "claim": "Changed-file lists are bounded and unique, required/gated counts match real steps and capacity-gated work remains skipped.",
+      "checkedAt": [
+        "grant_agent.verification_ladder.build_verification_ladder -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ladder.receipt",
+      "phase": "invariant",
+      "claim": "Syntax, targeted, backend and UI receipt statuses reflect observed exits/missing files or supplied interaction outcomes. Backend commands stop on first failure; absent evidence stays skipped.",
+      "checkedAt": [
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.support.bundle",
+      "phase": "invariant",
+      "claim": "Support archives preserve exact published hashes and the five-member allowlist; exclude raw prompts/logs/credentials, refuse hostile secret-shaped metadata and bound job/log inspection. External linked roots disclose no bytes.",
+      "checkedAt": [
+        "grant_agent.support_bundle.build_redacted_support_bundle -> grant_agent.proofs_e_sv.check_support_payload/check",
+        "grant_agent.support_bundle._resolve_jobs_root",
+        "grant_agent.support_bundle._read_json",
+        "grant_agent.support_bundle._log_index",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.performance.fail-closed",
+      "phase": "invariant",
+      "claim": "Performance evidence validates configuration, source assets, age, build/config/digest binding, measured provenance, sample limits and recomputed finite nonnegative metrics. Aggregate status remains fail-closed and local passing evidence cannot grant promotion; diagnostics hide private paths.",
+      "checkedAt": [
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:measure_build",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:main",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.sdk.bindings",
+      "phase": "invariant",
+      "claim": "Generated Python/TypeScript bindings have canonical LF bytes, deterministic schema ordering and resolvable language types; Git autocrlf checkout preserves committed generated bytes.",
+      "checkedAt": [
+        "grant_agent.sdk_codegen.generated_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.sdk.generation",
+      "phase": "invariant",
+      "claim": "Generator receipts faithfully report compared/written on-disk bytes and hashes for both language outputs.",
+      "checkedAt": [
+        "grant_agent.sdk_codegen.generate_sdk_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.sdk.portable-schema",
+      "phase": "invariant",
+      "claim": "Schema generation rejects lossy keywords/literals with precise pointers and keeps closed empty, open JSON, unconstrained JSON and scalar literal types distinct.",
+      "checkedAt": [
+        "grant_agent.sdk_codegen.validate_portable_schema",
+        "grant_agent.sdk_codegen._assert_supported",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.sdk.manifest",
+      "phase": "invariant",
+      "claim": "SDK manifest builders preserve bridge identity, requested task/context/action semantics and declared approval requirements.",
+      "checkedAt": [
+        "grant_agent.sdk.build_app_manifest -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.build_solantir_manifest",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.sdk.plan-only",
+      "phase": "invariant",
+      "claim": "SDK launch/install/profile planning never acquires execution or activation authority. CLI JSON inputs must be objects; untrusted publisher packages remain blocked and declared surfaces remain unavailable without live readiness.",
+      "checkedAt": [
+        "grant_agent.sdk.plan_application_surface_launch -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_module_install -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_install_profile -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_cli._load_json_object",
+        "grant_agent.sdk_cli.run_sdk_cli",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.sdk.transport",
+      "phase": "invariant",
+      "claim": "Every SDK HTTP request preserves its explicit destination/POST/payload and includes a session cookie only when requested. Responses must be JSON objects. Local protocol proof preserves runtime routes, application context and delivery attribution.",
+      "checkedAt": [
+        "grant_agent.sdk.FluxioClient._post -> grant_agent.proofs_e_sv.check_sdk_request/check",
+        "grant_agent.sdk.FluxioClient.runtime_lane_cycle",
+        "grant_agent.sdk.FluxioClient.solantir_intelligence_cycle",
+        "grant_agent.sdk.FluxioClient.record_delivery_receipt",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.video.metadata",
+      "phase": "invariant",
+      "claim": "Video metadata binds exact source bytes and model-facing stream/audio dimensions to real FFprobe observations.",
+      "checkedAt": [
+        "grant_agent.video_tools.VideoEvidenceBuilder.inspect -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.video.digest",
+      "phase": "invariant",
+      "claim": "Every completed video digest returns counts matching its durable manifest, hash-bound timestamped frames and a matching storyboard; real scene duplicate suppression and extracted audio are checked at startup.",
+      "checkedAt": [
+        "grant_agent.video_tools.VideoEvidenceBuilder.digest -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.video.route",
+      "phase": "invariant",
+      "claim": "Video-analysis action proposals select video.digest with the exact recognized source path.",
+      "checkedAt": [
+        "grant_agent.action_executor.HybridExecutionAdapter.build_action_proposal -> grant_agent.proofs_e_sv.check_video_proposal",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.snapshot.private-filter",
+      "phase": "invariant",
+      "claim": "Every staging path decision rejects private memory/browser-profile candidates while preserving redacted evidence candidates. This proof only evaluates path metadata, never performs snapshot or NAS transfer.",
+      "checkedAt": [
+        "scripts/stage_neyvia_wip_snapshot.py:_is_excluded -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.update.package-parse",
+      "phase": "invariant",
+      "claim": "Runtime-update metadata parsing only reports the package literally named in a global npm @latest command; it never performs the update.",
+      "checkedAt": [
+        "grant_agent.runtime_auto_update.npm_package_of -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "tools-depth",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.create",
+      "phase": "invariant",
+      "claim": "Skill creation validates scoped IDs and writes complete SKILL.md, interface metadata and hash-bound initial history. Failed creation preserves prior content and leaves no partial skill folder.",
+      "checkedAt": [
+        "grant_agent.web_backend._create_codex_skill -> grant_agent.proofs_e_sv.check/_check_failed_skill_write",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.save",
+      "phase": "invariant",
+      "claim": "Reviewed skill saves preserve exact backups, validate before replacement, bind source hashes and increment a single persisted revision. Invalid or unchanged writes preserve prior bytes/history; explicit personal roots remain separate from project history.",
+      "checkedAt": [
+        "grant_agent.web_backend._save_codex_skill_file -> grant_agent.proofs_e_sv.check/_check_failed_skill_write",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.skills.catalog",
+      "phase": "invariant",
+      "claim": "Skill catalogs expose bounded evolution history, revisions and useful usage without treating usage as trusted promotion; human review remains required.",
+      "checkedAt": [
+        "grant_agent.skill_library.SkillLibrary.build_catalog -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "agents",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.semantic-identity",
+      "phase": "invariant",
+      "claim": "Resident UI semantic identity ignores focus/hover presentation noise while preserving durable node identity, role, value, actions and quantized bounds.",
+      "checkedAt": [
+        "grant_agent.ui_graph.UiNode.semantic_tuple -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_graph.compute_semantic_hash",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.graph-state",
+      "phase": "invariant",
+      "claim": "Every resident graph replacement stamps all nodes with its new revision and binds returned changes to the exact current semantic hash and node set.",
+      "checkedAt": [
+        "grant_agent.ui_graph.UiGraph.replace_nodes -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.delta",
+      "phase": "invariant",
+      "claim": "Semantic graph diffs return each actual added/changed/removed identity exactly once.",
+      "checkedAt": [
+        "grant_agent.ui_graph.diff_graphs -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.query",
+      "phase": "invariant",
+      "claim": "UI graph search returns sorted bounded nodes matching exact/substring role/name/id queries or free text; it never returns a nonmatching control.",
+      "checkedAt": [
+        "grant_agent.ui_graph.find_nodes -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.compact-delta",
+      "phase": "invariant",
+      "claim": "Compact UI deltas retain graph revision/hash and every bounded changed identity without returning a full tree.",
+      "checkedAt": [
+        "grant_agent.ui_graph.format_compact_delta -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.ax-normalization",
+      "phase": "invariant",
+      "claim": "Playwright/CDP AX payload normalization preserves stable actionable role/source identity and editable values, omits presentation noise and exposes no disabled click action.",
+      "checkedAt": [
+        "grant_agent.ui_observer.flatten_playwright_ax -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_observer.flatten_cdp_ax_tree -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.compact-result",
+      "phase": "invariant",
+      "claim": "Every compact UI result explicitly omits trees and binds its revision, semantic hash and node count to the resident graph.",
+      "checkedAt": [
+        "grant_agent.ui_tools.UiToolSurface._compact_result -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.action-gates",
+      "phase": "invariant",
+      "claim": "Stale revision/hash UI actions reject before graph mutation; startup proves actual no-page failure without fabricating a browser interaction.",
+      "checkedAt": [
+        "grant_agent.ui_tools.UiToolSurface.ui_do -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    },
+    {
+      "id": "sv.ui.discovery",
+      "phase": "invariant",
+      "claim": "Native/progressive UI registration installs every compact tool once with callable/describable handlers; progressive search omits full schemas and describe supplies them.",
+      "checkedAt": [
+        "grant_agent.ui_tools.register_with_native_registry -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_tools.register_with_progressive_surface -> grant_agent.proofs_e_sv.check",
+        "grant_agent.proofs_e_sv.self_check"
+      ],
+      "impact": [
+        "perception",
+        "PROOFS-e s-v behavior"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_sdk.py",
+      "case": "FluxioSdkTests.test_client_logs_in_and_dispatches_runtime_lane_cycle",
+      "case_id": "tests/test_sdk.py::FluxioSdkTests.test_client_logs_in_and_dispatches_runtime_lane_cycle",
+      "contracts": [
+        "sv.sdk.transport"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.FluxioClient._post -> grant_agent.proofs_e_sv.check_sdk_request/check",
+        "grant_agent.sdk.FluxioClient.record_delivery_receipt",
+        "grant_agent.sdk.FluxioClient.runtime_lane_cycle",
+        "grant_agent.sdk.FluxioClient.solantir_intelligence_cycle"
+      ],
+      "procedure": "sdk_real_http_cookie_route_and_receipt_protocol"
+    },
+    {
+      "test": "tests/test_sdk.py",
+      "case": "FluxioSdkTests.test_build_app_manifest_creates_standard_capability_manifest",
+      "case_id": "tests/test_sdk.py::FluxioSdkTests.test_build_app_manifest_creates_standard_capability_manifest",
+      "contracts": [
+        "sv.sdk.manifest",
+        "sv.sdk.plan-only"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.build_app_manifest -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.build_solantir_manifest",
+        "grant_agent.sdk.plan_application_surface_launch -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_install_profile -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_module_install -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_cli._load_json_object",
+        "grant_agent.sdk_cli.run_sdk_cli"
+      ],
+      "procedure": "sdk_cli_and_manifest_nonexecuting_plans"
+    },
+    {
+      "test": "tests/test_sdk.py",
+      "case": "FluxioSdkTests.test_solantir_intelligence_cycle_sends_routes_and_app_context",
+      "case_id": "tests/test_sdk.py::FluxioSdkTests.test_solantir_intelligence_cycle_sends_routes_and_app_context",
+      "contracts": [
+        "sv.sdk.transport"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.FluxioClient._post -> grant_agent.proofs_e_sv.check_sdk_request/check",
+        "grant_agent.sdk.FluxioClient.record_delivery_receipt",
+        "grant_agent.sdk.FluxioClient.runtime_lane_cycle",
+        "grant_agent.sdk.FluxioClient.solantir_intelligence_cycle"
+      ],
+      "procedure": "sdk_real_http_cookie_route_and_receipt_protocol"
+    },
+    {
+      "test": "tests/test_sdk.py",
+      "case": "FluxioSdkTests.test_record_delivery_receipt_dispatches_backend_command",
+      "case_id": "tests/test_sdk.py::FluxioSdkTests.test_record_delivery_receipt_dispatches_backend_command",
+      "contracts": [
+        "sv.sdk.transport"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.FluxioClient._post -> grant_agent.proofs_e_sv.check_sdk_request/check",
+        "grant_agent.sdk.FluxioClient.record_delivery_receipt",
+        "grant_agent.sdk.FluxioClient.runtime_lane_cycle",
+        "grant_agent.sdk.FluxioClient.solantir_intelligence_cycle"
+      ],
+      "procedure": "sdk_real_http_cookie_route_and_receipt_protocol"
+    },
+    {
+      "test": "tests/test_sdk.py",
+      "case": "FluxioSdkTests.test_build_solantir_manifest_exposes_feed_and_dr_surfaces",
+      "case_id": "tests/test_sdk.py::FluxioSdkTests.test_build_solantir_manifest_exposes_feed_and_dr_surfaces",
+      "contracts": [
+        "sv.sdk.manifest",
+        "sv.sdk.plan-only"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.build_app_manifest -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.build_solantir_manifest",
+        "grant_agent.sdk.plan_application_surface_launch -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_install_profile -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_module_install -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_cli._load_json_object",
+        "grant_agent.sdk_cli.run_sdk_cli"
+      ],
+      "procedure": "sdk_cli_and_manifest_nonexecuting_plans"
+    },
+    {
+      "test": "tests/test_sdk.py",
+      "case": "FluxioSdkTests.test_install_profile_helpers_expose_truthful_composition",
+      "case_id": "tests/test_sdk.py::FluxioSdkTests.test_install_profile_helpers_expose_truthful_composition",
+      "contracts": [
+        "sv.sdk.manifest",
+        "sv.sdk.plan-only"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.build_app_manifest -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.build_solantir_manifest",
+        "grant_agent.sdk.plan_application_surface_launch -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_install_profile -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_module_install -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_cli._load_json_object",
+        "grant_agent.sdk_cli.run_sdk_cli"
+      ],
+      "procedure": "sdk_cli_and_manifest_nonexecuting_plans"
+    },
+    {
+      "test": "tests/test_sdk_cli.py",
+      "case": "test_marketplace_cli_validation_plan_and_catalog",
+      "case_id": "tests/test_sdk_cli.py::test_marketplace_cli_validation_plan_and_catalog",
+      "contracts": [
+        "sv.sdk.plan-only"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.plan_application_surface_launch -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_install_profile -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_module_install -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_cli._load_json_object",
+        "grant_agent.sdk_cli.run_sdk_cli"
+      ],
+      "procedure": "sdk_cli_and_manifest_nonexecuting_plans"
+    },
+    {
+      "test": "tests/test_sdk_cli.py",
+      "case": "test_surface_cli_status_and_launch_plan_never_execute",
+      "case_id": "tests/test_sdk_cli.py::test_surface_cli_status_and_launch_plan_never_execute",
+      "contracts": [
+        "sv.sdk.plan-only"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.plan_application_surface_launch -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_install_profile -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_module_install -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_cli._load_json_object",
+        "grant_agent.sdk_cli.run_sdk_cli"
+      ],
+      "procedure": "sdk_cli_and_manifest_nonexecuting_plans"
+    },
+    {
+      "test": "tests/test_sdk_cli.py",
+      "case": "test_manifest_cli_rejects_non_object_json",
+      "case_id": "tests/test_sdk_cli.py::test_manifest_cli_rejects_non_object_json",
+      "contracts": [
+        "sv.sdk.plan-only"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk.plan_application_surface_launch -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_install_profile -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk.plan_module_install -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_cli._load_json_object",
+        "grant_agent.sdk_cli.run_sdk_cli"
+      ],
+      "procedure": "sdk_cli_and_manifest_nonexecuting_plans"
+    },
+    {
+      "test": "tests/test_sdk_codegen.py",
+      "case": "test_generation_is_byte_identical_and_checked_in",
+      "case_id": "tests/test_sdk_codegen.py::test_generation_is_byte_identical_and_checked_in",
+      "contracts": [
+        "sv.sdk.bindings",
+        "sv.sdk.generation"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk_codegen.generate_sdk_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_codegen.generated_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript"
+      ],
+      "procedure": "sdk_generation_integrity_and_annotation_resolution"
+    },
+    {
+      "test": "tests/test_sdk_codegen.py",
+      "case": "test_source_object_order_does_not_change_generated_bytes",
+      "case_id": "tests/test_sdk_codegen.py::test_source_object_order_does_not_change_generated_bytes",
+      "contracts": [
+        "sv.sdk.bindings",
+        "sv.sdk.generation"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk_codegen.generate_sdk_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_codegen.generated_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript"
+      ],
+      "procedure": "sdk_generation_integrity_and_annotation_resolution"
+    },
+    {
+      "test": "tests/test_sdk_codegen.py",
+      "case": "test_generator_rejects_lossy_schema_keyword_with_pointer",
+      "case_id": "tests/test_sdk_codegen.py::test_generator_rejects_lossy_schema_keyword_with_pointer",
+      "contracts": [
+        "sv.sdk.portable-schema"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk_codegen._assert_supported",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript",
+        "grant_agent.sdk_codegen.validate_portable_schema"
+      ],
+      "procedure": "sdk_portable_schema_type_semantics"
+    },
+    {
+      "test": "tests/test_sdk_codegen.py",
+      "case": "test_unconstrained_open_and_closed_empty_objects_remain_distinct",
+      "case_id": "tests/test_sdk_codegen.py::test_unconstrained_open_and_closed_empty_objects_remain_distinct",
+      "contracts": [
+        "sv.sdk.portable-schema"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk_codegen._assert_supported",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript",
+        "grant_agent.sdk_codegen.validate_portable_schema"
+      ],
+      "procedure": "sdk_portable_schema_type_semantics"
+    },
+    {
+      "test": "tests/test_sdk_codegen.py",
+      "case": "test_boolean_and_null_literals_render_in_both_languages",
+      "case_id": "tests/test_sdk_codegen.py::test_boolean_and_null_literals_render_in_both_languages",
+      "contracts": [
+        "sv.sdk.portable-schema"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk_codegen._assert_supported",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript",
+        "grant_agent.sdk_codegen.validate_portable_schema"
+      ],
+      "procedure": "sdk_portable_schema_type_semantics"
+    },
+    {
+      "test": "tests/test_sdk_codegen.py",
+      "case": "test_nonportable_literals_fail_at_exact_pointer",
+      "case_id": "tests/test_sdk_codegen.py::test_nonportable_literals_fail_at_exact_pointer",
+      "contracts": [
+        "sv.sdk.portable-schema"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk_codegen._assert_supported",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript",
+        "grant_agent.sdk_codegen.validate_portable_schema"
+      ],
+      "procedure": "sdk_portable_schema_type_semantics"
+    },
+    {
+      "test": "tests/test_sdk_codegen.py",
+      "case": "test_generated_bindings_use_recursive_json_only_for_explicit_open_objects",
+      "case_id": "tests/test_sdk_codegen.py::test_generated_bindings_use_recursive_json_only_for_explicit_open_objects",
+      "contracts": [
+        "sv.sdk.bindings",
+        "sv.sdk.generation"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk_codegen.generate_sdk_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_codegen.generated_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript"
+      ],
+      "procedure": "sdk_generation_integrity_and_annotation_resolution"
+    },
+    {
+      "test": "tests/test_sdk_codegen.py",
+      "case": "test_generated_files_stay_lf_in_simulated_autocrlf_checkout",
+      "case_id": "tests/test_sdk_codegen.py::test_generated_files_stay_lf_in_simulated_autocrlf_checkout",
+      "contracts": [
+        "sv.sdk.bindings"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sdk_codegen.generated_bindings -> grant_agent.proofs_e_sv.check",
+        "grant_agent.sdk_codegen.render_python",
+        "grant_agent.sdk_codegen.render_typescript"
+      ],
+      "procedure": "sdk_git_checkout_line_ending_integrity"
+    },
+    {
+      "test": "tests/test_skill_brief.py",
+      "case": "SkillBriefTests.test_project_codex_skill_is_discovered_before_home_skills",
+      "case_id": "tests/test_skill_brief.py::SkillBriefTests.test_project_codex_skill_is_discovered_before_home_skills",
+      "contracts": [
+        "sv.skills.brief",
+        "sv.skills.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_library.SkillLibrary.build_skill_brief -> grant_agent.proofs_e_sv.check",
+        "grant_agent.skill_library.load_codex_home_skill_rows -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_brief_context_and_instruction_bounds"
+    },
+    {
+      "test": "tests/test_skill_brief.py",
+      "case": "SkillBriefTests.test_builds_bounded_task_relevant_skill_brief",
+      "case_id": "tests/test_skill_brief.py::SkillBriefTests.test_builds_bounded_task_relevant_skill_brief",
+      "contracts": [
+        "sv.skills.brief",
+        "sv.skills.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_library.SkillLibrary.build_skill_brief -> grant_agent.proofs_e_sv.check",
+        "grant_agent.skill_library.load_codex_home_skill_rows -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_brief_context_and_instruction_bounds"
+    },
+    {
+      "test": "tests/test_skill_brief.py",
+      "case": "SkillBriefTests.test_skill_brief_does_not_embed_full_skill_instructions",
+      "case_id": "tests/test_skill_brief.py::SkillBriefTests.test_skill_brief_does_not_embed_full_skill_instructions",
+      "contracts": [
+        "sv.skills.brief",
+        "sv.skills.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_library.SkillLibrary.build_skill_brief -> grant_agent.proofs_e_sv.check",
+        "grant_agent.skill_library.load_codex_home_skill_rows -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_brief_context_and_instruction_bounds"
+    },
+    {
+      "test": "tests/test_skill_capsules.py",
+      "case": "test_skill_runtime_separates_instruction_availability_from_enforced_contract",
+      "case_id": "tests/test_skill_capsules.py::test_skill_runtime_separates_instruction_availability_from_enforced_contract",
+      "contracts": [
+        "sv.skills.capsule"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_capsules.SkillCapsuleRegistry.compile -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "capsule_instruction_and_execution_boundary"
+    },
+    {
+      "test": "tests/test_skill_capsules.py",
+      "case": "test_design_skills_compile_behavior_and_phase_bindings",
+      "case_id": "tests/test_skill_capsules.py::test_design_skills_compile_behavior_and_phase_bindings",
+      "contracts": [
+        "sv.skills.capsule"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_capsules.SkillCapsuleRegistry.compile -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "capsule_instruction_and_execution_boundary"
+    },
+    {
+      "test": "tests/test_skill_evolution.py",
+      "case": "SkillEvolutionTests.test_repeated_zero_lift_branches_instead_of_reinforcing_forever",
+      "case_id": "tests/test_skill_evolution.py::SkillEvolutionTests.test_repeated_zero_lift_branches_instead_of_reinforcing_forever",
+      "contracts": [
+        "sv.skills.feedback",
+        "sv.skills.feedback-summary"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_library.SkillLibrary._feedback_summary -> grant_agent.proofs_e_sv.check",
+        "grant_agent.skill_library.SkillLibrary.record_slice_feedback -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_feedback_zero_lift_branch"
+    },
+    {
+      "test": "tests/test_skill_evolution.py",
+      "case": "SkillEvolutionTests.test_create_skill_writes_complete_project_skill_and_creation_receipt",
+      "case_id": "tests/test_skill_evolution.py::SkillEvolutionTests.test_create_skill_writes_complete_project_skill_and_creation_receipt",
+      "contracts": [
+        "sv.skills.create",
+        "sv.skills.catalog"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_library.SkillLibrary.build_catalog -> grant_agent.proofs_e_sv.check",
+        "grant_agent.web_backend._create_codex_skill -> grant_agent.proofs_e_sv.check/_check_failed_skill_write"
+      ],
+      "procedure": "skill_project_personal_creation_reviewed_save_and_catalog"
+    },
+    {
+      "test": "tests/test_skill_evolution.py",
+      "case": "SkillEvolutionTests.test_create_skill_can_target_the_personal_codex_library",
+      "case_id": "tests/test_skill_evolution.py::SkillEvolutionTests.test_create_skill_can_target_the_personal_codex_library",
+      "contracts": [
+        "sv.skills.create",
+        "sv.skills.save",
+        "sv.skills.catalog"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_library.SkillLibrary.build_catalog -> grant_agent.proofs_e_sv.check",
+        "grant_agent.web_backend._create_codex_skill -> grant_agent.proofs_e_sv.check/_check_failed_skill_write",
+        "grant_agent.web_backend._save_codex_skill_file -> grant_agent.proofs_e_sv.check/_check_failed_skill_write"
+      ],
+      "procedure": "skill_project_personal_creation_reviewed_save_and_catalog"
+    },
+    {
+      "test": "tests/test_skill_evolution.py",
+      "case": "SkillEvolutionTests.test_reviewed_save_validates_versions_hashes_and_preserves_backup",
+      "case_id": "tests/test_skill_evolution.py::SkillEvolutionTests.test_reviewed_save_validates_versions_hashes_and_preserves_backup",
+      "contracts": [
+        "sv.skills.save"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.web_backend._save_codex_skill_file -> grant_agent.proofs_e_sv.check/_check_failed_skill_write"
+      ],
+      "procedure": "skill_project_personal_creation_reviewed_save_and_catalog"
+    },
+    {
+      "test": "tests/test_skill_evolution.py",
+      "case": "SkillEvolutionTests.test_invalid_skill_is_rejected_before_the_file_changes",
+      "case_id": "tests/test_skill_evolution.py::SkillEvolutionTests.test_invalid_skill_is_rejected_before_the_file_changes",
+      "contracts": [
+        "sv.skills.save"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.web_backend._save_codex_skill_file -> grant_agent.proofs_e_sv.check/_check_failed_skill_write"
+      ],
+      "procedure": "skill_project_personal_creation_reviewed_save_and_catalog"
+    },
+    {
+      "test": "tests/test_skill_evolution.py",
+      "case": "SkillEvolutionTests.test_catalog_exposes_visible_evolution_without_equating_use_with_trust",
+      "case_id": "tests/test_skill_evolution.py::SkillEvolutionTests.test_catalog_exposes_visible_evolution_without_equating_use_with_trust",
+      "contracts": [
+        "sv.skills.catalog"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skill_library.SkillLibrary.build_catalog -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_project_personal_creation_reviewed_save_and_catalog"
+    },
+    {
+      "test": "tests/test_skills.py",
+      "case": "SkillRegistryTests.test_retrieves_relevant_skill",
+      "case_id": "tests/test_skills.py::SkillRegistryTests.test_retrieves_relevant_skill",
+      "contracts": [
+        "sv.skills.retrieval"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skills.SkillRegistry.retrieve -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_retrieval_and_packaged_capabilities"
+    },
+    {
+      "test": "tests/test_skills.py",
+      "case": "SkillRegistryTests.test_fallback_returns_defaults_when_no_overlap",
+      "case_id": "tests/test_skills.py::SkillRegistryTests.test_fallback_returns_defaults_when_no_overlap",
+      "contracts": [
+        "sv.skills.retrieval"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skills.SkillRegistry.retrieve -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_retrieval_and_packaged_capabilities"
+    },
+    {
+      "test": "tests/test_skills.py",
+      "case": "SkillRegistryTests.test_packaged_catalog_includes_curated_design_and_browser_skills",
+      "case_id": "tests/test_skills.py::SkillRegistryTests.test_packaged_catalog_includes_curated_design_and_browser_skills",
+      "contracts": [
+        "sv.skills.retrieval"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skills.SkillRegistry.retrieve -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_retrieval_and_packaged_capabilities"
+    },
+    {
+      "test": "tests/test_skills.py",
+      "case": "SkillRegistryTests.test_retrieves_jbheaven_godmode_skill_for_red_team_objectives",
+      "case_id": "tests/test_skills.py::SkillRegistryTests.test_retrieves_jbheaven_godmode_skill_for_red_team_objectives",
+      "contracts": [
+        "sv.skills.retrieval"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skills.SkillRegistry.retrieve -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_retrieval_and_packaged_capabilities"
+    },
+    {
+      "test": "tests/test_skills.py",
+      "case": "SkillRegistryTests.test_retrieves_voice_accessibility_skill_for_low_typing_objectives",
+      "case_id": "tests/test_skills.py::SkillRegistryTests.test_retrieves_voice_accessibility_skill_for_low_typing_objectives",
+      "contracts": [
+        "sv.skills.retrieval"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.skills.SkillRegistry.retrieve -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "skill_retrieval_and_packaged_capabilities"
+    },
+    {
+      "test": "tests/test_stage_neyvia_wip_snapshot.py",
+      "case": "test_wip_stage_excludes_browser_profiles_and_private_memory",
+      "case_id": "tests/test_stage_neyvia_wip_snapshot.py::test_wip_stage_excludes_browser_profiles_and_private_memory",
+      "contracts": [
+        "sv.snapshot.private-filter"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/stage_neyvia_wip_snapshot.py:_is_excluded -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "safe_update_and_snapshot_path_metadata"
+    },
+    {
+      "test": "tests/test_stage_neyvia_wip_snapshot.py",
+      "case": "test_wip_stage_keeps_redacted_receipt_binding_proof",
+      "case_id": "tests/test_stage_neyvia_wip_snapshot.py::test_wip_stage_keeps_redacted_receipt_binding_proof",
+      "contracts": [
+        "sv.snapshot.private-filter"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/stage_neyvia_wip_snapshot.py:_is_excluded -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "safe_update_and_snapshot_path_metadata"
+    },
+    {
+      "test": "tests/test_sub_agent_receipts.py",
+      "case": "SubAgentReceiptTests.test_builds_bounded_advisory_sub_agent_receipt",
+      "case_id": "tests/test_sub_agent_receipts.py::SubAgentReceiptTests.test_builds_bounded_advisory_sub_agent_receipt",
+      "contracts": [
+        "sv.subagent.advisory-bounds"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sub_agent_receipts.build_sub_agent_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "bounded_advisory_receipts"
+    },
+    {
+      "test": "tests/test_sub_agent_receipts.py",
+      "case": "SubAgentReceiptTests.test_invalid_role_and_status_fall_back_to_review_partial",
+      "case_id": "tests/test_sub_agent_receipts.py::SubAgentReceiptTests.test_invalid_role_and_status_fall_back_to_review_partial",
+      "contracts": [
+        "sv.subagent.advisory-bounds"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sub_agent_receipts.build_sub_agent_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "bounded_advisory_receipts"
+    },
+    {
+      "test": "tests/test_sub_agent_receipts.py",
+      "case": "SubAgentReceiptTests.test_receipt_does_not_store_giant_findings",
+      "case_id": "tests/test_sub_agent_receipts.py::SubAgentReceiptTests.test_receipt_does_not_store_giant_findings",
+      "contracts": [
+        "sv.subagent.advisory-bounds"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.sub_agent_receipts.build_sub_agent_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "bounded_advisory_receipts"
+    },
+    {
+      "test": "tests/test_suite_report.py",
+      "case": "SuiteReportTests.test_build_and_write_suite_artifacts",
+      "case_id": "tests/test_suite_report.py::SuiteReportTests.test_build_and_write_suite_artifacts",
+      "contracts": [
+        "sv.suite.summary",
+        "sv.suite.artifacts"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.suite_report.build_suite_summary -> grant_agent.proofs_e_sv.check",
+        "grant_agent.suite_report.write_suite_artifacts -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "suite_artifact_roundtrip"
+    },
+    {
+      "test": "tests/test_support_bundle.py",
+      "case": "test_support_bundle_is_allowlist_first_and_excludes_raw_project_content",
+      "case_id": "tests/test_support_bundle.py::test_support_bundle_is_allowlist_first_and_excludes_raw_project_content",
+      "contracts": [
+        "sv.support.bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.support_bundle._log_index",
+        "grant_agent.support_bundle._read_json",
+        "grant_agent.support_bundle._resolve_jobs_root",
+        "grant_agent.support_bundle.build_redacted_support_bundle -> grant_agent.proofs_e_sv.check_support_payload/check"
+      ],
+      "procedure": "support_allowlist_corrupt_bounds_and_secret_rejection"
+    },
+    {
+      "test": "tests/test_support_bundle.py",
+      "case": "test_support_bundle_does_not_copy_corrupt_receipt_bytes",
+      "case_id": "tests/test_support_bundle.py::test_support_bundle_does_not_copy_corrupt_receipt_bytes",
+      "contracts": [
+        "sv.support.bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.support_bundle._log_index",
+        "grant_agent.support_bundle._read_json",
+        "grant_agent.support_bundle._resolve_jobs_root",
+        "grant_agent.support_bundle.build_redacted_support_bundle -> grant_agent.proofs_e_sv.check_support_payload/check"
+      ],
+      "procedure": "support_allowlist_corrupt_bounds_and_secret_rejection"
+    },
+    {
+      "test": "tests/test_support_bundle.py",
+      "case": "test_support_bundle_fails_closed_on_secret_like_structured_identifier",
+      "case_id": "tests/test_support_bundle.py::test_support_bundle_fails_closed_on_secret_like_structured_identifier",
+      "contracts": [
+        "sv.support.bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.support_bundle._log_index",
+        "grant_agent.support_bundle._read_json",
+        "grant_agent.support_bundle._resolve_jobs_root",
+        "grant_agent.support_bundle.build_redacted_support_bundle -> grant_agent.proofs_e_sv.check_support_payload/check"
+      ],
+      "procedure": "support_allowlist_corrupt_bounds_and_secret_rejection"
+    },
+    {
+      "test": "tests/test_support_bundle.py",
+      "case": "test_support_bundle_is_bounded_and_refuses_accidental_overwrite",
+      "case_id": "tests/test_support_bundle.py::test_support_bundle_is_bounded_and_refuses_accidental_overwrite",
+      "contracts": [
+        "sv.support.bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.support_bundle._log_index",
+        "grant_agent.support_bundle._read_json",
+        "grant_agent.support_bundle._resolve_jobs_root",
+        "grant_agent.support_bundle.build_redacted_support_bundle -> grant_agent.proofs_e_sv.check_support_payload/check"
+      ],
+      "procedure": "support_allowlist_corrupt_bounds_and_secret_rejection"
+    },
+    {
+      "test": "tests/test_support_bundle_root_safety.py",
+      "case": "test_support_bundle_refuses_symlinked_harness_jobs_root",
+      "case_id": "tests/test_support_bundle_root_safety.py::test_support_bundle_refuses_symlinked_harness_jobs_root",
+      "contracts": [
+        "sv.support.bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.support_bundle._log_index",
+        "grant_agent.support_bundle._read_json",
+        "grant_agent.support_bundle._resolve_jobs_root",
+        "grant_agent.support_bundle.build_redacted_support_bundle -> grant_agent.proofs_e_sv.check_support_payload/check"
+      ],
+      "procedure": "support_external_linked_root_refusal"
+    },
+    {
+      "test": "tests/test_support_bundle_scale.py",
+      "case": "test_support_bundle_bounds_large_log_inspection",
+      "case_id": "tests/test_support_bundle_scale.py::test_support_bundle_bounds_large_log_inspection",
+      "contracts": [
+        "sv.support.bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.support_bundle._log_index",
+        "grant_agent.support_bundle._read_json",
+        "grant_agent.support_bundle._resolve_jobs_root",
+        "grant_agent.support_bundle.build_redacted_support_bundle -> grant_agent.proofs_e_sv.check_support_payload/check"
+      ],
+      "procedure": "support_allowlist_corrupt_bounds_and_secret_rejection"
+    },
+    {
+      "test": "tests/test_tool_auto_update.py",
+      "case": "test_npm_package_is_read_from_update_commands",
+      "case_id": "tests/test_tool_auto_update.py::test_npm_package_is_read_from_update_commands",
+      "contracts": [
+        "sv.update.package-parse"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.runtime_auto_update.npm_package_of -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "safe_update_and_snapshot_path_metadata"
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_semantic_hash_ignores_focus_noise",
+      "case_id": "tests/test_ui_graph.py::test_semantic_hash_ignores_focus_noise",
+      "contracts": [
+        "sv.ui.semantic-identity"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.ui_graph.UiNode.semantic_tuple -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_graph.compute_semantic_hash"
+      ],
+      "procedure": "ui_resident_semantic_graph_query_and_delta"
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_graph_delta_added_changed_removed",
+      "case_id": "tests/test_ui_graph.py::test_graph_delta_added_changed_removed",
+      "contracts": [
+        "sv.ui.graph-state",
+        "sv.ui.delta",
+        "sv.ui.compact-delta"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.ui_graph.UiGraph.replace_nodes -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_graph.diff_graphs -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_graph.format_compact_delta -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "ui_resident_semantic_graph_query_and_delta"
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_find_query_language",
+      "case_id": "tests/test_ui_graph.py::test_find_query_language",
+      "contracts": [
+        "sv.ui.query"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.ui_graph.find_nodes -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "ui_resident_semantic_graph_query_and_delta"
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_ui_tools_compact_find_diff_do_stale",
+      "case_id": "tests/test_ui_graph.py::test_ui_tools_compact_find_diff_do_stale",
+      "contracts": [
+        "sv.ui.compact-result",
+        "sv.ui.action-gates"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.ui_tools.UiToolSurface._compact_result -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_tools.UiToolSurface.ui_do -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "ui_compact_queries_and_stale_no_page_failure"
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_diff_graphs_helper_and_playwright_flatten",
+      "case_id": "tests/test_ui_graph.py::test_diff_graphs_helper_and_playwright_flatten",
+      "contracts": [
+        "sv.ui.delta",
+        "sv.ui.ax-normalization"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.ui_graph.diff_graphs -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_observer.flatten_cdp_ax_tree -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_observer.flatten_playwright_ax -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "ui_accessibility_payload_normalization"
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_cdp_ax_flatten_and_register_shim",
+      "case_id": "tests/test_ui_graph.py::test_cdp_ax_flatten_and_register_shim",
+      "contracts": [
+        "sv.ui.ax-normalization",
+        "sv.ui.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.ui_observer.flatten_cdp_ax_tree -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_observer.flatten_playwright_ax -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_tools.register_with_native_registry -> grant_agent.proofs_e_sv.check",
+        "grant_agent.ui_tools.register_with_progressive_surface -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "ui_native_and_progressive_registration"
+    },
+    {
+      "test": "tests/test_verification.py",
+      "case": "VerificationTests.test_blocks_high_risk_command",
+      "case_id": "tests/test_verification.py::VerificationTests.test_blocks_high_risk_command",
+      "contracts": [
+        "sv.verification.result",
+        "sv.verification.normalize"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification.VerificationRunner.run -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification._normalize_verification_command -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "command_rejection_timeout_and_normalization"
+    },
+    {
+      "test": "tests/test_verification.py",
+      "case": "VerificationTests.test_detect_default_commands",
+      "case_id": "tests/test_verification.py::VerificationTests.test_detect_default_commands",
+      "contracts": [
+        "sv.verification.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification.detect_default_verification_commands -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "default_verification_command_availability_discovery"
+    },
+    {
+      "test": "tests/test_verification.py",
+      "case": "VerificationTests.test_timeout_is_reported_instead_of_raising",
+      "case_id": "tests/test_verification.py::VerificationTests.test_timeout_is_reported_instead_of_raising",
+      "contracts": [
+        "sv.verification.result",
+        "sv.verification.normalize"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification.VerificationRunner.run -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification._normalize_verification_command -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "command_rejection_timeout_and_normalization"
+    },
+    {
+      "test": "tests/test_verification.py",
+      "case": "VerificationTests.test_pytest_commands_are_normalized_to_detected_python",
+      "case_id": "tests/test_verification.py::VerificationTests.test_pytest_commands_are_normalized_to_detected_python",
+      "contracts": [
+        "sv.verification.result",
+        "sv.verification.normalize"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification.VerificationRunner.run -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification._normalize_verification_command -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "command_rejection_timeout_and_normalization"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_plans_python_backend_checks",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_plans_python_backend_checks",
+      "contracts": [
+        "sv.ladder.capacity",
+        "sv.ladder.plan"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_verification_capacity_policy -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_verification_ladder -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_capacity_and_required_steps"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_gates_frontend_build_and_browser_verification_by_capacity",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_gates_frontend_build_and_browser_verification_by_capacity",
+      "contracts": [
+        "sv.ladder.capacity",
+        "sv.ladder.plan"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_verification_capacity_policy -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_verification_ladder -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_capacity_and_required_steps"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_capacity_policy_can_enable_heavier_ui_checks",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_capacity_policy_can_enable_heavier_ui_checks",
+      "contracts": [
+        "sv.ladder.capacity",
+        "sv.ladder.plan"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_verification_capacity_policy -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_verification_ladder -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_capacity_and_required_steps"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_capacity_policy_gates_heavy_checks_without_pc_or_time",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_capacity_policy_gates_heavy_checks_without_pc_or_time",
+      "contracts": [
+        "sv.ladder.capacity",
+        "sv.ladder.plan"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_verification_capacity_policy -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_verification_ladder -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_capacity_and_required_steps"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_capacity_policy_keeps_browser_gated_without_operator_presence",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_capacity_policy_keeps_browser_gated_without_operator_presence",
+      "contracts": [
+        "sv.ladder.capacity",
+        "sv.ladder.plan"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_verification_capacity_policy -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_verification_ladder -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_capacity_and_required_steps"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_ladder_bounds_changed_files",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_ladder_bounds_changed_files",
+      "contracts": [
+        "sv.ladder.capacity",
+        "sv.ladder.plan"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_verification_capacity_policy -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_verification_ladder -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_capacity_and_required_steps"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_syntax_import_receipt_passes_for_valid_python_files",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_syntax_import_receipt_passes_for_valid_python_files",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_syntax_import_receipt_fails_for_invalid_python",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_syntax_import_receipt_fails_for_invalid_python",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_syntax_import_receipt_fails_for_missing_python_file",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_syntax_import_receipt_fails_for_missing_python_file",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_changed_file_targeted_receipt_skips_when_no_test_target_exists",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_changed_file_targeted_receipt_skips_when_no_test_target_exists",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_changed_file_targeted_receipt_fails_for_missing_changed_test",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_changed_file_targeted_receipt_fails_for_missing_changed_test",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_backend_command_smoke_receipt_runs_supplied_command",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_backend_command_smoke_receipt_runs_supplied_command",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_backend_command_smoke_receipt_fails_fast",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_backend_command_smoke_receipt_fails_fast",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_backend_command_smoke_receipt_skips_without_command",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_backend_command_smoke_receipt_skips_without_command",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_ui_button_smoke_receipt_passes_with_observed_interactions",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_ui_button_smoke_receipt_passes_with_observed_interactions",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_ui_button_smoke_receipt_fails_when_any_interaction_fails",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_ui_button_smoke_receipt_fails_when_any_interaction_fails",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_ui_button_smoke_receipt_skips_without_observed_interactions",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_ui_button_smoke_receipt_skips_without_observed_interactions",
+      "contracts": [
+        "sv.ladder.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+        "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "verification_receipts_and_failure_short_circuit"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_local_budget_can_pass_but_promotion_remains_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_local_budget_can_pass_but_promotion_remains_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_fails_for_over_budget_measurement",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_fails_for_over_budget_measurement",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_missing_runtime_evidence_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_missing_runtime_evidence_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_manifest_accounts_for_transitive_entry_imports",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_manifest_accounts_for_transitive_entry_imports",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_build_asset_graph"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_manifest_rejects_malformed_visited_records",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_manifest_rejects_malformed_visited_records",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_build_asset_graph"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_html_parser_handles_unquoted_initial_assets_and_fails_unresolved_reference",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_html_parser_handles_unquoted_initial_assets_and_fails_unresolved_reference",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_build_asset_graph"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_stale_runtime_evidence_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_stale_runtime_evidence_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_numeric_metric_without_measured_provenance_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_numeric_metric_without_measured_provenance_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_excessive_metric_sample_count_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_excessive_metric_sample_count_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_future_runtime_evidence_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_future_runtime_evidence_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_runtime_evidence_for_different_build_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_runtime_evidence_for_different_build_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_tampered_recent_evidence_digest_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_tampered_recent_evidence_digest_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_hand_authored_evidence_without_recorder_schema_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_hand_authored_evidence_without_recorder_schema_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_evidence_for_different_budget_config_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_evidence_for_different_budget_config_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_resealed_aggregate_mismatch_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_resealed_aggregate_mismatch_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_negative_and_non_finite_runtime_values_are_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_negative_and_non_finite_runtime_values_are_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_missing_required_runtime_budget_is_rejected",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_missing_required_runtime_budget_is_rejected",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_missing_required_build_budget_is_rejected",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_missing_required_build_budget_is_rejected",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_evidence_trust_and_metric_validation"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_manifest_missing_referenced_asset_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_manifest_missing_referenced_asset_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_build_asset_graph"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_html_fallback_missing_non_javascript_asset_is_unproven",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_html_fallback_missing_non_javascript_asset_is_unproven",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_build_asset_graph"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_report_uses_path_refs_and_diagnostics_redact_sensitive_forms",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_report_uses_path_refs_and_diagnostics_redact_sensitive_forms",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_missing_build_and_redacted_cli"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_cli_failure_uses_stable_code_without_local_path",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_cli_failure_uses_stable_code_without_local_path",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_missing_build_and_redacted_cli"
+    },
+    {
+      "test": "tests/test_verify_performance_budget.py",
+      "case": "VerifyPerformanceBudgetTests.test_missing_build_output_is_unproven_not_an_exception",
+      "case_id": "tests/test_verify_performance_budget.py::VerifyPerformanceBudgetTests.test_missing_build_output_is_unproven_not_an_exception",
+      "contracts": [
+        "sv.performance.fail-closed"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "scripts/verify_performance_budget.py:_redact_diagnostic",
+        "scripts/verify_performance_budget.py:_validated_runtime_metric",
+        "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+        "scripts/verify_performance_budget.py:main",
+        "scripts/verify_performance_budget.py:measure_build"
+      ],
+      "procedure": "performance_missing_build_and_redacted_cli"
+    },
+    {
+      "test": "tests/test_vibe_suggestions.py",
+      "case": "VibeSuggestionTests.test_build_vibe_next_steps",
+      "case_id": "tests/test_vibe_suggestions.py::VibeSuggestionTests.test_build_vibe_next_steps",
+      "contracts": [
+        "sv.suggestions.priority",
+        "sv.suggestions.signals"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.vibe_suggestions.build_vibe_next_steps -> grant_agent.proofs_e_sv.check",
+        "grant_agent.vibe_suggestions.collect_repo_signals -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "repo_signals_and_plan_continuation"
+    },
+    {
+      "test": "tests/test_vibe_suggestions.py",
+      "case": "VibeSuggestionTests.test_collect_repo_signals",
+      "case_id": "tests/test_vibe_suggestions.py::VibeSuggestionTests.test_collect_repo_signals",
+      "contracts": [
+        "sv.suggestions.priority",
+        "sv.suggestions.signals"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.vibe_suggestions.build_vibe_next_steps -> grant_agent.proofs_e_sv.check",
+        "grant_agent.vibe_suggestions.collect_repo_signals -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "repo_signals_and_plan_continuation"
+    },
+    {
+      "test": "tests/test_video_tools.py",
+      "case": "VideoToolTests.test_inspect_and_digest_create_model_readable_video_evidence",
+      "case_id": "tests/test_video_tools.py::VideoToolTests.test_inspect_and_digest_create_model_readable_video_evidence",
+      "contracts": [
+        "sv.video.metadata",
+        "sv.video.digest",
+        "sv.video.route"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.HybridExecutionAdapter.build_action_proposal -> grant_agent.proofs_e_sv.check_video_proposal",
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.video_tools.VideoEvidenceBuilder.digest -> grant_agent.proofs_e_sv.check",
+        "grant_agent.video_tools.VideoEvidenceBuilder.inspect -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "real_video_native_inspection_digest_and_planner_route"
+    },
+    {
+      "test": "tests/test_video_tools.py",
+      "case": "VideoToolTests.test_action_executor_selects_video_digest",
+      "case_id": "tests/test_video_tools.py::VideoToolTests.test_action_executor_selects_video_digest",
+      "contracts": [
+        "sv.video.metadata",
+        "sv.video.digest",
+        "sv.video.route"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.HybridExecutionAdapter.build_action_proposal -> grant_agent.proofs_e_sv.check_video_proposal",
+        "grant_agent.proofs_e_sv.self_check",
+        "grant_agent.video_tools.VideoEvidenceBuilder.digest -> grant_agent.proofs_e_sv.check",
+        "grant_agent.video_tools.VideoEvidenceBuilder.inspect -> grant_agent.proofs_e_sv.check"
+      ],
+      "procedure": "real_video_native_inspection_digest_and_planner_route"
+    }
+  ],
+  "frontier": [
+    {
+      "test": "tests/test_secret_broker.py",
+      "case": "test_catalog_and_compatibility_hide_item_session_and_storage",
+      "case_id": "tests/test_secret_broker.py::test_catalog_and_compatibility_hide_item_session_and_storage",
+      "status": "retained",
+      "reason": "Retain destination/hash-bound single-use lease, approval/expiry rejection, state-root confinement, secret-output redaction and bounded audit protections until a scoped synthetic vault/destination process fixture drives each production broker action; real credential files cannot be read in this task."
+    },
+    {
+      "test": "tests/test_secret_broker.py",
+      "case": "test_plan_is_destination_bound_hash_bound_and_secretless",
+      "case_id": "tests/test_secret_broker.py::test_plan_is_destination_bound_hash_bound_and_secretless",
+      "status": "retained",
+      "reason": "Retain destination/hash-bound single-use lease, approval/expiry rejection, state-root confinement, secret-output redaction and bounded audit protections until a scoped synthetic vault/destination process fixture drives each production broker action; real credential files cannot be read in this task."
+    },
+    {
+      "test": "tests/test_secret_broker.py",
+      "case": "test_use_requires_approval_injects_only_at_destination_and_prevents_replay",
+      "case_id": "tests/test_secret_broker.py::test_use_requires_approval_injects_only_at_destination_and_prevents_replay",
+      "status": "retained",
+      "reason": "Retain destination/hash-bound single-use lease, approval/expiry rejection, state-root confinement, secret-output redaction and bounded audit protections until a scoped synthetic vault/destination process fixture drives each production broker action; real credential files cannot be read in this task."
+    },
+    {
+      "test": "tests/test_secret_broker.py",
+      "case": "test_destination_output_containing_secret_fails_closed_and_is_redacted",
+      "case_id": "tests/test_secret_broker.py::test_destination_output_containing_secret_fails_closed_and_is_redacted",
+      "status": "retained",
+      "reason": "Retain destination/hash-bound single-use lease, approval/expiry rejection, state-root confinement, secret-output redaction and bounded audit protections until a scoped synthetic vault/destination process fixture drives each production broker action; real credential files cannot be read in this task."
+    },
+    {
+      "test": "tests/test_secret_broker.py",
+      "case": "test_expired_lease_never_calls_vault",
+      "case_id": "tests/test_secret_broker.py::test_expired_lease_never_calls_vault",
+      "status": "retained",
+      "reason": "Retain destination/hash-bound single-use lease, approval/expiry rejection, state-root confinement, secret-output redaction and bounded audit protections until a scoped synthetic vault/destination process fixture drives each production broker action; real credential files cannot be read in this task."
+    },
+    {
+      "test": "tests/test_secret_broker.py",
+      "case": "test_vault_state_outside_dedicated_root_is_rejected",
+      "case_id": "tests/test_secret_broker.py::test_vault_state_outside_dedicated_root_is_rejected",
+      "status": "retained",
+      "reason": "Retain destination/hash-bound single-use lease, approval/expiry rejection, state-root confinement, secret-output redaction and bounded audit protections until a scoped synthetic vault/destination process fixture drives each production broker action; real credential files cannot be read in this task."
+    },
+    {
+      "test": "tests/test_secret_broker.py",
+      "case": "test_audit_is_bounded_and_contains_no_secret_material",
+      "case_id": "tests/test_secret_broker.py::test_audit_is_bounded_and_contains_no_secret_material",
+      "status": "retained",
+      "reason": "Retain destination/hash-bound single-use lease, approval/expiry rejection, state-root confinement, secret-output redaction and bounded audit protections until a scoped synthetic vault/destination process fixture drives each production broker action; real credential files cannot be read in this task."
+    },
+    {
+      "test": "tests/test_service_launcher.py",
+      "case": "ServiceLauncherTests.test_runtime_secret_loader_is_safe_and_precedes_gateway_actions",
+      "case_id": "tests/test_service_launcher.py::ServiceLauncherTests.test_runtime_secret_loader_is_safe_and_precedes_gateway_actions",
+      "status": "retained",
+      "reason": "Retain POSIX secret-loader ownership/mode/symlink guards plus explicit release gateway startup/rollback and watchdog/worker launch protections. Windows-only startup fixtures do not exercise these shell/POSIX mechanisms; live service/NAS actions are outside authority."
+    },
+    {
+      "test": "tests/test_service_launcher.py",
+      "case": "ServiceLauncherTests.test_nas_service_launcher_starts_backend_and_watchdog_with_opt_in_worker",
+      "case_id": "tests/test_service_launcher.py::ServiceLauncherTests.test_nas_service_launcher_starts_backend_and_watchdog_with_opt_in_worker",
+      "status": "retained",
+      "reason": "Retain POSIX secret-loader ownership/mode/symlink guards plus explicit release gateway startup/rollback and watchdog/worker launch protections. Windows-only startup fixtures do not exercise these shell/POSIX mechanisms; live service/NAS actions are outside authority."
+    },
+    {
+      "test": "tests/test_service_launcher.py",
+      "case": "ServiceLauncherTests.test_gateway_lifecycle_is_explicitly_bound_to_a_release",
+      "case_id": "tests/test_service_launcher.py::ServiceLauncherTests.test_gateway_lifecycle_is_explicitly_bound_to_a_release",
+      "status": "retained",
+      "reason": "Retain POSIX secret-loader ownership/mode/symlink guards plus explicit release gateway startup/rollback and watchdog/worker launch protections. Windows-only startup fixtures do not exercise these shell/POSIX mechanisms; live service/NAS actions are outside authority."
+    },
+    {
+      "test": "tests/test_skill_evolution.py",
+      "case": "SkillEvolutionTests.test_live_skill_library_command_returns_focused_creation_and_version_history",
+      "case_id": "tests/test_skill_evolution.py::SkillEvolutionTests.test_live_skill_library_command_returns_focused_creation_and_version_history",
+      "status": "retained",
+      "reason": "Retain live backend dispatch catalog focus/truncation/liveRefresh fields until a confined backend-dispatch journey and its per-action projections are covered. Actual project/personal helper writes, validated backup/hash/revision/idempotence and catalog evolution are covered under explicit scratch home roots."
+    },
+    {
+      "test": "tests/test_stage_neyvia_wip_snapshot.py",
+      "case": "test_wip_push_streams_archive_from_disk_instead_of_memory",
+      "case_id": "tests/test_stage_neyvia_wip_snapshot.py::test_wip_push_streams_archive_from_disk_instead_of_memory",
+      "status": "retained",
+      "reason": "The remaining streaming-transfer case asserts SSH upload implementation text; no permitted scoped transport fixture or real transfer receipt proves bounded disk-streaming. NAS transfer is explicitly forbidden."
+    },
+    {
+      "test": "tests/test_support_bundle.py",
+      "case": "test_support_bundle_refuses_symlinked_receipts_and_logs",
+      "case_id": "tests/test_support_bundle.py::test_support_bundle_refuses_symlinked_receipts_and_logs",
+      "status": "retained",
+      "reason": "Windows refuses file symbolic-link creation with WinError 1314. Preserve this file/link safety case until real file links can be exercised; directory junction proof does not cover file links."
+    },
+    {
+      "test": "tests/test_tool_auto_update.py",
+      "case": "test_update_needed_compares_with_the_newest_npm_release",
+      "case_id": "tests/test_tool_auto_update.py::test_update_needed_compares_with_the_newest_npm_release",
+      "status": "retained",
+      "reason": "Retain version-availability, installed-only idle CLI update, released-tool retry and busy/missing runtime protections. No scoped npm registry/install executable fixture is registered; global CLI installs/updates are outside this task."
+    },
+    {
+      "test": "tests/test_tool_auto_update.py",
+      "case": "test_user_clis_update_only_installed_idle_ones",
+      "case_id": "tests/test_tool_auto_update.py::test_user_clis_update_only_installed_idle_ones",
+      "status": "retained",
+      "reason": "Retain version-availability, installed-only idle CLI update, released-tool retry and busy/missing runtime protections. No scoped npm registry/install executable fixture is registered; global CLI installs/updates are outside this task."
+    },
+    {
+      "test": "tests/test_tool_auto_update.py",
+      "case": "test_a_released_tool_is_updated_in_the_same_round",
+      "case_id": "tests/test_tool_auto_update.py::test_a_released_tool_is_updated_in_the_same_round",
+      "status": "retained",
+      "reason": "Retain version-availability, installed-only idle CLI update, released-tool retry and busy/missing runtime protections. No scoped npm registry/install executable fixture is registered; global CLI installs/updates are outside this task."
+    },
+    {
+      "test": "tests/test_tool_auto_update.py",
+      "case": "test_all_runtimes_skip_missing_ones_and_defer_busy_ones",
+      "case_id": "tests/test_tool_auto_update.py::test_all_runtimes_skip_missing_ones_and_defer_busy_ones",
+      "status": "retained",
+      "reason": "Retain version-availability, installed-only idle CLI update, released-tool retry and busy/missing runtime protections. No scoped npm registry/install executable fixture is registered; global CLI installs/updates are outside this task."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "TurnCompartmentStorageTests.test_turns_store_a_reference_and_read_back_the_exact_runtime_compartment",
+      "case_id": "tests/test_turn_compartment.py::TurnCompartmentStorageTests.test_turns_store_a_reference_and_read_back_the_exact_runtime_compartment",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "TurnCompartmentStorageTests.test_replay_returns_the_rebuilt_windows",
+      "case_id": "tests/test_turn_compartment.py::TurnCompartmentStorageTests.test_replay_returns_the_rebuilt_windows",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "TurnCompartmentStorageTests.test_transcript_page_still_carries_only_the_turn_receipt",
+      "case_id": "tests/test_turn_compartment.py::TurnCompartmentStorageTests.test_transcript_page_still_carries_only_the_turn_receipt",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "TurnCompartmentStorageTests.test_a_run_outside_the_conversation_makes_the_next_turn_a_checkpoint",
+      "case_id": "tests/test_turn_compartment.py::TurnCompartmentStorageTests.test_a_run_outside_the_conversation_makes_the_next_turn_a_checkpoint",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "TurnCompartmentStorageTests.test_a_missing_session_file_starts_a_new_window_instead_of_reusing_a_stale_one",
+      "case_id": "tests/test_turn_compartment.py::TurnCompartmentStorageTests.test_a_missing_session_file_starts_a_new_window_instead_of_reusing_a_stale_one",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "TurnCompartmentStorageTests.test_a_deleted_base_turn_is_reported_instead_of_silently_shortening_the_window",
+      "case_id": "tests/test_turn_compartment.py::TurnCompartmentStorageTests.test_a_deleted_base_turn_is_reported_instead_of_silently_shortening_the_window",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "TurnCompartmentStorageTests.test_a_compartment_from_an_older_backend_is_stored_whole",
+      "case_id": "tests/test_turn_compartment.py::TurnCompartmentStorageTests.test_a_compartment_from_an_older_backend_is_stored_whole",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "LegacyTurnCompartmentTests.test_old_rows_read_unchanged",
+      "case_id": "tests/test_turn_compartment.py::LegacyTurnCompartmentTests.test_old_rows_read_unchanged",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "LegacyTurnCompartmentTests.test_a_new_turn_after_old_rows_references_the_last_old_row",
+      "case_id": "tests/test_turn_compartment.py::LegacyTurnCompartmentTests.test_a_new_turn_after_old_rows_references_the_last_old_row",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "LegacyTurnCompartmentTests.test_compaction_converts_old_rows_without_changing_what_they_read_as",
+      "case_id": "tests/test_turn_compartment.py::LegacyTurnCompartmentTests.test_compaction_converts_old_rows_without_changing_what_they_read_as",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "LegacyTurnCompartmentTests.test_compaction_keeps_a_row_whose_window_does_not_follow_from_its_predecessor",
+      "case_id": "tests/test_turn_compartment.py::LegacyTurnCompartmentTests.test_compaction_keeps_a_row_whose_window_does_not_follow_from_its_predecessor",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_turn_compartment.py",
+      "case": "LegacyTurnCompartmentTests.test_storage_compaction_entry_point_vacuums_the_database",
+      "case_id": "tests/test_turn_compartment.py::LegacyTurnCompartmentTests.test_storage_compaction_entry_point_vacuums_the_database",
+      "status": "retained",
+      "reason": "Retain real conversation persistence/replay/page projection, checkpoint/delta reconstruction, stale/missing-base handling, legacy conversion/idempotence and SQLite VACUUM protections. SV does not invoke the backend conversation write path; standalone command/receipt evidence cannot replace these cases."
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_ui_do_query_actions_refresh_delta_and_wait_locally",
+      "case_id": "tests/test_ui_graph.py::test_ui_do_query_actions_refresh_delta_and_wait_locally",
+      "status": "retained",
+      "reason": "Retain actual attached-browser action/fill/wait/re-observe, page-residency, screenshot-crop and MCP-host discovery cases. Pure injected resident graphs, AX payload normalization and native/progressive registration are covered; no rendered browser or MCP-host request receipt replaces these remaining cases."
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_model_facing_observe_keeps_page_resident_for_next_action",
+      "case_id": "tests/test_ui_graph.py::test_model_facing_observe_keeps_page_resident_for_next_action",
+      "status": "retained",
+      "reason": "Retain actual attached-browser action/fill/wait/re-observe, page-residency, screenshot-crop and MCP-host discovery cases. Pure injected resident graphs, AX payload normalization and native/progressive registration are covered; no rendered browser or MCP-host request receipt replaces these remaining cases."
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_ui_see_crop_with_fake_page",
+      "case_id": "tests/test_ui_graph.py::test_ui_see_crop_with_fake_page",
+      "status": "retained",
+      "reason": "Retain actual attached-browser action/fill/wait/re-observe, page-residency, screenshot-crop and MCP-host discovery cases. Pure injected resident graphs, AX payload normalization and native/progressive registration are covered; no rendered browser or MCP-host request receipt replaces these remaining cases."
+    },
+    {
+      "test": "tests/test_ui_graph.py",
+      "case": "test_mcp_progressive_discovers_ui_tools",
+      "case_id": "tests/test_ui_graph.py::test_mcp_progressive_discovers_ui_tools",
+      "status": "retained",
+      "reason": "Retain actual attached-browser action/fill/wait/re-observe, page-residency, screenshot-crop and MCP-host discovery cases. Pure injected resident graphs, AX payload normalization and native/progressive registration are covered; no rendered browser or MCP-host request receipt replaces these remaining cases."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_narrow_change_selects_direct_verified_topology",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_narrow_change_selects_direct_verified_topology",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_uncertain_cross_surface_task_is_candidate_eligible_but_not_simulated",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_uncertain_cross_surface_task_is_candidate_eligible_but_not_simulated",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_ultra_defaults_to_sol_low_and_luna_xhigh",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_ultra_defaults_to_sol_low_and_luna_xhigh",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_ultra_worker_effort_is_configurable_and_capability_adapted",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_ultra_worker_effort_is_configurable_and_capability_adapted",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_ultra_replaces_explicit_terra_delegated_routes",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_ultra_replaces_explicit_terra_delegated_routes",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_ultra_supports_models_without_reasoning_effort",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_ultra_supports_models_without_reasoning_effort",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_ultra_clamps_max_when_model_stops_at_xhigh",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_ultra_clamps_max_when_model_stops_at_xhigh",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_reasoning_effort_compiles_the_ultra_contract",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_reasoning_effort_compiles_the_ultra_contract",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_runtime_prompt_contains_ultra_boundaries",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_runtime_prompt_contains_ultra_boundaries",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_runtime_settings_reject_non_ultra_contracts",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_runtime_settings_reject_non_ultra_contracts",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_reasoning_effort_normalization_keeps_ultra_out_of_turn_modes",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_reasoning_effort_normalization_keeps_ultra_out_of_turn_modes",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_product_ultra_is_never_emitted_as_provider_wire_effort",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_product_ultra_is_never_emitted_as_provider_wire_effort",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_ultra_reasoning.py",
+      "case": "UltraReasoningTests.test_engine_cycle_blocks_before_invoke_when_isolation_is_unavailable",
+      "case_id": "tests/test_ultra_reasoning.py::UltraReasoningTests.test_engine_cycle_blocks_before_invoke_when_isolation_is_unavailable",
+      "status": "retained",
+      "reason": "Retain direct/candidate topology selection, capability-adapted delegated model/effort routes, Ultra launch/runtime prompt/wire boundaries and fail-closed engine isolation. SV does not invoke mission isolation admission or Ultra policy hosts; command-budget receipts cannot stand in for them."
+    },
+    {
+      "test": "tests/test_unified_agent_preview_contract.py",
+      "case": "test_legacy_preview_routes_canonicalize_into_agent_live",
+      "case_id": "tests/test_unified_agent_preview_contract.py::test_legacy_preview_routes_canonicalize_into_agent_live",
+      "status": "retained",
+      "reason": "Retain classic preview canonicalization, scoped resizable companion persistence, keyboard/focus/responsive companion behavior. Source literals do not prove the visible UI; no owned classic-shell rendered journey has covered these cases."
+    },
+    {
+      "test": "tests/test_unified_agent_preview_contract.py",
+      "case": "test_agent_companion_owns_resizable_per_conversation_state",
+      "case_id": "tests/test_unified_agent_preview_contract.py::test_agent_companion_owns_resizable_per_conversation_state",
+      "status": "retained",
+      "reason": "Retain classic preview canonicalization, scoped resizable companion persistence, keyboard/focus/responsive companion behavior. Source literals do not prove the visible UI; no owned classic-shell rendered journey has covered these cases."
+    },
+    {
+      "test": "tests/test_unified_agent_preview_contract.py",
+      "case": "test_focus_mode_and_responsive_layout_keep_the_companion_intentional",
+      "case_id": "tests/test_unified_agent_preview_contract.py::test_focus_mode_and_responsive_layout_keep_the_companion_intentional",
+      "status": "retained",
+      "reason": "Retain classic preview canonicalization, scoped resizable companion persistence, keyboard/focus/responsive companion behavior. Source literals do not prove the visible UI; no owned classic-shell rendered journey has covered these cases."
+    },
+    {
+      "test": "tests/test_updater_contract.py",
+      "case": "test_tauri_updater_is_signed_and_points_to_github_releases",
+      "case_id": "tests/test_updater_contract.py::test_tauri_updater_is_signed_and_points_to_github_releases",
+      "status": "retained",
+      "reason": "Retain desktop signed updater/artifact/key and permission configuration, signing-gated draft release workflow plus real Settings download/install/relaunch behavior until a scoped signed desktop updater fixture and rendered update journey prove them. Publishing/relaunching public services is unauthorized."
+    },
+    {
+      "test": "tests/test_updater_contract.py",
+      "case": "test_desktop_capability_grants_only_required_update_operations",
+      "case_id": "tests/test_updater_contract.py::test_desktop_capability_grants_only_required_update_operations",
+      "status": "retained",
+      "reason": "Retain desktop signed updater/artifact/key and permission configuration, signing-gated draft release workflow plus real Settings download/install/relaunch behavior until a scoped signed desktop updater fixture and rendered update journey prove them. Publishing/relaunching public services is unauthorized."
+    },
+    {
+      "test": "tests/test_updater_contract.py",
+      "case": "test_release_workflow_requires_signing_secrets_and_updater_json",
+      "case_id": "tests/test_updater_contract.py::test_release_workflow_requires_signing_secrets_and_updater_json",
+      "status": "retained",
+      "reason": "Retain desktop signed updater/artifact/key and permission configuration, signing-gated draft release workflow plus real Settings download/install/relaunch behavior until a scoped signed desktop updater fixture and rendered update journey prove them. Publishing/relaunching public services is unauthorized."
+    },
+    {
+      "test": "tests/test_updater_contract.py",
+      "case": "test_settings_surface_has_large_real_update_action",
+      "case_id": "tests/test_updater_contract.py::test_settings_surface_has_large_real_update_action",
+      "status": "retained",
+      "reason": "Retain desktop signed updater/artifact/key and permission configuration, signing-gated draft release workflow plus real Settings download/install/relaunch behavior until a scoped signed desktop updater fixture and rendered update journey prove them. Publishing/relaunching public services is unauthorized."
+    },
+    {
+      "test": "tests/test_verification_ladder.py",
+      "case": "VerificationLadderTests.test_changed_file_targeted_receipt_runs_changed_tests",
+      "case_id": "tests/test_verification_ladder.py::VerificationLadderTests.test_changed_file_targeted_receipt_runs_changed_tests",
+      "status": "retained",
+      "reason": "Current function invokes pytest. User forbids pytest, so the successful targeted-test execution case remains retained; missing/skipped target outcomes are covered."
+    }
+  ],
+  "scope": {
+    "files": 26,
+    "caseDefinitions": 154,
+    "mappedDefinitions": 100,
+    "retainedDefinitions": 54
+  },
+  "sourceFiles": [
+    ".gitattributes",
+    "config/skills.json",
+    "config/neyvia_module_manifest_schema.json",
+    "config/neyvia_application_surface_schema.json",
+    "config/neyvia_install_profiles.json",
+    "config/neyvia_marketplace_toolchain.json",
+    "config/capability_packs.json",
+    "src/grant_agent/proofs_e_sv.py",
+    "src/grant_agent/models.py",
+    "src/grant_agent/skill_package.py",
+    "src/grant_agent/sdk_cli.py",
+    "src/grant_agent/application_surface.py",
+    "src/grant_agent/module_marketplace.py",
+    "src/grant_agent/install_profiles.py",
+    "src/grant_agent/app_capability_standard.py",
+    "src/grant_agent/progressive_tools.py",
+    "src/grant_agent/native_tools.py",
+    "src/grant_agent/subprocess_utils.py",
+    "src/grant_agent/safety.py",
+    "src/grant_agent/durability.py",
+    "src/grant_agent/generated/neyvia_contracts.py",
+    "sdk/typescript/src/generated/neyvia-contracts.ts"
+  ],
+  "boundaries": [
+    "Local protocol fixture tests actual HTTP serialization/cookies; no provider engine is invoked.",
+    "UI smoke reducer checks supplied receipts only; no browser rendered behavior claim.",
+    "Synthetic performance receipt acceptance demonstrates validator behavior, never actual hardware metrics or release eligibility.",
+    "Snapshot/update checks inspect only metadata; never read credential files or perform NAS/global updates.",
+    "Support root safety uses a real scratch junction when Windows forbids symlink creation; file-symlink cases remain retained.",
+    "SDK CLI uses currently valid publisher-owned module IDs; the original CLI fixture's unowned ID is now correctly rejected."
+  ],
+  "portRoles": [48508]
+}

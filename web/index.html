@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta
+      content="Neyvia turns AI agents into durable daily collaborators on your computer or Synology NAS, with private memory, runtime control, and live UI review."
+      name="description"
+    />
+    <meta content="Neyvia" property="og:title" />
+    <meta content="#0a0f0c" name="theme-color" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="Neyvia" name="apple-mobile-web-app-title" />
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style" />
+    <meta
+      content="Turn AI agents into second brains with a private NAS-ready control layer."
+      property="og:description"
+    />
+    <title>Neyvia | Durable daily AI operations</title>
+    <link href="/manifest.webmanifest" rel="manifest" />
+    <link href="/icons/neyvia-mark.svg" rel="icon" type="image/svg+xml" />
+    <link href="/icons/neyvia-192.png" rel="apple-touch-icon" />
+    <link href="/src/neyvia/next/nxTree.css" rel="stylesheet" />
+    <style>
+      /* Startup splash: one continuous screen from first paint until the
+         workspace has real content (see src/neyvia/neyviaBoot.js). */
+      #neyvia-startup {
+        --nb-bg: #0d1612; --nb-text: #edf2ea; --nb-muted: #a5b6a9; --nb-star: #f6a13a; --nb-route: #6fbf8a;
+        position: fixed; inset: 0; z-index: 2147483000;
+        display: grid; place-content: center; justify-items: center; gap: 14px;
+        padding: 32px; box-sizing: border-box;
+        background: var(--nb-bg); color: var(--nb-text);
+        font: 15px/1.5 "Geist", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+        transition: opacity .42s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .42s;
+      }
+      #neyvia-startup[data-scheme="light"] { --nb-bg: #f7f2e8; --nb-text: #1b211c; --nb-muted: #5f6a60; --nb-star: #e0791f; --nb-route: #2f7d4f; }
+      #neyvia-startup[data-scheme="night"] { --nb-bg: #05141a; --nb-text: #e2f1ef; --nb-muted: #7a9ca0; --nb-star: #f0c552; --nb-route: #36d0a8; }
+      #neyvia-startup[data-scheme="sunset"] { --nb-bg: #141020; --nb-text: #fbf1ea; --nb-muted: #a99cb4; --nb-star: #ffc857; --nb-route: #ff9a5e; }
+      #neyvia-startup[data-scheme="terminal"] { --nb-bg: #040906; --nb-text: #c8f7d6; --nb-muted: #78c28f; --nb-star: #ffb52e; --nb-route: #34e07a; }
+      #neyvia-startup[data-scheme="paper"] { --nb-bg: #f4f3ee; --nb-text: #15171c; --nb-muted: #4b4f58; --nb-star: #c98a0a; --nb-route: #23408e; }
+      #neyvia-startup[data-scheme="ember"] { --nb-bg: #15100d; --nb-text: #f6ece3; --nb-muted: #b19f92; --nb-star: #ffbd4a; --nb-route: #e8573d; }
+      #neyvia-startup[data-scheme="warm"] { --nb-bg: #f3ebe1; --nb-text: #1f1a14; --nb-muted: #6b604f; --nb-star: #d06d18; --nb-route: #3f7a4a; }
+      #neyvia-startup[data-scheme="contrast"] { --nb-bg: #000; --nb-muted: #c8cfdc; }
+      #neyvia-startup .nb-mark { position: relative; width: 76px; height: 76px; display: grid; place-items: center; transition: transform .42s cubic-bezier(.22, 1, .36, 1); }
+      #neyvia-startup .nb-tree { --ny-tree-ink: var(--nb-text); --ny-tree-leaf: var(--nb-route); --ny-tree-sun: var(--nb-star); }
+      #neyvia-startup[data-state="stalled"] .nb-tree * { animation: none; }
+      #neyvia-startup strong { font-size: 19px; font-weight: 600; letter-spacing: -.01em; }
+      #neyvia-startup span { color: var(--nb-muted); font-size: 13.5px; opacity: 0; }
+      #neyvia-startup button { border: 0; border-radius: 999px; padding: 9px 18px; background: var(--nb-text); color: var(--nb-bg); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+      #neyvia-startup[data-state="leaving"] { opacity: 0; visibility: hidden; pointer-events: none; }
+      #neyvia-startup[data-state="leaving"] .nb-mark { transform: scale(1.12); }
+      #neyvia-startup[data-state="stalled"] span { opacity: 1; max-width: 34ch; text-align: center; }
+      @media (prefers-reduced-motion: no-preference) {
+        #neyvia-startup strong { animation: nb-rise .6s cubic-bezier(.22, 1, .36, 1) both; }
+        /* Only a slow start earns an explanation. */
+        #neyvia-startup span { animation: nb-rise .5s cubic-bezier(.22, 1, .36, 1) 1.4s forwards; }
+      }
+      @media (prefers-reduced-motion: reduce) { #neyvia-startup span { opacity: 1; } }
+      @keyframes nb-rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    </style>
+  </head>
+  <body>
+    <div id="neyvia-startup" role="status">
+      <div class="nb-mark" aria-hidden="true">
+        <!-- The growing tree: same markup as web/src/neyvia/next/NxGrowingTree.jsx. -->
+        <svg class="ny-tree is-growing nb-tree" width="76" height="76" viewBox="0 0 32 32">
+          <circle class="ny-tree-sun" cx="23" cy="8.5" r="5"/>
+          <g class="ny-tree-crown">
+            <path class="ny-tree-ground" d="M5 28.6Q16 26.4 27 28.6"/>
+            <path class="ny-tree-trunk" d="M14.6 28.4C15.3 25.4 15.3 21.6 15.1 18.6h1.8c-.2 3 -.2 6.8.5 9.8z"/>
+            <path class="ny-tree-branch is-left" d="M15.6 22.2C14 20.4 11.8 19.2 9.4 18.8"/>
+            <path class="ny-tree-branch is-right" d="M16.4 22.2C18 20.4 20.2 19.2 22.6 18.8"/>
+            <path class="ny-tree-branch is-mid" d="M16 19c-.1-2.4 0-4.6 0-6.6"/>
+            <circle class="ny-tree-leaf" cx="9.6" cy="16.6" r="3.3"/>
+            <circle class="ny-tree-leaf" cx="22.4" cy="16.6" r="3.3"/>
+            <circle class="ny-tree-leaf" cx="12.4" cy="12.4" r="3.8"/>
+            <circle class="ny-tree-leaf" cx="19.6" cy="12.4" r="3.8"/>
+            <circle class="ny-tree-leaf" cx="16" cy="9.4" r="4.2"/>
+          </g>
+        </svg>
+      </div>
+      <strong>Neyvia</strong>
+      <span>Opening your workspace</span>
+      <button hidden type="button">Reload workspace</button>
+      <noscript>Enable JavaScript to open your workspace.</noscript>
+    </div>
+    <div id="root"></div>
+    <script>
+      (() => {
+        const startup = document.getElementById("neyvia-startup");
+        const reload = startup.querySelector("button");
+        reload.onclick = () => window.location.reload();
+        try {
+          // The new shell (the default) keeps its theme in nx.os.theme; the classic one in its preferences.
+          const read = key => JSON.parse(localStorage.getItem(key) || "null");
+          let scheme = "dark";
+          if (localStorage.getItem("neyvia.ui.next") !== "0") {
+            const theme = read("nx.os.theme");
+            if (["light", "sunset", "night", "terminal", "paper", "ember"].includes(theme)) scheme = theme;
+          } else {
+            const prefs = read("neyvia.shell.preferences.v1") || {};
+            const light = prefs.colorMode === "light" || (prefs.colorMode !== "dark" && matchMedia("(prefers-color-scheme: light)").matches);
+            scheme = prefs.appearanceTheme === "high-contrast" ? "contrast" : light ? (prefs.appearanceTheme === "warm" ? "warm" : "light") : "dark";
+          }
+          if (scheme !== "dark") startup.dataset.scheme = scheme;
+        } catch { /* The dark splash is always a safe default. */ }
+        let done = false;
+        let fallback = 0;
+        const showRecovery = () => {
+          if (done) return;
+          startup.dataset.state = "stalled";
+          startup.querySelector("strong").textContent = "Your workspace hasn’t opened";
+          startup.querySelector("span").textContent = "The connection may have been interrupted. Reload to try again.";
+          reload.hidden = false;
+        };
+        const onError = event => {
+          if (event.target?.tagName === "SCRIPT" || event.target?.rel === "modulepreload") showRecovery();
+        };
+        const recovery = setTimeout(showRecovery, 15000);
+        window.addEventListener("error", onError, true);
+        const ready = () => {
+          if (done) return;
+          done = true;
+          clearTimeout(recovery);
+          clearTimeout(fallback);
+          window.removeEventListener("error", onError, true);
+          document.documentElement.dataset.neyviaBooted = "true";
+          startup.dataset.state = "leaving";
+          setTimeout(() => startup.remove(), 460);
+        };
+        // The app calls mounted() once its code runs, and ready() once it can
+        // show real content. A fallback keeps a slow list from holding the
+        // splash: after mounting, the workspace is revealed within `ms`.
+        window.__neyviaBoot = {
+          mounted(ms = 6000) {
+            if (done) return;
+            clearTimeout(recovery);
+            clearTimeout(fallback);
+            fallback = setTimeout(ready, ms);
+          },
+          ready,
+        };
+      })();
+    </script>
+    <script src="/src/main.tsx" type="module"></script>
+  </body>
+</html>

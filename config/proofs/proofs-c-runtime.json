@@ -1,0 +1,714 @@
+{
+  "area": "proofs-c-runtime",
+  "manuals": [
+    "slim-installer",
+    "tools-depth"
+  ],
+  "module": "grant_agent.proofs_c_runtime",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "runtime.install.catalog",
+      "phase": "post",
+      "claim": "Catalog preserves every package tier and delivery state with exact current core/optional totals.",
+      "checkedAt": [
+        "grant_agent.install_profiles.InstallProfileRegistry.catalog_snapshot",
+        "grant_agent.proofs_c_runtime.check_catalog",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "installation selection",
+        "core/optional inventory"
+      ]
+    },
+    {
+      "id": "runtime.install.plan",
+      "phase": "post",
+      "claim": "Plan resolves profile inheritance, optional exclusions and ordered dependency closure; unfinished packages block readiness and execution remains disabled.",
+      "checkedAt": [
+        "grant_agent.install_profiles.InstallProfileRegistry.resolve",
+        "grant_agent.proofs_c_runtime.check_plan",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "installation plan",
+        "dependency readiness",
+        "execution gate"
+      ]
+    },
+    {
+      "id": "runtime.install.cycles",
+      "phase": "pre",
+      "claim": "Registry rejects package or profile dependency cycles before constructing a selectable registry.",
+      "checkedAt": [
+        "grant_agent.install_profiles.InstallProfileRegistry._validate",
+        "grant_agent.install_profiles.InstallProfileRegistry._cycle_errors",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "installation dependency graph"
+      ]
+    },
+    {
+      "id": "runtime.service.spec",
+      "phase": "pre",
+      "claim": "Service declaration requires explicit loopback HTTP URLs, SHA256 pins, nonempty argv; environment content and inheritance participate in specification identity.",
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedServiceSpec.__post_init__",
+        "grant_agent.managed_local_service.ManagedServiceSpec.spec_hash",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "managed child identity",
+        "local service lifecycle"
+      ]
+    },
+    {
+      "id": "runtime.service.installation",
+      "phase": "pre",
+      "claim": "Every start validates executable and required-file SHA256 hashes before process creation or reuse.",
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedLocalService.start",
+        "grant_agent.managed_local_service.ManagedLocalService._validate_installation",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "local process creation",
+        "model and executable bytes"
+      ]
+    },
+    {
+      "id": "runtime.service.identity",
+      "phase": "invariant",
+      "claim": "Running status requires live PID, matching executable and specification, and endpoint health/identity. Foreign or changed identity cannot be stopped.",
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedLocalService.status",
+        "grant_agent.managed_local_service.ManagedLocalService._stop_locked",
+        "grant_agent.proofs_c_runtime.check_service_status",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "persisted PID",
+        "foreign process safety"
+      ]
+    },
+    {
+      "id": "runtime.service.lifecycle",
+      "phase": "post",
+      "claim": "An installed exact healthy process is reused without spawning; an owned new process persists running identity and stops to a zero-PID state.",
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedLocalService.start",
+        "grant_agent.managed_local_service.ManagedLocalService._stop_locked",
+        "grant_agent.proofs_c_runtime.check_service_status",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "managed lifecycle",
+        "service state receipts"
+      ]
+    },
+    {
+      "id": "runtime.node.versions",
+      "phase": "invariant",
+      "claim": "OpenClaw supports Node22 from22.22.3, Node24 from24.15.0 and Node25 from25.9.0 or later; Node23 and None are excluded.",
+      "checkedAt": [
+        "grant_agent.managed_node_runtime.node_supports_current_openclaw",
+        "grant_agent.proofs_c_runtime.check_node_version",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "optional CLI compatibility"
+      ]
+    },
+    {
+      "id": "runtime.node.environment",
+      "phase": "post",
+      "claim": "Resolved Node directory leads PATH and NEYVIA_MANAGED_NODE_BIN; preserve original PATH suffix and other variables without mutating caller environment.",
+      "checkedAt": [
+        "grant_agent.managed_node_runtime.prepend_openclaw_node_to_env",
+        "grant_agent.proofs_c_runtime.check_node_env",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "child CLI environment"
+      ]
+    },
+    {
+      "id": "runtime.toolchain.integrity",
+      "phase": "invariant",
+      "claim": "Pinned executable receipts reflect actual streamed SHA256 bytes; platform-managed entries stay distinct and aggregate invalidTools/healthy exactly match rows.",
+      "checkedAt": [
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager.local_integrity",
+        "grant_agent.proofs_c_runtime.check_toolchain_integrity",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "marketplace pinned security toolchain"
+      ]
+    },
+    {
+      "id": "runtime.memory.durable",
+      "phase": "post",
+      "claim": "Saving and adding memory persist exact content, tags, kind, unique identity and session/objective provenance in order; reopening preserves the same items.",
+      "checkedAt": [
+        "grant_agent.memory.MemoryStore.save",
+        "grant_agent.proofs_c_runtime.check_memory_saved",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "scratch workspace memory store",
+        "resume provenance"
+      ]
+    },
+    {
+      "id": "runtime.memory.search",
+      "phase": "post",
+      "claim": "Search returns positive lexical overlaps ranked by overlap and tag count; empty or absent matches fall back to recent entries and honor the limit.",
+      "checkedAt": [
+        "grant_agent.memory.MemoryStore.search",
+        "grant_agent.proofs_c_runtime.check_memory_search",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "memory retrieval"
+      ]
+    },
+    {
+      "id": "runtime.memory.ingest",
+      "phase": "post",
+      "claim": "Ingestion adds last3 decisions, last2 risks and first2 next actions with exact kinds/tags/session/objective; preserve previous items and return inserted ids in order.",
+      "checkedAt": [
+        "grant_agent.memory.ingest_state_into_memory",
+        "grant_agent.proofs_c_runtime.check_ingested",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "bounded session memory"
+      ]
+    },
+    {
+      "id": "runtime.mcp.discovery",
+      "phase": "invariant",
+      "claim": "Server/search observers omit schemas; describe preserves qualified identity, cached schema and mutability. Codex command-index maps to stdio; SSE remains unavailable with an explicit frontier.",
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpServerState.compact",
+        "grant_agent.mcp_broker.McpOutboundBroker.search",
+        "grant_agent.mcp_broker.McpOutboundBroker.describe",
+        "grant_agent.proofs_c_runtime.check_mcp_compact",
+        "grant_agent.proofs_c_runtime.check_mcp_search",
+        "grant_agent.proofs_c_runtime.check_mcp_described",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "progressive discovery",
+        "remote schema context",
+        "availability"
+      ]
+    },
+    {
+      "id": "runtime.mcp.authorization",
+      "phase": "pre",
+      "claim": "Unauthenticated and unapproved mutating actions cannot dispatch transport calls; success requires dispatch, authenticated state, approval when required and no invalid schema result.",
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "remote read/write authority",
+        "operator approvals"
+      ]
+    },
+    {
+      "id": "runtime.mcp.receipt",
+      "phase": "post",
+      "claim": "Every broker action persists its exact returned schema/provider/tool/auth/result/mission receipt under the selected root, including refusal receipts.",
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "action proof receipts",
+        "mission artifacts"
+      ]
+    },
+    {
+      "id": "runtime.mcp.progressive",
+      "phase": "invariant",
+      "claim": "Register exactly mcp.servers/search/describe/call; progressive calls use the broker authorization/receipt path. Explicit StubTransport handlers remain simulation.",
+      "checkedAt": [
+        "grant_agent.mcp_broker.register_with_progressive_surface",
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.mcp_broker.StubTransport.call_tool",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "model progressive interface",
+        "broker tool dispatch"
+      ]
+    },
+    {
+      "id": "runtime.mcp.host",
+      "phase": "goal",
+      "claim": "Neyvia MCP JSON-RPC host lists progressive tools without schemas, forwards qualified calls into the broker and marks approval refusals as MCP errors.",
+      "checkedAt": [
+        "grant_agent.neyvia_mcp.NeyviaMCPServer.handle",
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "incoming MCP host",
+        "outbound broker authority",
+        "progressive model action"
+      ]
+    },
+    {
+      "id": "runtime.toolchain.discovery",
+      "phase": "post",
+      "claim": "Stable release discovery binds exact asset template, bounded positive size, official GitHub repository URL and SHA256 digest; absence of digest raises before a candidate is returned; summary and signed-release activation policy match all rows.",
+      "checkedAt": [
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._check_tool",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._release_candidate",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._publish_discovery",
+        "grant_agent.proofs_c_runtime.check_toolchain_discovery",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "official release candidate selection",
+        "no unsigned install activation"
+      ]
+    },
+    {
+      "id": "runtime.toolchain.cache",
+      "phase": "post",
+      "claim": "Published discovery persists exact returned metadata; a fresh schema-compatible cache returns the same rows with cache=hit before any official release fetch.",
+      "checkedAt": [
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._publish_discovery",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._fresh_cache",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager.check_latest",
+        "grant_agent.proofs_c_runtime.check_toolchain_discovery",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "impact": [
+        "release metadata cache",
+        "repeat discovery latency"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_install_profiles.py",
+      "case": "test_catalog_separates_thin_core_from_heavy_optional_packs",
+      "contracts": [
+        "runtime.install.catalog"
+      ],
+      "checkedAt": [
+        "grant_agent.install_profiles.InstallProfileRegistry.catalog_snapshot",
+        "grant_agent.proofs_c_runtime.check_catalog",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_install_profiles.py::test_catalog_separates_thin_core_from_heavy_optional_packs"
+    },
+    {
+      "test": "tests/test_install_profiles.py",
+      "case": "test_recommended_profile_is_honest_about_unfinished_core",
+      "contracts": [
+        "runtime.install.plan"
+      ],
+      "checkedAt": [
+        "grant_agent.install_profiles.InstallProfileRegistry.resolve",
+        "grant_agent.proofs_c_runtime.check_plan",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_install_profiles.py::test_recommended_profile_is_honest_about_unfinished_core"
+    },
+    {
+      "test": "tests/test_install_profiles.py",
+      "case": "test_profile_inheritance_and_dependencies_are_resolved",
+      "contracts": [
+        "runtime.install.plan"
+      ],
+      "checkedAt": [
+        "grant_agent.install_profiles.InstallProfileRegistry.resolve",
+        "grant_agent.proofs_c_runtime.check_plan",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_install_profiles.py::test_profile_inheritance_and_dependencies_are_resolved"
+    },
+    {
+      "test": "tests/test_install_profiles.py",
+      "case": "test_registry_rejects_dependency_cycles",
+      "contracts": [
+        "runtime.install.cycles"
+      ],
+      "checkedAt": [
+        "grant_agent.install_profiles.InstallProfileRegistry._validate",
+        "grant_agent.install_profiles.InstallProfileRegistry._cycle_errors",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_install_profiles.py::test_registry_rejects_dependency_cycles"
+    },
+    {
+      "test": "tests/test_managed_local_service.py",
+      "case": "test_spec_requires_loopback_and_hash",
+      "contracts": [
+        "runtime.service.spec"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedServiceSpec.__post_init__",
+        "grant_agent.managed_local_service.ManagedServiceSpec.spec_hash",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_managed_local_service.py::test_spec_requires_loopback_and_hash"
+    },
+    {
+      "test": "tests/test_managed_local_service.py",
+      "case": "test_status_refuses_foreign_pid_identity",
+      "contracts": [
+        "runtime.service.identity"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedLocalService.status",
+        "grant_agent.managed_local_service.ManagedLocalService._stop_locked",
+        "grant_agent.proofs_c_runtime.check_service_status",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_managed_local_service.py::test_status_refuses_foreign_pid_identity"
+    },
+    {
+      "test": "tests/test_managed_local_service.py",
+      "case": "test_healthy_matching_process_is_reused_without_spawn",
+      "contracts": [
+        "runtime.service.lifecycle",
+        "runtime.service.identity"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedLocalService.start",
+        "grant_agent.managed_local_service.ManagedLocalService._stop_locked",
+        "grant_agent.proofs_c_runtime.check_service_status",
+        "grant_agent.proofs_c_runtime.self_check",
+        "grant_agent.managed_local_service.ManagedLocalService.status"
+      ],
+      "case_id": "tests/test_managed_local_service.py::test_healthy_matching_process_is_reused_without_spawn"
+    },
+    {
+      "test": "tests/test_managed_local_service.py",
+      "case": "test_installation_hash_mismatch_blocks_start",
+      "contracts": [
+        "runtime.service.installation"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedLocalService.start",
+        "grant_agent.managed_local_service.ManagedLocalService._validate_installation",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_managed_local_service.py::test_installation_hash_mismatch_blocks_start"
+    },
+    {
+      "test": "tests/test_managed_local_service.py",
+      "case": "test_required_model_hash_mismatch_blocks_start",
+      "contracts": [
+        "runtime.service.installation"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedLocalService.start",
+        "grant_agent.managed_local_service.ManagedLocalService._validate_installation",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_managed_local_service.py::test_required_model_hash_mismatch_blocks_start"
+    },
+    {
+      "test": "tests/test_managed_local_service.py",
+      "case": "test_environment_is_part_of_service_identity",
+      "contracts": [
+        "runtime.service.spec"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedServiceSpec.__post_init__",
+        "grant_agent.managed_local_service.ManagedServiceSpec.spec_hash",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_managed_local_service.py::test_environment_is_part_of_service_identity"
+    },
+    {
+      "test": "tests/test_managed_local_service.py",
+      "case": "test_environment_inheritance_is_part_of_service_identity",
+      "contracts": [
+        "runtime.service.spec"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_local_service.ManagedServiceSpec.__post_init__",
+        "grant_agent.managed_local_service.ManagedServiceSpec.spec_hash",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_managed_local_service.py::test_environment_inheritance_is_part_of_service_identity"
+    },
+    {
+      "test": "tests/test_managed_node_runtime.py",
+      "case": "test_openclaw_node_version_ranges_are_enforced",
+      "contracts": [
+        "runtime.node.versions"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_node_runtime.node_supports_current_openclaw",
+        "grant_agent.proofs_c_runtime.check_node_version",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_managed_node_runtime.py::test_openclaw_node_version_ranges_are_enforced"
+    },
+    {
+      "test": "tests/test_managed_node_runtime.py",
+      "case": "test_openclaw_environment_prefers_the_managed_node_directory",
+      "contracts": [
+        "runtime.node.environment"
+      ],
+      "checkedAt": [
+        "grant_agent.managed_node_runtime.prepend_openclaw_node_to_env",
+        "grant_agent.proofs_c_runtime.check_node_env",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_managed_node_runtime.py::test_openclaw_environment_prefers_the_managed_node_directory"
+    },
+    {
+      "test": "tests/test_memory.py",
+      "case": "MemoryTests.test_add_and_search_memory",
+      "contracts": [
+        "runtime.memory.durable",
+        "runtime.memory.search"
+      ],
+      "checkedAt": [
+        "grant_agent.memory.MemoryStore.save",
+        "grant_agent.proofs_c_runtime.check_memory_saved",
+        "grant_agent.proofs_c_runtime.self_check",
+        "grant_agent.memory.MemoryStore.search",
+        "grant_agent.proofs_c_runtime.check_memory_search"
+      ],
+      "case_id": "tests/test_memory.py::MemoryTests.test_add_and_search_memory"
+    },
+    {
+      "test": "tests/test_memory.py",
+      "case": "MemoryTests.test_ingest_state",
+      "contracts": [
+        "runtime.memory.ingest",
+        "runtime.memory.durable"
+      ],
+      "checkedAt": [
+        "grant_agent.memory.ingest_state_into_memory",
+        "grant_agent.proofs_c_runtime.check_ingested",
+        "grant_agent.proofs_c_runtime.self_check",
+        "grant_agent.memory.MemoryStore.save",
+        "grant_agent.proofs_c_runtime.check_memory_saved"
+      ],
+      "case_id": "tests/test_memory.py::MemoryTests.test_ingest_state"
+    },
+    {
+      "test": "tests/test_marketplace_toolchain.py",
+      "case": "test_toolchain_integrity_streams_and_verifies_pinned_binaries",
+      "contracts": [
+        "runtime.toolchain.integrity"
+      ],
+      "checkedAt": [
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager.local_integrity",
+        "grant_agent.proofs_c_runtime.check_toolchain_integrity",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_marketplace_toolchain.py::test_toolchain_integrity_streams_and_verifies_pinned_binaries"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_list_servers_and_search_omit_schemas",
+      "contracts": [
+        "runtime.mcp.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpServerState.compact",
+        "grant_agent.mcp_broker.McpOutboundBroker.search",
+        "grant_agent.mcp_broker.McpOutboundBroker.describe",
+        "grant_agent.proofs_c_runtime.check_mcp_compact",
+        "grant_agent.proofs_c_runtime.check_mcp_search",
+        "grant_agent.proofs_c_runtime.check_mcp_described",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_list_servers_and_search_omit_schemas"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_describe_caches_schema_and_call_read_path",
+      "contracts": [
+        "runtime.mcp.discovery",
+        "runtime.mcp.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpServerState.compact",
+        "grant_agent.mcp_broker.McpOutboundBroker.search",
+        "grant_agent.mcp_broker.McpOutboundBroker.describe",
+        "grant_agent.proofs_c_runtime.check_mcp_compact",
+        "grant_agent.proofs_c_runtime.check_mcp_search",
+        "grant_agent.proofs_c_runtime.check_mcp_described",
+        "grant_agent.proofs_c_runtime.self_check",
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_describe_caches_schema_and_call_read_path"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_mutating_call_requires_approval",
+      "contracts": [
+        "runtime.mcp.authorization",
+        "runtime.mcp.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_mutating_call_requires_approval"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_auth_state_blocks_callable",
+      "contracts": [
+        "runtime.mcp.authorization",
+        "runtime.mcp.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt",
+        "grant_agent.proofs_c_runtime.self_check",
+        "grant_agent.mcp_broker.McpServerState.compact",
+        "grant_agent.mcp_broker.McpOutboundBroker.search",
+        "grant_agent.mcp_broker.McpOutboundBroker.describe",
+        "grant_agent.proofs_c_runtime.check_mcp_compact",
+        "grant_agent.proofs_c_runtime.check_mcp_search",
+        "grant_agent.proofs_c_runtime.check_mcp_described"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_auth_state_blocks_callable"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_codex_command_index_is_stdio_callable",
+      "contracts": [
+        "runtime.mcp.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpServerState.compact",
+        "grant_agent.mcp_broker.McpOutboundBroker.search",
+        "grant_agent.mcp_broker.McpOutboundBroker.describe",
+        "grant_agent.proofs_c_runtime.check_mcp_compact",
+        "grant_agent.proofs_c_runtime.check_mcp_search",
+        "grant_agent.proofs_c_runtime.check_mcp_described",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_codex_command_index_is_stdio_callable"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_sse_remains_honestly_unwired",
+      "contracts": [
+        "runtime.mcp.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpServerState.compact",
+        "grant_agent.mcp_broker.McpOutboundBroker.search",
+        "grant_agent.mcp_broker.McpOutboundBroker.describe",
+        "grant_agent.proofs_c_runtime.check_mcp_compact",
+        "grant_agent.proofs_c_runtime.check_mcp_search",
+        "grant_agent.proofs_c_runtime.check_mcp_described",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_sse_remains_honestly_unwired"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_stdio_jsonrpc_transport_list_and_call",
+      "contracts": [
+        "runtime.mcp.discovery",
+        "runtime.mcp.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.mcp_broker.McpServerState.compact",
+        "grant_agent.mcp_broker.McpOutboundBroker.search",
+        "grant_agent.mcp_broker.McpOutboundBroker.describe",
+        "grant_agent.proofs_c_runtime.check_mcp_compact",
+        "grant_agent.proofs_c_runtime.check_mcp_search",
+        "grant_agent.proofs_c_runtime.check_mcp_described",
+        "grant_agent.proofs_c_runtime.self_check",
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_stdio_jsonrpc_transport_list_and_call"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_stub_transport_direct_and_progressive_wiring",
+      "contracts": [
+        "runtime.mcp.progressive",
+        "runtime.mcp.authorization"
+      ],
+      "checkedAt": [
+        "grant_agent.mcp_broker.register_with_progressive_surface",
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.mcp_broker.StubTransport.call_tool",
+        "grant_agent.proofs_c_runtime.self_check",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_stub_transport_direct_and_progressive_wiring"
+    },
+    {
+      "test": "tests/test_mcp_broker.py",
+      "case": "McpOutboundBrokerTests.test_neyvia_mcp_progressive_reaches_broker",
+      "contracts": [
+        "runtime.mcp.host",
+        "runtime.mcp.authorization"
+      ],
+      "checkedAt": [
+        "grant_agent.neyvia_mcp.NeyviaMCPServer.handle",
+        "grant_agent.mcp_broker.McpOutboundBroker.call",
+        "grant_agent.proofs_c_runtime.check_mcp_receipt",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_mcp_broker.py::McpOutboundBrokerTests.test_neyvia_mcp_progressive_reaches_broker"
+    },
+    {
+      "test": "tests/test_marketplace_toolchain.py",
+      "case": "test_update_discovery_binds_exact_official_asset_digest_and_caches",
+      "contracts": [
+        "runtime.toolchain.discovery",
+        "runtime.toolchain.cache"
+      ],
+      "checkedAt": [
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._check_tool",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._release_candidate",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._publish_discovery",
+        "grant_agent.proofs_c_runtime.check_toolchain_discovery",
+        "grant_agent.proofs_c_runtime.self_check",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._fresh_cache",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager.check_latest"
+      ],
+      "case_id": "tests/test_marketplace_toolchain.py::test_update_discovery_binds_exact_official_asset_digest_and_caches"
+    },
+    {
+      "test": "tests/test_marketplace_toolchain.py",
+      "case": "test_update_discovery_fails_closed_without_release_asset_digest",
+      "contracts": [
+        "runtime.toolchain.discovery"
+      ],
+      "checkedAt": [
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._check_tool",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._release_candidate",
+        "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._publish_discovery",
+        "grant_agent.proofs_c_runtime.check_toolchain_discovery",
+        "grant_agent.proofs_c_runtime.self_check"
+      ],
+      "case_id": "tests/test_marketplace_toolchain.py::test_update_discovery_fails_closed_without_release_asset_digest"
+    }
+  ],
+  "frontier": [
+    "OCI authenticated evidence, trust removal, tampering, activation/rollback and interrupted-transaction recovery: retain all8 OCI cases until full real verifier journeys are migrated.",
+    "Upstream GitHub availability is not claimed: declared metadata is served on owned loopback48487, then production parser and persisted cache run; no package downloads."
+  ],
+  "portRoles": [48487, 48488]
+}

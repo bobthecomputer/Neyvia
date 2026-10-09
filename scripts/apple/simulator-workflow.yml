@@ -1,0 +1,26 @@
+name: Neyvia Apple Simulator (explicit opt-in)
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_minutes:
+        description: 'I checked my GitHub allowance/billing and authorize this macOS run'
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+jobs:
+  simulator:
+    if: github.repository_owner == 'bobthecomputer' && vars.NEYVIA_APPLE_SIMULATOR_ENABLED == 'true' && inputs.confirm_minutes == true
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build, boot, install, launch and capture on Apple hardware
+        run: bash simulator.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: neyvia-apple-simulator
+          path: output/
+          retention-days: 3

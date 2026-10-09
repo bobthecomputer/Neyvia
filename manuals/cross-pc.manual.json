@@ -1,0 +1,1238 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "cross-pc",
+  "kind": "environment",
+  "proofs": {
+    "area": "cross-pc",
+    "manifests": [
+      "config/proofs/proofs-e-models.json"
+    ],
+    "contracts": [
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDevicesModel.js:dropIntent -> checkedProofsEModel"
+        ],
+        "claim": "Only local move, remote take and local-to-remote send are offered; remote-to-remote is refused",
+        "id": "devices.dropIntent",
+        "impact": [
+          "devices frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDevicesModel.js:sendTarget -> checkedProofsEModel"
+        ],
+        "claim": "Remote writes require inbox, writable share or explicit write-anywhere permission",
+        "id": "devices.sendTarget",
+        "impact": [
+          "devices frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDevicesModel.js:transferFraction -> checkedProofsEModel"
+        ],
+        "claim": "Known byte progress clamps to 0..1; unknown sizes stay unknown except completed transfers",
+        "id": "devices.transferFraction",
+        "impact": [
+          "devices frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDevicesModel.js:pcTarget -> checkedProofsEModel"
+        ],
+        "claim": "Other-PC navigation preserves path delimiters",
+        "id": "devices.pcTarget",
+        "impact": [
+          "devices frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDevicesModel.js:parsePcTarget -> checkedProofsEModel"
+        ],
+        "claim": "Only pc: identifiers are decoded, splitting device once and preserving all path bars",
+        "id": "devices.parsePcTarget",
+        "impact": [
+          "devices frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxDevicesModel.js:transferLine -> checkedProofsEModel"
+        ],
+        "claim": "Transfer labels preserve bytes, file counts, failure reason, measured speed and rounded remaining time",
+        "id": "devices.transferLine",
+        "impact": [
+          "devices frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_auth_sessions.WebAuthSessions.issue",
+          "grant_agent.proofs_e_wz.check_session_issued",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Issuance stores a 64-character token digest, exactly the requested normalized account identity/name/role and bounded device metadata, the selected creation/expiry times and every prior live session unchanged inside the SQLite write transaction; bearer tokens never become SQL values.",
+        "id": "proofs-e-wz.auth-issuance",
+        "impact": [
+          "web login",
+          "parallel browser sign-in",
+          "session database"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+          "grant_agent.proofs_e_wz.check_session_lookup",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Accepted lookup preserves account fields and creation time, upgrades an accepted legacy identity when needed, renews expiration only past the daily renewal threshold, and persists last-use updates atomically.",
+        "id": "proofs-e-wz.auth-renewal",
+        "impact": [
+          "long-lived web login",
+          "session expiry"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+          "grant_agent.proofs_e_wz.check_session_rejected",
+          "grant_agent.proofs_e_wz.self_check",
+          "grant_agent.web_auth_sessions.WebAuthSessions.revoke"
+        ],
+        "claim": "Expired, invalid-account and invalid-role sessions are removed before lookup returns no user; explicit logout removes the token digest.",
+        "id": "proofs-e-wz.auth-rejection",
+        "impact": [
+          "password changes",
+          "idle expiry",
+          "logout"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend_serving.HttpServingMixin.serve_artifact",
+          "grant_agent.proofs_e_wz.check_artifact_access",
+          "grant_agent.proofs_e_wz.self_check",
+          "grant_agent.web_backend.FluxioWebBackend.web_auth_sessions",
+          "grant_agent.web_backend.FluxioWebBackend.authenticated_session"
+        ],
+        "claim": "Private artifact file bytes are served only with a currently authenticated session; cookie validation reads the durable per-account fingerprint so backend recreation preserves valid sessions and password changes/logout revoke access.",
+        "id": "proofs-e-wz.auth-artifact",
+        "impact": [
+          "private media",
+          "preview iframe",
+          "backend recreation"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend._json_response",
+          "grant_agent.proofs_e_wz.check_json_response",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "JSON wire bytes remain compact and exact through compression; gzip is used only for accepted encodings above the existing minimum response size.",
+        "id": "proofs-e-wz.http-json",
+        "impact": [
+          "browser transport",
+          "large chat responses"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend._read_json_body",
+          "grant_agent.proofs_e_wz.check_request_body",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Gzip request decoding never exceeds the configured maximum decompressed JSON bytes; over-limit inputs reject before dispatch.",
+        "id": "proofs-e-wz.http-request",
+        "impact": [
+          "phone transcript upload",
+          "bounded allocation"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend._extend_io_timeout",
+          "grant_agent.proofs_e_wz.check_io_timeout",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "After a request starts, its socket uses the longer request IO timeout rather than the accept-time handshake timeout, allowing a paused reader to receive the full response.",
+        "id": "proofs-e-wz.http-io-timeout",
+        "impact": [
+          "slow phone readers",
+          "large transfers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend_serving.HttpServingMixin.serve_file",
+          "grant_agent.proofs_e_wz.check_static_response",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Static files remain jailed in the selected build root and return exact file bytes; only approved desktop origins receive CORS for non-page assets. Entry pages/service workers stay uncached and embedded pages retain their supported framing policy.",
+        "id": "proofs-e-wz.desktop-shell",
+        "impact": [
+          "desktop loader",
+          "current build assets",
+          "browser security headers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend_serving.HttpServingMixin.serve_desktop_update",
+          "grant_agent.proofs_e_wz.check_update_response",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Successful desktop update responses are allowlisted files strictly inside the update folder and contain the exact selected file bytes; unknown or escaping names cannot select a file.",
+        "id": "proofs-e-wz.desktop-update",
+        "impact": [
+          "public signed update feed",
+          "path confinement"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.devices.files.fetch": {
+      "type": "object",
+      "properties": {
+        "device": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "wait": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "device",
+        "from"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "device": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "from": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.devices.files.list": {
+      "type": "object",
+      "properties": {
+        "device": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "showHidden": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "device"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "device": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.devices.files.read": {
+      "type": "object",
+      "properties": {
+        "device": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "length": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "device",
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "device": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.devices.files.send": {
+      "type": "object",
+      "properties": {
+        "device": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "wait": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "device",
+        "from"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "device": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "from": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.devices.files.stat": {
+      "type": "object",
+      "properties": {
+        "device": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "boolean"
+        },
+        "hash": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "device",
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "device": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.devices.list": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.devices.transfers": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.files.stat": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "proofs-e-models.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Paired PCs: bounded reads and verified copies",
+      "state": {
+        "devices": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "here": {
+                "type": "object"
+              },
+              "devices": {
+                "type": "array"
+              },
+              "requests": {
+                "type": "array"
+              },
+              "transfers": {
+                "type": "array"
+              },
+              "tailnet": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "here",
+              "devices",
+              "requests",
+              "transfers",
+              "tailnet"
+            ]
+          },
+          "tool": "neyvia.devices.list"
+        },
+        "transfers": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "transfers": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "transfers"
+            ]
+          },
+          "tool": "neyvia.devices.transfers"
+        }
+      },
+      "actions": {
+        "devices.list": {
+          "effect": "Read saved PCs/requests/newest 30 transfers and cached tailnet status; online may be stale",
+          "pre": "Selected root peer store readable; no discovery/probing required",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.devices.list",
+          "tool": "neyvia.devices.list"
+        },
+        "devices.files.list": {
+          "effect": "Read remote places or folder entries (max 2000); refresh advertised theyShare when returned",
+          "pre": "Device ID is paired, reachable with DPAPI-protected pair token; path absent for places or inside remote shared folder/inbox",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.devices.files.list",
+          "tool": "neyvia.devices.files.list"
+        },
+        "devices.files.stat": {
+          "effect": "Read remote kind/size/mime, optional 64 KiB text preview and SHA-256",
+          "pre": "Paired reachable PC; existing path inside its shares/inbox; hash only files <=2 GiB",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.devices.files.stat",
+          "tool": "neyvia.devices.files.stat"
+        },
+        "devices.files.read": {
+          "effect": "Read bounded remote bytes, UTF-8 text or base64, size/eof; no local copy",
+          "pre": "Paired reachable PC; shared existing file; nonnegative offset and length 0..1 MiB",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.devices.files.read",
+          "tool": "neyvia.devices.files.read"
+        },
+        "devices.files.fetch": {
+          "effect": "Create destination folder if missing and start chunk-verified Take; collision gets unique path; wait may return unfinished; use transfer.to",
+          "pre": "Paired reachable PC and shared source; safe local destination is/createable as a folder; <=5000 files/50 GiB; artifact-write authority",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "transfer": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string"
+                  },
+                  "device": {
+                    "type": "string"
+                  },
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "integer"
+                  },
+                  "done": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "status",
+                  "sha256",
+                  "device",
+                  "from",
+                  "to",
+                  "size",
+                  "done"
+                ]
+              }
+            },
+            "required": [
+              "transfer"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.devices.files.fetch",
+          "tool": "neyvia.devices.files.fetch"
+        },
+        "devices.files.send": {
+          "effect": "Start chunk/hash-verified Send without overwrite; wait may return pending; transfer.to is actual received path",
+          "pre": "Paired reachable PC; local readable source; remote existing inbox/writable folder; owner grants devices:send:<id>; <=5000 files/50 GiB",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "transfer": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string"
+                  },
+                  "device": {
+                    "type": "string"
+                  },
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "integer"
+                  },
+                  "done": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "status",
+                  "sha256",
+                  "device",
+                  "from",
+                  "to",
+                  "size",
+                  "done"
+                ]
+              }
+            },
+            "required": [
+              "transfer"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.devices.files.send",
+          "tool": "neyvia.devices.files.send"
+        },
+        "devices.transfers": {
+          "effect": "Read newest 30 matching transfers with progress/status/error and end-to-end SHA-256",
+          "pre": "Selected root transfer store readable; optional id selects retained transfer",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.devices.transfers",
+          "tool": "neyvia.devices.transfers"
+        },
+        "files.stat": {
+          "effect": "Return kind/size/openWith; preview=true reads first 64 KiB only for text/notes",
+          "pre": "Existing guarded path inside a Files place outside protected tree",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.files.stat",
+          "tool": "neyvia.files.stat"
+        }
+      },
+      "checks": {
+        "transfer-done": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "transfers.0.status",
+            "value": "done"
+          },
+          "tool": "neyvia.devices.transfers"
+        },
+        "received-size": {
+          "args": {
+            "path": {
+              "$path": "to"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "size",
+            "value": {
+              "$input": "size"
+            }
+          },
+          "tool": "neyvia.files.stat"
+        },
+        "fresh-fetch-complete": {
+          "args": {
+            "id": {
+              "$result": "copied.transfer.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "transfers.0.status",
+            "value": "done"
+          },
+          "tool": "neyvia.devices.transfers"
+        },
+        "fresh-send-complete": {
+          "args": {
+            "id": {
+              "$result": "copied.transfer.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "transfers.0.status",
+            "value": "done"
+          },
+          "tool": "neyvia.devices.transfers"
+        }
+      },
+      "procedures": {
+        "take-file": {
+          "goal": "Inspect remote file and copy into existing local folder without overwrite; inspect newest transfers and retain the matching returned ID for separate completion verification",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "device",
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "devices.files.stat",
+              "args": {
+                "device": {
+                  "$input": "device"
+                },
+                "path": {
+                  "$input": "from"
+                }
+              },
+              "save": "source"
+            },
+            {
+              "judge": "take-or-stop"
+            },
+            {
+              "action": "devices.files.fetch",
+              "args": {
+                "device": {
+                  "$input": "device"
+                },
+                "from": {
+                  "$input": "from"
+                },
+                "to": {
+                  "$path": "to"
+                }
+              },
+              "save": "copied",
+              "when": {
+                "judge": "take-or-stop",
+                "option": "take"
+              }
+            },
+            {
+              "action": "devices.transfers",
+              "args": {},
+              "save": "progress",
+              "when": {
+                "judge": "take-or-stop",
+                "option": "take"
+              }
+            }
+          ]
+        },
+        "send-to-inbox": {
+          "goal": "Inspect local source and remote shares, then send a requested file to default inbox; inspect newest transfers and retain the matching returned ID for separate completion verification",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "device",
+              "from"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "files.stat",
+              "args": {
+                "path": {
+                  "$path": "from"
+                }
+              },
+              "save": "local"
+            },
+            {
+              "action": "devices.files.list",
+              "args": {
+                "device": {
+                  "$input": "device"
+                }
+              },
+              "save": "places"
+            },
+            {
+              "judge": "send-destination"
+            },
+            {
+              "action": "devices.files.send",
+              "args": {
+                "device": {
+                  "$input": "device"
+                },
+                "from": {
+                  "$path": "from"
+                }
+              },
+              "save": "copied",
+              "when": {
+                "judge": "send-destination",
+                "option": "send-inbox"
+              }
+            },
+            {
+              "action": "devices.transfers",
+              "args": {},
+              "save": "progress",
+              "when": {
+                "judge": "send-destination",
+                "option": "send-inbox"
+              }
+            }
+          ]
+        },
+        "verify-taken-file": {
+          "goal": "Inspect a saved Take transfer, confirm done and verify actual received file size",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "size": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "to",
+              "size"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "devices.transfers",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "progress"
+            },
+            {
+              "judge": "copy-status"
+            },
+            {
+              "action": "devices.transfers",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "check": "transfer-done",
+              "save": "done",
+              "when": {
+                "judge": "copy-status",
+                "option": "verify-done"
+              }
+            },
+            {
+              "action": "devices.transfers",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "digest",
+              "when": {
+                "judge": "copy-status",
+                "option": "verify-done"
+              }
+            },
+            {
+              "action": "files.stat",
+              "args": {
+                "path": {
+                  "$path": "to"
+                }
+              },
+              "check": "received-size",
+              "save": "received",
+              "when": {
+                "judge": "copy-status",
+                "option": "verify-done"
+              }
+            }
+          ]
+        },
+        "copy-file-fetch-verified": {
+          "goal": "Copy an already paired explicitly requested regular file <=64 MiB into an explicit folder; conserve source, refuse overwrite, and verify fresh bytes at both endpoints",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "device",
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "devices.files.fetch",
+              "args": {
+                "device": {
+                  "$input": "device"
+                },
+                "from": {
+                  "$input": "from"
+                },
+                "to": {
+                  "$input": "to"
+                },
+                "wait": 30
+              },
+              "check": "fresh-fetch-complete",
+              "save": "copied"
+            }
+          ]
+        },
+        "copy-file-send-verified": {
+          "goal": "Copy an already paired explicitly requested regular file <=64 MiB into an explicit folder; conserve source, refuse overwrite, and verify fresh bytes at both endpoints",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "device",
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "devices.files.send",
+              "args": {
+                "device": {
+                  "$input": "device"
+                },
+                "from": {
+                  "$input": "from"
+                },
+                "to": {
+                  "$input": "to"
+                },
+                "wait": 30
+              },
+              "check": "fresh-send-complete",
+              "save": "copied"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "remote-identity": {
+          "constraints": "Use device ID, not hostname. list is cached and online can be stale; refresh shares via files.list. Pair/revoke/share/discover and transfer controls belong to owner UI. Do not probe other services or reconfigure tailnet.",
+          "options": [
+            "read",
+            "stop"
+          ],
+          "question": "Is this the intended paired and reachable PC with the required share?"
+        },
+        "take-or-stop": {
+          "constraints": "For one-off bounded text use read-remote-range. Take when another app needs real file or more than a bounded range. Folder copies require explicit folder request, <=5000 files/50 GiB; this procedure verifies one file only.",
+          "options": [
+            "take",
+            "stop"
+          ],
+          "question": "Is this remote item needed as a local file?"
+        },
+        "copy-status": {
+          "constraints": "Read saved transfer status. running/verifying/paused/failed is pending and cannot be called success; poll transfers(id), do not invoke fetch/send again. Owner UI handles pause/resume/cancel. For verify-taken-file, id/to/size must come from the same saved direction=take transfer; compare SHA-256 to remote source if integrity matters.",
+          "options": [
+            "verify-done",
+            "pending"
+          ],
+          "question": "Has the saved transfer completed with end-to-end SHA-256?"
+        },
+        "send-destination": {
+          "constraints": "Default inbox is preferred. First model Send returns approval_required and owner must approve devices:send:<id>. A named writable share requires observed write:true/writeAnywhere; do not infer consent from pairing.",
+          "options": [
+            "send-inbox",
+            "stop"
+          ],
+          "question": "Send to the paired PC inbox or defer until destination is clarified?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Unpaired/revoked token or PC unreachable",
+          "recovery": "Stop and name the device; owner pairs/unpairs or turns PC on through Accounts. Do not reconfigure network"
+        },
+        {
+          "failure": "Destination collision changes name",
+          "recovery": "Use saved transfer.to; receiver chooses name (2).ext and never overwrites"
+        },
+        {
+          "failure": "Send returns approval_required",
+          "recovery": "Owner approves exact peer scope; reconcile failed manual run, then begin a new reviewed procedure after grant"
+        },
+        {
+          "failure": "Source changes or hash/range mismatch while copying",
+          "recovery": "Inspect failed receipt/partial; do not claim complete; a new intent after source reconciliation is required"
+        },
+        {
+          "failure": "Backend restart pauses transfer",
+          "recovery": "Owner resumes from verified chunks; poll retained ID, never duplicate copy"
+        },
+        {
+          "failure": "Read UTF-8 range splits multibyte character",
+          "recovery": "Offsets are bytes and decoder replaces incomplete sequences; fetch full file for exact Unicode"
+        },
+        {
+          "failure": "Remote path outside share or inbox",
+          "recovery": "List shared places and use remote full path; no traversal or local path translation"
+        }
+      ],
+      "frontier": [
+        "No remote delete/rename/move/live sync; copies are one-off",
+        "No direct other-PC-to-other-PC transfer; Take here then Send",
+        "Phones/NAS are not peers of this PC feature",
+        "Model transfer controls/pairing/discovery are unavailable; owner UI only"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_devices.py (peer, scoped, call_devices, _start_transfer, _copy_worker). Original docs/manuals/cross-pc.md converted in place.",
+        "Checks for Send: transfers(id).status == done, then devices.files.stat(device, transfer.to).size == transfer.size; compare verified transfer.sha256 when required.",
+        "Continue reads with offset += returned.length until eof; never advance by requested length after a short read.",
+        "Local scratch validation reads saved peer state only; it does not discover PCs, access port 47881 or touch Tailscale.",
+        "Durable gateway mutations may wrap data under toolResult. After launching Take/Send, transfers() lists retained IDs; select matching device/from/direction/by, then verify that ID. Never pick the first row blindly or relaunch to obtain an ID.",
+        "CL paired-file copy effects require an explicit destination folder and regular file <=64 MiB; directory/large copies remain native-only frontier; queued status never means complete."
+      ]
+    },
+    "proofs-e-models": {
+      "title": "PROOFS-e: production model contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the most recent verification receipt without invoking production actions again",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-models.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-model-proof-receipt": {
+          "goal": "Read the latest receipt after the production model self-check runner",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Model transforms are reported as proof of a native app/provider/device effect",
+          "recovery": "Use the real owning feature procedure and its observed runtime"
+        }
+      ],
+      "frontier": [
+        "Rendered browser/desktop journeys are separate from pure model proof",
+        "Remote device, game editor and provider behavior require their real runtimes"
+      ],
+      "guidance": [
+        "devices.dropIntent: Only local move, remote take and local-to-remote send are offered; remote-to-remote is refused",
+        "devices.sendTarget: Remote writes require inbox, writable share or explicit write-anywhere permission",
+        "devices.transferFraction: Known byte progress clamps to 0..1; unknown sizes stay unknown except completed transfers",
+        "devices.pcTarget: Other-PC navigation preserves path delimiters",
+        "devices.parsePcTarget: Only pc: identifiers are decoded, splitting device once and preserving all path bars",
+        "devices.transferLine: Transfer labels preserve bytes, file counts, failure reason, measured speed and rounded remaining time",
+        "Startup runner: scripts/proofs-e-models.mjs --root <owned-scratch>; area proofs-e-models checks real model actions and corrupted output refusals"
+      ]
+    },
+    "proofs-e-wz": {
+      "title": "PROOFS-e W-Z: live contracts and scratch self-checks",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A local fixture is mistaken for a real provider, signed desktop release or whole-suite replacement",
+          "recovery": "Read the source-bound receipt, per-case coverage map and unresolved frontier before retirement or promotion"
+        }
+      ],
+      "frontier": [
+        "Backend suite and paired-desktop controller scenarios remain pending unless every original predicate has a real action site and observed scratch procedure.",
+        "Hidden-process AST scanner self-tests protect test-only tooling and are retained pending lead retirement review; no source-text scan is relabeled as production proof.",
+        "Legacy desktop-ui/fluxioHelpers.js is absent; its workspace-selection tests remain pending impact/history review.",
+        "The original bootstrap test expected newest merged turn first; its coverage row explicitly supersedes that stale assertion with observed chronological ordering, preserving all other bootstrap/lazy-detail predicates."
+      ],
+      "guidance": [
+        "Self-check entry: grant_agent.proofs_e_wz.self_check; CLI: neyvia verify --root <workspace> --area proofs-e-wz",
+        "Manifest: config/proofs/proofs-e-wz.json; host sites enforce these contracts on every corresponding real action.",
+        "Fixtures use disposable SQLite stores, real owned Python child commands, localhost HTTP port 48503 and bounded source transport injection."
+      ]
+    }
+  }
+}

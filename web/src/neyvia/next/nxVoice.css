@@ -1,0 +1,89 @@
+/* Voice control card (above the strip) and the "Keyboard and voice" sheet. */
+
+.nx .nx-voice-card {
+  position: absolute; left: 50%; bottom: calc(var(--nx-strip-h) + 12px); z-index: 55; transform: translateX(-50%);
+  width: min(560px, calc(100% - 24px)); display: grid; gap: var(--nx-space-8); padding: var(--nx-space-10) var(--nx-space-10) var(--nx-space-8);
+  border-radius: var(--nx-r-lg); background: var(--nx-raised); box-shadow: var(--nx-shadow-pop), inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+  animation: nx-voice-in var(--nx-snappy) var(--nx-spring-snappy, var(--nx-ease)) both;
+}
+.nx .nx-voice-card.is-listening { box-shadow: var(--nx-shadow-pop), inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-red) 40%, transparent); }
+.nx .nx-voice-card.is-error { box-shadow: var(--nx-shadow-pop), inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-red) 45%, transparent); }
+.nx .nx-voice-card.is-ask { box-shadow: var(--nx-shadow-pop), inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-gold) 45%, transparent); }
+@keyframes nx-voice-in { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+.nx .nx-voice-head { display: flex; align-items: center; gap: var(--nx-space-10); min-height: 32px; }
+.nx .nx-voice-mic {
+  flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
+  color: var(--nx-text-2); background: var(--nx-hover);
+}
+.nx .nx-voice-mic:hover:not(:disabled) { color: var(--nx-text); background: var(--nx-active); }
+.nx .nx-voice-mic.is-live { color: var(--nx-on-error); background: var(--nx-red); }
+.nx .nx-voice-status { flex: 1 1 auto; min-width: 0; font-size: var(--nx-fs); line-height: 1.4; color: var(--nx-text); }
+.nx .nx-voice-status .is-hint { color: var(--nx-muted); }
+.nx .nx-voice-status q { color: var(--nx-text-2); }
+.nx .nx-voice-say { display: inline-flex; align-items: flex-start; gap: var(--nx-space-7); }
+.nx .nx-voice-say > .nx-icon { flex: none; margin-top: var(--nx-space-2); color: var(--nx-green); }
+.nx .nx-voice-card.is-error .nx-voice-say > .nx-icon { color: var(--nx-red); }
+.nx .nx-voice-card.is-ask .nx-voice-say > .nx-icon { color: var(--nx-gold); }
+.nx .nx-voice-heard { color: var(--nx-muted); }
+.nx .nx-voice-x { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--nx-r-sm); color: var(--nx-muted); }
+.nx .nx-voice-x:hover { background: var(--nx-hover); color: var(--nx-text); }
+
+.nx .nx-voice-choices { display: flex; flex-wrap: wrap; gap: var(--nx-space-6); padding-left: var(--nx-space-40); }
+.nx .nx-voice-choice {
+  min-height: 28px; max-width: 260px; padding: 0 var(--nx-space-10); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-sm); color: var(--nx-text-2);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+}
+.nx .nx-voice-choice:hover { background: var(--nx-hover); color: var(--nx-text); }
+
+.nx .nx-voice-type {
+  display: flex; align-items: center; gap: var(--nx-space-8); min-height: 32px; padding: 0 var(--nx-space-4) 0 var(--nx-space-10); border-radius: var(--nx-r);
+  color: var(--nx-muted); background: color-mix(in srgb, var(--nx-text) 4%, transparent);
+}
+.nx .nx-voice-type:focus-within { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-accent-hi); }
+.nx .nx-voice-type input { flex: 1 1 auto; min-width: 0; height: 30px; border: 0; background: transparent; color: var(--nx-text); font: inherit; font-size: var(--nx-fs); }
+.nx.nx .nx-voice-type input:focus-visible { outline: none; }
+.nx .nx-voice-help { flex: none; min-height: 26px; padding: 0 var(--nx-space-8); border-radius: var(--nx-r-xs); font-size: var(--nx-fs-sm); color: var(--nx-accent-text); }
+.nx .nx-voice-help:hover { background: var(--nx-hover); }
+
+/* the sheet */
+.nx .nx-help-scrim {
+  position: absolute; inset: 0; z-index: 62; display: flex; justify-content: center; align-items: flex-start;
+  padding: max(var(--nx-space-48), 9vh) var(--nx-space-16) var(--nx-space-16); background: var(--nx-scrim);
+}
+.nx .nx-help {
+  width: min(860px, 100%); max-height: min(680px, 100%); display: flex; flex-direction: column; overflow: hidden;
+  border-radius: var(--nx-r-lg); background: var(--nx-raised); box-shadow: var(--nx-shadow-pop);
+  animation: nx-pop var(--nx-settle) var(--nx-spring-settle) both;
+}
+.nx .nx-help-head { display: flex; align-items: center; justify-content: space-between; padding: var(--nx-space-14) var(--nx-space-14) var(--nx-space-10) var(--nx-space-20); border-bottom: 1px solid var(--nx-line); }
+.nx .nx-help-head h2 { font-size: var(--nx-fs-prose); font-weight: 600; }
+.nx .nx-help-body { display: grid; grid-template-columns: 1fr 1fr; gap: var(--nx-space-24); padding: var(--nx-space-16) var(--nx-space-20) var(--nx-space-20); min-height: 0; }
+.nx .nx-help-body h3 { font-size: var(--nx-fs); font-weight: 600; margin-bottom: var(--nx-space-8); color: var(--nx-text); }
+.nx .nx-help-body h4 { font-size: var(--nx-fs-sm); font-weight: 600; margin: var(--nx-space-12) 0 var(--nx-space-4); color: var(--nx-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.nx .nx-help-body dl { display: grid; gap: var(--nx-space-2); margin: 0; }
+.nx .nx-help-row { display: grid; grid-template-columns: minmax(120px, 40%) 1fr; gap: var(--nx-space-10); padding: var(--nx-space-4) 0; font-size: var(--nx-fs-sm); line-height: 1.45; }
+.nx .nx-help-row dt { color: var(--nx-text-2); }
+.nx .nx-help-row dd { margin: 0; color: var(--nx-muted); }
+.nx .nx-help-row.is-voice dd { display: flex; flex-wrap: wrap; gap: var(--nx-space-4) var(--nx-space-8); }
+.nx .nx-help-row.is-voice q { color: var(--nx-text-2); }
+.nx .nx-help-note { font-size: var(--nx-fs-sm); line-height: 1.5; color: var(--nx-muted); margin-bottom: var(--nx-space-8); display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-4); }
+.nx .nx-help-note.is-warn { color: var(--nx-gold); }
+
+.nx.is-phone .nx-help-body { grid-template-columns: minmax(0, 1fr); }
+.nx.is-phone .nx-voice-card { bottom: calc(var(--nx-strip-h) + 8px); }
+
+/* skip link: invisible until the first Tab */
+.nx .nx-skip {
+  position: absolute; left: 12px; top: 8px; z-index: 80; padding: var(--nx-space-8) var(--nx-space-12); border-radius: var(--nx-r-sm);
+  background: var(--nx-raised); color: var(--nx-text); box-shadow: var(--nx-shadow-pop); transform: translateY(-200%);
+}
+.nx .nx-skip:focus { transform: none; text-decoration: none; }
+
+/* Settings → Look → Motion: "Reduce" applies even when the OS doesn't ask for it. */
+.nx[data-nx-motion="reduce"] *, .nx[data-nx-motion="reduce"] *::before, .nx[data-nx-motion="reduce"] *::after {
+  animation-duration: var(--nx-reduced) !important; animation-iteration-count: 1 !important; transition-duration: var(--nx-reduced) !important; scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) { .nx .nx-voice-card { animation: none; } }
+.nx .nx-set-hint { font-size: var(--nx-fs-sm); color: var(--nx-muted); }

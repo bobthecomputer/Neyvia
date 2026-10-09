@@ -1,0 +1,122 @@
+/* Remote control (plan 15 T19): the share/use screen and the always-visible warning on the
+   sharing PC. The live window itself reuses the computer-use preview's .nx-pv-* classes. */
+
+/* The warning: above everything in Neyvia, amber while the other PC is using an app (something is
+   happening), gold while it waits for that PC (needs you to know). */
+.nx .nx-rm-banner {
+  position: fixed; top: calc(8px + var(--nx-safe-top)); left: 50%; transform: translateX(-50%); z-index: 95;
+  display: flex; align-items: center; gap: var(--nx-space-10); max-width: calc(100vw - 32px); padding: var(--nx-space-5) var(--nx-space-6) var(--nx-space-5) var(--nx-space-14);
+  border-radius: var(--nx-r-pill); background: var(--nx-raised); color: var(--nx-text);
+  box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-state-needs), var(--nx-lift-3);
+  animation: nx-pop-in var(--nx-med) var(--nx-ease);
+}
+.nx .nx-rm-banner.is-used { box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-state-running), var(--nx-lift-3); background: color-mix(in srgb, var(--nx-state-running) 10%, var(--nx-raised)); }
+.nx .nx-rm-banner-text { display: flex; align-items: baseline; gap: var(--nx-space-8); min-width: 0; text-align: left; color: inherit; }
+.nx .nx-rm-banner-text strong { font-size: var(--nx-fs-md); font-weight: 600; white-space: nowrap; }
+.nx .nx-rm-banner-text span { font-size: var(--nx-fs-sm); color: var(--nx-text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.nx .nx-rm-banner-text:hover strong { text-decoration: underline; text-decoration-color: var(--nx-line-strong); }
+.nx .nx-rm-banner .nx-btn { flex: none; }
+/* On a phone the top holds the screen's own controls: the warning sits at the bottom instead. */
+.nx.is-phone .nx-rm-banner { top: auto; bottom: calc(10px + var(--nx-safe-bottom) + var(--nx-strip-h)); padding-left: var(--nx-space-12); }
+.nx.is-phone .nx-rm-banner-text { flex-direction: column; gap: 0; align-items: flex-start; }
+
+/* The screen. */
+.nx .nx-rm { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.nx .nx-rm.is-solo { height: 100dvh; background: var(--nx-bg); padding-bottom: var(--nx-safe-bottom); }
+.nx .nx-rm-head { padding-left: var(--nx-space-10); }
+.nx .nx-rm-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.nx .nx-rm-share-side { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: var(--nx-space-20) var(--nx-space-16) var(--nx-space-28); }
+.nx .nx-rm-column { width: min(640px, 100%); margin: 0 auto; display: flex; flex-direction: column; gap: var(--nx-space-14); }
+
+.nx .nx-rm-card {
+  display: flex; flex-direction: column; gap: var(--nx-space-10); padding: var(--nx-space-14) var(--nx-space-16) var(--nx-space-16); border-radius: var(--nx-r-lg);
+  background: var(--nx-raised); box-shadow: var(--nx-card-shadow);
+}
+.nx .nx-rm-card.is-quiet { background: transparent; box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-rm-card-head { display: flex; align-items: flex-start; gap: var(--nx-space-10); }
+.nx .nx-rm-card-head > div { flex: 1 1 auto; min-width: 0; }
+.nx .nx-rm-card-head h3 { margin: 0; font-size: var(--nx-fs-md); font-weight: 600; color: var(--nx-text); }
+.nx .nx-rm-card-head p { margin: var(--nx-space-3) 0 0; font-size: var(--nx-fs-sm); color: var(--nx-muted); line-height: 1.45; }
+.nx .nx-rm-card-head > .nx-btn { margin-left: auto; }
+.nx .nx-rm-note { margin: 0; font-size: var(--nx-fs-sm); color: var(--nx-muted); line-height: 1.45; }
+.nx .nx-rm-wait { margin: 0; display: flex; align-items: center; gap: var(--nx-space-8); font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+
+/* Windows that could be shared. */
+.nx .nx-rm-targets { list-style: none; margin: 0 calc(-1 * var(--nx-space-8)); padding: 0; display: flex; flex-direction: column; gap: var(--nx-row-gap); max-height: 320px; overflow-y: auto; }
+.nx .nx-rm-targets label {
+  display: flex; align-items: center; gap: var(--nx-space-10); padding: var(--nx-row-pad) var(--nx-space-8); border-radius: var(--nx-r-sm); cursor: pointer;
+  transition: background var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-rm-targets label:hover { background: var(--nx-hover); }
+.nx .nx-rm-targets input { flex: none; width: 16px; height: 16px; accent-color: var(--nx-accent); }
+.nx .nx-rm-targets .is-off label { cursor: default; }
+.nx .nx-rm-targets .is-off label:hover { background: transparent; }
+.nx .nx-rm-targets .is-off .nx-rm-target-title { color: var(--nx-muted); }
+.nx .nx-rm-targets label > .nx-icon { flex: none; color: var(--nx-muted); }
+.nx .nx-rm-target-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.nx .nx-rm-target-title { font-size: var(--nx-fs); color: var(--nx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-rm-target-main small { font-size: var(--nx-fs-xs); color: var(--nx-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-rm-lock { flex: none; color: var(--nx-muted); }
+
+.nx .nx-rm-allow { display: flex; align-items: center; gap: var(--nx-space-10); flex-wrap: wrap; padding-top: var(--nx-space-4); }
+.nx .nx-rm-label { font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+
+/* The one-use code. */
+.nx .nx-rm-invite {
+  display: flex; flex-direction: column; gap: var(--nx-space-8); padding: var(--nx-space-14) var(--nx-space-16); border-radius: var(--nx-r-lg);
+  background: var(--nx-gold-soft); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-state-needs) 45%, transparent);
+  animation: nx-pop-in var(--nx-med) var(--nx-ease);
+}
+.nx .nx-rm-invite > header { display: flex; align-items: baseline; gap: var(--nx-space-10); }
+.nx .nx-rm-invite > header strong { font-size: var(--nx-fs-md); color: var(--nx-text); font-weight: 600; }
+.nx .nx-rm-count { margin-left: auto; font-family: var(--nx-mono); font-size: var(--nx-fs-sm); color: var(--nx-text-2); font-variant-numeric: tabular-nums; }
+.nx .nx-rm-code {
+  display: block; padding: var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r-sm); background: var(--nx-panel); color: var(--nx-text);
+  font-family: var(--nx-mono); font-size: var(--nx-fs-md); letter-spacing: 0.02em; overflow-wrap: anywhere; user-select: all;
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+}
+.nx .nx-rm-invite p { margin: 0; font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-rm-invite.is-used { flex-direction: row; align-items: center; background: var(--nx-green-soft); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); font-size: var(--nx-fs-sm); color: var(--nx-text); }
+.nx .nx-rm-row { display: flex; gap: var(--nx-space-8); flex-wrap: wrap; }
+
+/* Shares and their state. */
+.nx .nx-rm-shares { list-style: none; margin: 0 calc(-1 * var(--nx-space-8)); padding: 0; display: flex; flex-direction: column; gap: var(--nx-space-2); }
+.nx .nx-rm-share { display: flex; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-6) var(--nx-space-8); border-radius: var(--nx-r-sm); }
+.nx .nx-rm-share-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.nx .nx-rm-share-main strong { font-size: var(--nx-fs); font-weight: 500; color: var(--nx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-rm-share-main small { font-size: var(--nx-fs-xs); color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+.nx .nx-rm-share.is-stopped strong { color: var(--nx-text-2); }
+
+/* Connect. */
+.nx .nx-rm-field { display: flex; flex-direction: column; gap: var(--nx-space-5); }
+.nx .nx-rm-field > span { font-size: var(--nx-fs-sm); color: var(--nx-text-2); font-weight: 500; }
+.nx .nx-rm-field .nx-input { width: 100%; }
+.nx .nx-rm-code-input { font-family: var(--nx-mono); }
+.nx.is-phone .nx-rm-field .nx-input { font-size: var(--nx-fs-lg); }
+.nx .nx-rm-ended { border-radius: var(--nx-r-lg); border-bottom: 0; }
+
+/* The live window (on top of .nx-pv-*). */
+.nx .nx-rm-viewer .nx-pv-canvas { cursor: pointer; }
+.nx .nx-rm-blocked { flex-wrap: wrap; justify-content: center; text-align: center; }
+.nx .nx-rm-blocked > span:not(.nx-spinner) { flex: 1 1 220px; }
+.nx .nx-rm-target .nx-pv-tag { background: var(--nx-accent); color: var(--nx-on-accent); }
+.nx .nx-rm-hint { color: var(--nx-text-2); }
+.nx .nx-rm-controls ul { max-height: 220px; overflow-y: auto; }
+.nx .nx-rm-controls li { padding: 0; }
+.nx .nx-rm-control {
+  display: flex; align-items: center; gap: var(--nx-space-8); width: 100%; padding: var(--nx-space-4) var(--nx-space-6); border-radius: var(--nx-r-sm); text-align: left;
+  color: var(--nx-text-2); font-size: var(--nx-fs-sm); transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-rm-control:hover { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-rm-control.is-on { background: var(--nx-accent-soft); color: var(--nx-text); }
+.nx .nx-rm-control > span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-rm-control > small { flex: none; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-rm-control > .nx-icon { flex: none; color: var(--nx-muted); }
+
+@media (max-width: 640px) {
+  .nx .nx-rm-share-side { padding: var(--nx-space-14) var(--nx-space-16) var(--nx-space-24); }
+  .nx .nx-rm-allow > .nx-head-spacer { display: none; }
+  .nx .nx-rm-allow > .nx-btn-primary { width: 100%; justify-content: center; }
+}
+.nx.is-phone .nx-rm-viewer .nx-pv-foot > span:first-child { white-space: normal; }
+.nx.is-phone .nx-rm-share-side { padding-bottom: var(--nx-space-96); }

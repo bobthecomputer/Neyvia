@@ -1,0 +1,154 @@
+{
+  "requires": {"neyviaApi": ">=1.0 <2"},
+ "schema": "neyvia.module.v1",
+ "id": "photocraft",
+ "name": "PhotoCraft",
+ "purpose": "Agent-usable PhotoCraft (ArtCraft/storytold, a Photoshop-style editor in Rust) for video frames: inspect, run engine commands, convert.",
+ "files": [
+  "apps/photocraft/photocraft_mod.py",
+  "apps/photocraft/manual.cl",
+  "apps/photocraft/host-contract.json"
+ ],
+ "manual": "photocraft",
+ "sourceManual": "manual.cl",
+ "contract": "host-contract.json",
+ "ownerSurface": "Marketplace / Mods",
+ "settings": [
+  "enabled"
+ ],
+ "events": [],
+ "dependencies": [],
+ "permissions": [
+  "Runs the locally built photocraft-cli headless (no window)",
+  "Reads the images and writes the outputs you name",
+  "No network"
+ ],
+ "actions": [
+  {
+   "name": "neyvia.mod.photocraft.commands",
+   "description": "List PhotoCraft engine commands matching a filter.",
+   "file": "apps/photocraft/photocraft_mod.py",
+   "function": "commands",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "filter": {
+      "type": "string",
+      "maxLength": 200
+     }
+    },
+    "required": [],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.photocraft.info",
+   "description": "Observe an image document (size, mode, layer tree) as a CL Scene.",
+   "file": "apps/photocraft/photocraft_mod.py",
+   "function": "info",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "file": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "file"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.photocraft.run",
+   "description": "Open an image, run engine commands in order and save the result.",
+   "file": "apps/photocraft/photocraft_mod.py",
+   "function": "run",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "file": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "steps": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string",
+         "maxLength": 200
+        },
+        "params": {
+         "type": "object"
+        }
+       },
+       "required": [
+        "id"
+       ]
+      }
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "file",
+     "steps",
+     "out"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.photocraft.convert",
+   "description": "Convert an image between formats.",
+   "file": "apps/photocraft/photocraft_mod.py",
+   "function": "convert",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "input": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "input",
+     "out"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.photocraft.verify",
+   "description": "Real round trip on a Neyvia capture: inspect, convert, and compare the decoded pixels.",
+   "file": "apps/photocraft/photocraft_mod.py",
+   "function": "verify",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+   }
+  }
+ ],
+ "upstream": {
+  "repository": "https://github.com/storytold/photocraft",
+  "license": "MIT OR Apache-2.0"
+ },
+ "sourceRepository": "https://github.com/storytold/photocraft"
+}

@@ -1,0 +1,739 @@
+{
+  "area": "proofs-b-desktop",
+  "manual": "proofs-b-desktop",
+  "module": "grant_agent.proofs_b_desktop",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "desktop.debugger.bundle",
+      "phase": "post",
+      "claim": "Returned debugger manifest equals durable state; copied evidence bytes match source, missing evidence is explicit, snapshots are compact, and every bundle includes a next action.",
+      "checkedAt": [
+        "grant_agent.debugger_bundle.write_debugger_bundle",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "diagnostic artifacts",
+        "debugger manifest"
+      ]
+    },
+    {
+      "id": "desktop.debugger.summary",
+      "phase": "post",
+      "claim": "Diagnostic summaries use the newest concrete failing receipt; absent evidence is insufficient_evidence with no invented failure or proof paths; proof links are unique and bounded.",
+      "checkedAt": [
+        "grant_agent.debugger_bundle.build_diagnostic_summary",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "operator failure diagnosis"
+      ]
+    },
+    {
+      "id": "desktop.docs.evidence",
+      "phase": "post",
+      "claim": "Every requested document receives a bounded successful observation or explicit error; docs_evidence.json equals the returned ordered observations.",
+      "checkedAt": [
+        "grant_agent.doc_ingestion.ingest_docs",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "document evidence",
+        "session observer"
+      ]
+    },
+    {
+      "id": "desktop.gateway.heartbeat",
+      "phase": "post",
+      "claim": "A gateway heartbeat is durably recorded and agrees with the local accelerator registry capabilities, unlimited concurrency and workspace mapping.",
+      "checkedAt": [
+        "grant_agent.desktop_gateway.record_desktop_gateway_heartbeat",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "gateway availability",
+        "cluster registry"
+      ]
+    },
+    {
+      "id": "desktop.gateway.route",
+      "phase": "post",
+      "claim": "Gateway routing preserves all required capabilities, selects a capable online PC, leaves ordinary work on the controller, and queues missing gateway work as a proof gap.",
+      "checkedAt": [
+        "grant_agent.desktop_gateway.route_gateway_job",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "job routing",
+        "proof availability"
+      ]
+    },
+    {
+      "id": "desktop.gateway.reconcile",
+      "phase": "post",
+      "claim": "Lost gateway jobs are durably queued with a proof-gap explanation and cluster event rather than being declared failed.",
+      "checkedAt": [
+        "grant_agent.desktop_gateway.reconcile_disappeared_gateway_jobs",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "gateway job lifecycle",
+        "recovery queue"
+      ]
+    },
+    {
+      "id": "desktop.gateway.event",
+      "phase": "post",
+      "claim": "Gateway evidence is written to the event journal and, for a job, mirrored into the cluster event history with unchanged payload.",
+      "checkedAt": [
+        "grant_agent.desktop_gateway.record_gateway_event",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "gateway event observers",
+        "job evidence"
+      ]
+    },
+    {
+      "id": "desktop.demo.comparison",
+      "phase": "post",
+      "claim": "Scores, remaining work and verification-failure deltas derive from the supplied runs; improvement requires no negative delta in any dimension.",
+      "checkedAt": [
+        "grant_agent.demo_runner.compare_training",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "training comparison claims"
+      ]
+    },
+    {
+      "id": "desktop.demo.probe",
+      "phase": "post",
+      "claim": "The local deterministic pattern probe records attempts whose outcomes determine the exact count, resistance and threshold status; this is not a live model resilience claim.",
+      "checkedAt": [
+        "grant_agent.demo_runner.run_adversarial_probe",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "local pattern probe",
+        "defensive benchmark report"
+      ]
+    },
+    {
+      "id": "desktop.demo.export",
+      "phase": "post",
+      "claim": "Exports preserve findings and before/after/comparison evidence; report, panel and manifest exist and raw probe prompts are replaced by redaction text with their original hashes and lengths.",
+      "checkedAt": [
+        "grant_agent.demo_runner.export_report_bundle",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "demo export bundle",
+        "export payload confidentiality"
+      ]
+    },
+    {
+      "id": "desktop.dashboard.artifact",
+      "phase": "post",
+      "claim": "The generated dashboard contains parseable HTML navigation and embedded evidence rows identical to current valid proof bundles; corrupt bundles are skipped. Rendered interactions are a separate frontier.",
+      "checkedAt": [
+        "grant_agent.dashboard.write_proof_dashboard",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "generated dashboard artifact",
+        "bundle evidence projection"
+      ]
+    },
+    {
+      "id": "delivery.append",
+      "phase": "post",
+      "claim": "Appending under an interprocess journal lease preserves retained prior rows and records exactly the new receipt, capped at 500 journal lines.",
+      "checkedAt": [
+        "grant_agent.delivery_receipt._append_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "delivery audit log",
+        "overnight retention"
+      ]
+    },
+    {
+      "id": "delivery.update",
+      "phase": "post",
+      "claim": "Updating under the journal lease matches receipt identity, preserves unrelated and malformed rows, and appends delayed missing receipts within the retention cap.",
+      "checkedAt": [
+        "grant_agent.delivery_receipt._update_last_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "delivery identity",
+        "late recovery",
+        "unrelated progress audit"
+      ]
+    },
+    {
+      "id": "delivery.tail-update",
+      "phase": "post",
+      "claim": "The legacy tail update is serialized with all receipt mutators and preserves preceding retained rows; it does not promise identity-based replacement.",
+      "checkedAt": [
+        "grant_agent.delivery_receipt._update_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "legacy provider receipt audit"
+      ]
+    },
+    {
+      "id": "delivery.ack",
+      "phase": "post",
+      "claim": "Acknowledgement under the journal lease changes only eligible matching receipt status/time; terminal errors, unknown identifiers and corrupt rows stay unchanged.",
+      "checkedAt": [
+        "grant_agent.delivery_receipt.acknowledge_delivery_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "browser acknowledgements",
+        "terminal transport errors"
+      ]
+    },
+    {
+      "id": "delivery.observe",
+      "phase": "post",
+      "claim": "Receipt observations under the journal lease skip unreadable rows, retain newest-last order, and filter a mission before applying the limit.",
+      "checkedAt": [
+        "grant_agent.delivery_receipt.load_receipts",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "browser polling",
+        "mission delivery observer"
+      ]
+    },
+    {
+      "id": "delivery.browser",
+      "phase": "post",
+      "claim": "Local browser progress is recorded as delivered to control-room with unchanged event kind/message and no token in a delivery URL.",
+      "checkedAt": [
+        "grant_agent.delivery_receipt.record_browser_delivery_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "browser progress",
+        "local delivery receipt"
+      ]
+    },
+    {
+      "id": "delivery.skipped",
+      "phase": "post",
+      "claim": "Disabled or unconfigured escalation persists an explicit skipped receipt and reason; this declaration does not claim real provider delivery.",
+      "checkedAt": [
+        "grant_agent.delivery_receipt.send_approval_escalation_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "approval audit",
+        "configuration failures"
+      ]
+    },
+    {
+      "id": "delivery.message",
+      "phase": "post",
+      "claim": "Telegram HTML escapes all caller-controlled mission identity, body and note while retaining only the fixed approval/code markup.",
+      "checkedAt": [
+        "grant_agent.delivery_receipt._format_telegram_message",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "impact": [
+        "notification text",
+        "HTML control characters"
+      ]
+    },
+    {
+      "id": "desktop.bridge.allowlist",
+      "phase": "pre",
+      "claim": "Desktop commands outside the product allow-list are rejected before root resolution, policy installation, backend construction or forwarding.",
+      "checkedAt": [
+        "grant_agent.desktop_bridge.dispatch_desktop_command"
+      ],
+      "impact": [
+        "desktop IPC authority"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_dashboard.py",
+      "case": "DashboardTests.test_load_and_write_dashboard",
+      "contracts": [
+        "desktop.dashboard.artifact"
+      ],
+      "checkedAt": [
+        "grant_agent.dashboard.write_proof_dashboard",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_debugger_bundle.py",
+      "case": "DebuggerBundleTests.test_writes_manifest_and_copies_existing_evidence",
+      "contracts": [
+        "desktop.debugger.bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.debugger_bundle.write_debugger_bundle",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_debugger_bundle.py",
+      "case": "DebuggerBundleTests.test_empty_bundle_records_next_action_without_fake_evidence",
+      "contracts": [
+        "desktop.debugger.bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.debugger_bundle.write_debugger_bundle",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_debugger_bundle.py",
+      "case": "DebuggerBundleTests.test_diagnostic_summary_explains_failure_from_real_evidence",
+      "contracts": [
+        "desktop.debugger.summary"
+      ],
+      "checkedAt": [
+        "grant_agent.debugger_bundle.build_diagnostic_summary",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_debugger_bundle.py",
+      "case": "DebuggerBundleTests.test_diagnostic_summary_does_not_fake_failure_without_evidence",
+      "contracts": [
+        "desktop.debugger.summary"
+      ],
+      "checkedAt": [
+        "grant_agent.debugger_bundle.build_diagnostic_summary",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_update_receipt_matches_id_without_clobbering_newer_receipts",
+      "contracts": [
+        "delivery.update"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt._update_last_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_acknowledge_delivery_receipt_updates_browser_ack_and_preserves_bad_rows",
+      "contracts": [
+        "delivery.ack"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt.acknowledge_delivery_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_acknowledge_delivery_receipt_does_not_clobber_error_status",
+      "contracts": [
+        "delivery.ack"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt.acknowledge_delivery_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_record_browser_delivery_receipt_persists_delivered_progress_receipt",
+      "contracts": [
+        "delivery.browser",
+        "delivery.append"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt._append_receipt",
+        "grant_agent.delivery_receipt.record_browser_delivery_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_skipped_approval_receipt_is_persisted_for_browser_audit",
+      "contracts": [
+        "delivery.skipped",
+        "delivery.append"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt._append_receipt",
+        "grant_agent.delivery_receipt.send_approval_escalation_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_load_receipts_filters_by_mission_before_limit_for_browser_polling",
+      "contracts": [
+        "delivery.observe"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt.load_receipts",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_append_receipt_caps_jsonl_retention_for_overnight_progress",
+      "contracts": [
+        "delivery.append"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt._append_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_update_missing_receipt_fallback_preserves_retention_cap",
+      "contracts": [
+        "delivery.update"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt._update_last_receipt",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "case": "DeliveryReceiptTests.test_telegram_message_escapes_html_control_chars",
+      "contracts": [
+        "delivery.message"
+      ],
+      "checkedAt": [
+        "grant_agent.delivery_receipt._format_telegram_message",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_demo_runner.py",
+      "case": "DemoRunnerTests.test_compare_training",
+      "contracts": [
+        "desktop.demo.comparison"
+      ],
+      "checkedAt": [
+        "grant_agent.demo_runner.compare_training",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_demo_runner.py",
+      "case": "DemoRunnerTests.test_probe_and_bundle_export",
+      "contracts": [
+        "desktop.demo.probe",
+        "desktop.demo.export"
+      ],
+      "checkedAt": [
+        "grant_agent.demo_runner.export_report_bundle",
+        "grant_agent.demo_runner.run_adversarial_probe",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_desktop_bridge.py",
+      "case": "test_desktop_bridge_rejects_commands_outside_the_product_allowlist",
+      "contracts": [
+        "desktop.bridge.allowlist"
+      ],
+      "checkedAt": [
+        "grant_agent.desktop_bridge.dispatch_desktop_command"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_desktop_gateway.py",
+      "case": "test_desktop_gateway_heartbeat_updates_cluster_and_receipt_log",
+      "contracts": [
+        "desktop.gateway.heartbeat"
+      ],
+      "checkedAt": [
+        "grant_agent.desktop_gateway.record_desktop_gateway_heartbeat",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_desktop_gateway.py",
+      "case": "test_desktop_gateway_heartbeat_loader_skips_corrupt_rows",
+      "contracts": [
+        "desktop.gateway.heartbeat"
+      ],
+      "checkedAt": [
+        "grant_agent.desktop_gateway.record_desktop_gateway_heartbeat",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_desktop_gateway.py",
+      "case": "test_gateway_jobs_route_to_online_pc_gateway_with_required_capabilities",
+      "contracts": [
+        "desktop.gateway.route"
+      ],
+      "checkedAt": [
+        "grant_agent.desktop_gateway.route_gateway_job",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_desktop_gateway.py",
+      "case": "test_non_gateway_jobs_stay_on_controller_and_missing_gateway_queues_gap",
+      "contracts": [
+        "desktop.gateway.route"
+      ],
+      "checkedAt": [
+        "grant_agent.desktop_gateway.route_gateway_job",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_desktop_gateway.py",
+      "case": "test_disappeared_gateway_job_becomes_queued_proof_gap_not_failed",
+      "contracts": [
+        "desktop.gateway.reconcile"
+      ],
+      "checkedAt": [
+        "grant_agent.desktop_gateway.reconcile_disappeared_gateway_jobs",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_desktop_gateway.py",
+      "case": "test_gateway_events_stream_to_jsonl_and_cluster_events",
+      "contracts": [
+        "desktop.gateway.event"
+      ],
+      "checkedAt": [
+        "grant_agent.desktop_gateway.record_gateway_event",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_doc_ingestion.py",
+      "case": "DocIngestionTests.test_reads_local_doc_and_writes_evidence",
+      "contracts": [
+        "desktop.docs.evidence"
+      ],
+      "checkedAt": [
+        "grant_agent.doc_ingestion.ingest_docs",
+        "grant_agent.proofs_b_desktop.check"
+      ],
+      "procedure": "self_check"
+    }
+  ],
+  "reviewedFiles": [
+    {
+      "test": "tests/test_dashboard.py",
+      "cases": 1,
+      "covered": 1,
+      "disposition": "covered",
+      "pendingCases": [],
+      "reason": "Real local action and generated-artifact journeys cover all original cases. No dead code was established."
+    },
+    {
+      "test": "tests/test_debugger_bundle.py",
+      "cases": 4,
+      "covered": 4,
+      "disposition": "covered",
+      "pendingCases": [],
+      "reason": "Real local action and generated-artifact journeys cover all original cases. No dead code was established."
+    },
+    {
+      "test": "tests/test_delivery_receipt.py",
+      "cases": 17,
+      "covered": 9,
+      "disposition": "partial",
+      "pendingCases": [
+        "DeliveryReceiptTests.test_telegram_send_does_not_retry_non_transient_http_errors",
+        "DeliveryReceiptTests.test_telegram_receipt_persists_retry_count_after_transient_recovery",
+        "MissionControlDeliveryReceiptTests.test_maybe_send_approval_receipt_requires_delivery_ready",
+        "MissionControlDeliveryReceiptTests.test_maybe_send_approval_receipt_sends_when_delivery_ready",
+        "MissionControlDeliveryReceiptTests.test_maybe_send_approval_receipt_marks_attempt_consumed_to_prevent_refresh_spam",
+        "DeliveryReceiptWebBackendTests.test_cors_allows_patch_for_delivery_receipt_ack_preflight",
+        "DeliveryReceiptWebBackendTests.test_delivery_receipt_ack_is_exposed_as_patch_not_get",
+        "DeliveryReceiptWebBackendTests.test_delivery_receipt_limit_parser_rejects_unbounded_browser_queries"
+      ],
+      "reason": "Live transport retries and delivery-ready mission integration remain unobserved; CORS PATCH/HTTP limit journeys require the real HTTP boundary."
+    },
+    {
+      "test": "tests/test_demo_runner.py",
+      "cases": 2,
+      "covered": 2,
+      "disposition": "covered",
+      "pendingCases": [],
+      "reason": "Real local action and generated-artifact journeys cover all original cases. No dead code was established."
+    },
+    {
+      "test": "tests/test_dependency_inventory.py",
+      "cases": 10,
+      "covered": 0,
+      "disposition": "pending",
+      "pendingCases": [
+        "test_real_inventory_is_deterministic_complete_and_honest",
+        "test_written_inventory_rebuild_detects_report_and_source_tamper",
+        "test_critical_unresolved_entries_fail_updater_preflight",
+        "test_validator_rejects_implicit_license_unknown",
+        "test_npm_hoisting_resolves_to_nearest_locked_identity",
+        "test_full_identity_collision_is_detected",
+        "test_variant_dependency_resolution_requires_full_identity",
+        "test_reparse_dependency_input_is_rejected",
+        "test_input_changed_during_snapshot_is_rejected",
+        "test_clean_output_release_gate_rebuilds_and_binds_proof"
+      ],
+      "reason": "Current repository build correctly rejects stale Cargo and uv lock license evidence; no provenance is invented. Hoisting/identity ambiguity, reparse/source race and canonical release CLI need independent real journeys."
+    },
+    {
+      "test": "tests/test_desktop_bridge.py",
+      "cases": 3,
+      "covered": 1,
+      "disposition": "partial",
+      "pendingCases": [
+        "test_desktop_bridge_reads_the_durable_conversation_snapshot",
+        "test_desktop_bridge_installs_and_allows_the_bundled_image_skill"
+      ],
+      "reason": "Durable conversation snapshot requires an isolated backend/native journey; bundled skill byte installation alone would not cover allowed image command dispatch."
+    },
+    {
+      "test": "tests/test_desktop_gateway.py",
+      "cases": 6,
+      "covered": 6,
+      "disposition": "covered",
+      "pendingCases": [],
+      "reason": "Real local action and generated-artifact journeys cover all original cases. No dead code was established."
+    },
+    {
+      "test": "tests/test_desktop_ui_contract.py",
+      "cases": 75,
+      "covered": 0,
+      "disposition": "pending",
+      "pendingCases": [
+        "DesktopUiContractTests.test_agent_route_controls_stay_in_agent_and_surface_hermes_glm",
+        "DesktopUiContractTests.test_index_html_mounts_web_root_and_entrypoint",
+        "DesktopUiContractTests.test_main_entry_mounts_fluxio_app_inside_web_source_tree",
+        "DesktopUiContractTests.test_agent_turn_receipts_surface_real_proof_artifacts",
+        "DesktopUiContractTests.test_web_shell_is_installable_pwa_with_offline_fallback",
+        "DesktopUiContractTests.test_fluxio_shell_exposes_real_in_app_update_control",
+        "DesktopUiContractTests.test_slim_reference_rail_has_accessible_cues",
+        "DesktopUiContractTests.test_authenticated_settings_verifier_captures_updates_surface",
+        "DesktopUiContractTests.test_bridge_exposes_fluxio_facade_commands",
+        "DesktopUiContractTests.test_tauri_frontend_dist_points_at_web_build",
+        "DesktopUiContractTests.test_web_shell_has_mobile_notification_summary_path",
+        "DesktopUiContractTests.test_agent_review_keeps_runtime_messages_visible_and_defaults_to_high_effort",
+        "DesktopUiContractTests.test_package_json_exposes_desktop_verification_script",
+        "DesktopUiContractTests.test_pause_reason_and_runtime_lane_still_read_from_shared_mission_loop",
+        "DesktopUiContractTests.test_reference_shell_buttons_are_wired_to_actions",
+        "DesktopUiContractTests.test_slash_panel_surfaces_comments_and_skills",
+        "DesktopUiContractTests.test_agent_turn_receipts_and_executable_comments_are_visible",
+        "DesktopUiContractTests.test_connected_app_cards_can_seed_agent_and_skill_handoffs",
+        "DesktopUiContractTests.test_builder_surfaces_solantir_workspace_bridge_status",
+        "DesktopUiContractTests.test_skill_studio_surfaces_mission_slice_feedback_loop",
+        "DesktopUiContractTests.test_workbench_message_selection_does_not_reuse_stale_preview_frame",
+        "DesktopUiContractTests.test_agent_keeps_runtime_output_out_of_dialogue_thread",
+        "DesktopUiContractTests.test_proof_drawer_surfaces_digest_and_honest_preview_state",
+        "DesktopUiContractTests.test_agent_live_composer_arrow_is_the_only_start_flow",
+        "DesktopUiContractTests.test_mission_launcher_has_copyable_url_and_command_shortcuts",
+        "DesktopUiContractTests.test_fluxio_does_not_embed_the_separate_auv_haps_project",
+        "DesktopUiContractTests.test_composer_arrow_uses_5_6_without_an_implicit_runtime_budget",
+        "DesktopUiContractTests.test_agent_live_plus_menu_exposes_real_codex_like_context_actions",
+        "DesktopUiContractTests.test_agent_surface_has_primary_mission_command_center",
+        "DesktopUiContractTests.test_agent_command_center_surfaces_current_phase_from_mission_run",
+        "DesktopUiContractTests.test_agent_command_center_has_focused_task_navigator",
+        "DesktopUiContractTests.test_agent_command_center_has_proof_timeline_from_receipts",
+        "DesktopUiContractTests.test_agent_command_center_has_capacity_and_proof_gap_rail",
+        "DesktopUiContractTests.test_agent_command_center_has_morning_digest_view",
+        "DesktopUiContractTests.test_settings_is_global_rail_navigation_item",
+        "DesktopUiContractTests.test_settings_models_accounts_card_opens_real_provider_panel",
+        "DesktopUiContractTests.test_live_shell_default_retires_graphite_gold_look",
+        "DesktopUiContractTests.test_packaged_tauri_defaults_to_live_mode_without_fixture",
+        "DesktopUiContractTests.test_selector_controls_use_polished_drawer_style",
+        "DesktopUiContractTests.test_provider_auth_ui_does_not_fake_chatgpt_or_minimax_login",
+        "DesktopUiContractTests.test_provider_oauth_actions_offer_web_nas_fallback",
+        "DesktopUiContractTests.test_control_room_surfaces_live_agent_artifacts_compartments_and_deploy_readiness",
+        "DesktopUiContractTests.test_backend_exposes_integration_readiness_contract",
+        "DesktopUiContractTests.test_authenticated_live_agent_verifier_has_global_timeout_receipt",
+        "DesktopUiContractTests.test_builder_agent_modes_and_runtimes_remain_distinct",
+        "DesktopUiContractTests.test_builder_live_summary_contract_fails_closed",
+        "DesktopUiContractTests.test_builder_surfaces_project_health_and_subagent_lanes",
+        "DesktopUiContractTests.test_one_command_web_launcher_is_documented",
+        "DesktopUiContractTests.test_reference_builder_timeline_is_virtualized",
+        "DesktopUiContractTests.test_live_reference_builder_uses_real_nas_data_not_fixture_rows",
+        "DesktopUiContractTests.test_authenticated_live_control_verifier_proves_real_nas_rows",
+        "DesktopUiContractTests.test_authenticated_live_agent_verifier_proves_real_mission_detail",
+        "DesktopUiContractTests.test_workbench_program_bridge_verifier_uses_safe_login_and_browser_proof",
+        "DesktopUiContractTests.test_route_trust_live_sampler_launches_hermes_sampling_missions_safely",
+        "DesktopUiContractTests.test_route_trust_closeout_reviewer_waits_for_terminal_sampling_missions",
+        "DesktopUiContractTests.test_route_trust_loop_advances_without_duplicate_sampling_missions",
+        "DesktopUiContractTests.test_builder_surfaces_t3_gap_radar_from_live_snapshot",
+        "DesktopUiContractTests.test_long_history_chat_and_proof_lists_are_bounded",
+        "DesktopUiContractTests.test_responsive_visual_smoke_covers_phone_tablet_desktop",
+        "DesktopUiContractTests.test_release_proof_workflow_archives_long_history_ci_evidence",
+        "DesktopUiContractTests.test_self_improvement_evidence_is_archived_in_release_proof",
+        "DesktopUiContractTests.test_public_web_distribution_contract_is_verified_before_pages_deploy",
+        "DesktopUiContractTests.test_acceptance_gap_contracts_are_wired_for_storage_runtime_and_proof_attachment",
+        "DesktopUiContractTests.test_real_agent_conversation_proof_verifier_is_packaged_and_honest",
+        "DesktopUiContractTests.test_agent_live_exposes_real_runtime_proof_buttons_and_auto_refresh",
+        "DesktopUiContractTests.test_preview_bridge_verifier_records_durable_proof_attachment",
+        "DesktopUiContractTests.test_solantir_preview_verifier_records_feed_counts_and_camera_source_truth",
+        "DesktopUiContractTests.test_local_skills_publish_a_multi_harness_runtime_contract",
+        "DesktopUiContractTests.test_visible_preview_copy_does_not_reintroduce_browser_surface_labels",
+        "DesktopUiContractTests.test_agent_turn_mode_control_is_wired_across_surfaces_and_backends",
+        "DesktopUiContractTests.test_mission_artifact_manifest_preview_binds_to_agent_preview_window",
+        "DesktopUiContractTests.test_real_runtime_dialogue_reaches_the_live_mission_thread",
+        "DesktopUiContractTests.test_reference_agent_surfaces_failed_runtime_compartment_operator_prompt",
+        "DesktopUiContractTests.test_feature_tour_is_first_run_replayable_and_invisible_to_verifiers",
+        "DesktopUiContractTests.test_builder_exposes_compact_real_mission_orchestration"
+      ],
+      "reason": "75 broad source assertions remain unmigrated across Agent, Builder, Workbench, Settings, PWA, desktop/device, provider and release features. Installed Chrome has proved the separate bounded Harness browser chapter; that does not cover these journeys. Actual NAS/public/live-app targets are outside this task authority, and no dead-code inference comes from missing source strings."
+    },
+    {
+      "test": "tests/test_doc_ingestion.py",
+      "cases": 1,
+      "covered": 1,
+      "disposition": "covered",
+      "pendingCases": [],
+      "reason": "Real local action and generated-artifact journeys cover all original cases. No dead code was established."
+    }
+  ],
+  "frontier": [
+    "Live transport retries and delivery-ready mission integration remain unobserved; CORS PATCH/HTTP limit journeys require the real HTTP boundary.",
+    "Current repository build correctly rejects stale Cargo and uv lock license evidence; no provenance is invented. Hoisting/identity ambiguity, reparse/source race and canonical release CLI need independent real journeys.",
+    "Durable conversation snapshot requires an isolated backend/native journey; bundled skill byte installation alone would not cover allowed image command dispatch.",
+    "75 broad source assertions remain unmigrated across Agent, Builder, Workbench, Settings, PWA, desktop/device, provider and release features. Installed Chrome has proved the separate bounded Harness browser chapter; that does not cover these journeys. Actual NAS/public/live-app targets are outside this task authority, and no dead-code inference comes from missing source strings."
+  ],
+  "portRoles": []
+}

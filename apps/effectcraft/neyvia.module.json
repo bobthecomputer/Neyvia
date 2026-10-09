@@ -1,0 +1,197 @@
+{
+  "requires": {"neyviaApi": ">=1.0 <2"},
+ "schema": "neyvia.module.v1",
+ "id": "effectcraft",
+ "name": "EffectCraft",
+ "purpose": "Agent-usable EffectCraft (ArtCraft/storytold, an After Effects-style compositor in Rust) through its headless CLI: commands, comps and layers as a CL Scene, scripted edits, frames and renders.",
+ "files": [
+  "apps/effectcraft/effectcraft_mod.py",
+  "apps/effectcraft/manual.cl",
+  "apps/effectcraft/host-contract.json"
+ ],
+ "manual": "effectcraft",
+ "sourceManual": "manual.cl",
+ "contract": "host-contract.json",
+ "ownerSurface": "Marketplace / Mods",
+ "settings": [
+  "enabled"
+ ],
+ "events": [],
+ "dependencies": [],
+ "permissions": [
+  "Runs the locally built effectcraft-cli headless (no window)",
+  "Reads and writes the .ecproj and renders you name",
+  "No network"
+ ],
+ "actions": [
+  {
+   "name": "neyvia.mod.effectcraft.commands",
+   "description": "List EffectCraft engine commands matching a filter.",
+   "file": "apps/effectcraft/effectcraft_mod.py",
+   "function": "commands",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "filter": {
+      "type": "string",
+      "maxLength": 200
+     }
+    },
+    "required": [],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.effectcraft.info",
+   "description": "Observe a project as a CL Scene: every comp, and the active comp's layers with their effects and keyframed properties.",
+   "file": "apps/effectcraft/effectcraft_mod.py",
+   "function": "info",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.effectcraft.run",
+   "description": "Run engine commands in order on a project (the built-in demo when omitted) and save it.",
+   "file": "apps/effectcraft/effectcraft_mod.py",
+   "function": "run",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "steps": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string",
+         "maxLength": 200
+        },
+        "params": {
+         "type": "object"
+        }
+       },
+       "required": [
+        "id"
+       ]
+      }
+     },
+     "saveAs": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "steps",
+     "saveAs"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.effectcraft.frame",
+   "description": "Render one composition frame to PNG.",
+   "file": "apps/effectcraft/effectcraft_mod.py",
+   "function": "frame",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "comp": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "time": {
+      "type": "number",
+      "minimum": 0
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "out"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.effectcraft.render",
+   "description": "Render a composition to a file and check the outcome contracts.",
+   "file": "apps/effectcraft/effectcraft_mod.py",
+   "function": "render",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "comp": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "format": {
+      "type": "string",
+      "maxLength": 20
+     },
+     "start": {
+      "type": "number"
+     },
+     "end": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "out"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.effectcraft.verify",
+   "description": "Real round trip on a real Neyvia capture: new comp, import, keyframed push-in, a title with Drop Shadow and a fade, observe as a Scene, one frame, a 3 s H.264 render, then the outcome contracts on the decoded file.",
+   "file": "apps/effectcraft/effectcraft_mod.py",
+   "function": "verify",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+   }
+  }
+ ],
+ "upstream": {
+  "repository": "https://github.com/storytold/effectcraft",
+  "license": "MIT OR Apache-2.0",
+  "version": "0.3.1"
+ },
+ "sourceRepository": "https://github.com/storytold/effectcraft"
+}

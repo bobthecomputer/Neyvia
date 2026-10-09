@@ -1,0 +1,64 @@
+{
+  "schema": "neyvia.mesh-config/v1",
+  "selectedProvider": "tailscale-bridge",
+  "targetProvider": "netbird",
+  "cutoverEnabled": false,
+  "policy": {
+    "directPeerPreferred": true,
+    "relayFallbackAllowed": true,
+    "publicIngressAllowed": false,
+    "serviceDiscoveryScope": "private-mesh",
+    "shortLivedEnrollment": true,
+    "agentMayEnrollDevices": false,
+    "agentMayChangeRoutes": false,
+    "agentMayRevokeDevices": false
+  },
+  "performanceBudgets": {
+    "cachedSnapshotMs": 10,
+    "liveSnapshotMs": 750,
+    "directLanRttMs": 15,
+    "directWanRttMs": 120,
+    "relayRttMs": 250,
+    "statusCacheTtlSeconds": 3,
+    "probeCacheTtlSeconds": 60
+  },
+  "providers": {
+    "tailscale-bridge": {
+      "role": "non-disruptive-current-transport",
+      "version": "1.98.4",
+      "latestStableObserved": "1.98.9",
+      "executable": "C:\\Program Files\\Tailscale\\tailscale.exe",
+      "statusCommand": ["status", "--json"],
+      "pingCommand": ["ping"],
+      "autoUpdate": true,
+      "cutoverTarget": false
+    },
+    "netbird": {
+      "role": "selected-self-hosted-foundation",
+      "version": "0.75.0",
+      "release": "https://github.com/netbirdio/netbird/releases/tag/v0.75.0",
+      "architecture": "combined-server-plus-external-relay",
+      "controlInterface": "daemon-http-json-gateway",
+      "installState": "not-installed",
+      "cutoverTarget": true
+    },
+    "headscale": {
+      "role": "compatibility-alternative",
+      "version": "0.29.2",
+      "release": "https://github.com/juanfont/headscale/releases/tag/v0.29.2",
+      "installState": "evaluated-not-selected",
+      "cutoverTarget": false
+    }
+  },
+  "serviceTypes": [
+    "artifact",
+    "context",
+    "marketplace",
+    "app-bridge",
+    "nearby-send",
+    "folder-sync",
+    "chat",
+    "vault",
+    "worker"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "neyvia.learned",
+  "version": 2,
+  "owner": "laya-visible",
+  "representation": "CL-State plus explicit transfer features",
+  "adoption": "shadow",
+  "note": "Answers above the 0.95 gate only through admitted, labelled outcomes: an exact match, or an abstract match on the explicit transfer features below with distinct support and a contrasting example. Anything else stays a base-model estimate (never above the gate) and is handed up. Calibration and held-out numbers: docs/evidence/laya-calibration.md.",
+  "questions": {
+    "taste_triage": {
+      "type": "choice",
+      "view": ["checks", "blocks", "renderValid", "pageId"],
+      "instructions": "Deterministic page checks ran on a rendered page. Decide whether the page must be repaired before the expensive model critique, or whether the critique should look at it. Pages with defects the checks already found do not need a critique to be told they fail.",
+      "criteria": {
+        "repair_first": "The checks found defects of the kind the critique always rejects; repair them before asking the critique.",
+        "ask_critic": "The checks do not establish that the critique will reject the page; ask the critique."
+      },
+      "transfer_features": {
+        "theme_dark_ok": {"path": ["checks", "theme-dark", "passed"], "op": "exact"},
+        "side_void_ok": {"path": ["checks", "side-void", "passed"], "op": "exact"},
+        "visible_dash_ok": {"path": ["checks", "visible-dash", "passed"], "op": "exact"},
+        "stock_phrase_ok": {"path": ["checks", "stock-phrase", "passed"], "op": "exact"},
+        "abstract_art_ok": {"path": ["checks", "abstract-art", "passed"], "op": "exact"}
+      },
+      "learning": "instant",
+      "adoption": "shadow",
+      "stakes": {"default": "reversible_cheap"},
+      "thresholds": {"answer": 0.95}
+    },
+    "page_done": {
+      "type": "noul",
+      "view": ["goal", "page", "current", "action_receipts", "evidence", "receipt_summary"],
+      "instructions": "Has the goal on this page been completed? Done needs the required evidence to be visible in the observed page text and an action receipt showing the action actually happened. A requested or pending action is not a completed one.",
+      "criteria": {"false": "The evidence is not on the page, or no action receipt shows the work happened.", "true": "The evidence is on the page and an action receipt shows the work happened."},
+      "transfer_features": {
+        "evidence_on_page": {"path": ["current", "text"], "op": "contains_path", "value_path": ["evidence"]},
+        "action_receipt": {"path": ["receipt_summary"], "op": "nonempty"}
+      },
+      "learning": "instant",
+      "adoption": "shadow",
+      "stakes": {"default": "reversible_cheap"},
+      "thresholds": {"answer": 0.95}
+    },
+    "cl_route": {
+      "type": "noul",
+      "view": ["task", "layer", "layer_hit", "layer_hit_count", "rival_hit"],
+      "instructions": "A request arrived for the Connected Language host. Does it belong to the proposed manual layer? The layer's own vocabulary appearing in the request, with no other layer's vocabulary also appearing, is the usual sign.",
+      "criteria": {"false": "The request does not belong to the proposed layer, or another layer fits equally well.", "true": "The request belongs to the proposed layer."},
+      "transfer_features": {
+        "layer_terms_matched": {"path": ["layer_hit_count"], "op": "exact"},
+        "rival_vocabulary": {"path": ["rival_hit"], "op": "nonempty"}
+      },
+      "learning": "instant",
+      "adoption": "shadow",
+      "stakes": {"default": "reversible_cheap"},
+      "thresholds": {"answer": 0.95}
+    }
+  }
+}

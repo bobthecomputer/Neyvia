@@ -1,0 +1,316 @@
+{
+  "schema": "neyvia.install-profiles/v1",
+  "policy": {
+    "coreRule": "Core contains only the shell, trust/runtime contracts, local state, secure credential client, updater, module host, and thin mesh identity client.",
+    "optionalRule": "Heavy tools, models, SDKs, emulators, servers, and peer caches are capability packs installed only when selected.",
+    "automaticInstall": false,
+    "defaultProfile": "recommended",
+    "largePayloadRoot": "D:\\Neyvia",
+    "nasMirrorRole": "verified-mirror",
+    "publicReleaseOrigin": "https://github.com/bobthecomputer/vibe-coding-platform/releases"
+  },
+  "packages": [
+    {
+      "packageId": "core.desktop-shell",
+      "name": "Neyvia desktop shell",
+      "tier": "core",
+      "deliveryState": "bundled",
+      "installMode": "bundled",
+      "resourceClass": "light",
+      "dependsOn": [],
+      "capabilities": ["desktop", "web", "session-surfaces"]
+    },
+    {
+      "packageId": "core.agent-runtime",
+      "name": "Agent runtime and orchestration",
+      "tier": "core",
+      "deliveryState": "bundled",
+      "installMode": "bundled",
+      "resourceClass": "light",
+      "dependsOn": ["core.desktop-shell"],
+      "capabilities": ["missions", "approvals", "receipts", "runtime-lanes"]
+    },
+    {
+      "packageId": "core.capability-os",
+      "name": "Capability OS and permission broker",
+      "tier": "core",
+      "deliveryState": "bundled",
+      "installMode": "bundled",
+      "resourceClass": "light",
+      "dependsOn": ["core.agent-runtime"],
+      "capabilities": ["typed-tools", "permissions", "resource-management"]
+    },
+    {
+      "packageId": "core.context-artifacts",
+      "name": "Context, artifact, and lineage engine",
+      "tier": "core",
+      "deliveryState": "bundled",
+      "installMode": "bundled",
+      "resourceClass": "light",
+      "dependsOn": ["core.agent-runtime"],
+      "capabilities": ["context-packs", "artifact-graph", "verification"]
+    },
+    {
+      "packageId": "core.local-state",
+      "name": "Local metadata, search, and durable session state",
+      "tier": "core",
+      "deliveryState": "bundled",
+      "installMode": "bundled",
+      "resourceClass": "light",
+      "dependsOn": ["core.context-artifacts"],
+      "capabilities": ["sqlite-state", "local-search", "conversation-state"]
+    },
+    {
+      "packageId": "core.secure-store-client",
+      "name": "OS secure-store and opaque secret-handle client",
+      "tier": "core",
+      "deliveryState": "foundation",
+      "installMode": "bundled",
+      "resourceClass": "light",
+      "dependsOn": ["core.agent-runtime"],
+      "capabilities": ["os-keyring", "secret-presence", "opaque-handles"],
+      "gap": "OS keyring storage exists; the cross-device opaque-handle broker is not implemented."
+    },
+    {
+      "packageId": "core.module-host",
+      "name": "Sandboxed module host and installer",
+      "tier": "core",
+      "deliveryState": "foundation",
+      "installMode": "bundled",
+      "resourceClass": "light",
+      "dependsOn": ["core.capability-os", "core.context-artifacts"],
+      "toolIds": ["tool.cosign", "tool.wasmtime", "tool.syft", "tool.grype", "tool.windows-defender"],
+      "capabilities": ["manifest-validation", "deterministic-package-build", "signed-publisher-trust", "archive-inspection", "dependency-gate", "malware-scan", "sbom", "vulnerability-policy", "wasm-isolation", "atomic-activation", "disable", "rollback", "local-content-addressed-registry"],
+      "gap": "Signed content packs and zero-grant WebAssembly modules can be verified, scanned, activated, disabled, and rolled back. Full applications and long-running services remain blocked until the OS/container sandbox, health-window rollback, and registry revocation feed are implemented."
+    },
+    {
+      "packageId": "core.update-client",
+      "name": "Signed Neyvia update client",
+      "tier": "core",
+      "deliveryState": "foundation",
+      "installMode": "bundled",
+      "resourceClass": "light",
+      "dependsOn": ["core.desktop-shell"],
+      "capabilities": ["signed-update-check", "download-install", "release-notes", "rollback"],
+      "gap": "Signed update artifacts and the in-app install action exist; GitHub signing secrets and the first published latest.json feed are still required."
+    },
+    {
+      "packageId": "core.mesh-identity-client",
+      "name": "Thin private-mesh identity and route client",
+      "tier": "core",
+      "deliveryState": "foundation",
+      "installMode": "managed",
+      "resourceClass": "light",
+      "dependsOn": ["core.secure-store-client"],
+      "toolIds": ["tool.neyvia-mesh"],
+      "capabilities": ["sanitized-device-identity", "peer-health", "direct-or-relay-probe", "service-discovery", "provider-migration-gates"],
+      "gap": "The provider-neutral control layer and non-disruptive Tailscale bridge are verified. The selected NetBird client, NAS control plane, Android enrollment, relay proof, and recovery cutover are not deployed."
+    },
+    {
+      "packageId": "pack.documents-office",
+      "name": "Documents, PDF, office, language, and translation",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "managed",
+      "resourceClass": "medium",
+      "dependsOn": ["core.capability-os", "core.context-artifacts"],
+      "toolIds": ["tool.poppler", "tool.libreoffice", "tool.pandoc", "tool.latex-suite", "tool.languagetool", "tool.argos-translate", "tool.libretranslate"],
+      "capabilities": ["pdf", "office", "conversion", "grammar", "translation"],
+      "gap": "PDF, LibreOffice, Pandoc, and LaTeX are integrated; grammar and translation engines remain planned."
+    },
+    {
+      "packageId": "pack.ocr-local",
+      "name": "Modern local OCR and document understanding",
+      "tier": "optional",
+      "deliveryState": "verified",
+      "installMode": "managed",
+      "resourceClass": "heavy",
+      "dependsOn": ["core.capability-os", "core.context-artifacts"],
+      "toolIds": ["tool.glmocr", "tool.paddleocr", "tool.tesseract", "tool.ocrmypdf"],
+      "capabilities": ["page-text", "tables", "formulae", "layout", "searchable-pdf"]
+    },
+    {
+      "packageId": "pack.creator-sdk",
+      "name": "Marketplace SDK, templates, signing, and publishing tools",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "managed",
+      "resourceClass": "medium",
+      "dependsOn": ["core.module-host"],
+      "toolIds": ["tool.cosign", "tool.wasmtime", "tool.syft", "tool.grype"],
+      "capabilities": ["module-authoring", "deterministic-package-build", "sign", "local-content-addressed-publish"],
+      "gap": "Build, detached signing, validation, and local/NAS seed publishing are implemented. Project templates, compatibility emulators, public OCI publishing, and a publisher-facing guided workflow remain incomplete."
+    },
+    {
+      "packageId": "pack.android-lab",
+      "name": "Android SDK, emulator, Appium, and device lab",
+      "tier": "optional",
+      "deliveryState": "planned",
+      "installMode": "managed",
+      "resourceClass": "heavy",
+      "dependsOn": ["core.capability-os", "pack.creator-sdk"],
+      "toolIds": ["tool.android-sdk", "tool.appium", "tool.scrcpy"],
+      "capabilities": ["android-build", "emulator", "install", "interact", "record", "logs"]
+    },
+    {
+      "packageId": "pack.apple-builder",
+      "name": "iOS app studio and authorized build workers",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "remote",
+      "resourceClass": "heavy",
+      "dependsOn": ["pack.creator-sdk"],
+      "capabilities": ["expo-create", "preview", "windows-ios-compile", "remote-xcode-build"],
+      "gap": "Project creation and build paths exist; marketplace app packaging and a complete simulator matrix do not."
+    },
+    {
+      "packageId": "pack.developer-toolchains",
+      "name": "Developer toolchains and application services",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "managed",
+      "resourceClass": "heavy",
+      "dependsOn": ["core.capability-os"],
+      "toolIds": ["tool.git", "tool.docker-engine", "tool.postgresql", "tool.duckdb", "tool.polars", "tool.scientific-python"],
+      "capabilities": ["build", "test", "database", "dataframe", "notebooks"]
+    },
+    {
+      "packageId": "pack.models-gpu",
+      "name": "Local model and GPU runtime",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "managed",
+      "resourceClass": "heavy",
+      "dependsOn": ["core.capability-os"],
+      "toolIds": ["tool.pytorch-huggingface"],
+      "capabilities": ["local-inference", "model-cache", "gpu-scheduling"],
+      "gap": "Pinned OCR runtimes are verified; a general model lifecycle and evaluation pack is not complete."
+    },
+    {
+      "packageId": "pack.media-creative",
+      "name": "Media, 3D, CAD, game, and publishing studio",
+      "tier": "optional",
+      "deliveryState": "planned",
+      "installMode": "managed",
+      "resourceClass": "heavy",
+      "dependsOn": ["core.capability-os", "core.context-artifacts"],
+      "toolIds": ["tool.ffmpeg", "tool.imagemagick", "tool.gimp", "tool.blender", "tool.godot", "tool.kicad", "tool.freecad", "tool.openscad", "tool.inkscape", "tool.scribus"],
+      "capabilities": ["media", "image", "3d", "cad", "game", "desktop-publishing"]
+    },
+    {
+      "packageId": "pack.nas-worker",
+      "name": "NAS worker, verified transfer, and artifact mirror",
+      "tier": "optional",
+      "deliveryState": "verified",
+      "installMode": "service",
+      "resourceClass": "medium",
+      "dependsOn": ["core.agent-runtime", "core.context-artifacts"],
+      "capabilities": ["nas-worker", "resumable-transfer", "hash-verification", "artifact-mirror"]
+    },
+    {
+      "packageId": "pack.mesh-control-plane",
+      "name": "Self-hosted private-mesh control plane and relay",
+      "tier": "optional",
+      "deliveryState": "planned",
+      "installMode": "service",
+      "resourceClass": "medium",
+      "dependsOn": ["core.mesh-identity-client", "pack.nas-worker"],
+      "capabilities": ["identity", "wireguard", "relay", "routes", "dns", "policies"]
+    },
+    {
+      "packageId": "pack.nearby-share",
+      "name": "Nearby encrypted send",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "managed",
+      "resourceClass": "light",
+      "dependsOn": ["core.mesh-identity-client"],
+      "toolIds": ["tool.neyvia-nearby-send"],
+      "capabilities": ["device-discovery", "hash-bound-preview", "pinned-https-send", "parallel-streaming", "cancel", "transfer-receipts"],
+      "gap": "The LocalSend v2.1 sender and optional 1.17.0 compatibility client are verified. The Neyvia receiver sidecar, text/link first-class payloads, favorite-device policy, and Windows-to-Android physical-device proof remain."
+    },
+    {
+      "packageId": "pack.folder-sync",
+      "name": "Peer folder synchronization",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "service",
+      "resourceClass": "medium",
+      "dependsOn": ["core.mesh-identity-client"],
+      "toolIds": ["tool.neyvia-folder-sync"],
+      "capabilities": ["send-only", "receive-only", "bidirectional", "versioning", "ignore-rules", "health-events", "pause-resume-rescan", "conflict-recovery", "operation-receipts"],
+      "gap": "The Syncthing 2.1.2 transport is staged and the authenticated, credential-hiding Neyvia control contract is implemented. Creating the isolated production identity, pairing the NAS and Android peers, proving reconnect/conflict/version-restore on physical devices, and installing the supervised demand-start service remain."
+    },
+    {
+      "packageId": "pack.encrypted-chat",
+      "name": "Cross-device encrypted chat, links, and file handoff",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "service",
+      "resourceClass": "medium",
+      "dependsOn": ["core.mesh-identity-client", "pack.nas-worker"],
+      "toolIds": ["tool.neyvia-encrypted-chat"],
+      "capabilities": ["e2ee-chat", "self-chat", "links", "attachments", "multi-device", "opaque-room-scopes", "hash-bound-preview", "secret-refusal", "sanitized-history", "operation-receipts"],
+      "gap": "The Matrix 1.157.1 compatibility stack, Element clients, and the credential-hiding Neyvia chat contract are implemented. A private NAS homeserver, protected production account and crypto store, cross-device verification, real encrypted-room send/read proof, and the native stdin/IPC sidecar remain before production activation."
+    },
+    {
+      "packageId": "pack.password-vault",
+      "name": "Private password vault and secret broker",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "service",
+      "resourceClass": "medium",
+      "dependsOn": ["core.secure-store-client", "core.mesh-identity-client", "pack.nas-worker"],
+      "toolIds": ["tool.neyvia-secret-broker"],
+      "capabilities": ["vault", "autofill", "sharing", "opaque-agent-handles", "audit", "ttl-leases", "destination-binding", "one-time-use", "output-redaction", "replay-prevention"],
+      "gap": "Vaultwarden 1.36.0 and the verified Bitwarden CLI OSS 2026.7.0 transport are selected, and the opaque destination-bound Neyvia broker is implemented. NAS Vaultwarden deployment, protected account/session provisioning, real client interoperability, fixed production destination bindings, OS credential-store integration, and physical autofill/share proof remain."
+    },
+    {
+      "packageId": "pack.p2p-cache",
+      "name": "Private peer-to-peer immutable object cache",
+      "tier": "optional",
+      "deliveryState": "foundation",
+      "installMode": "service",
+      "resourceClass": "medium",
+      "dependsOn": ["core.mesh-identity-client", "pack.nas-worker"],
+      "toolIds": ["tool.neyvia-p2p-cache"],
+      "capabilities": ["content-addressing", "peer-cache", "package-mirror", "model-mirror", "context-chunks", "blake3", "bounded-local-read", "deduplication", "integrity-recheck", "allowlisted-iroh-fetch", "resumable-transfer", "atomic-admission", "supervised-private-publication", "rollback-safe-provider-reload", "broker-only-offers"],
+      "gap": "The BLAKE3 local CAS, SQLite index, hash-bound imports, deduplication, bounded offline reads, authenticated Iroh 1.0.3/iroh-blobs 0.103.0 fetch sidecar, lazy persistent client session, and supervised approval-gated provider lifecycle are implemented. Production peer enrollment, a private relay, multi-peer scheduling, replication policy, quota/GC policy, Android binding, signed release distribution, and measured Windows-Android-NAS context latency remain."
+    }
+  ],
+  "profiles": [
+    {
+      "profileId": "minimal",
+      "name": "Minimal core",
+      "description": "Thin Neyvia shell and trust/runtime foundation only.",
+      "optionalPackages": []
+    },
+    {
+      "profileId": "recommended",
+      "name": "Recommended workstation",
+      "description": "Core plus the OCR and NAS capabilities already most useful on this workstation.",
+      "optionalPackages": ["pack.ocr-local", "pack.nas-worker"]
+    },
+    {
+      "profileId": "creator",
+      "name": "App creator",
+      "description": "Recommended workstation plus module authoring and application build labs.",
+      "inherits": ["recommended"],
+      "optionalPackages": ["pack.creator-sdk", "pack.android-lab", "pack.apple-builder", "pack.developer-toolchains"]
+    },
+    {
+      "profileId": "private-cloud",
+      "name": "Private cloud and devices",
+      "description": "Recommended workstation plus mesh, sharing, sync, chat, vault, and peer cache servers.",
+      "inherits": ["recommended"],
+      "optionalPackages": ["pack.mesh-control-plane", "pack.nearby-share", "pack.folder-sync", "pack.encrypted-chat", "pack.password-vault", "pack.p2p-cache"]
+    },
+    {
+      "profileId": "full-lab",
+      "name": "Full ecosystem lab",
+      "description": "Every declared optional capability pack for the primary workstation and NAS.",
+      "inherits": ["creator", "private-cloud"],
+      "optionalPackages": ["pack.documents-office", "pack.models-gpu", "pack.media-creative"]
+    }
+  ]
+}

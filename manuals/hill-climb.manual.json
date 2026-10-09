@@ -1,0 +1,1009 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "hill-climb",
+  "kind": "workflow",
+  "proofs": {
+    "area": "hill-climb",
+    "manifests": [
+      "config/proofs/proofs-e-sv.json"
+    ],
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.self_repair.execute_self_repair_job",
+          "grant_agent.proofs_e_wz.check_repair",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Repair attempts never exceed the existing hard cap; repair/verify phase counts equal attempts actually used and verification occurs only after passed repair actions.",
+        "id": "proofs-e-wz.repair-bounds",
+        "impact": [
+          "bounded detect-repair-verify loop"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.self_repair.execute_self_repair_job",
+          "grant_agent.proofs_e_wz.check_repair",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Completion requires a real passed detection or verification phase; proof booleans match executed phase results, tracked changes match before/after hashes and the saved receipt exactly equals the returned receipt.",
+        "id": "proofs-e-wz.repair-receipt",
+        "impact": [
+          "repair evidence",
+          "tracked bytes",
+          "job completion"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.self_repair.execute_self_repair_job",
+          "grant_agent.proofs_e_wz.check_repair",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "An invalid repair contract returns a blocked durable receipt with its contract error and runs no command phases or claimed final verification.",
+        "id": "proofs-e-wz.repair-blocked",
+        "impact": [
+          "invalid execution contracts",
+          "failure reporting"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.worker.run_local_worker_once",
+          "grant_agent.proofs_e_wz.check_worker_repair",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "After actual local worker execution, the persisted job status matches its result, all reported phase events are recorded and the repair receipt is registered as a durable artifact.",
+        "id": "proofs-e-wz.worker-repair",
+        "impact": [
+          "cluster worker",
+          "repair artifacts",
+          "event history"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.suite_report.build_suite_summary -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Suite averages, pass rate and preset count exactly reflect supplied observed rows, including the empty suite.",
+        "id": "sv.suite.summary",
+        "impact": [
+          "hill-climb",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.suite_report.write_suite_artifacts -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Successful suite artifact writing returns paths whose JSON preserves all input evidence and whose human report lists every preset.",
+        "id": "sv.suite.artifacts",
+        "impact": [
+          "hill-climb",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.evolver.genome": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "genome": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "domain",
+        "genome"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "domain": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.evolver.job": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "requestId"
+      ]
+    },
+    "neyvia.evolver.lineage": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "domain": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.evolver.receipt": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "trial": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "domain",
+        "trial"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "domain": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.evolver.run": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "enum": [
+            "manual_compression",
+            "cl_skill",
+            "manual_compression_v2",
+            "cl_skill_v2",
+            "cl_skill_v3",
+            "paul_intent",
+            "manual_json_local_v1"
+          ]
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maxTrials": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2
+        }
+      },
+      "required": [
+        "domain",
+        "requestId"
+      ]
+    },
+    "neyvia.evolver.state": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.lab.state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.workflow.check": {
+      "type": "object",
+      "properties": {
+        "manual": {
+          "type": "string",
+          "enum": [
+            "hill-climb",
+            "creativity",
+            "critique-review",
+            "efficiency",
+            "research",
+            "design"
+          ]
+        },
+        "report": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "outcomeQuality": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "manual",
+        "report",
+        "evidence",
+        "outcomeQuality",
+        "tokens"
+      ]
+    },
+    "neyvia.workflow.record": {
+      "type": "object",
+      "properties": {
+        "manual": {
+          "type": "string",
+          "enum": [
+            "hill-climb",
+            "creativity",
+            "critique-review",
+            "efficiency",
+            "research",
+            "design"
+          ]
+        },
+        "report": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "outcomeQuality": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "manual",
+        "report",
+        "evidence",
+        "outcomeQuality",
+        "tokens"
+      ]
+    }
+  },
+  "chapters": {
+    "evolver": {
+      "title": "Paired evolution with locked judges and fresh confirmation",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "string"
+              }
+            },
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "domains": {
+                "type": "array"
+              },
+              "publicPromotion": {
+                "const": false
+              }
+            },
+            "required": [
+              "ok",
+              "domains",
+              "publicPromotion"
+            ]
+          },
+          "tool": "neyvia.evolver.state"
+        }
+      },
+      "actions": {
+        "evolver.state": {
+          "effect": "Read actual receipts; no public release changes",
+          "pre": "Read selected workspace state; do not pass judge, panel or promotion edits",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.evolver.state",
+          "tool": "neyvia.evolver.state"
+        },
+        "evolver.lineage": {
+          "effect": "Read actual receipts; no public release changes",
+          "pre": "Read selected workspace state; do not pass judge, panel or promotion edits",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.evolver.lineage",
+          "tool": "neyvia.evolver.lineage"
+        },
+        "evolver.receipt": {
+          "effect": "Read actual receipts; no public release changes",
+          "pre": "Read selected workspace state; do not pass judge, panel or promotion edits",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.evolver.receipt",
+          "tool": "neyvia.evolver.receipt"
+        },
+        "evolver.run": {
+          "effect": "Start a bounded named frozen domain; local compression uses no model; the other domains use GPT-6 Luna",
+          "pre": "Read selected workspace state; do not pass judge, panel or promotion edits",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.evolver.run",
+          "tool": "neyvia.evolver.run"
+        },
+        "evolver.job": {
+          "effect": "Read actual receipts; no public release changes",
+          "pre": "Read selected workspace state; do not pass judge, panel or promotion edits",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.evolver.job",
+          "tool": "neyvia.evolver.job"
+        },
+        "evolver.genome": {
+          "effect": "Read actual receipts; no public release changes",
+          "pre": "Read selected workspace state; do not pass judge, panel or promotion edits",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.evolver.genome",
+          "tool": "neyvia.evolver.genome"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "publicPromotion",
+            "value": false
+          },
+          "tool": "neyvia.evolver.state"
+        }
+      },
+      "procedures": {
+        "inspect": {
+          "goal": "Inspect frozen evolution without publication",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "evolver.state",
+              "args": {},
+              "check": "observed",
+              "save": "state"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "promotion": {
+          "constraints": "A Pareto member alone is insufficient. Read paired intervals, corrected alpha, hard gates and distinct panel IDs. Promotion changes only this workspace incumbent.",
+          "options": [
+            "inspect-receipt",
+            "retain-incumbent"
+          ],
+          "question": "Did discovery and fresh reconfirmation both satisfy the same frozen promotion contract?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Model sampling is called reproducibly seeded",
+          "recovery": "CLI has no sampling-seed control. Seeds control task inputs and pair order; provider sampling remains uncontrolled."
+        },
+        {
+          "failure": "Token count called native Luna token count",
+          "recovery": "Denominator uses o200k_base reference tokenization; actual CLI input/output usage is recorded separately."
+        },
+        {
+          "failure": "CL source checks called visual quality",
+          "recovery": "This first domain measures frozen adherence plus compilation/markup correctness. Browser appearance is outside that measurement."
+        }
+      ],
+      "frontier": [
+        "Claude owns the Hill climbing screen and rendered lineage journey",
+        "Field L5, other domains and unrestricted rewrite languages require separate adapters and evidence"
+      ],
+      "guidance": [
+        "Domain source: src/grant_agent/evolver_domains.py; engine: src/grant_agent/evolver_core.py; real runner: scripts/run_t13_evolution.py"
+      ]
+    },
+    "method": {
+      "title": "Executable hill-climb method: chronological mechanism and measured quality",
+      "state": {
+        "adherence": {
+          "args": {
+            "evidence": {
+              "$input": "evidence"
+            },
+            "manual": "hill-climb",
+            "outcomeQuality": {
+              "$input": "outcomeQuality"
+            },
+            "report": {
+              "$input": "report"
+            },
+            "tokens": {
+              "$input": "tokens"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "report": {
+                "type": "object"
+              },
+              "evidence": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "outcomeQuality": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "tokens": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "report",
+              "evidence",
+              "outcomeQuality",
+              "tokens"
+            ]
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "accepted": {
+                "type": "boolean"
+              },
+              "adherence": {
+                "type": "number"
+              },
+              "fitness": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "accepted",
+              "adherence",
+              "fitness",
+              "errors"
+            ],
+            "additionalProperties": true
+          },
+          "tool": "neyvia.workflow.check"
+        }
+      },
+      "actions": {
+        "check": {
+          "effect": "Validate ordered workflow evidence",
+          "pre": "Host owns task measurements and provider usage; report is bounded JSON",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "accepted": {
+                "type": "boolean"
+              },
+              "adherence": {
+                "type": "number"
+              },
+              "fitness": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "accepted",
+              "adherence",
+              "fitness",
+              "errors"
+            ],
+            "additionalProperties": true
+          },
+          "reversible": true,
+          "schema": "neyvia.workflow.check",
+          "tool": "neyvia.workflow.check"
+        },
+        "record": {
+          "effect": "Persist a validated workflow receipt under the selected task root",
+          "pre": "Host owns task measurements and provider usage; report is bounded JSON",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "accepted": {
+                "type": "boolean"
+              },
+              "adherence": {
+                "type": "number"
+              },
+              "fitness": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "accepted",
+              "adherence",
+              "fitness",
+              "errors"
+            ],
+            "additionalProperties": true
+          },
+          "reversible": false,
+          "schema": "neyvia.workflow.record",
+          "tool": "neyvia.workflow.record"
+        }
+      },
+      "checks": {
+        "adhered": {
+          "args": {
+            "evidence": {
+              "$input": "evidence"
+            },
+            "manual": "hill-climb",
+            "outcomeQuality": {
+              "$input": "outcomeQuality"
+            },
+            "report": {
+              "$input": "report"
+            },
+            "tokens": {
+              "$input": "tokens"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "accepted",
+            "value": true
+          },
+          "tool": "neyvia.workflow.check"
+        }
+      },
+      "procedures": {
+        "verify-and-record": {
+          "goal": "Verify defining workflow mechanism against host evidence and persist the acceptance receipt",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "report": {
+                "type": "object"
+              },
+              "evidence": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "outcomeQuality": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "tokens": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "report",
+              "evidence",
+              "outcomeQuality",
+              "tokens"
+            ]
+          },
+          "steps": [
+            {
+              "action": "check",
+              "args": {
+                "evidence": {
+                  "$input": "evidence"
+                },
+                "manual": "hill-climb",
+                "outcomeQuality": {
+                  "$input": "outcomeQuality"
+                },
+                "report": {
+                  "$input": "report"
+                },
+                "tokens": {
+                  "$input": "tokens"
+                }
+              },
+              "check": "adhered",
+              "save": "verified"
+            },
+            {
+              "action": "record",
+              "args": {
+                "evidence": {
+                  "$input": "evidence"
+                },
+                "manual": "hill-climb",
+                "outcomeQuality": {
+                  "$input": "outcomeQuality"
+                },
+                "report": {
+                  "$input": "report"
+                },
+                "tokens": {
+                  "$input": "tokens"
+                }
+              },
+              "check": "adhered",
+              "save": "recorded"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "quality": {
+          "constraints": "Use an independent frozen host quality judge; self-reported quality is not evidence.",
+          "options": [
+            "accept",
+            "revise"
+          ],
+          "question": "Does the outcome satisfy the actual task, beyond recorded adherence?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "A model writes its own successful receipt, outcome score or token count",
+          "recovery": "The host supplies hash-bound local evidence files, independently judged quality and provider usage; invented IDs fail"
+        }
+      ],
+      "frontier": [
+        "Executable adherence is necessary but not sufficient for semantic quality. Outcome quality belongs to a separate frozen task judge.",
+        "Three paired tasks provide bounded evidence and cannot authorize statistical Evolver promotion."
+      ],
+      "guidance": [
+        "Baseline first, before changing anything. Freeze the executable check, candidate task data and noise threshold.",
+        "Change exactly one mechanism; measure the candidate with the same checkHash as baseline. Higher value means better; transform minimization metrics before judging.",
+        "Accept only measured value > baseline value + frozen noise. A tie or inconclusive run keeps the baseline. Link measurement to a real research-ledger receipt and state a stop rule.",
+        "Report shape: {events:[{stage,data}],result:object}. Required chronological stages: baseline, change, measure, decision, log, stop",
+        "baseline{receipt}; change{candidate,changes:[one mechanism]}; measure{receipt}; decision{keep:boolean,reason}; log{receipt}; stop{rule}. Evidence measurement receipts have checkHash,value,noise; ledger receipt has kind=research-ledger,measurement=measure receipt ID.",
+        "Public tool evidence is {ID:{path:task-root-relative receipt JSON,sha256:receipt SHA256}}. Pure host evaluator evidence maps IDs to loaded measurements. Public tool outcome quality is explicitly caller-scored, never automatically verified.",
+        "Every data.receipt is a STRING naming a key in the host evidence mapping: for example {\"receipt\":\"measurement\"}. Never copy the receipt object or create a new ID. Public tool callers pass path/SHA descriptors separately; event receipt fields remain string IDs. Use the exact keys the current task supplied, not the example keys below.",
+        "Conforming shape example (replace illustrative values, IDs and decision with the actual task/evidence; do not copy its outcome): {\"events\":[{\"stage\":\"baseline\",\"data\":{\"receipt\":\"baseline\"}},{\"stage\":\"change\",\"data\":{\"candidate\":\"one candidate name\",\"changes\":[\"one mechanism change\"]}},{\"stage\":\"measure\",\"data\":{\"receipt\":\"measurement\"}},{\"stage\":\"decision\",\"data\":{\"keep\":false,\"reason\":\"measurement does not beat baseline beyond noise\"}},{\"stage\":\"log\",\"data\":{\"receipt\":\"log\"}},{\"stage\":\"stop\",\"data\":{\"rule\":\"stop after this measured decision\"}}],\"result\":{\"decision\":\"task-specific actual answer\"}}"
+      ]
+    },
+    "overview": {
+      "title": "Frozen improvement receipts, history and measured Pareto tradeoffs",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "records": {
+                "type": "array"
+              },
+              "competitions": {
+                "type": "array"
+              },
+              "automaticTraining": {
+                "const": false
+              },
+              "automaticPromotion": {
+                "const": false
+              }
+            },
+            "required": [
+              "records",
+              "competitions",
+              "automaticTraining",
+              "automaticPromotion"
+            ]
+          },
+          "tool": "neyvia.lab.state"
+        }
+      },
+      "actions": {
+        "lab.state": {
+          "effect": "Read latest 50 records and eligible measured Pareto sets; automaticTraining/Promotion and semanticQualityVerified remain false",
+          "pre": "Selected root improvement receipt store readable",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "records": {
+                "type": "array"
+              },
+              "competitions": {
+                "type": "array"
+              },
+              "automaticTraining": {
+                "const": false
+              },
+              "automaticPromotion": {
+                "const": false
+              }
+            },
+            "required": [
+              "records",
+              "competitions",
+              "automaticTraining",
+              "automaticPromotion"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.lab.state",
+          "tool": "neyvia.lab.state"
+        }
+      },
+      "checks": {
+        "no-promotion": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "automaticPromotion",
+            "value": false
+          },
+          "tool": "neyvia.lab.state"
+        }
+      },
+      "procedures": {
+        "inspect-measurements": {
+          "goal": "Read frozen improvement receipts and decide whether comparisons support the requested objective",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "lab.state",
+              "args": {},
+              "check": "no-promotion",
+              "save": "lab"
+            },
+            {
+              "judge": "candidate"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "candidate": {
+          "constraints": "Compare same definitionHash, boundary and instrument key set. Pareto minimizes numeric values/meanMs/bytes; a frontier candidate is not a semantic winner. Reject invalid/nonfinite measurements; missing instruments prevent domination claims.",
+          "options": [
+            "compare",
+            "more-evidence"
+          ],
+          "question": "Do these eligible candidates answer the improvement objective?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Pareto winner is called model promotion",
+          "recovery": "Read automaticPromotion=false and semanticQualityVerified=false; perform separate matched behavioral evaluation"
+        },
+        {
+          "failure": "Candidates have different instrument key sets",
+          "recovery": "Do not claim domination across incomparable vectors"
+        },
+        {
+          "failure": "Records lack finite numeric measurements or eligibility",
+          "recovery": "Exclude invalid vectors; collect missing evidence before comparison"
+        }
+      ],
+      "frontier": [
+        "Legacy Lab measurements remain separate from frozen domain-specific Evolver evaluations",
+        "Legacy competitions do not train or promote models"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_lab_board.py (vector, pareto, state); tests/test_neyvia_native_studios.py."
+      ]
+    },
+    "proofs-e-sv": {
+      "title": "PROOFS-e s-v host contracts and confined startup receipts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A passed scratch validator or receipt reducer is mistaken for provider, native release, NAS or rendered UI proof",
+          "recovery": "Read the adapter boundary and retain every unmapped case in the migration frontier"
+        }
+      ],
+      "frontier": [
+        "config/proofs/proofs-e-sv.json lists exact retained cases and the missing host/journey receipt; pending cases are never deletion authority."
+      ],
+      "guidance": [
+        "Production calls enforce these semantic contracts before returning. Startup entry: grant_agent.proofs_e_sv.self_check with a fresh confined root.",
+        "Run the registered proofs-e-sv area through neyvia.verify to obtain real scratch process, file, archive, language-compiler and local HTTP receipts.",
+        "This chapter is separate from other area additions; sv.* contract IDs identify its host-owned guarantees."
+      ]
+    },
+    "proofs-e-wz": {
+      "title": "PROOFS-e W-Z: live contracts and scratch self-checks",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A local fixture is mistaken for a real provider, signed desktop release or whole-suite replacement",
+          "recovery": "Read the source-bound receipt, per-case coverage map and unresolved frontier before retirement or promotion"
+        }
+      ],
+      "frontier": [
+        "Backend suite and paired-desktop controller scenarios remain pending unless every original predicate has a real action site and observed scratch procedure.",
+        "Hidden-process AST scanner self-tests protect test-only tooling and are retained pending lead retirement review; no source-text scan is relabeled as production proof.",
+        "Legacy desktop-ui/fluxioHelpers.js is absent; its workspace-selection tests remain pending impact/history review.",
+        "The original bootstrap test expected newest merged turn first; its coverage row explicitly supersedes that stale assertion with observed chronological ordering, preserving all other bootstrap/lazy-detail predicates."
+      ],
+      "guidance": [
+        "Self-check entry: grant_agent.proofs_e_wz.self_check; CLI: neyvia verify --root <workspace> --area proofs-e-wz",
+        "Manifest: config/proofs/proofs-e-wz.json; host sites enforce these contracts on every corresponding real action.",
+        "Fixtures use disposable SQLite stores, real owned Python child commands, localhost HTTP port 48503 and bounded source transport injection."
+      ]
+    }
+  }
+}

@@ -1,0 +1,1922 @@
+{
+  "portRoles": [],
+  "area": "d-ui-planning",
+  "module": "grant_agent.proofs_d_ui_planning",
+  "self_check": "self_check",
+  "manuals": [
+    "ui-planning"
+  ],
+  "contracts": [
+    {
+      "id": "d-ui.plan-order",
+      "phase": "invariant",
+      "claim": "First task follows requested execute-first or docs-first policy, and UI objectives retain the preview acceptance gate.",
+      "checkedAt": [
+        "planner.build_docs_first_plan",
+        "proofs_d_ui_planning.check_plan",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.plan-compact",
+      "phase": "invariant",
+      "claim": "PlanReceipt preserves goal, pending task schema, checks and bounded compact lists; raw docs never enter inputs.",
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.plan-skills",
+      "phase": "invariant",
+      "claim": "Explicit selected skills override the brief; default skills and brief provenance survive compaction.",
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.compiler-dag",
+      "phase": "invariant",
+      "claim": "Validated unique dependency DAG compiles every step after its prerequisites; cycles fail before execution.",
+      "checkedAt": [
+        "orchestration_language.NeyviaProgram.compile",
+        "proofs_d_ui_planning.check_compiled",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.compiler-authority",
+      "phase": "invariant",
+      "claim": "Compiled permission envelopes preserve lane scopes and risk; external/destructive writes require approval and proof-bearing steps retain proofRequired.",
+      "checkedAt": [
+        "orchestration_language.NeyviaProgram.compile",
+        "proofs_d_ui_planning.check_compiled",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.compiler-hash",
+      "phase": "invariant",
+      "claim": "SHA256 and size bind the compiled canonical typed plan.",
+      "checkedAt": [
+        "orchestration_language.NeyviaProgram.compile",
+        "proofs_d_ui_planning.check_compiled",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.night-readiness",
+      "phase": "invariant",
+      "claim": "Every failed preflight check blocks readiness; missing/short/long synthetic key statuses remain bounded and masked.",
+      "checkedAt": [
+        "night_mode.build_night_readiness_receipt",
+        "proofs_d_ui_planning.check_readiness",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.night-policy",
+      "phase": "invariant",
+      "claim": "Production profile keeps mission execution and receipt gates; capacity/approval work defers, unknowns hold, and admitted work ranks without loss.",
+      "checkedAt": [
+        "night_mode.classify_night_work",
+        "night_mode.rank_night_queue",
+        "night_mode.production_night_profile_payload",
+        "proofs_d_ui_planning.check_night_policy/check_night_queue/check_night_profile",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.night-notification",
+      "phase": "invariant",
+      "claim": "Passed readiness skips notification; blocked readiness links exactly its failure count and reasons to the receipt.",
+      "checkedAt": [
+        "night_mode.build_readiness_failure_message",
+        "proofs_d_ui_planning.check_notification",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.night-digest",
+      "phase": "invariant",
+      "claim": "Returned digest equals persisted JSON; counts match rows and markdown retains completed work, blocks, proof gaps and risks.",
+      "checkedAt": [
+        "night_mode.write_morning_digest",
+        "proofs_d_ui_planning.check_digest",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.usage-truth",
+      "phase": "invariant",
+      "claim": "Headline shows newly used tokens with cache reads separate; unknown totals stay unknown and partial coverage remains labelled.",
+      "checkedAt": [
+        "neyvia_analytics.publish_indicator",
+        "proofs_d_ui_planning.check_usage",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.view-arrange",
+      "phase": "invariant",
+      "claim": "Invalid order/widget requests refuse before durable state/events; valid layout patches preserve omitted fields and return the emitted patch.",
+      "checkedAt": [
+        "neyvia_view_tools.call",
+        "neyvia_view_tools._arrange",
+        "proof_contracts.before_action",
+        "proofs_d_ui_planning.check_arranged",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.view-schemas",
+      "phase": "invariant",
+      "claim": "Host-grounded public view.arrange schema exposes four regions and left/right dock; pane.show exposes replay, builder and accounts.",
+      "checkedAt": [
+        "neyvia_workspace_tools.DEFINITIONS",
+        "neyvia_workspace_tools.WorkspaceTools.call",
+        "proof_contracts.before_action",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.view-controls",
+      "phase": "invariant",
+      "claim": "Scene switch/save are exclusive and cannot overwrite built-ins; invalid themes refuse; known chats float/unfloat through the durable UI bus.",
+      "checkedAt": [
+        "neyvia_view_tools.call",
+        "neyvia_settings.update",
+        "proof_contracts.before_action",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.search-bounds",
+      "phase": "invariant",
+      "claim": "Bounded search returns only root-confined positive-line text matches satisfying the glob; generated/binary files are excluded, and timeout never claims completeness.",
+      "checkedAt": [
+        "research.search_workspace_detailed",
+        "proofs_d_ui_planning.check_search",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.product-boundary",
+      "phase": "invariant",
+      "claim": "Interactive user surfaces must be shared apps with independent GitHub source, never tools.",
+      "checkedAt": [
+        "product_catalog.ProductDescriptor.validate",
+        "product_catalog.ProductDescriptor.as_dict",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.ocr-quality",
+      "phase": "invariant",
+      "claim": "Normalized equality yields zero error; aggregate quality, latency and peak VRAM retain their observations and denominator.",
+      "checkedAt": [
+        "ocr_benchmark.character_error_rate",
+        "ocr_benchmark.word_error_rate",
+        "ocr_benchmark.aggregate_scores",
+        "proofs_d_ui_planning.check_ocr_metric/check_ocr_aggregate",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.ocr-route",
+      "phase": "invariant",
+      "claim": "Explicit bounded override wins; automatic routing prefers native text, then requested fast GPU path, structured GPU path, scanned GPU text, or CPU fallback.",
+      "checkedAt": [
+        "ocr_benchmark.select_ocr_route",
+        "proofs_d_ui_planning.check_ocr_route",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.mesh-receipt",
+      "phase": "invariant",
+      "claim": "Receipt validation rejects stale source/time, mismatched history, invisible tab/modal states, undefined text, poor contrast, unsafe paths and sensitive keys. This validates receipts and does not authenticate a browser capture.",
+      "checkedAt": [
+        "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.design-capsules",
+      "phase": "invariant",
+      "claim": "Every available bounded instruction receipt hashes current local source; compiled design capsule proof gates and complete plan hash remain bound.",
+      "checkedAt": [
+        "skill_capsules.SkillCapsuleRegistry.compile",
+        "proofs_d_ui_planning.check_capsules",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.office-boundary",
+      "phase": "invariant",
+      "claim": "Office operations enforce advertised operation identity and input schema; adapters lacking executable support return a truthful unavailable receipt.",
+      "checkedAt": [
+        "capability_service.CapabilityService.execute_tool_operation",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "planning receipts",
+        "UI bus",
+        "search and document tools"
+      ]
+    },
+    {
+      "id": "d-ui.ocr-candidates",
+      "phase": "post",
+      "claim": "Candidate registry requires unique identity, license and source; known production OCR identities retain their defined roles and CPU emergency fallback is ineligible for promotion.",
+      "checkedAt": [
+        "ocr_benchmark.load_candidate_registry",
+        "proofs_d_ui_planning.check_ocr_candidates",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "impact": [
+        "OCR engine admission",
+        "model provenance",
+        "fallback boundary"
+      ]
+    },
+    {
+      "id": "d-ui.workspace-integrity",
+      "phase": "post",
+      "claim": "Integrity receipts fail closed without authoritative change evidence; read-only protection is identified separately, and observed pre/post changes preserve bounded files, state and provenance.",
+      "checkedAt": [
+        "web_backend.FluxioWebBackend._workspace_integrity_receipt",
+        "proofs_d_ui_planning.check_integrity",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "impact": [
+        "orchestration dependency context",
+        "workspace change receipts",
+        "read-only authority"
+      ]
+    },
+    {
+      "id": "d-ui.workspace-snapshots",
+      "phase": "post",
+      "claim": "Complete before/after SHA256 snapshots identify modified, created and removed files plus the unchanged case; incomplete snapshots never fabricate content evidence or replace adapter claims.",
+      "checkedAt": [
+        "web_backend.FluxioWebBackend._apply_orchestration_workspace_evidence",
+        "proofs_d_ui_planning.check_workspace_evidence",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "impact": [
+        "orchestration dependency context",
+        "workspace change receipts",
+        "read-only authority"
+      ]
+    },
+    {
+      "id": "d-ui.dependency-context",
+      "phase": "post",
+      "claim": "Only completed dependency ancestors enter context; bounded salient reply, route and status remain ahead of raw runtime compartments/tool noise.",
+      "checkedAt": [
+        "web_backend.FluxioWebBackend._dependency_context_rows",
+        "proofs_d_ui_planning.check_dependency_context",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "impact": [
+        "orchestration dependency context",
+        "workspace change receipts",
+        "read-only authority"
+      ]
+    },
+    {
+      "id": "d-ui.route-context",
+      "phase": "post",
+      "claim": "Persisted immutable route identity/version enters base context first, ahead of bounded turn history; its sanitized projection matches the original conversation metadata.",
+      "checkedAt": [
+        "web_backend.FluxioWebBackend._build_neyvia_base_context",
+        "proofs_d_ui_planning.check_route_context",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "impact": [
+        "immutable conversation routes",
+        "execution context",
+        "selected prompt profile"
+      ]
+    },
+    {
+      "id": "d-ui.selected-profile",
+      "phase": "post",
+      "claim": "The normal adaptive execution prompt preserves the explicitly selected task-profile identity, full compiled adaptive contract and original user request; authored instruction branches retain their existing precedence.",
+      "checkedAt": [
+        "web_backend._chat_prompt",
+        "proofs_d_ui_planning.check_selected_prompt",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "impact": [
+        "immutable conversation routes",
+        "execution context",
+        "selected prompt profile"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_neyvia_design_skill_capsules.py",
+      "case": "test_repository_design_skills_are_installed_and_hash_bound",
+      "case_id": "tests/test_neyvia_design_skill_capsules.py::test_repository_design_skills_are_installed_and_hash_bound",
+      "contracts": [
+        "d-ui.design-capsules"
+      ],
+      "checkedAt": [
+        "skill_capsules.SkillCapsuleRegistry.compile",
+        "proofs_d_ui_planning.check_capsules",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_design_skill_capsules.py::test_repository_design_skills_are_installed_and_hash_bound"
+    },
+    {
+      "test": "tests/test_neyvia_usage_indicator.py",
+      "case": "test_cache_reads_do_not_inflate_the_headline",
+      "case_id": "tests/test_neyvia_usage_indicator.py::test_cache_reads_do_not_inflate_the_headline",
+      "contracts": [
+        "d-ui.usage-truth"
+      ],
+      "checkedAt": [
+        "neyvia_analytics.publish_indicator",
+        "proofs_d_ui_planning.check_usage",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_usage_indicator.py::test_cache_reads_do_not_inflate_the_headline"
+    },
+    {
+      "test": "tests/test_neyvia_usage_indicator.py",
+      "case": "test_unknown_cache_split_falls_back_to_the_reported_total",
+      "case_id": "tests/test_neyvia_usage_indicator.py::test_unknown_cache_split_falls_back_to_the_reported_total",
+      "contracts": [
+        "d-ui.usage-truth"
+      ],
+      "checkedAt": [
+        "neyvia_analytics.publish_indicator",
+        "proofs_d_ui_planning.check_usage",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_usage_indicator.py::test_unknown_cache_split_falls_back_to_the_reported_total"
+    },
+    {
+      "test": "tests/test_neyvia_usage_indicator.py",
+      "case": "test_unknown_usage_stays_unknown",
+      "case_id": "tests/test_neyvia_usage_indicator.py::test_unknown_usage_stays_unknown",
+      "contracts": [
+        "d-ui.usage-truth"
+      ],
+      "checkedAt": [
+        "neyvia_analytics.publish_indicator",
+        "proofs_d_ui_planning.check_usage",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_usage_indicator.py::test_unknown_usage_stays_unknown"
+    },
+    {
+      "test": "tests/test_neyvia_view_arrange.py",
+      "case": "test_the_contract_lists_view_arrange_with_its_regions_and_widgets",
+      "case_id": "tests/test_neyvia_view_arrange.py::test_the_contract_lists_view_arrange_with_its_regions_and_widgets",
+      "contracts": [
+        "d-ui.view-schemas"
+      ],
+      "checkedAt": [
+        "neyvia_workspace_tools.DEFINITIONS",
+        "neyvia_workspace_tools.WorkspaceTools.call",
+        "proof_contracts.before_action",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_view_arrange.py::test_the_contract_lists_view_arrange_with_its_regions_and_widgets"
+    },
+    {
+      "test": "tests/test_neyvia_view_arrange.py",
+      "case": "test_arrangement_is_emitted_and_kept_merging_with_earlier_ones",
+      "case_id": "tests/test_neyvia_view_arrange.py::test_arrangement_is_emitted_and_kept_merging_with_earlier_ones",
+      "contracts": [
+        "d-ui.view-arrange"
+      ],
+      "checkedAt": [
+        "neyvia_view_tools.call",
+        "neyvia_view_tools._arrange",
+        "proof_contracts.before_action",
+        "proofs_d_ui_planning.check_arranged",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_view_arrange.py::test_arrangement_is_emitted_and_kept_merging_with_earlier_ones"
+    },
+    {
+      "test": "tests/test_neyvia_view_arrange.py",
+      "case": "test_bad_arrangements_are_refused_with_a_reason",
+      "case_id": "tests/test_neyvia_view_arrange.py::test_bad_arrangements_are_refused_with_a_reason",
+      "contracts": [
+        "d-ui.view-arrange"
+      ],
+      "checkedAt": [
+        "neyvia_view_tools.call",
+        "neyvia_view_tools._arrange",
+        "proof_contracts.before_action",
+        "proofs_d_ui_planning.check_arranged",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_view_arrange.py::test_bad_arrangements_are_refused_with_a_reason"
+    },
+    {
+      "test": "tests/test_neyvia_view_arrange.py",
+      "case": "test_scene_float_and_theme_are_checked_before_anything_is_emitted",
+      "case_id": "tests/test_neyvia_view_arrange.py::test_scene_float_and_theme_are_checked_before_anything_is_emitted",
+      "contracts": [
+        "d-ui.view-controls"
+      ],
+      "checkedAt": [
+        "neyvia_view_tools.call",
+        "neyvia_settings.update",
+        "proof_contracts.before_action",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_view_arrange.py::test_scene_float_and_theme_are_checked_before_anything_is_emitted"
+    },
+    {
+      "test": "tests/test_neyvia_view_arrange.py",
+      "case": "test_replay_and_accounts_are_panes_the_agent_can_open",
+      "case_id": "tests/test_neyvia_view_arrange.py::test_replay_and_accounts_are_panes_the_agent_can_open",
+      "contracts": [
+        "d-ui.view-schemas"
+      ],
+      "checkedAt": [
+        "neyvia_workspace_tools.DEFINITIONS",
+        "neyvia_workspace_tools.WorkspaceTools.call",
+        "proof_contracts.before_action",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_view_arrange.py::test_replay_and_accounts_are_panes_the_agent_can_open"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_production_night_profile_allows_real_mission_work_with_receipts",
+      "case_id": "tests/test_night_mode.py::test_production_night_profile_allows_real_mission_work_with_receipts",
+      "contracts": [
+        "d-ui.night-policy"
+      ],
+      "checkedAt": [
+        "night_mode.classify_night_work",
+        "night_mode.rank_night_queue",
+        "night_mode.production_night_profile_payload",
+        "proofs_d_ui_planning.check_night_policy/check_night_queue/check_night_profile",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_production_night_profile_allows_real_mission_work_with_receipts"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_night_work_classifier_defers_capacity_and_approval_sensitive_work",
+      "case_id": "tests/test_night_mode.py::test_night_work_classifier_defers_capacity_and_approval_sensitive_work",
+      "contracts": [
+        "d-ui.night-policy"
+      ],
+      "checkedAt": [
+        "night_mode.classify_night_work",
+        "night_mode.rank_night_queue",
+        "night_mode.production_night_profile_payload",
+        "proofs_d_ui_planning.check_night_policy/check_night_queue/check_night_profile",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_night_work_classifier_defers_capacity_and_approval_sensitive_work"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_night_readiness_receipt_passes_only_when_required_checks_pass",
+      "case_id": "tests/test_night_mode.py::test_night_readiness_receipt_passes_only_when_required_checks_pass",
+      "contracts": [
+        "d-ui.night-readiness"
+      ],
+      "checkedAt": [
+        "night_mode.build_night_readiness_receipt",
+        "proofs_d_ui_planning.check_readiness",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_night_readiness_receipt_passes_only_when_required_checks_pass"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_night_readiness_receipt_blocks_without_worker_runtime_or_auth",
+      "case_id": "tests/test_night_mode.py::test_night_readiness_receipt_blocks_without_worker_runtime_or_auth",
+      "contracts": [
+        "d-ui.night-readiness"
+      ],
+      "checkedAt": [
+        "night_mode.build_night_readiness_receipt",
+        "proofs_d_ui_planning.check_readiness",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_night_readiness_receipt_blocks_without_worker_runtime_or_auth"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_night_queue_policy_ranks_allowed_work_in_production_order",
+      "case_id": "tests/test_night_mode.py::test_night_queue_policy_ranks_allowed_work_in_production_order",
+      "contracts": [
+        "d-ui.night-policy"
+      ],
+      "checkedAt": [
+        "night_mode.classify_night_work",
+        "night_mode.rank_night_queue",
+        "night_mode.production_night_profile_payload",
+        "proofs_d_ui_planning.check_night_policy/check_night_queue/check_night_profile",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_night_queue_policy_ranks_allowed_work_in_production_order"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_night_queue_policy_defers_capacity_sensitive_work_and_holds_unknowns",
+      "case_id": "tests/test_night_mode.py::test_night_queue_policy_defers_capacity_sensitive_work_and_holds_unknowns",
+      "contracts": [
+        "d-ui.night-policy"
+      ],
+      "checkedAt": [
+        "night_mode.classify_night_work",
+        "night_mode.rank_night_queue",
+        "night_mode.production_night_profile_payload",
+        "proofs_d_ui_planning.check_night_policy/check_night_queue/check_night_profile",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_night_queue_policy_defers_capacity_sensitive_work_and_holds_unknowns"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_readiness_failure_message_links_to_blocked_receipt",
+      "case_id": "tests/test_night_mode.py::test_readiness_failure_message_links_to_blocked_receipt",
+      "contracts": [
+        "d-ui.night-notification"
+      ],
+      "checkedAt": [
+        "night_mode.build_readiness_failure_message",
+        "proofs_d_ui_planning.check_notification",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_readiness_failure_message_links_to_blocked_receipt"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_readiness_failure_message_skips_when_readiness_passes",
+      "case_id": "tests/test_night_mode.py::test_readiness_failure_message_skips_when_readiness_passes",
+      "contracts": [
+        "d-ui.night-notification"
+      ],
+      "checkedAt": [
+        "night_mode.build_readiness_failure_message",
+        "proofs_d_ui_planning.check_notification",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_readiness_failure_message_skips_when_readiness_passes"
+    },
+    {
+      "test": "tests/test_night_mode.py",
+      "case": "test_write_morning_digest_creates_json_and_markdown_receipts",
+      "case_id": "tests/test_night_mode.py::test_write_morning_digest_creates_json_and_markdown_receipts",
+      "contracts": [
+        "d-ui.night-digest"
+      ],
+      "checkedAt": [
+        "night_mode.write_morning_digest",
+        "proofs_d_ui_planning.check_digest",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_night_mode.py::test_write_morning_digest_creates_json_and_markdown_receipts"
+    },
+    {
+      "test": "tests/test_ocr_benchmark.py",
+      "case": "test_error_metrics_are_deterministic_and_unicode_normalized",
+      "case_id": "tests/test_ocr_benchmark.py::test_error_metrics_are_deterministic_and_unicode_normalized",
+      "contracts": [
+        "d-ui.ocr-quality"
+      ],
+      "checkedAt": [
+        "ocr_benchmark.character_error_rate",
+        "ocr_benchmark.word_error_rate",
+        "ocr_benchmark.aggregate_scores",
+        "proofs_d_ui_planning.check_ocr_metric/check_ocr_aggregate",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_ocr_benchmark.py::test_error_metrics_are_deterministic_and_unicode_normalized"
+    },
+    {
+      "test": "tests/test_ocr_benchmark.py",
+      "case": "test_score_and_aggregate_preserve_quality_and_runtime_dimensions",
+      "case_id": "tests/test_ocr_benchmark.py::test_score_and_aggregate_preserve_quality_and_runtime_dimensions",
+      "contracts": [
+        "d-ui.ocr-quality"
+      ],
+      "checkedAt": [
+        "ocr_benchmark.character_error_rate",
+        "ocr_benchmark.word_error_rate",
+        "ocr_benchmark.aggregate_scores",
+        "proofs_d_ui_planning.check_ocr_metric/check_ocr_aggregate",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_ocr_benchmark.py::test_score_and_aggregate_preserve_quality_and_runtime_dimensions"
+    },
+    {
+      "test": "tests/test_ocr_benchmark.py",
+      "case": "test_router_uses_native_text_then_text_ocr_then_structured_vlm",
+      "case_id": "tests/test_ocr_benchmark.py::test_router_uses_native_text_then_text_ocr_then_structured_vlm",
+      "contracts": [
+        "d-ui.ocr-route"
+      ],
+      "checkedAt": [
+        "ocr_benchmark.select_ocr_route",
+        "proofs_d_ui_planning.check_ocr_route",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_ocr_benchmark.py::test_router_uses_native_text_then_text_ocr_then_structured_vlm"
+    },
+    {
+      "test": "tests/test_ocr_benchmark.py",
+      "case": "test_candidate_registry_is_licensed_sourced_and_loadable",
+      "case_id": "tests/test_ocr_benchmark.py::test_candidate_registry_is_licensed_sourced_and_loadable",
+      "contracts": [
+        "d-ui.ocr-candidates"
+      ],
+      "checkedAt": [
+        "ocr_benchmark.load_candidate_registry",
+        "proofs_d_ui_planning.check_ocr_candidates",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_ocr_benchmark.py::test_candidate_registry_is_licensed_sourced_and_loadable"
+    },
+    {
+      "test": "tests/test_office_suite_operator_workspace.py",
+      "case": "test_office_suite_unavailable_when_adapter_not_executable",
+      "case_id": "tests/test_office_suite_operator_workspace.py::test_office_suite_unavailable_when_adapter_not_executable",
+      "contracts": [
+        "d-ui.office-boundary"
+      ],
+      "checkedAt": [
+        "capability_service.CapabilityService.execute_tool_operation",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_office_suite_operator_workspace.py::test_office_suite_unavailable_when_adapter_not_executable"
+    },
+    {
+      "test": "tests/test_office_suite_operator_workspace.py",
+      "case": "test_office_suite_invalid_arguments_for_pandoc_convert",
+      "case_id": "tests/test_office_suite_operator_workspace.py::test_office_suite_invalid_arguments_for_pandoc_convert",
+      "contracts": [
+        "d-ui.office-boundary"
+      ],
+      "checkedAt": [
+        "capability_service.CapabilityService.execute_tool_operation",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_office_suite_operator_workspace.py::test_office_suite_invalid_arguments_for_pandoc_convert"
+    },
+    {
+      "test": "tests/test_office_suite_operator_workspace.py",
+      "case": "test_office_suite_backend_error_unknown_operation",
+      "case_id": "tests/test_office_suite_operator_workspace.py::test_office_suite_backend_error_unknown_operation",
+      "contracts": [
+        "d-ui.office-boundary"
+      ],
+      "checkedAt": [
+        "capability_service.CapabilityService.execute_tool_operation",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_office_suite_operator_workspace.py::test_office_suite_backend_error_unknown_operation"
+    },
+    {
+      "test": "tests/test_orchestration_language.py",
+      "case": "OrchestrationLanguageTests.test_compiles_typed_stages_permissions_and_hash",
+      "case_id": "tests/test_orchestration_language.py::OrchestrationLanguageTests.test_compiles_typed_stages_permissions_and_hash",
+      "contracts": [
+        "d-ui.compiler-dag",
+        "d-ui.compiler-authority",
+        "d-ui.compiler-hash"
+      ],
+      "checkedAt": [
+        "orchestration_language.NeyviaProgram.compile",
+        "proofs_d_ui_planning.check_compiled",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_orchestration_language.py::OrchestrationLanguageTests.test_compiles_typed_stages_permissions_and_hash"
+    },
+    {
+      "test": "tests/test_orchestration_language.py",
+      "case": "OrchestrationLanguageTests.test_rejects_dependency_cycles_before_execution",
+      "case_id": "tests/test_orchestration_language.py::OrchestrationLanguageTests.test_rejects_dependency_cycles_before_execution",
+      "contracts": [
+        "d-ui.compiler-dag"
+      ],
+      "checkedAt": [
+        "orchestration_language.NeyviaProgram.compile",
+        "proofs_d_ui_planning.check_compiled",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_orchestration_language.py::OrchestrationLanguageTests.test_rejects_dependency_cycles_before_execution"
+    },
+    {
+      "test": "tests/test_orchestration_language.py",
+      "case": "OrchestrationLanguageTests.test_external_writes_require_approval",
+      "case_id": "tests/test_orchestration_language.py::OrchestrationLanguageTests.test_external_writes_require_approval",
+      "contracts": [
+        "d-ui.compiler-authority"
+      ],
+      "checkedAt": [
+        "orchestration_language.NeyviaProgram.compile",
+        "proofs_d_ui_planning.check_compiled",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_orchestration_language.py::OrchestrationLanguageTests.test_external_writes_require_approval"
+    },
+    {
+      "test": "tests/test_personal_mesh_browser_proof.py",
+      "case": "test_validates_current_source_hash_and_contrast",
+      "case_id": "tests/test_personal_mesh_browser_proof.py::test_validates_current_source_hash_and_contrast",
+      "contracts": [
+        "d-ui.mesh-receipt"
+      ],
+      "checkedAt": [
+        "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_personal_mesh_browser_proof.py::test_validates_current_source_hash_and_contrast"
+    },
+    {
+      "test": "tests/test_personal_mesh_browser_proof.py",
+      "case": "test_rejects_invalid_ui_evidence",
+      "case_id": "tests/test_personal_mesh_browser_proof.py::test_rejects_invalid_ui_evidence",
+      "contracts": [
+        "d-ui.mesh-receipt"
+      ],
+      "checkedAt": [
+        "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_personal_mesh_browser_proof.py::test_rejects_invalid_ui_evidence"
+    },
+    {
+      "test": "tests/test_personal_mesh_browser_proof.py",
+      "case": "test_rejects_stale_embedded_proof_after_source_changes",
+      "case_id": "tests/test_personal_mesh_browser_proof.py::test_rejects_stale_embedded_proof_after_source_changes",
+      "contracts": [
+        "d-ui.mesh-receipt"
+      ],
+      "checkedAt": [
+        "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_personal_mesh_browser_proof.py::test_rejects_stale_embedded_proof_after_source_changes"
+    },
+    {
+      "test": "tests/test_personal_mesh_browser_proof.py",
+      "case": "test_rejects_stale_capture_time",
+      "case_id": "tests/test_personal_mesh_browser_proof.py::test_rejects_stale_capture_time",
+      "contracts": [
+        "d-ui.mesh-receipt"
+      ],
+      "checkedAt": [
+        "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_personal_mesh_browser_proof.py::test_rejects_stale_capture_time"
+    },
+    {
+      "test": "tests/test_personal_mesh_browser_proof.py",
+      "case": "test_allows_null_metadata_but_rejects_sensitive_keys",
+      "case_id": "tests/test_personal_mesh_browser_proof.py::test_allows_null_metadata_but_rejects_sensitive_keys",
+      "contracts": [
+        "d-ui.mesh-receipt"
+      ],
+      "checkedAt": [
+        "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_personal_mesh_browser_proof.py::test_allows_null_metadata_but_rejects_sensitive_keys"
+    },
+    {
+      "test": "tests/test_personal_mesh_browser_proof.py",
+      "case": "test_rejects_unbounded_or_non_integer_max_age",
+      "case_id": "tests/test_personal_mesh_browser_proof.py::test_rejects_unbounded_or_non_integer_max_age",
+      "contracts": [
+        "d-ui.mesh-receipt"
+      ],
+      "checkedAt": [
+        "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_personal_mesh_browser_proof.py::test_rejects_unbounded_or_non_integer_max_age"
+    },
+    {
+      "test": "tests/test_personal_mesh_browser_proof.py",
+      "case": "test_rejects_absolute_and_traversal_source_paths",
+      "case_id": "tests/test_personal_mesh_browser_proof.py::test_rejects_absolute_and_traversal_source_paths",
+      "contracts": [
+        "d-ui.mesh-receipt"
+      ],
+      "checkedAt": [
+        "scripts/verify_personal_mesh_browser_proof.py::validate_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_personal_mesh_browser_proof.py::test_rejects_absolute_and_traversal_source_paths"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_execute_first_objective_starts_with_product_implementation",
+      "case_id": "tests/test_planner.py::PlannerTests.test_execute_first_objective_starts_with_product_implementation",
+      "contracts": [
+        "d-ui.plan-order"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan",
+        "proofs_d_ui_planning.check_plan",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_execute_first_objective_starts_with_product_implementation"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_docs_first_planner_produces_compact_plan_receipt",
+      "case_id": "tests/test_planner.py::PlannerTests.test_docs_first_planner_produces_compact_plan_receipt#L25",
+      "contracts": [
+        "d-ui.plan-compact"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_docs_first_planner_produces_compact_plan_receipt"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_plan_receipt_caps_large_lists_for_context_efficiency",
+      "case_id": "tests/test_planner.py::PlannerTests.test_plan_receipt_caps_large_lists_for_context_efficiency#L59",
+      "contracts": [
+        "d-ui.plan-compact"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_plan_receipt_caps_large_lists_for_context_efficiency"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_plan_receipt_selects_skills_from_skill_brief",
+      "case_id": "tests/test_planner.py::PlannerTests.test_plan_receipt_selects_skills_from_skill_brief#L78",
+      "contracts": [
+        "d-ui.plan-skills"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_plan_receipt_selects_skills_from_skill_brief"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_manual_selected_skills_override_skill_brief",
+      "case_id": "tests/test_planner.py::PlannerTests.test_manual_selected_skills_override_skill_brief#L102",
+      "contracts": [
+        "d-ui.plan-skills"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_manual_selected_skills_override_skill_brief"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_docs_first_planner_produces_compact_plan_receipt",
+      "case_id": "tests/test_planner.py::PlannerTests.test_docs_first_planner_produces_compact_plan_receipt#L120",
+      "contracts": [
+        "d-ui.plan-compact"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_docs_first_planner_produces_compact_plan_receipt"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_plan_receipt_caps_large_lists_for_context_efficiency",
+      "case_id": "tests/test_planner.py::PlannerTests.test_plan_receipt_caps_large_lists_for_context_efficiency#L154",
+      "contracts": [
+        "d-ui.plan-compact"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_plan_receipt_caps_large_lists_for_context_efficiency"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_plan_receipt_selects_skills_from_skill_brief",
+      "case_id": "tests/test_planner.py::PlannerTests.test_plan_receipt_selects_skills_from_skill_brief#L173",
+      "contracts": [
+        "d-ui.plan-skills"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_plan_receipt_selects_skills_from_skill_brief"
+    },
+    {
+      "test": "tests/test_planner.py",
+      "case": "PlannerTests.test_manual_selected_skills_override_skill_brief",
+      "case_id": "tests/test_planner.py::PlannerTests.test_manual_selected_skills_override_skill_brief#L197",
+      "contracts": [
+        "d-ui.plan-skills"
+      ],
+      "checkedAt": [
+        "planner.build_docs_first_plan_receipt",
+        "proofs_d_ui_planning.check_plan_receipt",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_planner.py::PlannerTests.test_manual_selected_skills_override_skill_brief"
+    },
+    {
+      "test": "tests/test_product_catalog.py",
+      "case": "ProductCatalogTests.test_tool_with_user_surface_must_be_an_app",
+      "case_id": "tests/test_product_catalog.py::ProductCatalogTests.test_tool_with_user_surface_must_be_an_app",
+      "contracts": [
+        "d-ui.product-boundary"
+      ],
+      "checkedAt": [
+        "product_catalog.ProductDescriptor.validate",
+        "product_catalog.ProductDescriptor.as_dict",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_product_catalog.py::ProductCatalogTests.test_tool_with_user_surface_must_be_an_app"
+    },
+    {
+      "test": "tests/test_product_catalog.py",
+      "case": "ProductCatalogTests.test_app_requires_independent_github_source",
+      "case_id": "tests/test_product_catalog.py::ProductCatalogTests.test_app_requires_independent_github_source",
+      "contracts": [
+        "d-ui.product-boundary"
+      ],
+      "checkedAt": [
+        "product_catalog.ProductDescriptor.validate",
+        "product_catalog.ProductDescriptor.as_dict",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_product_catalog.py::ProductCatalogTests.test_app_requires_independent_github_source"
+    },
+    {
+      "test": "tests/test_research.py",
+      "case": "ResearchTests.test_search_workspace_returns_matches",
+      "case_id": "tests/test_research.py::ResearchTests.test_search_workspace_returns_matches",
+      "contracts": [
+        "d-ui.search-bounds"
+      ],
+      "checkedAt": [
+        "research.search_workspace_detailed",
+        "proofs_d_ui_planning.check_search",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_research.py::ResearchTests.test_search_workspace_returns_matches"
+    },
+    {
+      "test": "tests/test_research.py",
+      "case": "ResearchTests.test_generated_folders_and_binaries_are_skipped",
+      "case_id": "tests/test_research.py::ResearchTests.test_generated_folders_and_binaries_are_skipped",
+      "contracts": [
+        "d-ui.search-bounds"
+      ],
+      "checkedAt": [
+        "research.search_workspace_detailed",
+        "proofs_d_ui_planning.check_search",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_research.py::ResearchTests.test_generated_folders_and_binaries_are_skipped"
+    },
+    {
+      "test": "tests/test_research.py",
+      "case": "ResearchTests.test_time_budget_returns_what_was_found",
+      "case_id": "tests/test_research.py::ResearchTests.test_time_budget_returns_what_was_found",
+      "contracts": [
+        "d-ui.search-bounds"
+      ],
+      "checkedAt": [
+        "research.search_workspace_detailed",
+        "proofs_d_ui_planning.check_search",
+        "proofs_d_ui_planning.self_check"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_research.py::ResearchTests.test_time_budget_returns_what_was_found"
+    },
+    {
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_workspace_integrity_receipt_fails_closed_without_adapter_change_evidence",
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_workspace_integrity_receipt_fails_closed_without_adapter_change_evidence",
+      "contracts": [
+        "d-ui.workspace-integrity"
+      ],
+      "checkedAt": [
+        "web_backend.FluxioWebBackend._workspace_integrity_receipt",
+        "proofs_d_ui_planning.check_integrity",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_orchestration_execution.py::test_workspace_integrity_receipt_fails_closed_without_adapter_change_evidence"
+    },
+    {
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_writable_orchestration_snapshot_proves_changed_and_unchanged_files",
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_writable_orchestration_snapshot_proves_changed_and_unchanged_files",
+      "contracts": [
+        "d-ui.workspace-snapshots",
+        "d-ui.workspace-integrity"
+      ],
+      "checkedAt": [
+        "web_backend.FluxioWebBackend._apply_orchestration_workspace_evidence",
+        "proofs_d_ui_planning.check_workspace_evidence",
+        "proofs_d_ui_planning.orchestration_self_checks",
+        "web_backend.FluxioWebBackend._workspace_integrity_receipt",
+        "proofs_d_ui_planning.check_integrity"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_orchestration_execution.py::test_writable_orchestration_snapshot_proves_changed_and_unchanged_files"
+    },
+    {
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_dependency_context_keeps_salient_result_evidence_ahead_of_runtime_noise",
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_dependency_context_keeps_salient_result_evidence_ahead_of_runtime_noise",
+      "contracts": [
+        "d-ui.dependency-context"
+      ],
+      "checkedAt": [
+        "web_backend.FluxioWebBackend._dependency_context_rows",
+        "proofs_d_ui_planning.check_dependency_context",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_orchestration_execution.py::test_dependency_context_keeps_salient_result_evidence_ahead_of_runtime_noise"
+    },
+    {
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_base_context_exposes_immutable_route_snapshot_before_bounded_turns",
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_base_context_exposes_immutable_route_snapshot_before_bounded_turns",
+      "contracts": [
+        "d-ui.route-context"
+      ],
+      "checkedAt": [
+        "web_backend.FluxioWebBackend._build_neyvia_base_context",
+        "proofs_d_ui_planning.check_route_context",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_orchestration_execution.py::test_base_context_exposes_immutable_route_snapshot_before_bounded_turns"
+    },
+    {
+      "test": "tests/test_neyvia_system_prompt_selector.py",
+      "case": "test_selected_profile_changes_the_compiled_execution_prompt",
+      "case_id": "tests/test_neyvia_system_prompt_selector.py::test_selected_profile_changes_the_compiled_execution_prompt",
+      "contracts": [
+        "d-ui.selected-profile"
+      ],
+      "checkedAt": [
+        "web_backend._chat_prompt",
+        "proofs_d_ui_planning.check_selected_prompt",
+        "proofs_d_ui_planning.orchestration_self_checks"
+      ],
+      "procedure": "self_check",
+      "receiptCase": "tests/test_neyvia_system_prompt_selector.py::test_selected_profile_changes_the_compiled_execution_prompt"
+    }
+  ],
+  "frontier": [
+    {
+      "case_id": "tests/test_neyvia_app_factory_ui.py::test_app_factory_is_a_first_class_receipt_backed_workspace",
+      "test": "tests/test_neyvia_app_factory_ui.py",
+      "case": "test_app_factory_is_a_first_class_receipt_backed_workspace",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for app factory is a first class receipt backed workspace. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_brand_contract.py::test_exact_neyvia_brand_is_used_on_user_facing_surfaces",
+      "test": "tests/test_neyvia_brand_contract.py",
+      "case": "test_exact_neyvia_brand_is_used_on_user_facing_surfaces",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for exact neyvia brand is used on user facing surfaces. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_brand_contract.py::test_brand_marks_are_not_uppercased_by_the_final_ui_pass",
+      "test": "tests/test_neyvia_brand_contract.py",
+      "case": "test_brand_marks_are_not_uppercased_by_the_final_ui_pass",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for brand marks are not uppercased by the final ui pass. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_current_pass_contract.py::test_user_facing_brand_spelling_is_exact",
+      "test": "tests/test_neyvia_current_pass_contract.py",
+      "case": "test_user_facing_brand_spelling_is_exact",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for user facing brand spelling is exact. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_current_pass_contract.py::test_chat_prompt_uses_real_persisted_profile_contract",
+      "test": "tests/test_neyvia_current_pass_contract.py",
+      "case": "test_chat_prompt_uses_real_persisted_profile_contract",
+      "status": "pending",
+      "reason": "Needs actual persisted prompt-profile or grounded skill catalog/auth inventory observation and host enforcement. Auth evidence must come from scoped runtime status without credential reads; source scans or mocked auth responders are insufficient."
+    },
+    {
+      "case_id": "tests/test_neyvia_current_pass_contract.py::test_new_ui_skills_are_available_to_neyvia",
+      "test": "tests/test_neyvia_current_pass_contract.py",
+      "case": "test_new_ui_skills_are_available_to_neyvia",
+      "status": "pending",
+      "reason": "Needs actual persisted prompt-profile or grounded skill catalog/auth inventory observation and host enforcement. Auth evidence must come from scoped runtime status without credential reads; source scans or mocked auth responders are insufficient."
+    },
+    {
+      "case_id": "tests/test_neyvia_current_pass_contract.py::test_auth_inventory_separates_install_config_auth_and_benchmark",
+      "test": "tests/test_neyvia_current_pass_contract.py",
+      "case": "test_auth_inventory_separates_install_config_auth_and_benchmark",
+      "status": "pending",
+      "reason": "Needs actual persisted prompt-profile or grounded skill catalog/auth inventory observation and host enforcement. Auth evidence must come from scoped runtime status without credential reads; source scans or mocked auth responders are insufficient."
+    },
+    {
+      "case_id": "tests/test_neyvia_current_pass_contract.py::test_claude_does_not_consume_codex_oauth_route",
+      "test": "tests/test_neyvia_current_pass_contract.py",
+      "case": "test_claude_does_not_consume_codex_oauth_route",
+      "status": "pending",
+      "reason": "Needs actual persisted prompt-profile or grounded skill catalog/auth inventory observation and host enforcement. Auth evidence must come from scoped runtime status without credential reads; source scans or mocked auth responders are insufficient."
+    },
+    {
+      "case_id": "tests/test_neyvia_harness_clarity_contract.py::test_harness_ui_explains_native_hybrid_and_auth_truth",
+      "test": "tests/test_neyvia_harness_clarity_contract.py",
+      "case": "test_harness_ui_explains_native_hybrid_and_auth_truth",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for harness ui explains native hybrid and auth truth. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_harness_clarity_contract.py::test_benchmark_endpoint_reads_the_verified_report",
+      "test": "tests/test_neyvia_harness_clarity_contract.py",
+      "case": "test_benchmark_endpoint_reads_the_verified_report",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for benchmark endpoint reads the verified report. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_marketplace_ui.py::test_marketplace_mount_is_narrow_and_reachable",
+      "test": "tests/test_neyvia_marketplace_ui.py",
+      "case": "test_marketplace_mount_is_narrow_and_reachable",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for marketplace mount is narrow and reachable. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_marketplace_ui.py::test_marketplace_exposes_reviewed_lifecycle_commands",
+      "test": "tests/test_neyvia_marketplace_ui.py",
+      "case": "test_marketplace_exposes_reviewed_lifecycle_commands",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for marketplace exposes reviewed lifecycle commands. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_marketplace_ui.py::test_marketplace_separates_trust_signature_staging_and_blockers",
+      "test": "tests/test_neyvia_marketplace_ui.py",
+      "case": "test_marketplace_separates_trust_signature_staging_and_blockers",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for marketplace separates trust signature staging and blockers. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_marketplace_ui.py::test_marketplace_accessibility_and_dedicated_responsive_styles",
+      "test": "tests/test_neyvia_marketplace_ui.py",
+      "case": "test_marketplace_accessibility_and_dedicated_responsive_styles",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for marketplace accessibility and dedicated responsive styles. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_conversation_rail_opens_the_exact_durable_history",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_conversation_rail_opens_the_exact_durable_history",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for conversation rail opens the exact durable history. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_project_and_past_session_rail_is_visible",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_project_and_past_session_rail_is_visible",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for project and past session rail is visible. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_all_configured_role_routes_have_switchable_direct_controls",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_all_configured_role_routes_have_switchable_direct_controls",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for all configured role routes have switchable direct controls. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_folder_picker_uses_neyvia_browser_and_labels_nas_roots",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_folder_picker_uses_neyvia_browser_and_labels_nas_roots",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for folder picker uses neyvia browser and labels nas roots. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_global_notification_overlay_is_not_rendered",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_global_notification_overlay_is_not_rendered",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for global notification overlay is not rendered. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_composer_arrow_is_the_only_new_mission_launch_surface",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_composer_arrow_is_the_only_new_mission_launch_surface",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for composer arrow is the only new mission launch surface. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_shared_composer_has_honest_scope_and_submission_states",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_shared_composer_has_honest_scope_and_submission_states",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for shared composer has honest scope and submission states. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_chat_and_orchestration_motion_preserves_semantics_and_reduced_motion",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_chat_and_orchestration_motion_preserves_semantics_and_reduced_motion",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for chat and orchestration motion preserves semantics and reduced motion. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_whole_product_finish_is_loaded_last_and_keeps_surface_semantics",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_whole_product_finish_is_loaded_last_and_keeps_surface_semantics",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for whole product finish is loaded last and keeps surface semantics. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_conversation_observer_supports_priority_activity_and_project_views",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_conversation_observer_supports_priority_activity_and_project_views",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for conversation observer supports priority activity and project views. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_session_templates_are_removed_from_every_shell_entry_point",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_session_templates_are_removed_from_every_shell_entry_point",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for session templates are removed from every shell entry point. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_agent_launcher_keeps_the_selected_workspace",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_agent_launcher_keeps_the_selected_workspace",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for agent launcher keeps the selected workspace. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_live_refresh_does_not_steal_an_explicit_workspace_selection",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_live_refresh_does_not_steal_an_explicit_workspace_selection",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for live refresh does not steal an explicit workspace selection. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_tauri_mission_launch_dispatches_asynchronously",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_tauri_mission_launch_dispatches_asynchronously",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for tauri mission launch dispatches asynchronously. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_navigation_contract.py::NeyviaNavigationContractTests.test_desktop_does_not_register_the_website_offline_worker",
+      "test": "tests/test_neyvia_navigation_contract.py",
+      "case": "NeyviaNavigationContractTests.test_desktop_does_not_register_the_website_offline_worker",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for desktop does not register the website offline worker. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_personal_mesh_ui.py::test_personal_mesh_dark_and_light_theme_pairs_meet_wcag_aa",
+      "test": "tests/test_neyvia_personal_mesh_ui.py",
+      "case": "test_personal_mesh_dark_and_light_theme_pairs_meet_wcag_aa",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for personal mesh dark and light theme pairs meet wcag aa. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_personal_mesh_ui.py::test_personal_mesh_uses_normalized_unavailable_values_and_hides_initial_data",
+      "test": "tests/test_neyvia_personal_mesh_ui.py",
+      "case": "test_personal_mesh_uses_normalized_unavailable_values_and_hides_initial_data",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for personal mesh uses normalized unavailable values and hides initial data. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_personal_mesh_ui.py::test_personal_mesh_is_reachable_and_exposes_accessible_dialog_tabs",
+      "test": "tests/test_neyvia_personal_mesh_ui.py",
+      "case": "test_personal_mesh_is_reachable_and_exposes_accessible_dialog_tabs",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for personal mesh is reachable and exposes accessible dialog tabs. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_personal_mesh_ui.py::test_ui_does_not_claim_unproven_cancellation_success",
+      "test": "tests/test_neyvia_personal_mesh_ui.py",
+      "case": "test_ui_does_not_claim_unproven_cancellation_success",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for ui does not claim unproven cancellation success. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_production_ui_gate.py::test_agent_home_owns_the_prompt_and_direct_route_menus",
+      "test": "tests/test_neyvia_production_ui_gate.py",
+      "case": "test_agent_home_owns_the_prompt_and_direct_route_menus",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for agent home owns the prompt and direct route menus. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_production_ui_gate.py::test_route_pill_selection_persists_without_apply_button",
+      "test": "tests/test_neyvia_production_ui_gate.py",
+      "case": "test_route_pill_selection_persists_without_apply_button",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for route pill selection persists without apply button. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_production_ui_gate.py::test_browser_is_an_agent_preview_tool_not_a_navigation_surface",
+      "test": "tests/test_neyvia_production_ui_gate.py",
+      "case": "test_browser_is_an_agent_preview_tool_not_a_navigation_surface",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for browser is an agent preview tool not a navigation surface. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_production_ui_gate.py::test_desktop_live_summary_and_full_skill_sections_are_wired",
+      "test": "tests/test_neyvia_production_ui_gate.py",
+      "case": "test_desktop_live_summary_and_full_skill_sections_are_wired",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for desktop live summary and full skill sections are wired. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_production_ui_gate.py::test_neyvia_home_visual_precedence_is_explicit",
+      "test": "tests/test_neyvia_production_ui_gate.py",
+      "case": "test_neyvia_home_visual_precedence_is_explicit",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for neyvia home visual precedence is explicit. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_production_ui_gate.py::test_builder_layout_and_progressive_disclosure_contract_is_explicit",
+      "test": "tests/test_neyvia_production_ui_gate.py",
+      "case": "test_builder_layout_and_progressive_disclosure_contract_is_explicit",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for builder layout and progressive disclosure contract is explicit. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_production_ui_gate.py::test_native_commands_use_neyvias_verified_python_runtime",
+      "test": "tests/test_neyvia_production_ui_gate.py",
+      "case": "test_native_commands_use_neyvias_verified_python_runtime",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for native commands use neyvias verified python runtime. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_pass_contract.py::test_larger_ui_pass_is_loaded_after_existing_reference_styles",
+      "test": "tests/test_neyvia_ui_pass_contract.py",
+      "case": "test_larger_ui_pass_is_loaded_after_existing_reference_styles",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for larger ui pass is loaded after existing reference styles. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_pass_contract.py::test_shared_pass_covers_shell_and_primary_operator_surfaces",
+      "test": "tests/test_neyvia_ui_pass_contract.py",
+      "case": "test_shared_pass_covers_shell_and_primary_operator_surfaces",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for shared pass covers shell and primary operator surfaces. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_pass_contract.py::test_chat_start_uses_asymmetric_hierarchy_instead_of_equal_card_grid",
+      "test": "tests/test_neyvia_ui_pass_contract.py",
+      "case": "test_chat_start_uses_asymmetric_hierarchy_instead_of_equal_card_grid",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for chat start uses asymmetric hierarchy instead of equal card grid. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_pass_contract.py::test_compact_composer_has_an_explicit_non_overlapping_control_grid",
+      "test": "tests/test_neyvia_ui_pass_contract.py",
+      "case": "test_compact_composer_has_an_explicit_non_overlapping_control_grid",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for compact composer has an explicit non overlapping control grid. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_pass_contract.py::test_pass_preserves_keyboard_focus_and_reduced_motion",
+      "test": "tests/test_neyvia_ui_pass_contract.py",
+      "case": "test_pass_preserves_keyboard_focus_and_reduced_motion",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for pass preserves keyboard focus and reduced motion. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_chat_uses_one_composer_entry_without_top_or_template_launchers",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_chat_uses_one_composer_entry_without_top_or_template_launchers",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for chat uses one composer entry without top or template launchers. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_reasoning_is_an_integrated_accessible_slider",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_reasoning_is_an_integrated_accessible_slider",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for reasoning is an integrated accessible slider. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_new_conversation_does_not_inherit_the_abandoned_draft",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_new_conversation_does_not_inherit_the_abandoned_draft",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for new conversation does not inherit the abandoned draft. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_harness_catalog_is_a_compact_selector_and_readiness_constellation",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_harness_catalog_is_a_compact_selector_and_readiness_constellation",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for harness catalog is a compact selector and readiness constellation. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_harness_readiness_cannot_spin_forever_or_invent_a_route",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_harness_readiness_cannot_spin_forever_or_invent_a_route",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for harness readiness cannot spin forever or invent a route. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_sidebar_navigation_is_one_continuous_surface_not_a_stack_of_slabs",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_sidebar_navigation_is_one_continuous_surface_not_a_stack_of_slabs",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for sidebar navigation is one continuous surface not a stack of slabs. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_model_accounts_keep_one_primary_connection_and_disclose_secondary_methods",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_model_accounts_keep_one_primary_connection_and_disclose_secondary_methods",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for model accounts keep one primary connection and disclose secondary methods. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_orchestration_agent_management_is_integrated_into_the_agent_lane",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_orchestration_agent_management_is_integrated_into_the_agent_lane",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for orchestration agent management is integrated into the agent lane. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_orchestration_has_one_integrated_launch_path_without_legacy_top_actions",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_orchestration_has_one_integrated_launch_path_without_legacy_top_actions",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for orchestration has one integrated launch path without legacy top actions. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_saved_conversation_uses_the_full_canvas_with_an_integrated_route_strip",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_saved_conversation_uses_the_full_canvas_with_an_integrated_route_strip",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for saved conversation uses the full canvas with an integrated route strip. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_runtime_messages_and_harness_runs_show_route_truth_in_production_language",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_runtime_messages_and_harness_runs_show_route_truth_in_production_language",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for runtime messages and harness runs show route truth in production language. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_turn_receipts_render_structured_activity_instead_of_raw_json",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_turn_receipts_render_structured_activity_instead_of_raw_json",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for turn receipts render structured activity instead of raw json. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_recording_proof_captures_only_the_neyvia_app_window",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_recording_proof_captures_only_the_neyvia_app_window",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for recording proof captures only the neyvia app window. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_route_projection_keeps_provider_runtime_and_model_coherent",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_route_projection_keeps_provider_runtime_and_model_coherent",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for route projection keeps provider runtime and model coherent. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_agent_routes_use_an_in_app_searchable_picker_instead_of_native_menus",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_agent_routes_use_an_in_app_searchable_picker_instead_of_native_menus",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for agent routes use an in app searchable picker instead of native menus. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_workspace_browser_uses_the_python_backend_in_desktop_builds",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_workspace_browser_uses_the_python_backend_in_desktop_builds",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for workspace browser uses the python backend in desktop builds. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_workspace_selection_stays_inside_the_neyvia_shell",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_workspace_selection_stays_inside_the_neyvia_shell",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for workspace selection stays inside the neyvia shell. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_native_product_surfaces_recover_a_local_backend_session",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_native_product_surfaces_recover_a_local_backend_session",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for native product surfaces recover a local backend session. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_initial_bootstrap_reconciles_all_provider_auth_before_showing_setup",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_initial_bootstrap_reconciles_all_provider_auth_before_showing_setup",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for initial bootstrap reconciles all provider auth before showing setup. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_neyvia_ui_polish_contract.py::test_frontier_agent_patterns_extend_neyvia_without_a_competing_runtime",
+      "test": "tests/test_neyvia_ui_polish_contract.py",
+      "case": "test_frontier_agent_patterns_extend_neyvia_without_a_competing_runtime",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for frontier agent patterns extend neyvia without a competing runtime. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_night_mode.py::test_night_mode_doc_no_longer_describes_safe_maintenance_only",
+      "test": "tests/test_night_mode.py",
+      "case": "test_night_mode_doc_no_longer_describes_safe_maintenance_only",
+      "status": "pending",
+      "reason": "Prose document assertion is retained pending a reviewed document/manual impact disposition; missing or changed wording alone does not establish dead code."
+    },
+    {
+      "case_id": "tests/test_nightshift_plan_hold.py::test_tasks_hold_while_a_plan_window_is_past_the_line",
+      "test": "tests/test_nightshift_plan_hold.py",
+      "case": "test_tasks_hold_while_a_plan_window_is_past_the_line",
+      "status": "pending",
+      "reason": "Fresh complete plan-window admission and reset-timer scheduling require a real LiveLimits observation fixture; service_for starts CLI readers, so do not invoke it under the no-credential/no-provider boundary. Original test monkeypatches both ledger initialization and live snapshot."
+    },
+    {
+      "case_id": "tests/test_office_suite_operator_workspace.py::test_office_suite_verified_inspect_or_skip",
+      "test": "tests/test_office_suite_operator_workspace.py",
+      "case": "test_office_suite_verified_inspect_or_skip",
+      "status": "pending",
+      "reason": "Neither installed Office adapter is executable on this worker. The original branch explicitly skips this case; retain real inspect/convert/version and isolated profile receipt until a local executable adapter is available."
+    },
+    {
+      "case_id": "tests/test_onboarding.py::OnboardingTests.test_command_version_uses_wsl_fallback_for_hermes",
+      "test": "tests/test_onboarding.py",
+      "case": "OnboardingTests.test_command_version_uses_wsl_fallback_for_hermes",
+      "status": "pending",
+      "reason": "Command-version, WSL, package/update and setup-history paths need executable local fixture binaries and real dependency discovery; patching subprocess/runtime detectors cannot establish those paths. Retain until a scoped detector fixture exists."
+    },
+    {
+      "case_id": "tests/test_onboarding.py::OnboardingTests.test_detect_onboarding_status_collects_checks",
+      "test": "tests/test_onboarding.py",
+      "case": "OnboardingTests.test_detect_onboarding_status_collects_checks",
+      "status": "pending",
+      "reason": "Command-version, WSL, package/update and setup-history paths need executable local fixture binaries and real dependency discovery; patching subprocess/runtime detectors cannot establish those paths. Retain until a scoped detector fixture exists."
+    },
+    {
+      "case_id": "tests/test_onboarding.py::OnboardingTests.test_detect_onboarding_status_surfaces_runtime_updates",
+      "test": "tests/test_onboarding.py",
+      "case": "OnboardingTests.test_detect_onboarding_status_surfaces_runtime_updates",
+      "status": "pending",
+      "reason": "Command-version, WSL, package/update and setup-history paths need executable local fixture binaries and real dependency discovery; patching subprocess/runtime detectors cannot establish those paths. Retain until a scoped detector fixture exists."
+    },
+    {
+      "case_id": "tests/test_onboarding.py::OnboardingTests.test_runtime_stack_action_includes_node_and_uv_when_missing",
+      "test": "tests/test_onboarding.py",
+      "case": "OnboardingTests.test_runtime_stack_action_includes_node_and_uv_when_missing",
+      "status": "pending",
+      "reason": "Command-version, WSL, package/update and setup-history paths need executable local fixture binaries and real dependency discovery; patching subprocess/runtime detectors cannot establish those paths. Retain until a scoped detector fixture exists."
+    },
+    {
+      "case_id": "tests/test_onboarding.py::OnboardingTests.test_image_tools_are_offered_when_opencv_is_missing",
+      "test": "tests/test_onboarding.py",
+      "case": "OnboardingTests.test_image_tools_are_offered_when_opencv_is_missing",
+      "status": "pending",
+      "reason": "Command-version, WSL, package/update and setup-history paths need executable local fixture binaries and real dependency discovery; patching subprocess/runtime detectors cannot establish those paths. Retain until a scoped detector fixture exists."
+    },
+    {
+      "case_id": "tests/test_onboarding.py::OnboardingTests.test_setup_history_surfaces_verify_pending_stage",
+      "test": "tests/test_onboarding.py",
+      "case": "OnboardingTests.test_setup_history_surfaces_verify_pending_stage",
+      "status": "pending",
+      "reason": "Command-version, WSL, package/update and setup-history paths need executable local fixture binaries and real dependency discovery; patching subprocess/runtime detectors cannot establish those paths. Retain until a scoped detector fixture exists."
+    },
+    {
+      "case_id": "tests/test_onboarding.py::OnboardingTests.test_tutorial_completes_after_workspace_mission_and_phone_destination_exist",
+      "test": "tests/test_onboarding.py",
+      "case": "OnboardingTests.test_tutorial_completes_after_workspace_mission_and_phone_destination_exist",
+      "status": "pending",
+      "reason": "Command-version, WSL, package/update and setup-history paths need executable local fixture binaries and real dependency discovery; patching subprocess/runtime detectors cannot establish those paths. Retain until a scoped detector fixture exists."
+    },
+    {
+      "case_id": "tests/test_onboarding.py::OnboardingTests.test_healthy_dependency_stays_passed_when_global_verify_has_other_blockers",
+      "test": "tests/test_onboarding.py",
+      "case": "OnboardingTests.test_healthy_dependency_stays_passed_when_global_verify_has_other_blockers",
+      "status": "pending",
+      "reason": "Command-version, WSL, package/update and setup-history paths need executable local fixture binaries and real dependency discovery; patching subprocess/runtime detectors cannot establish those paths. Retain until a scoped detector fixture exists."
+    },
+    {
+      "case_id": "tests/test_preview_research_tools.py::test_agent_live_exposes_visual_search_and_real_annotation_controls",
+      "test": "tests/test_preview_research_tools.py",
+      "case": "test_agent_live_exposes_visual_search_and_real_annotation_controls",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for agent live exposes visual search and real annotation controls. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_preview_research_tools.py::test_desktop_native_tool_bridge_and_evidence_call_are_wired",
+      "test": "tests/test_preview_research_tools.py",
+      "case": "test_desktop_native_tool_bridge_and_evidence_call_are_wired",
+      "status": "pending",
+      "reason": "Needs an actual owned browser/desktop journey for desktop native tool bridge and evidence call are wired. Preserve current source assertion until rendered DOM/state, reachability, accessibility/motion or native-command evidence protects that behavior; absence of source strings is not dead code."
+    },
+    {
+      "case_id": "tests/test_product_catalog.py::ProductCatalogTests.test_snapshot_counts_real_native_managed_and_agent_products",
+      "test": "tests/test_product_catalog.py",
+      "case": "ProductCatalogTests.test_snapshot_counts_real_native_managed_and_agent_products",
+      "status": "pending",
+      "reason": "Original catalog cardinalities are a historical hardcoded registry snapshot; need derive counts from current manifests/native descriptors and check advertised execution readiness against local adapters. No current counts were fabricated or frozen."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_run_command_executes_frozen_routes_in_dependency_waves_and_records_receipts",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_run_command_executes_frozen_routes_in_dependency_waves_and_records_receipts",
+      "status": "pending",
+      "reason": "Retain real provider route/dependency-wave execution, authority admission and durable runtime handback until a scoped actual model/harness invocation can establish its end-to-end result. Original monkeypatched provider output cannot replace that proof."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_run_command_grants_workspace_mutation_only_to_explicit_executor",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_run_command_grants_workspace_mutation_only_to_explicit_executor",
+      "status": "pending",
+      "reason": "Retain real provider route/dependency-wave execution, authority admission and durable runtime handback until a scoped actual model/harness invocation can establish its end-to-end result. Original monkeypatched provider output cannot replace that proof."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_run_command_blocks_incomplete_workspace_mutation_contract",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_run_command_blocks_incomplete_workspace_mutation_contract",
+      "status": "pending",
+      "reason": "Retain real provider route/dependency-wave execution, authority admission and durable runtime handback until a scoped actual model/harness invocation can establish its end-to-end result. Original monkeypatched provider output cannot replace that proof."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_run_command_blocks_unavailable_or_incompatible_route_without_provider_fallback",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_run_command_blocks_unavailable_or_incompatible_route_without_provider_fallback",
+      "status": "pending",
+      "reason": "Retain real provider route/dependency-wave execution, authority admission and durable runtime handback until a scoped actual model/harness invocation can establish its end-to-end result. Original monkeypatched provider output cannot replace that proof."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_run_command_overlaps_independent_nodes_and_barriers_next_wave",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_run_command_overlaps_independent_nodes_and_barriers_next_wave",
+      "status": "pending",
+      "reason": "Retain real provider route/dependency-wave execution, authority admission and durable runtime handback until a scoped actual model/harness invocation can establish its end-to-end result. Original monkeypatched provider output cannot replace that proof."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_run_command_flows_bounded_base_and_dependency_context_without_future_context",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_run_command_flows_bounded_base_and_dependency_context_without_future_context",
+      "status": "pending",
+      "reason": "Retain real provider route/dependency-wave execution, authority admission and durable runtime handback until a scoped actual model/harness invocation can establish its end-to-end result. Original monkeypatched provider output cannot replace that proof."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_run_command_honors_explicit_no_context_selection",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_run_command_honors_explicit_no_context_selection",
+      "status": "pending",
+      "reason": "Retain real provider route/dependency-wave execution, authority admission and durable runtime handback until a scoped actual model/harness invocation can establish its end-to-end result. Original monkeypatched provider output cannot replace that proof."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_partial_orchestration_run_keeps_parent_active",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_partial_orchestration_run_keeps_parent_active",
+      "status": "pending",
+      "reason": "Retain real provider route/dependency-wave execution, authority admission and durable runtime handback until a scoped actual model/harness invocation can establish its end-to-end result. Original monkeypatched provider output cannot replace that proof."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_ui_shaped_explicit_snapshot_contains_only_planner_executor_verifier",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_ui_shaped_explicit_snapshot_contains_only_planner_executor_verifier",
+      "status": "pending",
+      "reason": "The public conversation/plan dispatcher may support a local SQLite fixture for exact explicit planner/executor/verifier route identity, but it needs reviewed real returns and enforcement outside the three owned facade methods."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_dynamic_decompose_uses_exact_sol_receipt_then_requires_bound_approval_before_spawn",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_dynamic_decompose_uses_exact_sol_receipt_then_requires_bound_approval_before_spawn",
+      "status": "pending",
+      "reason": "Dynamic decomposition needs actual selected Sol receipt/model output, immutable approval binding, malformed output refusal and unavailable-route evidence. CLI/module monkeypatches are insufficient; no model invocation belongs to this bounded local content batch."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_dynamic_decompose_sol_subprocess_receipt_stays_awaiting_approval",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_dynamic_decompose_sol_subprocess_receipt_stays_awaiting_approval",
+      "status": "pending",
+      "reason": "Dynamic decomposition needs actual selected Sol receipt/model output, immutable approval binding, malformed output refusal and unavailable-route evidence. CLI/module monkeypatches are insufficient; no model invocation belongs to this bounded local content batch."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_dynamic_plan_prompt_requires_executable_route_identity_contract",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_dynamic_plan_prompt_requires_executable_route_identity_contract",
+      "status": "pending",
+      "reason": "Dynamic decomposition needs actual selected Sol receipt/model output, immutable approval binding, malformed output refusal and unavailable-route evidence. CLI/module monkeypatches are insufficient; no model invocation belongs to this bounded local content batch."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_dynamic_decompose_binds_selected_import_rows_to_exact_sol_invocation",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_dynamic_decompose_binds_selected_import_rows_to_exact_sol_invocation",
+      "status": "pending",
+      "reason": "Dynamic decomposition needs actual selected Sol receipt/model output, immutable approval binding, malformed output refusal and unavailable-route evidence. CLI/module monkeypatches are insufficient; no model invocation belongs to this bounded local content batch."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_dynamic_decompose_invalid_model_output_blocks_without_children",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_dynamic_decompose_invalid_model_output_blocks_without_children",
+      "status": "pending",
+      "reason": "Dynamic decomposition needs actual selected Sol receipt/model output, immutable approval binding, malformed output refusal and unavailable-route evidence. CLI/module monkeypatches are insufficient; no model invocation belongs to this bounded local content batch."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_dynamic_decompose_unavailable_sol_blocks_with_readiness_detail_without_turn_or_fallback",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_dynamic_decompose_unavailable_sol_blocks_with_readiness_detail_without_turn_or_fallback",
+      "status": "pending",
+      "reason": "Dynamic decomposition needs actual selected Sol receipt/model output, immutable approval binding, malformed output refusal and unavailable-route evidence. CLI/module monkeypatches are insufficient; no model invocation belongs to this bounded local content batch."
+    },
+    {
+      "case_id": "tests/test_neyvia_orchestration_execution.py::test_dynamic_decompose_unavailable_sol_deduplicates_invocation_problems",
+      "test": "tests/test_neyvia_orchestration_execution.py",
+      "case": "test_dynamic_decompose_unavailable_sol_deduplicates_invocation_problems",
+      "status": "pending",
+      "reason": "Dynamic decomposition needs actual selected Sol receipt/model output, immutable approval binding, malformed output refusal and unavailable-route evidence. CLI/module monkeypatches are insufficient; no model invocation belongs to this bounded local content batch."
+    },
+    {
+      "case_id": "tests/test_neyvia_system_prompt_selector.py::test_prompt_profile_is_persisted_and_submitted",
+      "test": "tests/test_neyvia_system_prompt_selector.py",
+      "case": "test_prompt_profile_is_persisted_and_submitted",
+      "status": "pending",
+      "reason": "Rendered preference persistence and submission must be exercised in an owned browser with actual selected profile dispatch; compiled backend prompts alone do not prove the frontend saved/submitted preference."
+    }
+  ]
+}

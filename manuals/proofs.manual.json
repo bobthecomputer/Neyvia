@@ -1,0 +1,1571 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "proofs",
+  "kind": "environment",
+  "proofs": {
+    "area": "host, resource-outcomes, measured-coverage",
+    "manifests": [
+      "config/proofs/resource-outcomes.json",
+      "config/proofs/measured-coverage.json"
+    ],
+    "contracts": [
+      {
+        "id": "p22.manual-compiler",
+        "phase": "post",
+        "claim": "The current authored Connected Language manuals and skills compile in memory, match their checked-in semantic artifacts, and satisfy the indexed source and module-map consistency checks.",
+        "checkedAt": [
+          "scripts/cl_compile_manuals.py",
+          "src/grant_agent/cl/manuals.py",
+          "src/grant_agent/cl_skill.py",
+          "config/neyvia_manuals.json"
+        ],
+        "impact": [
+          "Connected Language source compilation and semantic manual artifacts"
+        ]
+      },
+      {
+        "id": "p22.module-registry",
+        "phase": "post",
+        "claim": "The source-derived module registry matches current owned files, source hashes, declared dependencies, manual references, and generated module documentation.",
+        "checkedAt": [
+          "scripts/generate_module_map.py",
+          "src/grant_agent/module_map.py",
+          "config/neyvia.modules.json",
+          "config/contract_module_map.json",
+          "config/neyvia_manuals.json"
+        ],
+        "impact": [
+          "Source-derived module ownership and generated module documentation"
+        ]
+      },
+      {
+        "id": "p22.manual-cache",
+        "phase": "post",
+        "claim": "The generated compiled-manual cache exactly matches current CL source, semantic artifacts, compiler inputs, index lines, tool owners, and procedure owners.",
+        "checkedAt": [
+          "scripts/build_fixcl_manual_cache.py",
+          "src/grant_agent/neyvia_manuals.py",
+          "src/grant_agent/cl/integration.py",
+          "src/grant_agent/cl/manuals.py",
+          "config/neyvia_manuals.json"
+        ],
+        "impact": [
+          "Generated executable manual cache and manual-first lookup"
+        ]
+      },
+      {
+        "id": "p22.measured-coverage",
+        "phase": "post",
+        "claim": "Measured Python trace streams bind an explicit changed-line scope to source-stable receipts; only executed in-scope lines gain admission, out-of-scope and unexecuted lines stay uncovered, stale sources or specifications invalidate reuse, and resource boundaries fail closed.",
+        "checkedAt": [
+          "grant_agent.contract_execution.start",
+          "grant_agent.contract_execution.TraceSession.stop",
+          "grant_agent.contract_measurements.measured_record",
+          "grant_agent.contract_measurements.write_cache",
+          "grant_agent.contract_measurements.read_cache",
+          "grant_agent.contract_measurements.fresh",
+          "grant_agent.contract_measurements.admission",
+          "grant_agent.contract_measurements.impacted",
+          "grant_agent.contract_coverage.classify",
+          "grant_agent.proofs_measured_coverage._exercise_measurement_runtime",
+          "grant_agent.contract_resources.memory_limit_exceeded"
+        ],
+        "impact": [
+          "Contract gate execution tracing, source-bound coverage cache, and changed-line admission"
+        ]
+      },
+      {
+        "id": "p22.settings.preference-journey",
+        "phase": "post",
+        "claim": "A user's Settings density and text-size selection is saved and returned by a fresh read; invalid or stale edits explain the issue and preserve the latest saved selection.",
+        "checkedAt": [
+          "grant_agent.proofs_settings_journey.self_check",
+          "grant_agent.neyvia_workspace_tools.WorkspaceTools.__init__",
+          "grant_agent.neyvia_settings.update",
+          "grant_agent.neyvia_settings.get",
+          "grant_agent.ui_command_bus.UICommandBus.since",
+          "grant_agent.ui_command_bus.UICommandBus.connect"
+        ],
+        "impact": [
+          "Settings preferences",
+          "visual preferences",
+          "density"
+        ]
+      },
+      {
+        "id": "native.runtime.process-journey",
+        "phase": "goal",
+        "claim": "Eco resource admission bounds specialist selection; an isolated local child returns a route-bound output receipt accepted by the production evaluator; timeout cancels an owned descendant and its cancelled receipt is refused.",
+        "checkedAt": [
+          "grant_agent.native_resource_profiles._profile_for_memory",
+          "grant_agent.native_spawn_contracts.build_specialist_routes",
+          "grant_agent.native_spawn_contracts.NativeSpawnRegistry.start/finish",
+          "grant_agent.subprocess_utils.capture_bounded_process",
+          "grant_agent.subprocess_utils.process_is_alive",
+          "grant_agent.native_spawn_evaluator.evaluate_spawn_receipt",
+          "grant_agent.proofs_runtime_journey._journey"
+        ],
+        "impact": [
+          "Native runtime resource admission",
+          "bounded local child lifecycle",
+          "operator receipt projection"
+        ]
+      },
+      {
+        "id": "p22.mission-artifact-repair",
+        "phase": "post",
+        "claim": "The saved mission detail keeps a completion blocked while runtime output and an artifact are missing, then admits and persists completion after a local report and preview are saved.",
+        "checkedAt": [
+          "grant_agent.mission_control.ControlRoomStore.save_missions",
+          "grant_agent.mission_control.ControlRoomStore.get_mission",
+          "grant_agent.mission_control_detail.ControlRoomDetailMixin.build_mission_detail_snapshot",
+          "grant_agent.mission_control_detail.ControlRoomDetailMixin._mission_summary_payload",
+          "grant_agent.mission_control_artifact_gates.mission_hard_artifact_gate",
+          "grant_agent.mission_control_artifact_gates._complete_repaired_hard_artifact_gate_from_detail",
+          "grant_agent.proofs_mission_journey.mission_artifact_repair"
+        ],
+        "impact": [
+          "Mission and Workbench persisted artifact inspection"
+        ]
+      },
+      {
+        "id": "p22.creative.brief-selection-journey",
+        "phase": "post",
+        "claim": "A local creative brief persists three alternatives and an explicit review selection; registered experience handlers normalize a nested investigation body without overriding outer work identity or authority aliases, persist and read it back, retain flat legacy reads, and refuse a reusable-learning write while that capability remains disabled.",
+        "checkedAt": [
+          "grant_agent.proofs_creative_journey.self_check",
+          "grant_agent.native_tools.NativeToolRegistry.__init__",
+          "grant_agent.native_tools.NativeToolRegistry.prepare_arguments",
+          "grant_agent.creative_tools.creative_tool_definitions",
+          "grant_agent.creative_tools.CreativeToolRuntime.__init__",
+          "grant_agent.creative_tools.CreativeToolRuntime.call",
+          "grant_agent.creative_tools._experience_arguments",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence.__init__",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence._read",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence._write",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence._mutate",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence.propose_brief",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence.review_brief",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence.collaboration",
+          "grant_agent.experience_learning.ExperienceStore.__init__",
+          "grant_agent.experience_learning.ExperienceStore._record",
+          "grant_agent.experience_learning.ExperienceStore.investigate",
+          "grant_agent.experience_learning.ExperienceStore.snapshot",
+          "grant_agent.experience_learning.ExperienceStore.list"
+        ],
+        "impact": [
+          "creative tool API",
+          "creative proposal",
+          "structured investigation record",
+          "reusable-learning authority"
+        ]
+      },
+      {
+        "id": "p22.chat-history-sidebar-journey",
+        "phase": "post",
+        "claim": "Connected Chats reopens saved native text and tool output, shows only another session's live work claim, excludes declined edits, keeps cleanup inside fresh allowed roots, redacts quota-reader failures across durable reopen, and reports bounded checkout progress while refusing malformed job identities.",
+        "checkedAt": [
+          "grant_agent.connected_sessions.opencode_history.read_items",
+          "grant_agent.connected_sessions.opencode_history.latest_model",
+          "grant_agent.connected_sessions.opencode_history.tool_output",
+          "grant_agent.connected_sessions.work_board.turn_note",
+          "grant_agent.connected_sessions.work_board.edited_paths",
+          "grant_agent.connected_sessions.sidebar_cleanup.SidebarSafetyObserver.observe",
+          "grant_agent.connected_sessions.sidebar_cleanup.archive_blocker",
+          "grant_agent.connected_sessions.sidebar_cleanup.normalize_policy",
+          "grant_agent.connected_sessions.sidebar_cleanup.stale",
+          "grant_agent.connected_sessions.live_limits.LiveLimits.collect",
+          "grant_agent.connected_sessions.live_limits.LiveLimits.snapshot",
+          "grant_agent.connected_sessions.live_limits.LiveLimits._save",
+          "grant_agent.connected_sessions.folder_jobs.status",
+          "grant_agent.connected_sessions.folder_jobs.checkout_progress",
+          "grant_agent.proofs_chat_journey.saved_history_and_sidebar"
+        ],
+        "impact": [
+          "Connected Chats transcript and sidebar history",
+          "Connected Chats cleanup, quota and worktree status"
+        ]
+      },
+      {
+        "id": "browser.site-manual-journey",
+        "phase": "post",
+        "claim": "A learned site manual is reused only when a fresh non-stealth Obscura observation matches; changed controls demote prior facts and ambiguous targets dispatch no action",
+        "checkedAt": [
+          "grant_agent.browser_site_manuals.site_manual",
+          "grant_agent.browser_site_manuals._structure",
+          "grant_agent.browser_site_manuals._procedures",
+          "grant_agent.browser_site_manuals.action_batch",
+          "grant_agent.browser_site_manuals.resolve_target",
+          "grant_agent.neyvia_browser.BrowserService.request",
+          "grant_agent.neyvia_browser.BrowserService.headless_request"
+        ],
+        "impact": [
+          "Fresh browser site manual learning and reuse",
+          "Stale semantic target refusal before browser action dispatch"
+        ]
+      },
+      {
+        "id": "cl.completion-after-effect",
+        "phase": "post",
+        "claim": "A real CL observer and explicit done complete the authored task; a subsequent native note write persists its requested bytes and invalidates the prior completion in the product observer.",
+        "checkedAt": [
+          "grant_agent.cl.protocol.Protocol.run",
+          "grant_agent.cl.protocol.Protocol.completion",
+          "grant_agent.neyvia_gateway.NeyviaToolGateway.call_native",
+          "grant_agent.neyvia_agent._product_cl_completion",
+          "grant_agent.neyvia_notes_tools.call_notes",
+          "grant_agent.proofs_cl_completion.check_completion"
+        ],
+        "impact": [
+          "CL task completion",
+          "native note bytes",
+          "done proof invalidation"
+        ]
+      },
+      {
+        "id": "cl.stale-reference-preserves",
+        "phase": "invariant",
+        "claim": "Restored observer bindings are reread against current bytes; a fresh native observation supersedes the old ref, and a stale ref is refused without changing the selected file or exposing its native token.",
+        "checkedAt": [
+          "grant_agent.cl.host.HostContext.resolve",
+          "grant_agent.cl.host.HostContext.completion_bindings",
+          "grant_agent.cl.host.HostContext.restore_completion_bindings",
+          "grant_agent.cl.host.HostContext.execute",
+          "grant_agent.proofs_cl_completion.check_stale_reference"
+        ],
+        "impact": [
+          "Native target safety",
+          "restored CL completion observations",
+          "stale action refusal"
+        ]
+      },
+      {
+        "id": "sessions.plan-history.order",
+        "phase": "post",
+        "claim": "Claude plan history folds accepted tool operations in transcript order, applies only matching successful results and retains the latest completed and active task states.",
+        "checkedAt": [
+          "grant_agent.connected_sessions.claude_plan_history.read_plan_history",
+          "grant_agent.connected_sessions.claude_plan_history.apply_plan_result",
+          "grant_agent.connected_sessions.plan.latest_plan",
+          "grant_agent.proofs_plan_history._order_case"
+        ],
+        "impact": [
+          "connected chat plan visibility",
+          "Claude transcript history"
+        ]
+      },
+      {
+        "id": "sessions.plan-history.source-clear",
+        "phase": "post",
+        "claim": "Plan source changes discard prior source rows and terminal deletion or an empty replacement clears the visible checklist.",
+        "checkedAt": [
+          "grant_agent.connected_sessions.claude_plan_history.read_plan_history",
+          "grant_agent.connected_sessions.plan.latest_plan",
+          "grant_agent.proofs_plan_history._source_and_clear_case"
+        ],
+        "impact": [
+          "connected chat plan visibility",
+          "Claude transcript history"
+        ]
+      },
+      {
+        "id": "sessions.plan-history.conversation-scope",
+        "phase": "post",
+        "claim": "Plan calls and results stay within the selected conversation transcript and sidechain calls do not enter its visible plan.",
+        "checkedAt": [
+          "grant_agent.connected_sessions.claude_plan_history.read_plan_history",
+          "grant_agent.proofs_plan_history._conversation_scope_case"
+        ],
+        "impact": [
+          "connected chat plan visibility",
+          "conversation and subagent boundaries"
+        ]
+      },
+      {
+        "id": "browser-script.input-binding",
+        "phase": "post",
+        "claim": "A learned browser procedure binds caller inputs into concrete actions and goal predicates while preserving all fixed semantic targets",
+        "checkedAt": [
+          "grant_agent.browser_scripts.bind",
+          "grant_agent.proofs_browser_scripts.input_binding"
+        ],
+        "impact": [
+          "Compiled browser procedure inputs and replay actions"
+        ]
+      },
+      {
+        "id": "browser-script.goal-observation",
+        "phase": "post",
+        "claim": "Browser procedure goals pass only when the fresh observed JSON values satisfy every exact or contains predicate",
+        "checkedAt": [
+          "grant_agent.browser_scripts.goal",
+          "grant_agent.proofs_browser_scripts.goal_observation"
+        ],
+        "impact": [
+          "Browser procedure completion and replay admission"
+        ]
+      },
+      {
+        "id": "browser-script.query-binding",
+        "phase": "post",
+        "claim": "A proved URL query value maps back to its semantic caller input and parameter name without retaining the successful value",
+        "checkedAt": [
+          "grant_agent.browser_scripts.observed_input_bindings",
+          "grant_agent.proofs_browser_scripts.query_binding"
+        ],
+        "impact": [
+          "Reusable browser procedure query inputs"
+        ]
+      },
+      {
+        "id": "browser-script.invalid-name",
+        "phase": "post",
+        "claim": "A path-like browser procedure name fails with invalid_script before any browser observation is attempted",
+        "checkedAt": [
+          "grant_agent.browser_scripts.execute",
+          "grant_agent.proofs_browser_scripts.invalid_name"
+        ],
+        "impact": [
+          "Browser procedure path isolation and input validation"
+        ]
+      },
+      {
+        "id": "p22.message-markdown",
+        "phase": "post",
+        "claim": "Mounted Neyvia prose renders its Markdown content and exposes model-authored images as links without fetching them",
+        "checkedAt": [
+          "web/src/neyvia/NeyviaMessageBody.jsx",
+          "web/src/neyvia/NeyviaMessageBody.css",
+          "scripts/p22_frontend_outcomes.mjs"
+        ],
+        "impact": [
+          "Assistant replies, notes preview, output reports and artifact prose"
+        ]
+      },
+      {
+        "id": "p22.message-stream-safety",
+        "phase": "post",
+        "claim": "Streaming prose hides unfinished Markdown markers and raw HTML cannot mount or execute",
+        "checkedAt": [
+          "web/src/neyvia/NeyviaMessageBody.jsx",
+          "web/src/neyvia/neyviaLiveMessages.js",
+          "scripts/p22_frontend_outcomes.mjs"
+        ],
+        "impact": [
+          "Streaming assistant replies and Markdown rendering safety"
+        ]
+      },
+      {
+        "id": "p22.sdk-clients",
+        "phase": "post",
+        "claim": "Python and browser SDK clients deliver exact Unicode requests and local export policy over owned HTTP; unowned URLs and refused responses preserve typed denials",
+        "checkedAt": [
+          "src/neyvia_sdk/client.py",
+          "src/neyvia_sdk/__init__.py",
+          "packages/neyvia-sdk/index.js",
+          "scripts/p22_release_models.mjs"
+        ],
+        "impact": [
+          "Public SDK command and native-tool transports"
+        ]
+      },
+      {
+        "id": "p22.asyncio-wakeup",
+        "phase": "post",
+        "claim": "Windows async observers receive cross-thread wakeups through assigned loopback ports; public wakeup ports are refused",
+        "checkedAt": [
+          "grant_agent.proof_ports.configure_asyncio",
+          "grant_agent.contract_gate.worker"
+        ],
+        "impact": [
+          "Isolated async DOM and Windows OCR observers"
+        ]
+      },
+      {
+        "id": "p22.desktop-asset-path",
+        "phase": "pre",
+        "claim": "The native frontend directory predicate accepts relative asset folders and refuses drive paths and file URLs that would open a directory listing",
+        "checkedAt": [
+          "src-tauri/build_frontend_guard.rs",
+          "src-tauri/build.rs"
+        ],
+        "impact": [
+          "Desktop generated schemas and native frontend asset location"
+        ]
+      },
+      {
+        "id": "p22.compiled-command",
+        "phase": "post",
+        "claim": "An executable CL workspace command persists its exact Unicode text; read-only and escaped commands cannot change the selected workspace",
+        "checkedAt": [
+          "grant_agent.cl.protocol.Protocol.run",
+          "grant_agent.cl.host",
+          "grant_agent.cl.parser",
+          "grant_agent.cl.runtime",
+          "grant_agent.cl.state",
+          "grant_agent.cl.schema",
+          "grant_agent.cl.validator",
+          "grant_agent.cl.expressions",
+          "grant_agent.cl.effects",
+          "grant_agent.cl.manuals",
+          "grant_agent.cl.integration",
+          "scripts/cl_compile_manuals.py",
+          "config/neyvia_manuals.json"
+        ],
+        "impact": [
+          "Executable manual compilation and command execution"
+        ]
+      },
+      {
+        "id": "p22.mod-lifecycle",
+        "phase": "post",
+        "claim": "A local source mod installs disabled, executes the requested greeting only after activation and refuses calls after persisted disable",
+        "checkedAt": [
+          "grant_agent.source_marketplace.SourceMarketplace",
+          "grant_agent.module_plugins.dispatch",
+          "apps/hello-module/greeting.py",
+          "apps/hello-module/neyvia.module.json",
+          "apps/hello-module/manual.cl",
+          "apps/hello-module/host-contract.json"
+        ],
+        "impact": [
+          "Local app and mod marketplace lifecycle"
+        ]
+      },
+      {
+        "id": "p22.sdk-state",
+        "phase": "post",
+        "claim": "A generated web app serves one durable shared counter with exact action replay; missing authority, foreign origin, stale revision and negative count never mutate it",
+        "checkedAt": [
+          "grant_agent.app_sdk.new_app",
+          "grant_agent.app_sdk.commit_api",
+          "grant_agent.app_sdk_server.serve",
+          "grant_agent.neyvia_app_sdk.call",
+          "scripts/app_sdk.py",
+          "scripts/build_app_sdk_runtime.mjs"
+        ],
+        "impact": [
+          "Generated SDK app state and local HTTP authority"
+        ]
+      },
+      {
+        "id": "p22.production-build",
+        "phase": "post",
+        "claim": "The selected checkout produces a complete Vite application bundle through its production build configuration",
+        "checkedAt": [
+          "vite.config.mjs",
+          "package.json",
+          "scripts/build_app_sdk_runtime.mjs"
+        ],
+        "impact": [
+          "Generated web application assets and dependency resolution"
+        ]
+      },
+      {
+        "id": "p22.coverage-model",
+        "phase": "post",
+        "claim": "Declared evidence exemptions preserve generator obligations; real module outcomes cover companions while sentinels and unknown code remain uncovered",
+        "checkedAt": [
+          "grant_agent.contract_coverage.model",
+          "grant_agent.contract_coverage.classify",
+          "grant_agent.contract_gate.select",
+          "config/contract_path_policy.json",
+          "scripts/p22_coverage_report.py",
+          "grant_agent.contract_gate.exact_renames"
+        ],
+        "impact": [
+          "Impact coverage and uncovered admission"
+        ]
+      },
+      {
+        "id": "p22.module-discovery",
+        "phase": "post",
+        "claim": "The current generated owner reaches exact module search and source lookup; another owners source is refused",
+        "checkedAt": [
+          "grant_agent.module_map.generate",
+          "grant_agent.neyvia_modules.call",
+          "scripts/generate_module_map.py"
+        ],
+        "impact": [
+          "Generated module registry and module documents"
+        ]
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_runtime_edges.budget",
+          "src/grant_agent/cli.py",
+          "src/grant_agent/mission_control.py"
+        ],
+        "claim": "Implicit budgets stay unlimited; explicit limits and authority roots remain enforced",
+        "id": "p22.runtime-budget",
+        "impact": [
+          "tests/test_runtime_budget_contract.py",
+          "Migrated edge cases; no live provider is contacted"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_runtime_edges.releases",
+          "src/grant_agent/runtime_updates.py"
+        ],
+        "claim": "Offline release responses select the newest semantic version with its truthful source",
+        "id": "p22.release-parsing",
+        "impact": [
+          "tests/test_runtime_updates.py",
+          "Migrated edge cases; no live provider is contacted"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proof_contracts.before_action",
+          "grant_agent.native_tools.NativeToolRegistry.call",
+          "grant_agent.neyvia_workspace_tools.WorkspaceTools.call"
+        ],
+        "claim": "Every documented action validates all grounded manual input schemas before effects",
+        "id": "proofs.manual-input",
+        "impact": [
+          "action effects",
+          "manual input promises"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proof_contracts.after_action",
+          "grant_agent.native_tools.NativeToolRegistry.call",
+          "grant_agent.neyvia_workspace_tools.WorkspaceTools.call"
+        ],
+        "claim": "Every successful documented action validates all grounded manual result schemas before delivery",
+        "id": "proofs.manual-output",
+        "impact": [
+          "agent observations",
+          "UI operation results"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proof_verifier.run_verification",
+          "grant_agent.proof_verifier._local_arguments",
+          "grant_agent.subprocess_utils.capture_bounded_process"
+        ],
+        "claim": "Embedded verifier runs in a new interpreter with task-owned runtime homes, without host UI state or backend routing overrides, and only approved local scratch dispatch",
+        "id": "proofs.scratch-isolation",
+        "impact": [
+          "live workspace state",
+          "self-check effects"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proof_verifier.run_verification",
+          "grant_agent.proof_verifier.worker_failure_message",
+          "grant_agent.web_backend.main"
+        ],
+        "claim": "A startup self-check worker that exits without a readable receipt is reported with its exit code, stdout size, stderr tail and retained diagnostics path, never as empty text; startup supplies the reviewed fixture ports and a ceiling long enough for the complete suite",
+        "id": "proofs.worker-failure-report",
+        "impact": [
+          "backend startup",
+          "release readiness"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proof_readiness.run_now",
+          "grant_agent.proof_readiness.status",
+          "grant_agent.web_backend.main",
+          "grant_agent.neyvia_runtime.request",
+          "grant_agent.proofs_e_host.check_startup_readiness"
+        ],
+        "claim": "The backend serves immediately while the complete self-check runs hidden at low priority; its running, passed, failed (with failing claims) or error outcome is a durable receipt shown on the Runtime page and never prevents Neyvia from opening; --proof-self-check-blocking restores a refusing run for CI and release audit Passed requires both contractsOk and complete; passing partial coverage is reported as failed with an explicit reason.",
+        "id": "proofs.background-readiness",
+        "impact": [
+          "backend startup",
+          "Runtime page readiness"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proof_coverage.retirement_gate",
+          "grant_agent.proof_coverage.coverage_source_current"
+        ],
+        "claim": "Retirement requires complete declared host coverage, unchanged original tests and immutable manifests/receipts, plus current source binding or fresh exact-contract revalidation",
+        "id": "proofs.retirement-coverage",
+        "impact": [
+          "tests",
+          "coverage evidence",
+          "protected behavior"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proof_credential_guard.install",
+          "grant_agent.proof_credential_guard.check_access",
+          "scripts/run_web_backend.py",
+          "scripts/verify_proofs.py"
+        ],
+        "claim": "Python proof workers and explicitly guarded owned backends refuse configured saved credential file opens outside disposable proof state before content is read.",
+        "id": "proofs.saved-credential-boundary",
+        "impact": [
+          "saved credential authority",
+          "disposable proof state"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proof_coverage.revalidate_existing",
+          "grant_agent.proof_coverage.revalidated_cases",
+          "grant_agent.proof_coverage.evidence_revalidated",
+          "grant_agent.proof_verifier.coverage_report",
+          "scripts/prove_proofs_b_admission.py"
+        ],
+        "claim": "An unchanged prior coverage row may use a fresh observed-contract receipt bound to exact current source; original receipt, manifest, contract ids, production sites and prior binding still match. Tampered or stale revalidation fails closed without editing other tracks rows.",
+        "id": "proofs.source-revalidation",
+        "impact": [
+          "scoped incremental migration",
+          "prior proof lineage",
+          "coverage admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.contract_gate.select",
+          "scripts/gate.py",
+          "scripts/cl_compile_manuals.py"
+        ],
+        "claim": "Changed source selects its authored outcome contracts through real dependency edges",
+        "id": "p22.impact",
+        "impact": [
+          "Fast contract gate and configuration authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.contract_gate.select",
+          "scripts/p22_contract_audit.py"
+        ],
+        "claim": "A covered neighbour never hides an unmapped changed source",
+        "id": "p22.uncovered",
+        "impact": [
+          "Fast contract gate and configuration authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_agent.NeyviaAgentConfig.validated",
+          "grant_agent.proofs_fast_contracts.self_check"
+        ],
+        "claim": "Repeated configuration validation never increases the callers mutation authority",
+        "id": "p22.permission-validation",
+        "impact": [
+          "Fast contract gate and configuration authority",
+          "tests/test_cl_config_validation.py",
+          "config/proofs/p22-python-coverage.json"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_runtime_edges.workspace",
+          "scripts/p22_workspace.mjs",
+          "web/src/neyvia/missionHelpers.js"
+        ],
+        "claim": "Live refresh preserves explicit selection; launches keep its exact profile and missing selections never fall back",
+        "id": "p22.workspace-selection",
+        "impact": [
+          "tests/test_workspace_selection_behavior.py"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_runtime_edges.codex_threads",
+          "src/grant_agent/connected_sessions/codex_items.py"
+        ],
+        "claim": "Codex exec threads normalize extended Windows paths, retain public background status and match the selected project",
+        "id": "p22.codex-threads",
+        "impact": [
+          "tests/test_connected_codex_exec_threads.py"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_runtime_edges.oauth_owner",
+          "src/grant_agent/provider_auth_broker.py"
+        ],
+        "claim": "One explicit refresh owner persists the supplied synthetic credential while public state and status disclose no token",
+        "id": "p22.oauth-owner",
+        "impact": [
+          "tests/test_provider_auth_broker.py"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_runtime_edges.plan_hold",
+          "src/grant_agent/nightshift_resources.py",
+          "src/grant_agent/connected_sessions/plan_limits.py"
+        ],
+        "claim": "Fresh plan usage holds new work at the configured threshold, schedules reset and releases expired windows",
+        "id": "p22.plan-hold",
+        "impact": [
+          "tests/test_nightshift_plan_hold.py"
+        ],
+        "phase": "post"
+      },
+      {
+        "id": "p22.context-replay",
+        "phase": "post",
+        "claim": "Replay repairs only generated workspace metadata and keeps the current tool exchange and saved source history intact",
+        "checkedAt": [
+          "grant_agent.chat_context.normalize_replay_context",
+          "grant_agent.context_window.bounded_history"
+        ],
+        "impact": [
+          "Model context and durable conversation continuity"
+        ]
+      },
+      {
+        "id": "p22.context-admission",
+        "phase": "pre",
+        "claim": "Capacity controls default admission; price limits apply only by explicit choice and measured usage is reused only for an unchanged prefix",
+        "checkedAt": [
+          "grant_agent.compaction_policy.resolve_policy",
+          "grant_agent.compaction_policy.ContextMeter",
+          "config/neyvia_context_policy.json"
+        ],
+        "impact": [
+          "Model context admission and Unicode input accounting"
+        ]
+      },
+      {
+        "id": "p22.compiled-maps",
+        "phase": "pre",
+        "claim": "Retained provider calls keep their exact versioned meaning; ambiguous and absent calls never fall back to another map",
+        "checkedAt": [
+          "grant_agent.compiled_tool_maps.CompiledToolMapStore"
+        ],
+        "impact": [
+          "Provider tool selection and retained map authority"
+        ]
+      },
+      {
+        "id": "p22.app-registry",
+        "phase": "post",
+        "claim": "Local App Factory registration persists source and permissions with upgrade lineage; unreadable state is preserved and publication or executable rollback is never invented",
+        "checkedAt": [
+          "grant_agent.app_factory_semantics.register_app_factory_job"
+        ],
+        "impact": [
+          "Local app registry and source revision continuity"
+        ]
+      },
+      {
+        "id": "p22.watch-pages",
+        "phase": "post",
+        "claim": "Every persisted run watch remains reachable across bounded pages, with a continuation after the second page and no duplicates",
+        "checkedAt": [
+          "grant_agent.neyvia_run_watches.call"
+        ],
+        "impact": [
+          "Run-watch list pagination"
+        ]
+      },
+      {
+        "id": "p22.timer-durable",
+        "phase": "post",
+        "claim": "A checkpoint replays once, stopped elapsed time survives reopening, and a retained timer refuses a different intent",
+        "checkedAt": [
+          "grant_agent.neyvia_time_tools.call"
+        ],
+        "impact": [
+          "Native timer persistence and checkpoint replay"
+        ]
+      },
+      {
+        "id": "p22.cl-history",
+        "phase": "post",
+        "claim": "Archived CL messages reopen with exact Unicode pagination; another task, an impossible budget and tampered messages are refused",
+        "checkedAt": [
+          "grant_agent.cl.turn_context.TurnContext",
+          "grant_agent.cl.tokens.count_tokens"
+        ],
+        "impact": [
+          "CL immutable task and durable history retrieval"
+        ]
+      },
+      {
+        "id": "p22.language-copy",
+        "phase": "post",
+        "claim": "Both installed language skill sources reject bad label copy with evidence while accepting a clean label and ignoring stylesheet source",
+        "checkedAt": [
+          "grant_agent.neyvia_language.check",
+          "grant_agent.cl_skill.run_checks",
+          "manuals/skills/no-slop.cl",
+          "config/cl_skills/no-slop.cl"
+        ],
+        "impact": [
+          "Agent report and authored UI-copy admission"
+        ]
+      },
+      {
+        "id": "p22.glance-ports",
+        "phase": "invariant",
+        "claim": "The LAYA hook keeps the caller allocation for its real loopback observation and refuses conflicting, duplicate or public port authority.",
+        "checkedAt": [
+          "grant_agent.laya_glance_gate.request_ports",
+          "grant_agent.proofs_fast_contracts.glance_ports",
+          "grant_agent.browser_ports.parse_ports"
+        ],
+        "impact": [
+          "LAYA hook caller socket ownership"
+        ]
+      },
+      {
+        "id": "p22.codec-outcome",
+        "phase": "post",
+        "claim": "Typed file observations retain names and paths, represent private IDs with refs, ignore reorder-only changes and refuse structured scalar cells.",
+        "checkedAt": [
+          "grant_agent.cl.codecs.SemanticCodecs.render",
+          "grant_agent.cl.codecs.SemanticCodecs.delta",
+          "grant_agent.cl.codecs.scalar",
+          "grant_agent.proofs_semantic_outcomes.codec_outcome"
+        ],
+        "impact": [
+          "Native semantic and durable application outcomes"
+        ]
+      },
+      {
+        "id": "p22.deliverable-outcome",
+        "phase": "post",
+        "claim": "A saved generic report title blocks finishing; a specific titled report with a table clears the gate and executable lesson text is refused.",
+        "checkedAt": [
+          "grant_agent.cl_deliverables.DeliverableOutput.docs",
+          "grant_agent.cl_deliverables.configured_gate",
+          "grant_agent.cl_deliverables.merge_promoted",
+          "grant_agent.proofs_semantic_outcomes.deliverable_outcome"
+        ],
+        "impact": [
+          "Native semantic and durable application outcomes"
+        ]
+      },
+      {
+        "id": "p22.transparency-outcome",
+        "phase": "post",
+        "claim": "Visible evidence survives projection, absent provider reasoning stays withheld, and oversized output preserves its prefix with an exact omission notice.",
+        "checkedAt": [
+          "grant_agent.connected_sessions.transparency.reasoning_data",
+          "grant_agent.connected_sessions.transparency.normalize_item",
+          "grant_agent.connected_sessions.transparency.bounded_text",
+          "grant_agent.proofs_semantic_outcomes.transparency_outcome"
+        ],
+        "impact": [
+          "Native semantic and durable application outcomes"
+        ]
+      },
+      {
+        "id": "p22.chat-storage-compaction-outcome",
+        "phase": "post",
+        "claim": "Legacy history compaction preserves dry-run bytes and hydrated messages and receipts, retains divergent windows and is idempotent.",
+        "checkedAt": [
+          "grant_agent.chat_storage_compaction.compact_chat_storage",
+          "grant_agent.neyvia_conversations.NeyviaConversationStore.compact_turn_compartments",
+          "grant_agent.turn_compartment.hydrate",
+          "grant_agent.proofs_semantic_outcomes.storage_outcome"
+        ],
+        "impact": [
+          "Native semantic and durable application outcomes"
+        ]
+      },
+      {
+        "id": "p22.autopilot-transport",
+        "phase": "post",
+        "claim": "A finite local judgement peer has a durable truthful result after reconnect; reported tools fail admission with secrets redacted, and unsupported routes invoke no peer.",
+        "checkedAt": [
+          "grant_agent.autopilot_model.decide",
+          "grant_agent.proofs_semantic_outcomes.autopilot_transport"
+        ],
+        "impact": [
+          "Native semantic and durable application outcomes"
+        ]
+      },
+      {
+        "id": "p22.compaction-bookkeeping",
+        "phase": "post",
+        "claim": "Summary requests preserve continuity and disable execution; non-message outputs are excluded and failed calls are counted with unknown usage.",
+        "checkedAt": [
+          "grant_agent.compaction_model.summarize",
+          "grant_agent.model_usage.add_summary_usage",
+          "grant_agent.proofs_semantic_outcomes.compaction_bookkeeping"
+        ],
+        "impact": [
+          "Native semantic and durable application outcomes"
+        ]
+      },
+      {
+        "id": "p22.collaboration-projection",
+        "phase": "post",
+        "claim": "Durable user corrections and scoped preferences reach the actual collaboration prompt as task data, without invented authority; stale and unauthenticated writes preserve the current selection.",
+        "checkedAt": [
+          "grant_agent.collaboration_prompt.collaboration_instructions",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence.propose_brief",
+          "grant_agent.workspace_intelligence.WorkspaceIntelligence.configure_collaboration",
+          "grant_agent.proofs_semantic_outcomes.collaboration_projection"
+        ],
+        "impact": [
+          "Native and external chat task continuity"
+        ]
+      },
+      {
+        "id": "p22.media-projection",
+        "phase": "post",
+        "claim": "Referenced chat media displays a decoded saved filename and returns exact discovered attachment bytes; remote references and unreferenced media are refused.",
+        "checkedAt": [
+          "grant_agent.connected_chat_media.descriptors",
+          "grant_agent.connected_chat_media.media_refs",
+          "grant_agent.connected_chat_media.read_media",
+          "grant_agent.proofs_semantic_outcomes.media_projection"
+        ],
+        "impact": [
+          "Connected chat visible metadata and media"
+        ]
+      },
+      {
+        "id": "p22.chat-context-projection",
+        "phase": "post",
+        "claim": "Source context counters preserve reported capacity and cached input; compaction clears stale usage and malformed counters remain unknown.",
+        "checkedAt": [
+          "grant_agent.connected_chat_context.context_from_events",
+          "grant_agent.proofs_semantic_outcomes.chat_context_projection"
+        ],
+        "impact": [
+          "Connected chat visible metadata and media"
+        ]
+      },
+      {
+        "id": "cl.adaptive-work-journey",
+        "phase": "post",
+        "claim": "A compiled CL work procedure persists the exact adaptive-work problem and its event under the selected work identity; an update with a missing problem reference is refused without changing either state or event bytes, while an independent native note observation stays current.",
+        "checkedAt": [
+          "grant_agent.neyvia_gateway.NeyviaToolGateway.call_native",
+          "grant_agent.cl.protocol.Protocol.run",
+          "grant_agent.cl.protocol.Protocol._checks",
+          "grant_agent.cl.frontier_effects.checks_for",
+          "grant_agent.cl.work_effects.checks_for",
+          "grant_agent.cl.work_effects.snapshot_for",
+          "grant_agent.cl.work_effects._verify",
+          "grant_agent.adaptive_work.AdaptiveWorkStore.record_problem",
+          "grant_agent.adaptive_work.AdaptiveWorkStore.update_problem",
+          "grant_agent.adaptive_work.AdaptiveWorkStore.snapshot",
+          "grant_agent.neyvia_notes_tools.call_notes",
+          "grant_agent.proofs_cl_effect_outcomes.check_adaptive_work_journey"
+        ],
+        "impact": [
+          "Compiled Connected Language adaptive-work procedures",
+          "Durable work problems and event history",
+          "Safe refusal of a stale problem reference"
+        ]
+      },
+      {
+        "id": "native.events.recovery-journey",
+        "phase": "invariant",
+        "claim": "A native event journal reopens without duplicating its durable tail, appends the next unique sequential event with the exact payload, and an independent fresh reader and production verifier accept the intact chain; an unencodable append leaves exact prior bytes unchanged and tampered payload content is refused by both readers.",
+        "checkedAt": [
+          "native_event_stream.NativeEventStream.__init__/_recover_tail",
+          "native_event_stream.NativeEventStream.emit",
+          "native_event_stream.NativeEventStream.verify",
+          "grant_agent.proofs_event_recovery_journey._observe_journal",
+          "grant_agent.proofs_event_recovery_journey._journey"
+        ],
+        "impact": [
+          "Native durable event identity and append recovery",
+          "Event integrity verification and tamper refusal",
+          "No mutation after rejected event append"
+        ]
+      },
+      {
+        "id": "p22.working-memory-continuity",
+        "phase": "post",
+        "claim": "Scoped working memory keeps the exact objective and decision in a bounded projection, retains an omitted observation for exact retrieval after reopening, and refuses cross-work retrieval without mutating the other identity.",
+        "checkedAt": [
+          "grant_agent.working_memory.WorkingMemoryStore.set_objective",
+          "grant_agent.working_memory.WorkingMemoryStore.record_decision",
+          "grant_agent.working_memory.WorkingMemoryStore.record_observation",
+          "grant_agent.working_memory.WorkingMemoryStore.project",
+          "grant_agent.working_memory.WorkingMemoryStore.retrieve",
+          "grant_agent.proofs_working_memory_journey.scoped_projection_retrieval"
+        ],
+        "impact": [
+          "Session-scoped working memory and retrieval across bounded context projection"
+        ]
+      },
+      {
+        "id": "p22.files.registered-project-export-outcome",
+        "phase": "post",
+        "claim": "Browsing, previewing, downloading and archiving a registered nested Unicode project preserves exact source bytes, filters secrets and generated metadata, and refuses traversal without reading outside bytes.",
+        "checkedAt": [
+          "grant_agent.project_files.list_project_entries",
+          "grant_agent.project_files.preview_project_file",
+          "grant_agent.project_files.open_project_download",
+          "grant_agent.project_files.create_project_archive",
+          "grant_agent.project_files.resolve_registered_workspace",
+          "grant_agent.proofs_project_files_journey.self_check"
+        ],
+        "impact": [
+          "registered Project Files browser and export",
+          "project-relative Unicode paths",
+          "secret and generated-file filtering",
+          "outside-path refusal and source-byte preservation"
+        ]
+      },
+      {
+        "id": "p22.pdf.backend-range-raster-worker",
+        "phase": "post",
+        "claim": "A synthetic local PDF is served byte-exactly through the production PDF route and range path, its authenticated MuPDF raster has independently detected ink and matching pixel/source hashes, and the production pypdf worker extracts and searches the known phrase while escaped paths, invalid MIME, out-of-range pages, and unauthenticated requests refuse.",
+        "checkedAt": [
+          "grant_agent.proofs_pdf_backend_journey.self_check",
+          "grant_agent.neyvia_ui_api.serve",
+          "grant_agent.neyvia_pdf_api.serve_file",
+          "grant_agent.neyvia_pdf_api.serve_raster",
+          "grant_agent.neyvia_pdf_api.rasterize",
+          "grant_agent.neyvia_pdf_tools.safe_pdf",
+          "grant_agent.pdf_document.read_pdf",
+          "grant_agent.pdf_document_worker.read"
+        ],
+        "impact": [
+          "local PDF delivery and byte ranges",
+          "PDF raster fallback pixels",
+          "PDF page text extraction and search"
+        ]
+      },
+      {
+        "id": "p22.session-event-cursor",
+        "phase": "post",
+        "claim": "The host-scoped connected-session stream retains exact session, run, request, and monotonic cursor identities across bounded replay; stale or ahead cursors request resync, oversized payloads are bounded, and readers drain or close without hanging.",
+        "checkedAt": [
+          "grant_agent.connected_sessions.events.EventBuffer.publish",
+          "grant_agent.connected_sessions.events.EventBuffer.since",
+          "grant_agent.connected_sessions.events.EventBuffer.wait",
+          "grant_agent.connected_sessions.events.EventBuffer.close",
+          "grant_agent.proofs_session_events_journey.cursor_overflow_wait_close"
+        ],
+        "impact": [
+          "Live connected-session event timeline and reconnect cursor"
+        ]
+      },
+      {
+        "id": "p22.trace-resource-boundaries",
+        "phase": "post",
+        "claim": "Two owned processes acquire distinct heavy-work slots; a third launch is refused while both are held, real child output is captured on D:, and an owned child exceeding a tiny injected memory limit is terminated without a large allocation.",
+        "checkedAt": [
+          "grant_agent.contract_resources.heavy_slot",
+          "grant_agent.contract_resources.capture_resource_bounded",
+          "grant_agent.contract_resources.MemoryWatch",
+          "grant_agent.proofs_resource_outcomes.self_check"
+        ],
+        "impact": [
+          "Contract tracing concurrency, memory cutoffs and streamed D-drive logs"
+        ]
+      },
+      {
+        "checkedAt": [
+          "grant_agent.contract_gate.laya_admitted",
+          "grant_agent.contract_gate.run",
+          "grant_agent.proofs_fast_contracts.self_check"
+        ],
+        "claim": "Explicit advisory glance policy preserves unavailable, failed and uncertain findings without blocking release; strict defaults still refuse and string flags cannot silently enable advisory admission",
+        "id": "p22.laya-advisory",
+        "impact": [
+          "Release glance policy",
+          "scripts/gate.py"
+        ],
+        "phase": "post"
+      },
+      {
+        "id": "p29.lesson-public-calibration",
+        "phase": "post",
+        "claim": "The public empty preference seed preserves exact immutable objective replay suites; both taste judges refuse absent labels before model work or saving a calibrated judge.",
+        "checkedAt": [
+          "grant_agent.lesson_evolver._preference_pairs",
+          "grant_agent.lesson_evolver.LessonService.freeze_suite",
+          "grant_agent.lesson_evolver.FrozenJudge.calibrate",
+          "grant_agent.lesson_evolver.LearnedJudge.calibrate",
+          "config/lesson_learning.json",
+          "config/lesson_preferences.json",
+          "grant_agent.proofs_release_outcomes.lesson_preferences"
+        ],
+        "impact": [
+          "Objective lesson replay",
+          "Personal calibration admission"
+        ]
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.verify": {
+      "type": "object",
+      "properties": {
+        "areas": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "a-capabilities",
+              "a-cli",
+              "a-control",
+              "a-livecontrol",
+              "a-native-sessions",
+              "a-providers",
+              "a-sessions",
+              "awareness",
+              "d-host",
+              "d-native",
+              "d-nearby",
+              "d-neyvia",
+              "d-onboarding",
+              "d-runtime",
+              "d-ui-planning",
+              "dictation",
+              "frontend",
+              "frontend-models",
+              "notes-files",
+              "proofs-b-adapters",
+              "proofs-b-browser",
+              "proofs-b-desktop",
+              "proofs-b-engine",
+              "proofs-b-harness",
+              "proofs-c-control",
+              "proofs-c-frontend",
+              "proofs-c-intent",
+              "proofs-c-missions",
+              "proofs-c-mobile",
+              "proofs-c-models",
+              "proofs-c-runtime",
+              "proofs-e-chat",
+              "proofs-e-frontend",
+              "proofs-e-host",
+              "proofs-e-models",
+              "proofs-e-release",
+              "proofs-e-shell",
+              "proofs-e-sv",
+              "proofs-e-wz",
+              "settings"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "includeManuals": {
+          "type": "boolean",
+          "description": "False runs selected areas only and can never establish startup completeness.",
+          "default": true
+        },
+        "adapterChapters": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "git",
+              "handoff",
+              "html",
+              "ocr",
+              "publication",
+              "sync",
+              "release"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Selected B adapter chapters only; areas must be proofs-b-adapters and completeness remains false."
+        }
+      },
+      "required": []
+    },
+    "neyvia.verify.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "terminal.exec": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shell": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "powershell",
+            "python",
+            "bash",
+            "cmd"
+          ]
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120000
+        },
+        "maxOutputChars": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 50000
+        }
+      },
+      "required": [
+        "command"
+      ]
+    },
+    "workspace.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "startLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "fast-contracts": {
+      "title": "Fast impact gate",
+      "state": {},
+      "actions": {
+        "run": {
+          "effect": "Run local command with bounded timeout/output and return exit result; can mutate local files",
+          "pre": "External-action permission/approval; valid shell and cwd; nonempty command; timeoutMs 1–120000",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "terminal.exec",
+          "tool": "terminal.exec"
+        },
+        "read": {
+          "effect": "Read the integrated candidate gate report and exact proof paths; never promotes",
+          "pre": "The integrator has written its current source-bound gate receipt",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "content"
+            ]
+          },
+          "reversible": true,
+          "schema": "workspace.read",
+          "tool": "workspace.read"
+        }
+      },
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [
+        "LAYA glance is owned by the separate LAYA session; missing is not a pass."
+      ],
+      "guidance": [
+        "Run gate.py --since the last accepted release. No full suite or tour is needed."
+      ]
+    },
+    "overview": {
+      "title": "Executable manual checks, scratch startup and remaining migration coverage",
+      "state": {
+        "latest": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "available": {
+                "type": "boolean"
+              },
+              "complete": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read latest verification coverage and completeness",
+          "pre": "Selected workspace; observer never reruns mutations",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.verify.status",
+          "tool": "neyvia.verify.status"
+        },
+        "verify": {
+          "effect": "Run production contracts, local manual observers and reviewed procedure fixtures in a fresh scratch root; blocked external procedures remain frontier",
+          "pre": "Host-owned registered adapters only; isolated child process removes UI/backend state overrides",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "complete",
+              "contractsOk",
+              "coverage",
+              "areas",
+              "manualSelfChecks",
+              "scratchRoot",
+              "durationMs"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.verify",
+          "tool": "neyvia.verify"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        },
+        "complete": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "complete",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-latest": {
+          "goal": "Observe verification status without replaying a real action",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "require-complete-self-check": {
+          "goal": "Require complete passing startup coverage; partial contracts remain failed",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "report"
+            },
+            {
+              "action": "status",
+              "args": {},
+              "check": "complete",
+              "save": "completeReport"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A passing partial batch is mistaken for whole-suite replacement",
+          "recovery": "Require complete=true, 100 percent case coverage, no uncovered deletion and no blocked manual entry"
+        }
+      ],
+      "frontier": [
+        "Remaining inventory rows require reviewed executable contracts before retirement",
+        "External engines, native apps, remote devices and provider procedures need explicit scratch fixtures and their real runtimes"
+      ],
+      "guidance": [
+        "CLI: neyvia verify --root <workspace>; tool: neyvia.verify(areas?); run default startup checks before serving",
+        "Evidence map: docs/evidence/tests-to-proofs.md; baseline hashes: config/proofs/test-inventory.json",
+        "Schema postconditions apply only to success; rejected actions retain their original failure responses"
+      ]
+    },
+    "proofs_a_authority": {
+      "title": "Disposable proof authority and saved credentials (PROOFS-a)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A status callback opens saved authentication data while a proof is meant to use disposable state",
+          "recovery": "Enable the proof credential guard before backend imports; retain that route as unproven when authority is absent"
+        }
+      ],
+      "frontier": [
+        "Python audit hooks cover configured saved credential file opens. Preliminary unguarded Builder observation has no credential-access attestation and cannot support that authority claim. Controlled transport peers do not prove external model or account execution."
+      ],
+      "guidance": [
+        "verify installs the guard before importing adapters, then proves refused opens using nonexistent task paths and synthetic owned fixtures.",
+        "Owned backend proof journeys explicitly set NEYVIA_PROOF_CREDENTIAL_GUARD=1; normal application credential behavior keeps its existing authority."
+      ]
+    },
+    "release-integration": {
+      "title": "Integrated candidate release gates; receipts remain local until Paul promotes",
+      "state": {
+        "report": {
+          "args": {
+            "maxChars": 20000,
+            "path": "scripts/evidence/INTN-gates.json"
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {}
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "content"
+            ]
+          },
+          "tool": "workspace.read"
+        }
+      },
+      "actions": {
+        "read-report": {
+          "effect": "Read the integrated candidate gate report and exact proof paths; never promotes",
+          "pre": "The integrator has written its current source-bound gate receipt",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "content"
+            ]
+          },
+          "reversible": true,
+          "schema": "workspace.read",
+          "tool": "workspace.read"
+        }
+      },
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Historical or partial receipts are mistaken for current integrated proof",
+          "recovery": "Require source identity, complete Python coverage, fresh blocking self-check, C8 and rendered tour receipts for the accepted candidate"
+        }
+      ],
+      "frontier": [
+        "Promotion is not authorized; Paul decides after reviewing this report"
+      ],
+      "guidance": [
+        "No new test files. Verification lives in this Connected Language contract and the existing C7 contracts."
+      ]
+    }
+  }
+}

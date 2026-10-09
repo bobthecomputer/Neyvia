@@ -1,0 +1,91 @@
+/* Tool screens hosted on the new stage (NxToolScreens). The tool
+   components keep their own markup and stylesheets; here their palette
+   variables are mapped onto the theme tokens so their surfaces, lines, text
+   and accents follow Forest, Morning, Sunset and Night Green. Colours a tool
+   stylesheet writes as literals (not variables) keep their tool value; the
+   gap list names the screens where that still shows (docs/evidence/tool-gap.md). */
+
+.nx .nx-tool-screen {
+  flex: 1 1 auto; min-height: 0; overflow: auto; color: var(--nx-text-2); font-family: var(--nx-font); font-size: var(--nx-fs);
+  /* Compatibility palette variables used by the retained tool screens. */
+  --fluxio-text: var(--nx-text); --fluxio-muted: var(--nx-muted); --fluxio-panel: var(--nx-raised); --fluxio-border: var(--nx-line-strong);
+  --neyvia-text: var(--nx-text); --neyvia-muted: var(--nx-muted); --neyvia-line: var(--nx-line); --neyvia-panel: var(--nx-raised);
+  --neyvia-accent: var(--nx-accent-text); --neyvia-warn: var(--nx-state-caution);
+  --ny-text: var(--nx-text); --ny-text-soft: var(--nx-text-2); --ny-muted: var(--nx-muted); --ny-faint: var(--nx-muted); --ny-panel: var(--nx-raised);
+  --ny-line: var(--nx-line); --ny-line-strong: var(--nx-line-strong); --ny-hover: var(--nx-hover); --ny-accent: var(--nx-accent); --ny-accent-ink: var(--nx-on-accent);
+  --ny-good: var(--nx-state-ok); --ny-warn: var(--nx-state-caution); --ny-bad: var(--nx-state-error); --ny-glow: var(--nx-accent-soft);
+  --settings-line: var(--nx-line); --settings-text: var(--nx-text); --settings-surface: var(--nx-raised); --settings-surface-soft: var(--nx-panel);
+  --ref-muted: var(--nx-muted); --ref-gold: var(--nx-state-needs); --ref-violet: var(--nx-accent-text);
+  --harness-accent: var(--nx-accent-hi); --harness-node: var(--nx-accent-hi); --studio-accent: var(--nx-accent-text);
+}
+.nx .nx-tool-screen button:focus-visible, .nx .nx-tool-screen a:focus-visible, .nx .nx-tool-screen input:focus-visible,
+.nx .nx-tool-screen select:focus-visible, .nx .nx-tool-screen textarea:focus-visible { box-shadow: var(--nx-focus); outline: none; }
+
+/* Each tool screen's own palette, by its root class (two classes beat the tool root's one). */
+.nx .nx-tool-screen .neyvia-app-factory {
+  --factory-bg: var(--nx-bg); --factory-panel: var(--nx-panel); --factory-panel-strong: var(--nx-raised); --factory-line: var(--nx-line);
+  --factory-ink: var(--nx-text); --factory-muted: var(--nx-muted); --factory-green: var(--nx-accent-text); --factory-green-deep: var(--nx-accent-soft);
+}
+.nx .nx-tool-screen .neyvia-native-studio { --studio-border: var(--nx-line); --studio-muted: var(--nx-muted); --studio-panel: var(--nx-panel); }
+.nx .nx-tool-screen .neyvia-harnesses { --nh-line: var(--nx-line); --nh-panel: var(--nx-panel); }
+.nx .nx-tool-screen .neyvia-office-suite { --nos-line: var(--nx-line); --nos-ink: var(--nx-text); --nos-muted: var(--nx-muted); --nos-panel: var(--nx-panel);
+  --nos-good: var(--nx-state-ok); --nos-warn: var(--nx-state-caution); --nos-bad: var(--nx-state-error); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel] {
+  --market-bg: var(--nx-bg); --market-surface: var(--nx-panel); --market-surface-raised: var(--nx-raised); --market-border: var(--nx-line-strong);
+  --market-text: var(--nx-text); --market-muted: var(--nx-muted); --market-accent: var(--nx-accent); --market-accent-ink: var(--nx-on-accent);
+  --market-good: var(--nx-state-ok); --market-warn: var(--nx-state-caution); --market-blocked: var(--nx-state-error);
+  --office-bg: var(--nx-bg); --office-panel: var(--nx-panel); --office-border: var(--nx-line-strong); --office-text: var(--nx-text); --office-muted: var(--nx-muted);
+}
+/* Personal mesh carries its own dark palette for the old overlay; on the stage its card is transparent,
+   so its text must follow the shell theme (cream text on Morning's paper would be unreadable). */
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel="personal-mesh"] {
+  --mesh-surface: var(--nx-panel); --mesh-surface-raised: var(--nx-raised); --mesh-surface-subtle: var(--nx-raised-2);
+  --mesh-text: var(--nx-text); --mesh-muted: var(--nx-muted); --mesh-line: var(--nx-line-strong);
+  --mesh-accent: var(--nx-accent); --mesh-accent-ink: var(--nx-on-accent);
+  --mesh-good: var(--nx-green); --mesh-good-soft: var(--nx-green-soft);
+  --mesh-warn: var(--nx-state-caution); --mesh-warn-soft: var(--nx-caution-soft);
+  --mesh-failed: var(--nx-red); --mesh-failed-soft: var(--nx-red-soft);
+  color-scheme: inherit;
+}
+
+/* Panels written as overlays (Marketplace, Office tools, Personal mesh) sit on the stage instead:
+   no backdrop or fixed box, the stage's own close replaces theirs, and they get the stage gutters. */
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel] { position: static; inset: auto; background: transparent; display: block; padding: 16px; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel] .neyvia-overlay-card { position: static; max-width: none; max-height: none; width: auto; box-shadow: none; background: transparent; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel] .neyvia-overlay-backdrop,
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel] .neyvia-overlay-card > header > button[aria-label^="Close"] { display: none; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel] .neyvia-overlay-card > header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel] .neyvia-overlay-card > header h2 { margin: 0 0 4px; font-size: var(--nx-fs-xl); font-weight: 600; color: var(--nx-text); }
+.nx .nx-tool-screen .neyvia-overlay[data-neyvia-panel] .neyvia-overlay-card > header p { margin: 0; color: var(--nx-muted); }
+.nx .nx-tool-screen-security, .nx .nx-tool-screen-mcp-broker { padding: 16px; }
+
+/* Fields and titles written with literal colours in the tool sheets: bring them onto the theme
+   (doubled class so these beat tool rules of the same weight that load later). */
+.nx .nx-tool-screen.nx-tool-screen :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
+  background-color: var(--nx-panel); color: var(--nx-text); border-color: var(--nx-line-strong);
+}
+.nx .nx-tool-screen.nx-tool-screen :is(input, textarea)::placeholder { color: var(--nx-muted); }
+.nx .nx-tool-screen.nx-tool-screen :is(h1, h2, h3, h4, h5, legend, th, summary) { color: var(--nx-text); }
+.nx .nx-tool-screen.nx-tool-screen label { color: var(--nx-text-2); }
+.nx .nx-tool-screen.nx-tool-screen :is(h1, h2, h3, h4, h5) strong, .nx .nx-tool-screen.nx-tool-screen header strong { color: var(--nx-text); }
+
+/* Harnesses: the few literal colours that vanish on Morning (composer title, active tab, receipt card). */
+.nx .nx-tool-screen .neyvia-harnesses .neyvia-harnesses__composer-title strong { color: var(--nx-text); }
+.nx .nx-tool-screen .neyvia-harnesses .neyvia-harnesses__tabs button { color: var(--nx-muted); }
+.nx .nx-tool-screen .neyvia-harnesses .neyvia-harnesses__tabs button.active { color: var(--nx-text); box-shadow: inset 0 -2px 0 var(--nx-accent-hi); }
+.nx .nx-tool-screen .neyvia-harnesses [data-harness-receipt="true"] { background: var(--nx-raised); color: var(--nx-text-2); box-shadow: inset 0 0 0 1px var(--nx-line); }
+.nx .nx-tool-screen .neyvia-harnesses [data-harness-receipt="true"] .neyvia-harnesses__receipt-meta { color: var(--nx-accent-text); }
+
+/* Library, Lab and Notebook (NxLibrarySurfaces) lost their frame with the classic stylesheets:
+   give the surface a page gutter and make each folded section a real disclosure row. */
+.nx .neyvia-shell-surface { box-sizing: border-box; display: grid; align-content: start; gap: var(--nx-space-16); min-height: 100%; padding: var(--nx-space-20) var(--nx-space-24) var(--nx-space-32); }
+.nx .neyvia-library-disclosure { border-top: 1px solid var(--nx-line); padding-top: var(--nx-space-4); }
+.nx .neyvia-library-disclosure > summary {
+  display: flex; align-items: center; gap: var(--nx-space-8); min-height: 36px; cursor: pointer; list-style: none;
+  color: var(--nx-text); font-weight: 600; font-size: var(--nx-fs);
+}
+.nx .neyvia-library-disclosure > summary::-webkit-details-marker { display: none; }
+.nx .neyvia-library-disclosure > summary::before { content: "\203A"; display: inline-block; width: 12px; color: var(--nx-muted); transition: transform var(--nx-fast) var(--nx-ease); }
+.nx .neyvia-library-disclosure[open] > summary::before { transform: rotate(90deg); }
+.nx .neyvia-library-disclosure[open] > :not(summary) { margin: var(--nx-space-8) 0 var(--nx-space-12); }
+@container (max-width: 560px) { .nx .neyvia-shell-surface { padding: var(--nx-space-14) var(--nx-space-14) var(--nx-space-24); } }

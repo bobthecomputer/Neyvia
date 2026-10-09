@@ -1,0 +1,2244 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "neyvia-reference",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-c-frontend",
+    "contracts": [
+      {
+        "checkedAt": [
+          "web/src/neyvia/missionControlModel.js:buildMissionControlModel -> checkedLiveReviewProjection",
+          "web/src/neyvia/missionReviewContracts.js:checkedLiveReviewProjection"
+        ],
+        "claim": "Live review preserves every event domain, annotation recovery handles, screenshot/replay links, planner and supervisor route/feedback fields",
+        "id": "mission.review.projection",
+        "impact": [
+          "Live review projection, replay and planner proof handles"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.attention.list": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recentHours": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 720
+        }
+      },
+      "required": []
+    },
+    "neyvia.mission.control": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "start",
+            "pause",
+            "stop",
+            "redirect"
+          ]
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "effort": {
+          "type": "string"
+        },
+        "permissionMode": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "action"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mission.create": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "folder": {
+                "type": "string"
+              },
+              "harness": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "effort": {
+                "type": "string"
+              },
+              "permissionMode": {
+                "type": "string"
+              },
+              "transport": {
+                "type": "string"
+              },
+              "routingProfile": {
+                "type": "string",
+                "enum": [
+                  "planner",
+                  "executor",
+                  "verifier",
+                  "classifier"
+                ]
+              },
+              "needs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "requiresGpu": {
+                "type": "boolean"
+              },
+              "completionEvidence": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "prompt"
+            ]
+          }
+        },
+        "budget": {
+          "type": "object"
+        },
+        "acceptanceChecks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "goal",
+        "folder",
+        "tasks",
+        "acceptanceChecks"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "goal": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "folder": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mission.list": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.pane.observe": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.pane.show": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "diff",
+            "file",
+            "artifact",
+            "terminal",
+            "browser",
+            "mission",
+            "replay",
+            "builder",
+            "accounts",
+            "runtime",
+            "settings",
+            "preview",
+            "outputs",
+            "perception",
+            "agentview",
+            "sessions",
+            "usage",
+            "parallel",
+            "agents"
+          ]
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "target"
+      ]
+    },
+    "neyvia.schedule.after": {
+      "type": "object",
+      "properties": {
+        "seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "object",
+          "x-empty-text-is-empty-object": true,
+          "description": "Empty object means notification only. An empty text transport wrapper uses this same safe scope."
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "seconds",
+        "prompt",
+        "scope",
+        "requestId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "prompt": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "requestId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.schedule.cancel": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.schedule.create": {
+      "type": "object",
+      "properties": {
+        "when": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "object",
+          "x-empty-text-is-empty-object": true,
+          "description": "Empty scope means notification only, including an empty text transport wrapper."
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "when",
+        "prompt",
+        "scope",
+        "requestId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "when": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "prompt": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "requestId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.schedule.list": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.time.budget": {
+      "type": "object",
+      "properties": {
+        "deadlineAt": {
+          "type": "string"
+        },
+        "estimatedNextSeconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "verificationReserveSeconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "optional": {
+          "type": "boolean"
+        }
+      },
+      "required": []
+    },
+    "neyvia.time.now": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.timer.lap": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "lapId": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "planning",
+            "execution",
+            "verification",
+            "review",
+            "other"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "lapId",
+        "label"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "lapId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "label": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.timer.list": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "running",
+            "stopped",
+            "all"
+          ]
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": []
+    },
+    "neyvia.timer.read": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.timer.start": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "planning",
+            "execution",
+            "verification",
+            "review",
+            "other"
+          ]
+        },
+        "targetSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "label": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.timer.stop": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.watch.cancel": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.watch.create": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "failed",
+              "interrupted",
+              "cancelled",
+              "waiting_approval",
+              "waiting_input"
+            ]
+          }
+        },
+        "followup": {
+          "type": "object",
+          "properties": {
+            "app": {
+              "type": "string"
+            },
+            "folder": {
+              "type": "string"
+            },
+            "prompt": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "app",
+            "folder",
+            "prompt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "requestId",
+        "runId",
+        "message"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "requestId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "runId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "message": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.watch.list": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": []
+    }
+  },
+  "chapters": {
+    "missions": {
+      "title": "missions",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.mission.list"
+        }
+      },
+      "actions": {
+        "mission.list": {
+          "effect": "Read missions/task trees, acceptance evidence and reported usage coverage",
+          "pre": "Night Shift service stores readable",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mission.list",
+          "tool": "neyvia.mission.list"
+        },
+        "mission.control": {
+          "effect": "Start approved branches, pause future launches, stop owned runs or redirect dormant task; completed evidence immutable",
+          "pre": "Known mission/task branch; start needs fingerprint-bound owner approval; redirect only dormant/blocked task and nonempty route/prompt patch",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mission.control",
+          "tool": "neyvia.mission.control"
+        },
+        "mission.create": {
+          "effect": "Persist draft mission and dormant waiting tasks; nothing launches",
+          "pre": "Nonblank goal/checks; 1–100 unique explicit task IDs; safe folders/routes; acyclic internal needs; positive recognized budgets; exact ID retries",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mission.create",
+          "tool": "neyvia.mission.create"
+        }
+      },
+      "checks": {
+        "selected-id": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": [
+              "missions",
+              {
+                "$input": "index"
+              },
+              "id"
+            ],
+            "value": {
+              "$input": "id"
+            }
+          },
+          "tool": "neyvia.mission.list"
+        },
+        "selected-status": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": [
+              "missions",
+              {
+                "$input": "index"
+              },
+              "status"
+            ],
+            "value": {
+              "$input": "status"
+            }
+          },
+          "tool": "neyvia.mission.list"
+        }
+      },
+      "procedures": {
+        "draft-mission": {
+          "goal": "Read mission inventory, review explicit task graph and save dormant draft",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "goal": {
+                "type": "string"
+              },
+              "folder": {
+                "type": "string"
+              },
+              "tasks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "prompt": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "folder": {
+                      "type": "string"
+                    },
+                    "harness": {
+                      "type": "string"
+                    },
+                    "owner": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "effort": {
+                      "type": "string"
+                    },
+                    "permissionMode": {
+                      "type": "string"
+                    },
+                    "transport": {
+                      "type": "string"
+                    },
+                    "routingProfile": {
+                      "type": "string",
+                      "enum": [
+                        "planner",
+                        "executor",
+                        "verifier",
+                        "classifier"
+                      ]
+                    },
+                    "needs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "requiresGpu": {
+                      "type": "boolean"
+                    },
+                    "completionEvidence": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "prompt"
+                  ]
+                }
+              },
+              "acceptanceChecks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "goal",
+              "folder",
+              "tasks",
+              "acceptanceChecks"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mission.list",
+              "args": {},
+              "save": "before"
+            },
+            {
+              "judge": "mission-draft"
+            },
+            {
+              "action": "mission.create",
+              "args": {
+                "acceptanceChecks": {
+                  "$input": "acceptanceChecks"
+                },
+                "folder": {
+                  "$path": "folder"
+                },
+                "goal": {
+                  "$input": "goal"
+                },
+                "tasks": {
+                  "$input": "tasks"
+                }
+              },
+              "save": "draft",
+              "when": {
+                "judge": "mission-draft",
+                "option": "store-draft"
+              }
+            },
+            {
+              "action": "mission.list",
+              "args": {},
+              "save": "retained",
+              "when": {
+                "judge": "mission-draft",
+                "option": "store-draft"
+              }
+            }
+          ]
+        },
+        "supervise-mission": {
+          "goal": "Read actual branch state and choose pause or stop",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mission.list",
+              "args": {},
+              "save": "before"
+            },
+            {
+              "judge": "branch-control"
+            },
+            {
+              "action": "mission.control",
+              "args": {
+                "action": "pause",
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "paused",
+              "when": {
+                "judge": "branch-control",
+                "option": "pause"
+              }
+            },
+            {
+              "action": "mission.control",
+              "args": {
+                "action": "stop",
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "stopped",
+              "when": {
+                "judge": "branch-control",
+                "option": "stop"
+              }
+            },
+            {
+              "action": "mission.list",
+              "args": {},
+              "save": "after"
+            }
+          ]
+        },
+        "verify-retained-status": {
+          "goal": "Verify that the selected mission has the expected ID and draft/running/paused/stopped state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "index",
+              "id",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mission.list",
+              "args": {},
+              "check": "selected-id",
+              "save": "identity"
+            },
+            {
+              "action": "mission.list",
+              "args": {},
+              "check": "selected-status",
+              "save": "outcome"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "mission-draft": {
+          "constraints": "Draft storage launches nothing. IDs unique, needs internal and acyclic; choose concrete completion evidence and positive token/time limits. Start requires owner approval fingerprint for exact mission/branches.",
+          "options": [
+            "store-draft",
+            "revise"
+          ],
+          "question": "Do tasks, prerequisites, route and acceptance checks express the requested goal?"
+        },
+        "branch-control": {
+          "constraints": "Pause leaves running tasks active; stop cancels selected owned runs and dependent branches. Neither changes completed evidence. Confirm exact mission/task scope before decision.",
+          "options": [
+            "pause",
+            "stop"
+          ],
+          "question": "Pause future launches or stop owned runs?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Cyclic or outside-mission prerequisites",
+          "recovery": "Repair explicit needs graph; draft refused before storage"
+        },
+        {
+          "failure": "Token budget waits for unknown usage",
+          "recovery": "Wait for transport-reported usage; do not estimate model text"
+        },
+        {
+          "failure": "Task done interpreted as accepted quality",
+          "recovery": "Read evidence and explicit checks; evidence_ready_for_review still requires review"
+        },
+        {
+          "failure": "Redirect running/done task",
+          "recovery": "Pause/reconcile running work; completed evidence immutable, create fresh task intent"
+        },
+        {
+          "failure": "A Claude Code or Codex task waits with 'Holding: ... limit at N%'",
+          "recovery": "Its plan window passed Night Shift resources holdAtPlanPercent (default 70); it starts by itself after the shown reset. Raise or null holdAtPlanPercent only when Paul says so."
+        }
+      ],
+      "frontier": [
+        "Mission semantic quality and cash cost are not generated by summary",
+        "Unreported transport token usage prevents exact budget admission"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_time_tools.py, neyvia_workspace_tools.py schedule, neyvia_missions.py, neyvia_run_watches.py, neyvia_attention.py; scripts/verify-manual-first.mjs.",
+        "For verify-retained-status, take index from the latest list and match exact id first. For watches index is within the first default page; use watch.list offset/limit to inspect older pages directly. Status changes between reads correctly fail the expectation and require reread."
+      ]
+    },
+    "proactivity": {
+      "title": "proactivity",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.attention.list"
+        }
+      },
+      "actions": {
+        "attention.list": {
+          "effect": "Read outstanding approvals, waiting/failed runs and blocked tasks with source IDs; no automatic repair",
+          "pre": "Backend broker plus Night Shift store; bounded offset/limit",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.attention.list",
+          "tool": "neyvia.attention.list"
+        },
+        "watch.cancel": {
+          "effect": "Persist cancelled watch and wake scheduler; existing follow-up/run unaffected",
+          "pre": "Known armed watch; cancelled exact retry allowed; fired watches cannot be cancelled here",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.watch.cancel",
+          "tool": "neyvia.watch.cancel"
+        },
+        "watch.create": {
+          "effect": "Arm event-driven one-shot notification; optional approved follow-up uses durable scheduler",
+          "pre": "Known broker run, stable requestId exact fingerprint; supported nonempty states; message 1–2000 chars; <=64 armed; optional explicit read-only followup needs exact approval",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.watch.create",
+          "tool": "neyvia.watch.create"
+        },
+        "watch.list": {
+          "effect": "Read watch conditions/outcomes and follow-up schedule/run identities",
+          "pre": "Workspace watch store readable; offset >=0, limit 1–100",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.watch.list",
+          "tool": "neyvia.watch.list"
+        }
+      },
+      "checks": {
+        "selected-id": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": [
+              "watches",
+              {
+                "$input": "index"
+              },
+              "id"
+            ],
+            "value": {
+              "$input": "id"
+            }
+          },
+          "tool": "neyvia.watch.list"
+        },
+        "selected-status": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": [
+              "watches",
+              {
+                "$input": "index"
+              },
+              "status"
+            ],
+            "value": {
+              "$input": "status"
+            }
+          },
+          "tool": "neyvia.watch.list"
+        }
+      },
+      "procedures": {
+        "triage-attention": {
+          "goal": "Read pending approvals, blocked tasks and recent failed runs before intervention",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "attention.list",
+              "args": {},
+              "save": "inbox"
+            },
+            {
+              "action": "watch.list",
+              "args": {},
+              "save": "watches"
+            },
+            {
+              "judge": "attention"
+            }
+          ]
+        },
+        "watch-run": {
+          "goal": "Inspect retained watches, review terminal/waiting conditions and arm a notification",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "requestId": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "states": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "completed",
+                    "failed",
+                    "interrupted",
+                    "cancelled",
+                    "waiting_approval",
+                    "waiting_input"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "runId",
+              "requestId",
+              "message",
+              "states"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "watch.list",
+              "args": {},
+              "save": "before"
+            },
+            {
+              "judge": "watch-intent"
+            },
+            {
+              "action": "watch.create",
+              "args": {
+                "message": {
+                  "$input": "message"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "runId": {
+                  "$input": "runId"
+                },
+                "states": {
+                  "$input": "states"
+                }
+              },
+              "save": "armed",
+              "when": {
+                "judge": "watch-intent",
+                "option": "arm"
+              }
+            },
+            {
+              "action": "watch.list",
+              "args": {},
+              "save": "after",
+              "when": {
+                "judge": "watch-intent",
+                "option": "arm"
+              }
+            }
+          ]
+        },
+        "verify-retained-status": {
+          "goal": "Verify the chosen one-shot watch identity and armed/fired/cancelled/blocked/uncertain status",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "index",
+              "id",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "watch.list",
+              "args": {},
+              "check": "selected-id",
+              "save": "identity"
+            },
+            {
+              "action": "watch.list",
+              "args": {},
+              "check": "selected-status",
+              "save": "outcome"
+            }
+          ]
+        },
+        "verify-effect-watch-cancel": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "steps": [
+            {
+              "action": "watch.cancel",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-watch-create": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "requestId",
+              "runId",
+              "message"
+            ]
+          },
+          "steps": [
+            {
+              "action": "watch.create",
+              "args": {
+                "message": {
+                  "$input": "message"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "runId": {
+                  "$input": "runId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "attention": {
+          "constraints": "Prioritize explicit approval/waiting input IDs. Do not retry failed/interrupted work without inspecting retained effects. Inbox is bounded local evidence, not an outcome verdict.",
+          "options": [
+            "owner-input",
+            "inspect-run"
+          ],
+          "question": "Does this item need owner input or reconciliation of an existing run?"
+        },
+        "watch-intent": {
+          "constraints": "Notification only, no followup object here. Choose supported states and exact message; runId must exist, stable requestId exact intent, max 64 armed. Followup chat requires separate explicit approval.",
+          "options": [
+            "arm",
+            "leave"
+          ],
+          "question": "Arm a one-shot notification for this known run condition?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Watch fired/uncertain after backend restart",
+          "recovery": "Inspect saved event/schedule; never automatic rearm or duplicate follow-up"
+        },
+        {
+          "failure": "Cancel already-fired watch refused",
+          "recovery": "Use returned schedule/run controls; watch.cancel affects only armed watch"
+        },
+        {
+          "failure": "Attention list truncated",
+          "recovery": "Page with nextOffset and narrower recentHours; absence is not absence from all history"
+        }
+      ],
+      "frontier": [
+        "No provider polling or automatic repair in attention.list",
+        "Watch supports explicit states only; arbitrary semantic conditions unmapped"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_time_tools.py, neyvia_workspace_tools.py schedule, neyvia_missions.py, neyvia_run_watches.py, neyvia_attention.py; scripts/verify-manual-first.mjs.",
+        "For verify-retained-status, take index from the latest list and match exact id first. For watches index is within the first default page; use watch.list offset/limit to inspect older pages directly. Status changes between reads correctly fail the expectation and require reread."
+      ]
+    },
+    "proofs-c-live-review-frontend": {
+      "title": "PROOFS-c: live review projection integrity",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A passing model self-check is mistaken for remote generation or rendered UI proof",
+          "recovery": "Inspect the receipt boundary and run the actual application journey for its remaining frontier"
+        }
+      ],
+      "frontier": [
+        "Image UI route/default runtime wiring and rendered browser controls still need their actual user journeys",
+        "Historical Codex May-11 reference manifest was replaced by current May-13 imagegen reference; missing history alone does not establish dead code",
+        "Live review connected bridge, planner panels, proof-copy links, replay controls and project switcher remain rendered UI boundaries",
+        "Mobile authenticated lazy loading, bootstrap refresh, empty phone indexes and one-session transcript hydration remain integration/UI boundaries",
+        "SVG compositor is a real local registered provider; external remote image generation is not exercised"
+      ],
+      "guidance": [
+        "Startup entry: scripts/proofs-c-frontend.mjs --root <scratch>; config/proofs/proofs-c-frontend.json owns reviewed procedures and per-case coverage"
+      ]
+    },
+    "renderer": {
+      "title": "Renderer pane acknowledgement",
+      "state": {
+        "visible-pane": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.pane.observe"
+        }
+      },
+      "actions": {
+        "pane.observe": {
+          "effect": "Fresh content observation",
+          "pre": "Authenticated owner renderer uses this workspace event channel",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pane.observe",
+          "tool": "neyvia.pane.observe"
+        },
+        "pane.show": {
+          "effect": "Request a pane; completion waits for mounted visible content acknowledgement",
+          "pre": "Authenticated owner renderer uses this workspace event channel",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pane.show",
+          "tool": "neyvia.pane.show"
+        }
+      },
+      "checks": {
+        "visible": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "visible",
+            "value": true
+          },
+          "tool": "neyvia.pane.observe"
+        }
+      },
+      "procedures": {
+        "show-observed-pane": {
+          "goal": "Mount the requested pane and verify its fresh rendered content",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "diff",
+                  "file",
+                  "artifact",
+                  "terminal",
+                  "browser",
+                  "mission",
+                  "replay",
+                  "builder",
+                  "accounts",
+                  "runtime",
+                  "settings",
+                  "preview",
+                  "outputs",
+                  "perception",
+                  "agentview",
+                  "sessions",
+                  "usage",
+                  "parallel",
+                  "agents"
+                ]
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "target"
+            ]
+          },
+          "steps": [
+            {
+              "action": "pane.show",
+              "args": {
+                "kind": {
+                  "$input": "kind"
+                },
+                "target": {
+                  "$input": "target"
+                }
+              },
+              "check": "visible",
+              "save": "request"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "No renderer content report or stale observation",
+          "recovery": "Mount in the owner shell and report content over /api/ui/ack; never invent a renderer receipt"
+        }
+      ],
+      "frontier": [
+        "Claude UI wiring and real Neyvia renderer mount/content proof remain required; queued pane events are incomplete"
+      ],
+      "guidance": [
+        "ACK observation: paneId, runtimeId, kind, target, contentHash (SHA-256 of UTF-8 displayed content), mounted, visible. Heartbeat at most 5 seconds; reports expire after 30 seconds. File content uses normalized editor text."
+      ]
+    },
+    "schedule": {
+      "title": "schedule",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.schedule.list"
+        }
+      },
+      "actions": {
+        "schedule.list": {
+          "effect": "Read durable follow-up records and outcomes; no new launches",
+          "pre": "Workspace scheduler store readable",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.schedule.list",
+          "tool": "neyvia.schedule.list"
+        },
+        "schedule.after": {
+          "effect": "Translate relative delay once into durable follow-up; retries keep original timestamp",
+          "pre": "Positive finite seconds; stable ID <=160 chars; exact seconds/prompt/scope on retry; chat scope read-only with safe folder and supported harness",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "schedule": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "schedule"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.schedule.after",
+          "tool": "neyvia.schedule.after"
+        },
+        "schedule.cancel": {
+          "effect": "Persist cancelled status; fired follow-ups require separate run reconciliation",
+          "pre": "Existing pending follow-up ID",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.schedule.cancel",
+          "tool": "neyvia.schedule.cancel"
+        },
+        "schedule.create": {
+          "effect": "Persist one pending follow-up and wake workspace scheduler; empty scope means notification only",
+          "pre": "Nonblank stable requestId; future timezone-qualified when; retry prompt/scope/time identical; chat scope read-only with safe folder and supported harness",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.schedule.create",
+          "tool": "neyvia.schedule.create"
+        }
+      },
+      "checks": {
+        "selected-id": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": [
+              "schedules",
+              {
+                "$input": "index"
+              },
+              "id"
+            ],
+            "value": {
+              "$input": "id"
+            }
+          },
+          "tool": "neyvia.schedule.list"
+        },
+        "selected-status": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": [
+              "schedules",
+              {
+                "$input": "index"
+              },
+              "status"
+            ],
+            "value": {
+              "$input": "status"
+            }
+          },
+          "tool": "neyvia.schedule.list"
+        }
+      },
+      "procedures": {
+        "remind-after": {
+          "goal": "Read follow-ups, review reminder and schedule one notification after specified seconds",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "seconds": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "seconds",
+              "prompt",
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "schedule.list",
+              "args": {},
+              "save": "before"
+            },
+            {
+              "judge": "followup"
+            },
+            {
+              "action": "schedule.after",
+              "args": {
+                "prompt": {
+                  "$input": "prompt"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "scope": {},
+                "seconds": {
+                  "$input": "seconds"
+                }
+              },
+              "save": "scheduled",
+              "when": {
+                "judge": "followup",
+                "option": "notify"
+              }
+            },
+            {
+              "action": "schedule.list",
+              "args": {},
+              "save": "retained",
+              "when": {
+                "judge": "followup",
+                "option": "notify"
+              }
+            }
+          ]
+        },
+        "cancel-pending": {
+          "goal": "Read schedule intent and cancel only selected pending follow-up",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "schedule.list",
+              "args": {},
+              "save": "schedules"
+            },
+            {
+              "judge": "cancel-reminder"
+            },
+            {
+              "action": "schedule.cancel",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "cancelled",
+              "when": {
+                "judge": "cancel-reminder",
+                "option": "cancel"
+              }
+            }
+          ]
+        },
+        "verify-retained-status": {
+          "goal": "Verify that the chosen follow-up has the expected ID and waiting/cancelled/done/blocked outcome",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "index",
+              "id",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "schedule.list",
+              "args": {},
+              "check": "selected-id",
+              "save": "identity"
+            },
+            {
+              "action": "schedule.list",
+              "args": {},
+              "check": "selected-status",
+              "save": "outcome"
+            }
+          ]
+        },
+        "verify-effect-schedule-after": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "seconds": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "scope": {
+                "type": "object",
+                "x-empty-text-is-empty-object": true,
+                "description": "Empty object means notification only. An empty text transport wrapper uses this same safe scope."
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "seconds",
+              "prompt",
+              "scope",
+              "requestId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "schedule.after",
+              "args": {
+                "prompt": {
+                  "$input": "prompt"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "scope": {
+                  "$input": "scope"
+                },
+                "seconds": {
+                  "$input": "seconds"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-schedule-cancel": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "steps": [
+            {
+              "action": "schedule.cancel",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-schedule-create": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "when": {
+                "type": "string"
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "scope": {
+                "type": "object",
+                "x-empty-text-is-empty-object": true,
+                "description": "Empty scope means notification only, including an empty text transport wrapper."
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "when",
+              "prompt",
+              "scope",
+              "requestId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "schedule.create",
+              "args": {
+                "prompt": {
+                  "$input": "prompt"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "scope": {
+                  "$input": "scope"
+                },
+                "when": {
+                  "$input": "when"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "followup": {
+          "constraints": "This procedure uses scope={}; no future model is launched. For chat use explicit app/folder/model/prompt and read-only mode; never smuggle write work into scope.",
+          "options": [
+            "notify",
+            "leave"
+          ],
+          "question": "Is this a notification-only reminder or does it require a future chat?"
+        },
+        "cancel-reminder": {
+          "constraints": "Match id and intent from schedule.list; fired/running follow-up cannot be undone by schedule.cancel. Cancelling future notification does not cancel an existing provider run.",
+          "options": [
+            "cancel",
+            "keep"
+          ],
+          "question": "Is this pending reminder obsolete?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Naive/past ISO timestamp refused",
+          "recovery": "Read time.now, choose future timezone-qualified timestamp"
+        },
+        {
+          "failure": "requestId already represents different follow-up",
+          "recovery": "Keep original intent on retry; new intent gets new ID"
+        },
+        {
+          "failure": "Scheduled chat requests write permissions",
+          "recovery": "Use approved Night Shift mission instead; schedule chat scope read-only"
+        },
+        {
+          "failure": "Cancel pending schedule not found",
+          "recovery": "Read outcome/run identity; reconcile executed follow-up separately"
+        }
+      ],
+      "frontier": [
+        "Recurring schedules and automatic write-mode follow-ups unmapped",
+        "Notification delivery depends on local scheduler being alive"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_time_tools.py, neyvia_workspace_tools.py schedule, neyvia_missions.py, neyvia_run_watches.py, neyvia_attention.py; scripts/verify-manual-first.mjs.",
+        "For verify-retained-status, take index from the latest list and match exact id first. For watches index is within the first default page; use watch.list offset/limit to inspect older pages directly. Status changes between reads correctly fail the expectation and require reread."
+      ]
+    },
+    "time": {
+      "title": "time",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.time.now"
+        }
+      },
+      "actions": {
+        "time.now": {
+          "effect": "Return precise UTC/local ISO timestamps and Unix seconds",
+          "pre": "System clock available",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.time.now",
+          "tool": "neyvia.time.now"
+        },
+        "time.budget": {
+          "effect": "Return advisory deadline risk and verification reserve; never stop agent work",
+          "pre": "Optional deadline has explicit timezone; estimates/reserve nonnegative",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.time.budget",
+          "tool": "neyvia.time.budget"
+        },
+        "timer.lap": {
+          "effect": "Persist one checkpoint and interval measurement; exact retry replays saved lap",
+          "pre": "Existing running timer with <1000 laps; stable lapId <=160 chars and label 1–200; repeated lapId must match intent",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.timer.lap",
+          "tool": "neyvia.timer.lap"
+        },
+        "timer.list": {
+          "effect": "Read paged timer inventory with explicit nextOffset",
+          "pre": "status running/stopped/all; offset >=0, limit 1–100",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.timer.list",
+          "tool": "neyvia.timer.list"
+        },
+        "timer.read": {
+          "effect": "Read elapsed measurement and paged laps; restarted-process values marked wall_clock_recovered_estimate",
+          "pre": "Existing timer ID; offset >=0, limit 1–100",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.timer.read",
+          "tool": "neyvia.timer.read"
+        },
+        "timer.start": {
+          "effect": "Persist running elapsed timer; same intent replays, stopped ID cannot restart a new measurement",
+          "pre": "ID nonblank <=160 chars; label 1–200 chars; positive finite targetSeconds; existing ID must match label/phase/target",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.timer.start",
+          "tool": "neyvia.timer.start"
+        },
+        "timer.stop": {
+          "effect": "Persist stopped measurement; repeat stop replays it; never cancel associated work",
+          "pre": "Existing timer ID",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.timer.stop",
+          "tool": "neyvia.timer.stop"
+        }
+      },
+      "checks": {
+        "timer-running": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "timer.status",
+            "value": "running"
+          },
+          "tool": "neyvia.timer.read"
+        },
+        "timer-stopped": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "timer.status",
+            "value": "stopped"
+          },
+          "tool": "neyvia.timer.read"
+        }
+      },
+      "procedures": {
+        "start-timer": {
+          "goal": "Start a distinct elapsed-work measurement and verify running state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "timer.start",
+              "args": {
+                "id": {
+                  "$input": "id"
+                },
+                "label": {
+                  "$input": "label"
+                }
+              },
+              "check": "timer-running",
+              "save": "started"
+            }
+          ]
+        },
+        "lap-and-stop": {
+          "goal": "Read elapsed timer, decide checkpoint, then record one lap and stop",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "lapId": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "lapId",
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "timer.read",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "checkpoint"
+            },
+            {
+              "action": "timer.lap",
+              "args": {
+                "id": {
+                  "$input": "id"
+                },
+                "label": {
+                  "$input": "label"
+                },
+                "lapId": {
+                  "$input": "lapId"
+                }
+              },
+              "save": "lap",
+              "when": {
+                "judge": "checkpoint",
+                "option": "lap-stop"
+              }
+            },
+            {
+              "action": "timer.stop",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "check": "timer-stopped",
+              "save": "stopped",
+              "when": {
+                "judge": "checkpoint",
+                "option": "lap-stop"
+              }
+            }
+          ]
+        }
+      },
+      "judge": {
+        "checkpoint": {
+          "constraints": "Timer is elapsed time, not CPU/provider cost. Stop only measurement; it does not cancel work. A stopped ID cannot be reused for a new timing intent.",
+          "options": [
+            "lap-stop",
+            "keep-running"
+          ],
+          "question": "Record this completed checkpoint and stop measurement?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Timer ID/lapId reused with different intent",
+          "recovery": "Use new ID for new measurement; exact retries replay retained values"
+        },
+        {
+          "failure": "Timer spans backend restart",
+          "recovery": "Report clockBasis=wall_clock_recovered_estimate and clockAnomaly; do not call it monotonic precision"
+        },
+        {
+          "failure": "Advisory target exceeded",
+          "recovery": "Continue required work or report real blocker; timer does not stop it"
+        },
+        {
+          "failure": "A lap is attempted on stopped timer or beyond 1000 laps",
+          "recovery": "Start a distinct timer for next measurement; retain old evidence"
+        }
+      ],
+      "frontier": [
+        "No provider cost or CPU-time accounting in elapsed timers",
+        "Wall clock across restarts may change; do not use as calibrated performance benchmark"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_time_tools.py; seconds targets and deadline risk are advisory.",
+        "Source: src/grant_agent/neyvia_time_tools.py, neyvia_workspace_tools.py schedule, neyvia_missions.py, neyvia_run_watches.py, neyvia_attention.py; scripts/verify-manual-first.mjs."
+      ]
+    }
+  }
+}

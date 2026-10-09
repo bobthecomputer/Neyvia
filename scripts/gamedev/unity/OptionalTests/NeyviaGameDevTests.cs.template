@@ -1,0 +1,42 @@
+// Setup enables this file only when com.unity.test-framework is in the project.
+using System;
+using UnityEditor;
+using UnityEditor.TestTools.TestRunner.Api;
+using UnityEngine;
+
+namespace Neyvia.GameDev
+{
+    [InitializeOnLoad]
+    public static class NeyviaGameDevTests
+    {
+        static readonly TestRunnerApi Api;
+        static Action<NeyviaGameDevBridge.Result, string> complete;
+        static NeyviaGameDevTests()
+        {
+            Api = ScriptableObject.CreateInstance<TestRunnerApi>();
+            Api.RegisterCallbacks(new Callbacks());
+            NeyviaGameDevBridge.TestRunner = Run;
+        }
+        static void Run(string mode, Action<NeyviaGameDevBridge.Result, string> done)
+        {
+            if(mode != "EditMode" && mode != "PlayMode") throw new ArgumentException("mode must be EditMode or PlayMode");
+            complete=done;
+            Api.Execute(new ExecutionSettings(new Filter {testMode=mode == "EditMode" ? TestMode.EditMode : TestMode.PlayMode}));
+        }
+        class Callbacks : ICallbacks
+        {
+            public void RunStarted(ITestAdaptor tests) { }
+            public void TestStarted(ITestAdaptor test) { }
+            public void TestFinished(ITestResultAdaptor test) { }
+            public void RunFinished(ITestResultAdaptor result)
+            {
+                // Recover the completion callback after a PlayMode domain reload.
+                Action<NeyviaGameDevBridge.Result,string> done=complete;
+                if(done==null) done=NeyviaGameDevBridge.FinishTest;
+                var observed=new NeyviaGameDevBridge.Result {state=result.TestStatus.ToString(), passed=result.PassCount, failed=result.FailCount, skipped=result.SkipCount};
+                var error=result.FailCount > 0 ? "Unity test run failed" : result.PassCount == 0 ? "No passing tests; empty/skipped suites do not prove behaviour" : null;
+                done(observed,error); complete=null;
+            }
+        }
+    }
+}

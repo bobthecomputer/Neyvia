@@ -1,0 +1,2442 @@
+{
+  "area": "proofs-e-wz",
+  "module": "grant_agent.proofs_e_wz",
+  "self_check": "self_check",
+  "manuals": [
+    "agents",
+    "computer-use",
+    "conductor",
+    "cross-pc",
+    "hill-climb",
+    "remote",
+    "workspace"
+  ],
+  "sourceFiles": [
+    "src/grant_agent/agent_prompt_library.py",
+    "src/grant_agent/neyvia_runtime_invocation.py",
+    "src/grant_agent/reasoning_capabilities.py",
+    "src/grant_agent/capability_routes.py"
+  ],
+  "contracts": [
+    {
+      "id": "proofs-e-wz.auth-issuance",
+      "phase": "post",
+      "claim": "Issuance stores a 64-character token digest, exactly the requested normalized account identity/name/role and bounded device metadata, the selected creation/expiry times and every prior live session unchanged inside the SQLite write transaction; bearer tokens never become SQL values.",
+      "checkedAt": [
+        "grant_agent.web_auth_sessions.WebAuthSessions.issue",
+        "grant_agent.proofs_e_wz.check_session_issued",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "web login",
+        "parallel browser sign-in",
+        "session database"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.auth-renewal",
+      "phase": "post",
+      "claim": "Accepted lookup preserves account fields and creation time, upgrades an accepted legacy identity when needed, renews expiration only past the daily renewal threshold, and persists last-use updates atomically.",
+      "checkedAt": [
+        "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+        "grant_agent.proofs_e_wz.check_session_lookup",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "long-lived web login",
+        "session expiry"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.auth-rejection",
+      "phase": "post",
+      "claim": "Expired, invalid-account and invalid-role sessions are removed before lookup returns no user; explicit logout removes the token digest.",
+      "checkedAt": [
+        "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+        "grant_agent.proofs_e_wz.check_session_rejected",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_auth_sessions.WebAuthSessions.revoke"
+      ],
+      "impact": [
+        "password changes",
+        "idle expiry",
+        "logout"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.auth-artifact",
+      "phase": "post",
+      "claim": "Private artifact file bytes are served only with a currently authenticated session; cookie validation reads the durable per-account fingerprint so backend recreation preserves valid sessions and password changes/logout revoke access.",
+      "checkedAt": [
+        "grant_agent.web_backend_serving.HttpServingMixin.serve_artifact",
+        "grant_agent.proofs_e_wz.check_artifact_access",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend.FluxioWebBackend.web_auth_sessions",
+        "grant_agent.web_backend.FluxioWebBackend.authenticated_session"
+      ],
+      "impact": [
+        "private media",
+        "preview iframe",
+        "backend recreation"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.hidden-options",
+      "phase": "post",
+      "claim": "Windows background process options include CREATE_NO_WINDOW, optional process group and hidden startup info; non-Windows receives no Windows kwargs.",
+      "checkedAt": [
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.proofs_e_wz.check_hidden_kwargs",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "owned child processes",
+        "console-window behavior"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.hidden-default",
+      "phase": "post",
+      "claim": "Every Popen invocation through the installed Windows safety net receives CREATE_NO_WINDOW when flags are missing/zero, while explicit keyword/positional flags and other arguments remain exact; installation is idempotent and off Windows does nothing.",
+      "checkedAt": [
+        "grant_agent.subprocess_utils._hidden_popen_init",
+        "grant_agent.proofs_e_wz.check_spawn_flags",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.subprocess_utils.install_hidden_subprocess_default"
+      ],
+      "impact": [
+        "all Popen-based background launchers",
+        "interactive login consoles"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.x-handle",
+      "phase": "pre",
+      "claim": "X handles normalize leading @ and reject every value outside the existing 1-15 ASCII username characters before provider access.",
+      "checkedAt": [
+        "grant_agent.x_following_sources.normalize_x_handle",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "following enumeration",
+        "timeline requests"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.x-following",
+      "phase": "post",
+      "claim": "Following enumeration returns unique case-insensitive handles within its configured account cap, accurate counts, HTTPS source provenance and exhaustion/truncation flags consistent with pagination.",
+      "checkedAt": [
+        "grant_agent.x_following_sources.fetch_following_accounts",
+        "grant_agent.proofs_e_wz.check_following",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "source collector",
+        "following digest"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.x-public-timelines",
+      "phase": "post",
+      "claim": "Only public following accounts enter timeline requests; exactly one success or failure represents each request and all summary counts equal the collected data.",
+      "checkedAt": [
+        "grant_agent.x_following_sources.collect_following_digest_sources",
+        "grant_agent.proofs_e_wz.check_source_bundle",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "public timeline collection",
+        "protected account privacy"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.x-artifacts",
+      "phase": "post",
+      "claim": "Every written source JSON equals its collected data and the manifest describes exact byte lengths and SHA-256 digests; the returned manifest digest matches the durable manifest.",
+      "checkedAt": [
+        "grant_agent.x_following_sources.write_following_source_bundle",
+        "grant_agent.proofs_e_wz.check_source_artifacts",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "following source artifacts",
+        "hashed manifest"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.repair-bounds",
+      "phase": "post",
+      "claim": "Repair attempts never exceed the existing hard cap; repair/verify phase counts equal attempts actually used and verification occurs only after passed repair actions.",
+      "checkedAt": [
+        "grant_agent.self_repair.execute_self_repair_job",
+        "grant_agent.proofs_e_wz.check_repair",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "bounded detect-repair-verify loop"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.repair-receipt",
+      "phase": "post",
+      "claim": "Completion requires a real passed detection or verification phase; proof booleans match executed phase results, tracked changes match before/after hashes and the saved receipt exactly equals the returned receipt.",
+      "checkedAt": [
+        "grant_agent.self_repair.execute_self_repair_job",
+        "grant_agent.proofs_e_wz.check_repair",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "repair evidence",
+        "tracked bytes",
+        "job completion"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.repair-blocked",
+      "phase": "post",
+      "claim": "An invalid repair contract returns a blocked durable receipt with its contract error and runs no command phases or claimed final verification.",
+      "checkedAt": [
+        "grant_agent.self_repair.execute_self_repair_job",
+        "grant_agent.proofs_e_wz.check_repair",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "invalid execution contracts",
+        "failure reporting"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.worker-repair",
+      "phase": "post",
+      "claim": "After actual local worker execution, the persisted job status matches its result, all reported phase events are recorded and the repair receipt is registered as a durable artifact.",
+      "checkedAt": [
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.proofs_e_wz.check_worker_repair",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "cluster worker",
+        "repair artifacts",
+        "event history"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.http-json",
+      "phase": "post",
+      "claim": "JSON wire bytes remain compact and exact through compression; gzip is used only for accepted encodings above the existing minimum response size.",
+      "checkedAt": [
+        "grant_agent.web_backend._json_response",
+        "grant_agent.proofs_e_wz.check_json_response",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "browser transport",
+        "large chat responses"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.http-request",
+      "phase": "pre",
+      "claim": "Gzip request decoding never exceeds the configured maximum decompressed JSON bytes; over-limit inputs reject before dispatch.",
+      "checkedAt": [
+        "grant_agent.web_backend._read_json_body",
+        "grant_agent.proofs_e_wz.check_request_body",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "phone transcript upload",
+        "bounded allocation"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.http-io-timeout",
+      "phase": "post",
+      "claim": "After a request starts, its socket uses the longer request IO timeout rather than the accept-time handshake timeout, allowing a paused reader to receive the full response.",
+      "checkedAt": [
+        "grant_agent.web_backend._extend_io_timeout",
+        "grant_agent.proofs_e_wz.check_io_timeout",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "slow phone readers",
+        "large transfers"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.desktop-shell",
+      "phase": "post",
+      "claim": "Static files remain jailed in the selected build root and return exact file bytes; only approved desktop origins receive CORS for non-page assets. Entry pages/service workers stay uncached and embedded pages retain their supported framing policy.",
+      "checkedAt": [
+        "grant_agent.web_backend_serving.HttpServingMixin.serve_file",
+        "grant_agent.proofs_e_wz.check_static_response",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "desktop loader",
+        "current build assets",
+        "browser security headers"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.desktop-update",
+      "phase": "post",
+      "claim": "Successful desktop update responses are allowlisted files strictly inside the update folder and contain the exact selected file bytes; unknown or escaping names cannot select a file.",
+      "checkedAt": [
+        "grant_agent.web_backend_serving.HttpServingMixin.serve_desktop_update",
+        "grant_agent.proofs_e_wz.check_update_response",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "public signed update feed",
+        "path confinement"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.conversation-save",
+      "phase": "post",
+      "claim": "A save preserves its selected normalized storage marker and active session identity and writes the exact returned state with chronologically ordered transcript turns while the save lock remains held. A receipt-only response reports persisted session/transcript counts without echoing transcripts; a full response returns normalized stored state.",
+      "checkedAt": [
+        "grant_agent.web_backend._save_conversation_state",
+        "grant_agent.proofs_e_wz.check_conversation_save",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._save_conversation_state_locked",
+        "grant_agent.proofs_e_wz.check_conversation_persistence"
+      ],
+      "impact": [
+        "cross-device chat state",
+        "save response size"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.conversation-revision",
+      "phase": "post",
+      "claim": "Session revisions bind only semantic session fields and the returned turn page. Equal revisions return compact notModified responses; changed or invalid revisions return the exact session/page with accurate counts.",
+      "checkedAt": [
+        "grant_agent.web_backend._conversation_session_state",
+        "grant_agent.proofs_e_wz.check_conversation_session",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "chat polling",
+        "lazy transcript loading",
+        "cross-device revisions"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.conversation-bootstrap",
+      "phase": "post",
+      "claim": "Bootstrap returns the complete session/transcript index, only the selected bounded active turn tail, accurate projection counts and the existing lazy session-detail command.",
+      "checkedAt": [
+        "grant_agent.web_backend._conversation_state_bootstrap",
+        "grant_agent.proofs_e_wz.check_conversation_bootstrap",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "index-first cross-device chat loading",
+        "bounded initial transfer"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.chat-route",
+      "phase": "post",
+      "claim": "Preparation normalizes the OpenCon GLM5.2 alias to canonical OpenRouter identity, and OpenCode Go GLM5.2/MiniMaxM3/Qwen3.7 route samples keep the selected provider while removing redundant known catalog/provider prefixes. This proves prepared identity, not provider execution.",
+      "checkedAt": [
+        "grant_agent.web_backend.FluxioWebBackend._chat_route",
+        "grant_agent.proofs_e_wz.check_chat_route",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "prepared chat routes",
+        "provider identity"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.capture-failure",
+      "phase": "post",
+      "claim": "Every timed-out, nonzero or malformed child result retains that invocation's positive process id, nonnegative measured elapsed milliseconds and ordered started/ended timestamps before raising the existing readable failure.",
+      "checkedAt": [
+        "grant_agent.web_backend._run_process_capture",
+        "grant_agent.proofs_e_wz.check_capture_failure",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "runtime failures",
+        "bounded process capture"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.terminal-text",
+      "phase": "post",
+      "claim": "Terminal cleaning decodes timeout bytes as UTF-8 with replacement, removes the shared ANSI pattern and normalizes CR/CRLF to LF without losing the remaining readable text.",
+      "checkedAt": [
+        "grant_agent.web_backend._clean_terminal_text",
+        "grant_agent.proofs_e_wz.check_terminal_text",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "readable runtime errors",
+        "timeout output"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.workflow-budget",
+      "phase": "post",
+      "claim": "Prepared workflow runtime budgets default to 180 seconds, reject values outside 120-1800 and freeze the selected normalized value in the preset and every stage team contract.",
+      "checkedAt": [
+        "grant_agent.efficient_workflow.build_efficient_workflow",
+        "grant_agent.proofs_e_wz.check_workflow_budget",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "workflow graph preparation",
+        "bounded runtime stages"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.assistant-selection",
+      "phase": "post",
+      "claim": "Selected assistant messages exclude raw commands/command-prefixed traces, agree with finalMessage and humanized artifact summaries preserve the supplied headline, selected facts and route while dropping artifact metadata lines.",
+      "checkedAt": [
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._normalize_receipt_assistant_message",
+        "grant_agent.proofs_e_wz.check_model_message",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._assistant_message_from_runtime_output",
+        "grant_agent.proofs_e_wz.check_humanized_message",
+        "grant_agent.proofs_e_wz.check_chat_compartment"
+      ],
+      "impact": [
+        "readable model answers",
+        "runtime command trace visibility"
+      ]
+    },
+    {
+      "id": "proofs-e-wz.chat-recording",
+      "phase": "post",
+      "claim": "Every saved compartment preserves exactly its prior message tail plus this operator input and usable assistant answer, records a model-message or trace-only event, preserves answer provenance fields and returns exactly the persisted JSON.",
+      "checkedAt": [
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._save_chat_compartment",
+        "grant_agent.proofs_e_wz.check_chat_compartment",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "impact": [
+        "durable chat compartment",
+        "cross-device answer provenance"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_web_auth_sessions_renewal.py",
+      "case": "test_a_session_in_use_keeps_renewing_and_an_unused_one_expires",
+      "case_id": "tests/test_web_auth_sessions_renewal.py::test_a_session_in_use_keeps_renewing_and_an_unused_one_expires",
+      "contracts": [
+        "proofs-e-wz.auth-renewal",
+        "proofs-e-wz.auth-rejection"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_session_lookup",
+        "grant_agent.proofs_e_wz.check_session_rejected",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+        "grant_agent.web_auth_sessions.WebAuthSessions.revoke"
+      ],
+      "procedure": "cases/auth-renewal"
+    },
+    {
+      "test": "tests/test_web_auth_sessions_renewal.py",
+      "case": "test_a_changed_account_identity_still_ends_every_session",
+      "case_id": "tests/test_web_auth_sessions_renewal.py::test_a_changed_account_identity_still_ends_every_session",
+      "contracts": [
+        "proofs-e-wz.auth-rejection"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_session_rejected",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+        "grant_agent.web_auth_sessions.WebAuthSessions.revoke"
+      ],
+      "procedure": "cases/auth-changed-identity"
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_safety_net_fills_a_missing_creationflags",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_safety_net_fills_a_missing_creationflags",
+      "contracts": [
+        "proofs-e-wz.hidden-default",
+        "proofs-e-wz.hidden-options"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_hidden_kwargs",
+        "grant_agent.proofs_e_wz.check_spawn_flags",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.subprocess_utils._hidden_popen_init",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.subprocess_utils.install_hidden_subprocess_default"
+      ],
+      "procedure": "cases/hidden-child-real-runtime"
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_safety_net_preserves_explicit_creationflags",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_safety_net_preserves_explicit_creationflags",
+      "contracts": [
+        "proofs-e-wz.hidden-default",
+        "proofs-e-wz.hidden-options"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_hidden_kwargs",
+        "grant_agent.proofs_e_wz.check_spawn_flags",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.subprocess_utils._hidden_popen_init",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.subprocess_utils.install_hidden_subprocess_default"
+      ],
+      "procedure": "cases/hidden-child-real-runtime"
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_safety_net_is_idempotent",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_safety_net_is_idempotent",
+      "contracts": [
+        "proofs-e-wz.hidden-default",
+        "proofs-e-wz.hidden-options"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_hidden_kwargs",
+        "grant_agent.proofs_e_wz.check_spawn_flags",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.subprocess_utils._hidden_popen_init",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.subprocess_utils.install_hidden_subprocess_default"
+      ],
+      "procedure": "cases/hidden-child-real-runtime"
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_real_child_started_through_the_safety_net_has_no_console_window",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_real_child_started_through_the_safety_net_has_no_console_window",
+      "contracts": [
+        "proofs-e-wz.hidden-default",
+        "proofs-e-wz.hidden-options"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_hidden_kwargs",
+        "grant_agent.proofs_e_wz.check_spawn_flags",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.subprocess_utils._hidden_popen_init",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.subprocess_utils.install_hidden_subprocess_default"
+      ],
+      "procedure": "cases/hidden-child-real-runtime"
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_safety_net_does_nothing_off_windows",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_safety_net_does_nothing_off_windows",
+      "contracts": [
+        "proofs-e-wz.hidden-default",
+        "proofs-e-wz.hidden-options"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_hidden_kwargs",
+        "grant_agent.proofs_e_wz.check_spawn_flags",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.subprocess_utils._hidden_popen_init",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.subprocess_utils.install_hidden_subprocess_default"
+      ],
+      "procedure": "cases/hidden-child-real-runtime"
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_hidden_kwargs_are_empty_off_windows",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_hidden_kwargs_are_empty_off_windows",
+      "contracts": [
+        "proofs-e-wz.hidden-default",
+        "proofs-e-wz.hidden-options"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_hidden_kwargs",
+        "grant_agent.proofs_e_wz.check_spawn_flags",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.subprocess_utils._hidden_popen_init",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.subprocess_utils.install_hidden_subprocess_default"
+      ],
+      "procedure": "cases/hidden-child-real-runtime"
+    },
+    {
+      "test": "tests/test_x_following_sources.py",
+      "case": "XFollowingSourceTests.test_normalize_handle_rejects_non_x_username",
+      "case_id": "tests/test_x_following_sources.py::XFollowingSourceTests.test_normalize_handle_rejects_non_x_username",
+      "contracts": [
+        "proofs-e-wz.x-handle"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.x_following_sources.normalize_x_handle"
+      ],
+      "procedure": "cases/x-source-local-transport-and-artifacts"
+    },
+    {
+      "test": "tests/test_x_following_sources.py",
+      "case": "XFollowingSourceTests.test_following_pagination_deduplicates_accounts_and_preserves_proof",
+      "case_id": "tests/test_x_following_sources.py::XFollowingSourceTests.test_following_pagination_deduplicates_accounts_and_preserves_proof",
+      "contracts": [
+        "proofs-e-wz.x-following"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_following",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.x_following_sources.fetch_following_accounts"
+      ],
+      "procedure": "cases/x-source-local-transport-and-artifacts"
+    },
+    {
+      "test": "tests/test_x_following_sources.py",
+      "case": "XFollowingSourceTests.test_collects_public_folo_timelines_and_writes_hashed_artifacts",
+      "case_id": "tests/test_x_following_sources.py::XFollowingSourceTests.test_collects_public_folo_timelines_and_writes_hashed_artifacts",
+      "contracts": [
+        "proofs-e-wz.x-public-timelines",
+        "proofs-e-wz.x-artifacts"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_source_artifacts",
+        "grant_agent.proofs_e_wz.check_source_bundle",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.x_following_sources.collect_following_digest_sources",
+        "grant_agent.x_following_sources.write_following_source_bundle"
+      ],
+      "procedure": "cases/x-source-local-transport-and-artifacts"
+    },
+    {
+      "test": "tests/test_worker_self_repair.py",
+      "case": "WorkerSelfRepairTests.test_bundled_worker_repairs_and_verifies_broken_app",
+      "case_id": "tests/test_worker_self_repair.py::WorkerSelfRepairTests.test_bundled_worker_repairs_and_verifies_broken_app",
+      "contracts": [
+        "proofs-e-wz.worker-repair",
+        "proofs-e-wz.repair-receipt",
+        "proofs-e-wz.repair-bounds"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_repair",
+        "grant_agent.proofs_e_wz.check_worker_repair",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.self_repair.execute_self_repair_job",
+        "grant_agent.worker.run_local_worker_once"
+      ],
+      "procedure": "cases/worker-repair-real-child-commands"
+    },
+    {
+      "test": "tests/test_worker_self_repair.py",
+      "case": "WorkerSelfRepairTests.test_invalid_repair_contract_is_blocked_with_receipt",
+      "case_id": "tests/test_worker_self_repair.py::WorkerSelfRepairTests.test_invalid_repair_contract_is_blocked_with_receipt",
+      "contracts": [
+        "proofs-e-wz.worker-repair",
+        "proofs-e-wz.repair-blocked"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_repair",
+        "grant_agent.proofs_e_wz.check_worker_repair",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.self_repair.execute_self_repair_job",
+        "grant_agent.worker.run_local_worker_once"
+      ],
+      "procedure": "cases/worker-repair-real-child-commands"
+    },
+    {
+      "test": "tests/test_worker_self_repair.py",
+      "case": "WorkerSelfRepairTests.test_failed_verification_stops_at_hard_attempt_cap",
+      "case_id": "tests/test_worker_self_repair.py::WorkerSelfRepairTests.test_failed_verification_stops_at_hard_attempt_cap",
+      "contracts": [
+        "proofs-e-wz.repair-bounds",
+        "proofs-e-wz.repair-receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_repair",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.self_repair.execute_self_repair_job"
+      ],
+      "procedure": "cases/worker-repair-real-child-commands"
+    },
+    {
+      "test": "tests/test_web_backend_desktop_shell.py",
+      "case": "test_update_feed_serves_only_files_in_its_folder",
+      "case_id": "tests/test_web_backend_desktop_shell.py::test_update_feed_serves_only_files_in_its_folder",
+      "contracts": [
+        "proofs-e-wz.desktop-update"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_update_response",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_serving.HttpServingMixin.serve_desktop_update"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend_desktop_shell.py",
+      "case": "test_interface_files_answer_the_desktop_origin_but_the_page_does_not",
+      "case_id": "tests/test_web_backend_desktop_shell.py::test_interface_files_answer_the_desktop_origin_but_the_page_does_not",
+      "contracts": [
+        "proofs-e-wz.desktop-shell"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_static_response",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_serving.HttpServingMixin.serve_file"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "BrowserTransportTests.test_large_answers_are_compressed_only_for_clients_that_accept_it",
+      "case_id": "tests/test_web_backend_browser_parity.py::BrowserTransportTests.test_large_answers_are_compressed_only_for_clients_that_accept_it",
+      "contracts": [
+        "proofs-e-wz.http-json"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_json_response",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._json_response"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "BrowserTransportTests.test_small_answers_stay_uncompressed",
+      "case_id": "tests/test_web_backend_browser_parity.py::BrowserTransportTests.test_small_answers_stay_uncompressed",
+      "contracts": [
+        "proofs-e-wz.http-json"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_json_response",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._json_response"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "BrowserTransportTests.test_a_gzip_request_body_is_accepted",
+      "case_id": "tests/test_web_backend_browser_parity.py::BrowserTransportTests.test_a_gzip_request_body_is_accepted",
+      "contracts": [
+        "proofs-e-wz.http-request"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_request_body",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._read_json_body"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "BrowserTransportTests.test_a_gzip_bomb_is_rejected",
+      "case_id": "tests/test_web_backend_browser_parity.py::BrowserTransportTests.test_a_gzip_bomb_is_rejected",
+      "contracts": [
+        "proofs-e-wz.http-request"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_request_body",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._read_json_body"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "BrowserTransportTests.test_a_reader_that_stalls_longer_than_the_accept_timeout_still_gets_everything",
+      "case_id": "tests/test_web_backend_browser_parity.py::BrowserTransportTests.test_a_reader_that_stalls_longer_than_the_accept_timeout_still_gets_everything",
+      "contracts": [
+        "proofs-e-wz.http-io-timeout"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_io_timeout",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._extend_io_timeout"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "BrowserTransportTests.test_save_can_skip_echoing_the_whole_state",
+      "case_id": "tests/test_web_backend_browser_parity.py::BrowserTransportTests.test_save_can_skip_echoing_the_whole_state",
+      "contracts": [
+        "proofs-e-wz.conversation-save"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_conversation_persistence",
+        "grant_agent.proofs_e_wz.check_conversation_save",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._save_conversation_state",
+        "grant_agent.web_backend._save_conversation_state_locked"
+      ],
+      "procedure": "cases/conversation-save-and-semantic-revision"
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "BrowserTransportTests.test_an_unchanged_session_answers_with_a_revision_instead_of_the_transcript",
+      "case_id": "tests/test_web_backend_browser_parity.py::BrowserTransportTests.test_an_unchanged_session_answers_with_a_revision_instead_of_the_transcript",
+      "contracts": [
+        "proofs-e-wz.conversation-revision"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_conversation_session",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._conversation_session_state"
+      ],
+      "procedure": "cases/conversation-save-and-semantic-revision"
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "BrowserTransportTests.test_the_stale_revision_helper_ignores_junk",
+      "case_id": "tests/test_web_backend_browser_parity.py::BrowserTransportTests.test_the_stale_revision_helper_ignores_junk",
+      "contracts": [
+        "proofs-e-wz.conversation-revision"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_conversation_session",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._conversation_session_state"
+      ],
+      "procedure": "cases/conversation-save-and-semantic-revision"
+    },
+    {
+      "test": "tests/web-auth-sessions.test.mjs",
+      "case": "web auth sessions survive process recreation, bind account identity, expire, and revoke",
+      "case_id": "tests/web-auth-sessions.test.mjs::web auth sessions survive process recreation, bind account identity, expire, and revoke",
+      "contracts": [
+        "proofs-e-wz.auth-issuance",
+        "proofs-e-wz.auth-rejection",
+        "proofs-e-wz.auth-renewal"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_session_issued",
+        "grant_agent.proofs_e_wz.check_session_lookup",
+        "grant_agent.proofs_e_wz.check_session_rejected",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_auth_sessions.WebAuthSessions.issue",
+        "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+        "grant_agent.web_auth_sessions.WebAuthSessions.revoke"
+      ],
+      "procedure": "cases/auth-parallel-issuance-and-process-recreation"
+    },
+    {
+      "test": "tests/web-auth-sessions.test.mjs",
+      "case": "parallel backend processes can issue sessions into the same database",
+      "case_id": "tests/web-auth-sessions.test.mjs::parallel backend processes can issue sessions into the same database",
+      "contracts": [
+        "proofs-e-wz.auth-issuance"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_session_issued",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_auth_sessions.WebAuthSessions.issue"
+      ],
+      "procedure": "cases/auth-parallel-issuance-and-process-recreation"
+    },
+    {
+      "test": "tests/web-auth-backend-restart.test.mjs",
+      "case": "backend recreation preserves web login and keeps media gated through logout",
+      "case_id": "tests/web-auth-backend-restart.test.mjs::backend recreation preserves web login and keeps media gated through logout",
+      "contracts": [
+        "proofs-e-wz.auth-artifact",
+        "proofs-e-wz.auth-rejection"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_artifact_access",
+        "grant_agent.proofs_e_wz.check_session_rejected",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+        "grant_agent.web_auth_sessions.WebAuthSessions.revoke",
+        "grant_agent.web_backend.FluxioWebBackend.authenticated_session",
+        "grant_agent.web_backend.FluxioWebBackend.web_auth_sessions",
+        "grant_agent.web_backend_serving.HttpServingMixin.serve_artifact"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/web-auth-backend-restart.test.mjs",
+      "case": "environment-backed credentials keep sessions stable when regenerated password salts change",
+      "case_id": "tests/web-auth-backend-restart.test.mjs::environment-backed credentials keep sessions stable when regenerated password salts change",
+      "contracts": [
+        "proofs-e-wz.auth-artifact",
+        "proofs-e-wz.auth-rejection"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_artifact_access",
+        "grant_agent.proofs_e_wz.check_session_rejected",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_auth_sessions.WebAuthSessions.lookup",
+        "grant_agent.web_auth_sessions.WebAuthSessions.revoke",
+        "grant_agent.web_backend.FluxioWebBackend.authenticated_session",
+        "grant_agent.web_backend.FluxioWebBackend.web_auth_sessions",
+        "grant_agent.web_backend_serving.HttpServingMixin.serve_artifact"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_process_capture_timeout_returns_readable_runtime_error",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_process_capture_timeout_returns_readable_runtime_error",
+      "contracts": [
+        "proofs-e-wz.capture-failure"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_capture_failure",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._run_process_capture"
+      ],
+      "procedure": "cases/real-process-failure-and-workflow-budget"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_terminal_cleaner_accepts_timeout_bytes",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_terminal_cleaner_accepts_timeout_bytes",
+      "contracts": [
+        "proofs-e-wz.terminal-text"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_terminal_text",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._clean_terminal_text"
+      ],
+      "procedure": "cases/real-process-failure-and-workflow-budget"
+    },
+    {
+      "test": "tests/neyvia_long_workflow_budget_contract.test.mjs",
+      "case": "efficient workflows freeze an explicit bounded runtime budget",
+      "case_id": "tests/neyvia_long_workflow_budget_contract.test.mjs::efficient workflows freeze an explicit bounded runtime budget",
+      "contracts": [
+        "proofs-e-wz.workflow-budget"
+      ],
+      "checkedAt": [
+        "grant_agent.efficient_workflow.build_efficient_workflow",
+        "grant_agent.proofs_e_wz.check_workflow_budget",
+        "grant_agent.proofs_e_wz.self_check"
+      ],
+      "procedure": "cases/real-process-failure-and-workflow-budget"
+    },
+    {
+      "test": "tests/neyvia_long_workflow_budget_contract.test.mjs",
+      "case": "runtime failures retain measured timing and process identity",
+      "case_id": "tests/neyvia_long_workflow_budget_contract.test.mjs::runtime failures retain measured timing and process identity",
+      "contracts": [
+        "proofs-e-wz.capture-failure"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_capture_failure",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._run_process_capture"
+      ],
+      "procedure": "cases/real-process-failure-and-workflow-budget"
+    },
+    {
+      "test": "tests/neyvia_long_workflow_budget_contract.test.mjs",
+      "case": "process capture emits evidence for timeout and non-zero exit",
+      "case_id": "tests/neyvia_long_workflow_budget_contract.test.mjs::process capture emits evidence for timeout and non-zero exit",
+      "contracts": [
+        "proofs-e-wz.capture-failure"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_capture_failure",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._run_process_capture"
+      ],
+      "procedure": "cases/real-process-failure-and-workflow-budget"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_turn_receipt_does_not_treat_command_message_as_agent_reply",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_turn_receipt_does_not_treat_command_message_as_agent_reply",
+      "contracts": [
+        "proofs-e-wz.assistant-selection",
+        "proofs-e-wz.chat-recording"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_compartment",
+        "grant_agent.proofs_e_wz.check_humanized_message",
+        "grant_agent.proofs_e_wz.check_model_message",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._assistant_message_from_runtime_output",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._normalize_receipt_assistant_message",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._save_chat_compartment"
+      ],
+      "procedure": "cases/recorded-command-traces-and-model-answer"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_turn_receipt_does_not_treat_command_prefixed_reply_as_agent_reply",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_turn_receipt_does_not_treat_command_prefixed_reply_as_agent_reply",
+      "contracts": [
+        "proofs-e-wz.assistant-selection",
+        "proofs-e-wz.chat-recording"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_compartment",
+        "grant_agent.proofs_e_wz.check_humanized_message",
+        "grant_agent.proofs_e_wz.check_model_message",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._assistant_message_from_runtime_output",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._normalize_receipt_assistant_message",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._save_chat_compartment"
+      ],
+      "procedure": "cases/recorded-command-traces-and-model-answer"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_turn_receipt_does_not_treat_command_word_without_colon_as_agent_reply",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_turn_receipt_does_not_treat_command_word_without_colon_as_agent_reply",
+      "contracts": [
+        "proofs-e-wz.assistant-selection",
+        "proofs-e-wz.chat-recording"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_compartment",
+        "grant_agent.proofs_e_wz.check_humanized_message",
+        "grant_agent.proofs_e_wz.check_model_message",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._assistant_message_from_runtime_output",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._normalize_receipt_assistant_message",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._save_chat_compartment"
+      ],
+      "procedure": "cases/recorded-command-traces-and-model-answer"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_turn_receipt_prefers_open_runtime_model_message",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_turn_receipt_prefers_open_runtime_model_message",
+      "contracts": [
+        "proofs-e-wz.assistant-selection",
+        "proofs-e-wz.chat-recording"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_compartment",
+        "grant_agent.proofs_e_wz.check_humanized_message",
+        "grant_agent.proofs_e_wz.check_model_message",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._assistant_message_from_runtime_output",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._normalize_receipt_assistant_message",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._save_chat_compartment"
+      ],
+      "procedure": "cases/recorded-command-traces-and-model-answer"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_turn_receipt_humanizes_runtime_artifact_message",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_turn_receipt_humanizes_runtime_artifact_message",
+      "contracts": [
+        "proofs-e-wz.assistant-selection",
+        "proofs-e-wz.chat-recording"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_compartment",
+        "grant_agent.proofs_e_wz.check_humanized_message",
+        "grant_agent.proofs_e_wz.check_model_message",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._assistant_message_from_runtime_output",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._normalize_receipt_assistant_message",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._save_chat_compartment"
+      ],
+      "procedure": "cases/recorded-command-traces-and-model-answer"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_turn_receipt_skips_command_before_open_runtime_message",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_turn_receipt_skips_command_before_open_runtime_message",
+      "contracts": [
+        "proofs-e-wz.assistant-selection",
+        "proofs-e-wz.chat-recording"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_compartment",
+        "grant_agent.proofs_e_wz.check_humanized_message",
+        "grant_agent.proofs_e_wz.check_model_message",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._assistant_message_from_runtime_output",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._normalize_receipt_assistant_message",
+        "grant_agent.web_backend_receipts.ChatReceiptMixin._save_chat_compartment"
+      ],
+      "procedure": "cases/recorded-command-traces-and-model-answer"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_web_handler_uses_http_11_keep_alive",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_web_handler_uses_http_11_keep_alive",
+      "contracts": [
+        "proofs-e-wz.http-json"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_json_response",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._json_response"
+      ],
+      "procedure": "cases/http-recreation-private-media-desktop-transfer"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_conversation_state_commands_persist_cross_device_chat_state",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_conversation_state_commands_persist_cross_device_chat_state",
+      "contracts": [
+        "proofs-e-wz.conversation-save"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_conversation_persistence",
+        "grant_agent.proofs_e_wz.check_conversation_save",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._save_conversation_state",
+        "grant_agent.web_backend._save_conversation_state_locked"
+      ],
+      "procedure": "cases/live-bootstrap-and-prepared-route-identities"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_conversation_bootstrap_is_index_first_and_session_detail_is_lazy",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_conversation_bootstrap_is_index_first_and_session_detail_is_lazy",
+      "contracts": [
+        "proofs-e-wz.conversation-save",
+        "proofs-e-wz.conversation-bootstrap",
+        "proofs-e-wz.conversation-revision"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_conversation_bootstrap",
+        "grant_agent.proofs_e_wz.check_conversation_persistence",
+        "grant_agent.proofs_e_wz.check_conversation_save",
+        "grant_agent.proofs_e_wz.check_conversation_session",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend._conversation_session_state",
+        "grant_agent.web_backend._conversation_state_bootstrap",
+        "grant_agent.web_backend._save_conversation_state",
+        "grant_agent.web_backend._save_conversation_state_locked"
+      ],
+      "procedure": "cases/live-bootstrap-and-prepared-route-identities",
+      "classification": "real-current",
+      "supersededAssertions": [
+        {
+          "original": "merged[chatSessionTranscripts][chat-1][0][id] == chat-1-new",
+          "current": "The new 11:00 turn is last in the 41 chronological transcript turns; all 40 earlier turns and unselected session history remain persisted.",
+          "rationale": "Current production _normalize_conversation_transcripts sorts ascending createdAt. Migration expresses observed current behavior without changing production ordering."
+        }
+      ]
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_route_opencon_glm52_normalizes_to_openrouter_model_id",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_route_opencon_glm52_normalizes_to_openrouter_model_id",
+      "contracts": [
+        "proofs-e-wz.chat-route"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_route",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend.FluxioWebBackend._chat_route"
+      ],
+      "procedure": "cases/live-bootstrap-and-prepared-route-identities"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_route_opencode_go_strips_provider_and_openrouter_model_prefixes",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_route_opencode_go_strips_provider_and_openrouter_model_prefixes",
+      "contracts": [
+        "proofs-e-wz.chat-route"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_route",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend.FluxioWebBackend._chat_route"
+      ],
+      "procedure": "cases/live-bootstrap-and-prepared-route-identities"
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_route_opencode_go_supports_current_plan_models",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_route_opencode_go_supports_current_plan_models",
+      "contracts": [
+        "proofs-e-wz.chat-route"
+      ],
+      "checkedAt": [
+        "grant_agent.proofs_e_wz.check_chat_route",
+        "grant_agent.proofs_e_wz.self_check",
+        "grant_agent.web_backend.FluxioWebBackend._chat_route"
+      ],
+      "procedure": "cases/live-bootstrap-and-prepared-route-identities"
+    }
+  ],
+  "frontier": [
+    "Backend suite and paired-desktop controller scenarios remain pending unless every original predicate has a real action site and observed scratch procedure.",
+    "Hidden-process AST scanner self-tests protect test-only tooling and are retained pending lead retirement review; no source-text scan is relabeled as production proof.",
+    "Legacy desktop-ui/fluxioHelpers.js is absent; its workspace-selection tests remain pending impact/history review.",
+    "The original bootstrap test expected newest merged turn first; its coverage row explicitly supersedes that stale assertion with observed chronological ordering, preserving all other bootstrap/lazy-detail predicates."
+  ],
+  "retainedCases": [
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_capability_comparison_resolves_receipts_from_conversation_ledger",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_capability_comparison_resolves_receipts_from_conversation_ledger",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_capability_comparison_resolves_receipts_from_conversation_ledger. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_counterfactual_forge_uses_server_recorded_replay_run_ids",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_counterfactual_forge_uses_server_recorded_replay_run_ids",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_counterfactual_forge_uses_server_recorded_replay_run_ids. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openclaw_codex_route_uses_native_app_server_model_id",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openclaw_codex_route_uses_native_app_server_model_id",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openclaw_codex_route_uses_native_app_server_model_id. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openclaw_plain_text_image_receipt_proves_codex_oauth_route",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openclaw_plain_text_image_receipt_proves_codex_oauth_route",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openclaw_plain_text_image_receipt_proves_codex_oauth_route. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_cli_mutation_uses_bound_single_use_backend_approval",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_cli_mutation_uses_bound_single_use_backend_approval",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_cli_mutation_uses_bound_single_use_backend_approval. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_browser_click_probe_page_is_real_click_target",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_browser_click_probe_page_is_real_click_target",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_browser_click_probe_page_is_real_click_target. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_runtime_lane_cycle_command_dispatches_to_cycle_runner",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_runtime_lane_cycle_command_dispatches_to_cycle_runner",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_runtime_lane_cycle_command_dispatches_to_cycle_runner. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_runtime_auto_update_command_dispatches_with_runtime_ids",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_runtime_auto_update_command_dispatches_with_runtime_ids",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_runtime_auto_update_command_dispatches_with_runtime_ids. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_preview_bridge_proof_command_writes_artifact_and_receipt",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_preview_bridge_proof_command_writes_artifact_and_receipt",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_preview_bridge_proof_command_writes_artifact_and_receipt. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_turn_receipts_keep_runtime_preview_proof_artifacts",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_turn_receipts_keep_runtime_preview_proof_artifacts",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_turn_receipts_keep_runtime_preview_proof_artifacts. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_image_playground_operation_writes_served_artifact_and_manifest",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_image_playground_operation_writes_served_artifact_and_manifest",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_image_playground_operation_writes_served_artifact_and_manifest. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_image_playground_skill_invocation_blocks_when_installed_skill_is_missing",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_image_playground_skill_invocation_blocks_when_installed_skill_is_missing",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_image_playground_skill_invocation_blocks_when_installed_skill_is_missing. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_backend_serves_mission_artifacts_from_sibling_project_roots",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_backend_serves_mission_artifacts_from_sibling_project_roots",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_backend_serves_mission_artifacts_from_sibling_project_roots. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_backend_serves_html_mission_dashboard_from_active_release_artifacts",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_backend_serves_html_mission_dashboard_from_active_release_artifacts",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_backend_serves_html_mission_dashboard_from_active_release_artifacts. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_image_playground_accepts_openai_json_when_stderr_proves_codex_oauth",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_image_playground_accepts_openai_json_when_stderr_proves_codex_oauth",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_image_playground_accepts_openai_json_when_stderr_proves_codex_oauth. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_image_playground_codex_subscription_reports_blocked_when_openclaw_is_missing",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_image_playground_codex_subscription_reports_blocked_when_openclaw_is_missing",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_image_playground_codex_subscription_reports_blocked_when_openclaw_is_missing. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_artifact_resolver_maps_nas_absolute_path_to_local_volume_mirror",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_artifact_resolver_maps_nas_absolute_path_to_local_volume_mirror",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_artifact_resolver_maps_nas_absolute_path_to_local_volume_mirror. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_artifact_resolver_maps_configured_nas_project_path_to_workspace",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_artifact_resolver_maps_configured_nas_project_path_to_workspace",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_artifact_resolver_maps_configured_nas_project_path_to_workspace. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_artifact_resolver_rejects_general_workspace_files",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_artifact_resolver_rejects_general_workspace_files",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_artifact_resolver_rejects_general_workspace_files. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_artifact_resolver_serves_runtime_evidence_files_only_from_control_roots",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_artifact_resolver_serves_runtime_evidence_files_only_from_control_roots",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_artifact_resolver_serves_runtime_evidence_files_only_from_control_roots. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_artifact_resolver_recovers_embedded_windows_runtime_evidence_path",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_artifact_resolver_recovers_embedded_windows_runtime_evidence_path",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_artifact_resolver_recovers_embedded_windows_runtime_evidence_path. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_windows_drive_path_translates_for_wsl_artifact_serving",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_windows_drive_path_translates_for_wsl_artifact_serving",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_windows_drive_path_translates_for_wsl_artifact_serving. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_neyvia_conversation_commands_use_durable_unified_store",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_neyvia_conversation_commands_use_durable_unified_store",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_neyvia_conversation_commands_use_durable_unified_store. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_attention_inbox_commands_are_durable_through_backend",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_attention_inbox_commands_are_durable_through_backend",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_attention_inbox_commands_are_durable_through_backend. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_neyvia_conversation_command_pages_large_history",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_neyvia_conversation_command_pages_large_history",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_neyvia_conversation_command_pages_large_history. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_persists_exact_legacy_turn_ids_and_replays_runtime_result",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_persists_exact_legacy_turn_ids_and_replays_runtime_result",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_persists_exact_legacy_turn_ids_and_replays_runtime_result. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_duplicate_agent_chat_requests_share_one_runtime_execution",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_duplicate_agent_chat_requests_share_one_runtime_execution",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_duplicate_agent_chat_requests_share_one_runtime_execution. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_compartment_records_messages_and_runtime_lanes",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_compartment_records_messages_and_runtime_lanes",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_chat_compartment_records_messages_and_runtime_lanes. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_compartment_ignores_quoted_windows_command_as_changed_file_evidence",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_compartment_ignores_quoted_windows_command_as_changed_file_evidence",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_chat_compartment_ignores_quoted_windows_command_as_changed_file_evidence. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_compartment_attaches_runtime_artifact_paths_from_reply_text",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_compartment_attaches_runtime_artifact_paths_from_reply_text",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_chat_compartment_attaches_runtime_artifact_paths_from_reply_text. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_explicit_openclaw_chat_uses_openclaw_for_openai_codex_route",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_explicit_openclaw_chat_uses_openclaw_for_openai_codex_route",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_explicit_openclaw_chat_uses_openclaw_for_openai_codex_route. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_explicit_neyvia_agent_chat_uses_own_runtime",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_explicit_neyvia_agent_chat_uses_own_runtime",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_explicit_neyvia_agent_chat_uses_own_runtime. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_neyvia_agent_chat_resolves_cli_from_source_workspace",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_neyvia_agent_chat_resolves_cli_from_source_workspace",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_neyvia_agent_chat_resolves_cli_from_source_workspace. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_neyvia_agent_chat_applies_secret_free_chat_completions_profile",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_neyvia_agent_chat_applies_secret_free_chat_completions_profile",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_neyvia_agent_chat_applies_secret_free_chat_completions_profile. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_explicit_openclaw_chat_uses_openclaw_for_minimax_route",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_explicit_openclaw_chat_uses_openclaw_for_minimax_route",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_explicit_openclaw_chat_uses_openclaw_for_minimax_route. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openai_codex_route_continues_through_codex_when_delegated_runtime_fails",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openai_codex_route_continues_through_codex_when_delegated_runtime_fails",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openai_codex_route_continues_through_codex_when_delegated_runtime_fails. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_codex_cli_resolver_prefers_latest_desktop_app_binary",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_codex_cli_resolver_prefers_latest_desktop_app_binary",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_codex_cli_resolver_prefers_latest_desktop_app_binary. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_codex_login_status_uses_cli_receipt_when_desktop_owns_credentials",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_codex_login_status_uses_cli_receipt_when_desktop_owns_credentials",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_codex_login_status_uses_cli_receipt_when_desktop_owns_credentials. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_windows_read_only_chat_state_uses_short_local_path",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_windows_read_only_chat_state_uses_short_local_path",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_windows_read_only_chat_state_uses_short_local_path. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_chat_compartment_records_executable_comment_receipt",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_chat_compartment_records_executable_comment_receipt",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_chat_compartment_records_executable_comment_receipt. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_nas_deploy_readiness_command_returns_offline_safe_checks",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_nas_deploy_readiness_command_returns_offline_safe_checks",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_nas_deploy_readiness_command_returns_offline_safe_checks. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_integration_readiness_command_returns_evidence_contract",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_integration_readiness_command_returns_evidence_contract",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_integration_readiness_command_returns_evidence_contract. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_security_delegation_requires_provider_and_executable_runtime",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_security_delegation_requires_provider_and_executable_runtime",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_security_delegation_requires_provider_and_executable_runtime. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_provider_secret_presence_uses_session_memory",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_provider_secret_presence_uses_session_memory",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_provider_secret_presence_uses_session_memory. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_provider_presence_reads_native_opencode_go_auth_store",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_provider_presence_reads_native_opencode_go_auth_store",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_provider_presence_reads_native_opencode_go_auth_store. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openrouter_oauth_pkce_connects_through_one_time_callback",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openrouter_oauth_pkce_connects_through_one_time_callback",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openrouter_oauth_pkce_connects_through_one_time_callback. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openrouter_oauth_rejects_non_https_remote_callback",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openrouter_oauth_rejects_non_https_remote_callback",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openrouter_oauth_rejects_non_https_remote_callback. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_web_backend_prepends_packaged_runtime_bin_to_cli_path",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_web_backend_prepends_packaged_runtime_bin_to_cli_path",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_web_backend_prepends_packaged_runtime_bin_to_cli_path. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_codex_child_path_omits_store_powershell_but_keeps_windows_fallback",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_codex_child_path_omits_store_powershell_but_keeps_windows_fallback",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_codex_child_path_omits_store_powershell_but_keeps_windows_fallback. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_web_backend_reports_minimax_openclaw_manual_auth_command",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_web_backend_reports_minimax_openclaw_manual_auth_command",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_web_backend_reports_minimax_openclaw_manual_auth_command. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_web_backend_starts_minimax_oauth_user_code_session",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_web_backend_starts_minimax_oauth_user_code_session",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_web_backend_starts_minimax_oauth_user_code_session. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_web_backend_completes_minimax_oauth_user_code_session",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_web_backend_completes_minimax_oauth_user_code_session",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_web_backend_completes_minimax_oauth_user_code_session. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_minimax_status_does_not_claim_auth_store_source_without_profile",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_minimax_status_does_not_claim_auth_store_source_without_profile",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_minimax_status_does_not_claim_auth_store_source_without_profile. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openai_api_key_does_not_impersonate_codex_oauth",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openai_api_key_does_not_impersonate_codex_oauth",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openai_api_key_does_not_impersonate_codex_oauth. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_copied_openclaw_profile_does_not_own_codex_oauth",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_copied_openclaw_profile_does_not_own_codex_oauth",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_copied_openclaw_profile_does_not_own_codex_oauth. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_web_backend_prefers_authenticated_codex_cli_over_stale_runtime_profiles",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_web_backend_prefers_authenticated_codex_cli_over_stale_runtime_profiles",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_web_backend_prefers_authenticated_codex_cli_over_stale_runtime_profiles. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_hermes_auth_store_does_not_own_codex_oauth",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_hermes_auth_store_does_not_own_codex_oauth",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_hermes_auth_store_does_not_own_codex_oauth. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_command_runs_openclaw_agent_with_selected_non_codex_route",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_command_runs_openclaw_agent_with_selected_non_codex_route",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_command_runs_openclaw_agent_with_selected_non_codex_route. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_command_uses_codex_cli_when_runtime_is_codex",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_command_uses_codex_cli_when_runtime_is_codex",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_command_uses_codex_cli_when_runtime_is_codex. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_runtime_timeout_expands_for_xhigh_without_becoming_unbounded",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_runtime_timeout_expands_for_xhigh_without_becoming_unbounded",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_runtime_timeout_expands_for_xhigh_without_becoming_unbounded. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_prefers_minimax_portal_when_oauth_profile_is_connected",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_prefers_minimax_portal_when_oauth_profile_is_connected",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_prefers_minimax_portal_when_oauth_profile_is_connected. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_hermes_chat_sends_normalized_minimax_m3_route",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_hermes_chat_sends_normalized_minimax_m3_route",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_hermes_chat_sends_normalized_minimax_m3_route. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_hermes_chat_maps_runtime_provider_alias_to_codex_route",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_hermes_chat_maps_runtime_provider_alias_to_codex_route",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_hermes_chat_maps_runtime_provider_alias_to_codex_route. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_extracts_runtime_model_message_from_json_string_reply",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_extracts_runtime_model_message_from_json_string_reply",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_extracts_runtime_model_message_from_json_string_reply. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_extracts_model_message_from_fluxio_event_output",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_extracts_model_message_from_fluxio_event_output",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_extracts_model_message_from_fluxio_event_output. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_prompt_quotes_history_so_old_exact_reply_cannot_override_latest",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_prompt_quotes_history_so_old_exact_reply_cannot_override_latest",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_prompt_quotes_history_so_old_exact_reply_cannot_override_latest. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_command_runs_native_opencode_runtime",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_command_runs_native_opencode_runtime",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_command_runs_native_opencode_runtime. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_agent_chat_uses_wsl_hermes_when_native_cli_is_missing",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_agent_chat_uses_wsl_hermes_when_native_cli_is_missing",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_agent_chat_uses_wsl_hermes_when_native_cli_is_missing. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_runtime_route_proof_reports_wsl_hermes_command",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_runtime_route_proof_reports_wsl_hermes_command",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_runtime_route_proof_reports_wsl_hermes_command. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_web_backend_starts_direct_openai_codex_oauth",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_web_backend_starts_direct_openai_codex_oauth",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_web_backend_starts_direct_openai_codex_oauth. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openai_codex_oauth_completion_uses_only_active_session",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openai_codex_oauth_completion_uses_only_active_session",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openai_codex_oauth_completion_uses_only_active_session. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openai_codex_oauth_relay_completes_relative_callback_path",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openai_codex_oauth_relay_completes_relative_callback_path",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openai_codex_oauth_relay_completes_relative_callback_path. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_openai_codex_oauth_session_status_reports_single_active_session",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_openai_codex_oauth_session_status_reports_single_active_session",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_openai_codex_oauth_session_status_reports_single_active_session. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_account_config_is_local_and_password_is_required",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_account_config_is_local_and_password_is_required",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_account_config_is_local_and_password_is_required. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_additional_local_user_can_login",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_additional_local_user_can_login",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_additional_local_user_can_login. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_explicit_admin_password_reset_preserves_account_identity_and_order",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_explicit_admin_password_reset_preserves_account_identity_and_order",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_explicit_admin_password_reset_preserves_account_identity_and_order. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_auth_status_exposes_local_account_hints_without_session",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_auth_status_exposes_local_account_hints_without_session",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_auth_status_exposes_local_account_hints_without_session. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_environment_account_aliases_can_login_without_writing_password_file",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_environment_account_aliases_can_login_without_writing_password_file",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_environment_account_aliases_can_login_without_writing_password_file. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_public_https_url_is_written_to_password_note",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_public_https_url_is_written_to_password_note",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_public_https_url_is_written_to_password_note. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_list_workspace_directory_command_returns_directory_entries",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_list_workspace_directory_command_returns_directory_entries",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_list_workspace_directory_command_returns_directory_entries. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_workspace_root_catalog_does_not_probe_remote_paths",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_workspace_root_catalog_does_not_probe_remote_paths",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_workspace_root_catalog_does_not_probe_remote_paths. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_search_workspace_directories_command_returns_matching_folders",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_search_workspace_directories_command_returns_matching_folders",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_search_workspace_directories_command_returns_matching_folders. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_reads_verifier_reports",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_reads_verifier_reports",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_reads_verifier_reports. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_uses_short_cache",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_uses_short_cache",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_uses_short_cache. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_reports_missing_transcript_health_without_reports",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_reports_missing_transcript_health_without_reports",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_reports_missing_transcript_health_without_reports. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_flags_missing_screenshot_evidence",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_flags_missing_screenshot_evidence",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_flags_missing_screenshot_evidence. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_emits_authenticated_agent_ui_capture_command",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_emits_authenticated_agent_ui_capture_command",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_emits_authenticated_agent_ui_capture_command. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_promotes_row_agent_ui_capture_command",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_promotes_row_agent_ui_capture_command",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_promotes_row_agent_ui_capture_command. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_flags_partial_screenshot_bundle",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_flags_partial_screenshot_bundle",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_flags_partial_screenshot_bundle. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_reconciles_preview_bridge_screenshot_evidence",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_reconciles_preview_bridge_screenshot_evidence",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_reconciles_preview_bridge_screenshot_evidence. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_reconciles_authenticated_agent_ui_screenshot_evidence",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_reconciles_authenticated_agent_ui_screenshot_evidence",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_reconciles_authenticated_agent_ui_screenshot_evidence. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_keeps_complete_evidence_bundles_together",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_keeps_complete_evidence_bundles_together",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_keeps_complete_evidence_bundles_together. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_dedupes_latest_report_cache",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_dedupes_latest_report_cache",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_dedupes_latest_report_cache. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_uses_report_index_after_full_scan",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_uses_report_index_after_full_scan",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_uses_report_index_after_full_scan. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_reads_workspace_proof_roots",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_reads_workspace_proof_roots",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_reads_workspace_proof_roots. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_reuses_receipt_hash_cache",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_reuses_receipt_hash_cache",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_reuses_receipt_hash_cache. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_indexes_authenticated_reports_once",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_indexes_authenticated_reports_once",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_indexes_authenticated_reports_once. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_accepts_explicit_runtime_reports",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_accepts_explicit_runtime_reports",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_accepts_explicit_runtime_reports. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_old_reports_stale",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_old_reports_stale",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_old_reports_stale. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_surfaces_openclaw_diagnostics",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_surfaces_openclaw_diagnostics",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_surfaces_openclaw_diagnostics. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_recovered_transcript_source",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_recovered_transcript_source",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_recovered_transcript_source. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_mixed_transcript_coverage",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_mixed_transcript_coverage",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_marks_mixed_transcript_coverage. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_real_agent_runtime_proof_status_summarizes_proof_bag_gaps",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_real_agent_runtime_proof_status_summarizes_proof_bag_gaps",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_real_agent_runtime_proof_status_summarizes_proof_bag_gaps. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_invokes_verifier_without_faking_success",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_invokes_verifier_without_faking_success",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_invokes_verifier_without_faking_success. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_blocks_overlapping_run",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_blocks_overlapping_run",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_blocks_overlapping_run. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_clears_stale_lock",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_clears_stale_lock",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_run_real_agent_runtime_proof_command_clears_stale_lock. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_run_authenticated_live_agent_proof_command_invokes_verifier_and_refreshes_status",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_run_authenticated_live_agent_proof_command_invokes_verifier_and_refreshes_status",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_run_authenticated_live_agent_proof_command_invokes_verifier_and_refreshes_status. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_run_cli_sets_pythonpath_to_workspace_src",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_run_cli_sets_pythonpath_to_workspace_src",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_run_cli_sets_pythonpath_to_workspace_src. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_runtime_route_status_decodes_hermes_version_as_utf8",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_runtime_route_status_decodes_hermes_version_as_utf8",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_runtime_route_status_decodes_hermes_version_as_utf8. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_command_uses_in_process_snapshot",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_command_uses_in_process_snapshot",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_command_uses_in_process_snapshot. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_command_caches_full_snapshot",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_command_caches_full_snapshot",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_command_caches_full_snapshot. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_skills_surface_full_summary_bypasses_stale_full_snapshot_cache",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_skills_surface_full_summary_bypasses_stale_full_snapshot_cache",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_skills_surface_full_summary_bypasses_stale_full_snapshot_cache. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_builder_surface_full_summary_bypasses_stale_full_snapshot_cache",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_builder_surface_full_summary_bypasses_stale_full_snapshot_cache",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_builder_surface_full_summary_bypasses_stale_full_snapshot_cache. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_command_loads_matching_persisted_full_snapshot_after_restart",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_command_loads_matching_persisted_full_snapshot_after_restart",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_command_loads_matching_persisted_full_snapshot_after_restart. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_watchdog_reports",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_watchdog_reports",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_watchdog_reports. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_cache_signature_tracks_skill_files_and_evolution_receipts",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_cache_signature_tracks_skill_files_and_evolution_receipts",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_cache_signature_tracks_skill_files_and_evolution_receipts. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_runtime_compartments",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_runtime_compartments",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_runtime_compartments. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_connected_app_manifest",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_connected_app_manifest",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_cache_signature_includes_connected_app_manifest. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_bootstrap_summary_cache_uses_live_signature_instead_of_short_ttl",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_bootstrap_summary_cache_uses_live_signature_instead_of_short_ttl",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_bootstrap_summary_cache_uses_live_signature_instead_of_short_ttl. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_bootstrap_summary_cache_persists_across_backend_restart_when_signature_matches",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_bootstrap_summary_cache_persists_across_backend_restart_when_signature_matches",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_bootstrap_summary_cache_persists_across_backend_restart_when_signature_matches. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_command_serves_stale_full_snapshot_while_revalidating",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_command_serves_stale_full_snapshot_while_revalidating",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_command_serves_stale_full_snapshot_while_revalidating. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_command_supports_bootstrap_snapshot",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_command_supports_bootstrap_snapshot",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_command_supports_bootstrap_snapshot. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_prewarm_is_delayed_not_inline",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_prewarm_is_delayed_not_inline",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_prewarm_is_delayed_not_inline. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_prewarm_is_enabled_by_default",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_prewarm_is_enabled_by_default",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_prewarm_is_enabled_by_default. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_summary_prewarm_can_be_disabled",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_summary_prewarm_can_be_disabled",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_summary_prewarm_can_be_disabled. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_snapshot_command_uses_full_live_snapshot",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_snapshot_command_uses_full_live_snapshot",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_snapshot_command_uses_full_live_snapshot. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_mission_detail_command_uses_in_process_live_store",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_mission_detail_command_uses_in_process_live_store",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_mission_detail_command_uses_in_process_live_store. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_mission_detail_command_rejects_missing_mission_id_before_store_load",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_mission_detail_command_rejects_missing_mission_id_before_store_load",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_mission_detail_command_rejects_missing_mission_id_before_store_load. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_mission_detail_command_normalizes_event_limit",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_mission_detail_command_normalizes_event_limit",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_mission_detail_command_normalizes_event_limit. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_mission_detail_cache_reuses_matching_live_signature",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_mission_detail_cache_reuses_matching_live_signature",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_mission_detail_cache_reuses_matching_live_signature. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_mission_detail_cache_invalidates_when_live_signature_changes",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_mission_detail_cache_invalidates_when_live_signature_changes",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_mission_detail_cache_invalidates_when_live_signature_changes. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_mission_detail_cache_serves_short_stale_hit",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_mission_detail_cache_serves_short_stale_hit",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_mission_detail_cache_serves_short_stale_hit. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_mission_detail_waits_for_active_prewarm",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_mission_detail_waits_for_active_prewarm",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_mission_detail_waits_for_active_prewarm. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_control_room_mission_detail_request_cancels_pending_prewarm",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_control_room_mission_detail_request_cancels_pending_prewarm",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_control_room_mission_detail_request_cancels_pending_prewarm. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_export_mission_proof_digest_command_writes_reviewable_report",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_export_mission_proof_digest_command_writes_reviewable_report",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_export_mission_proof_digest_command_writes_reviewable_report. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_export_control_room_data_command_is_available_on_web_backend",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_export_control_room_data_command_is_available_on_web_backend",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_export_control_room_data_command_is_available_on_web_backend. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_apply_skill_repair_command_is_available_on_web_backend",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_apply_skill_repair_command_is_available_on_web_backend",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_apply_skill_repair_command_is_available_on_web_backend. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_record_delivery_receipt_command_persists_browser_notification_receipt",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_record_delivery_receipt_command_persists_browser_notification_receipt",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_record_delivery_receipt_command_persists_browser_notification_receipt. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_record_delivery_receipt_command_persists_runtime_provenance",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_record_delivery_receipt_command_persists_runtime_provenance",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_record_delivery_receipt_command_persists_runtime_provenance. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_web_push_status_and_subscription_are_exposed_for_browser_registration",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_web_push_status_and_subscription_are_exposed_for_browser_registration",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_web_push_status_and_subscription_are_exposed_for_browser_registration. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_generate_web_push_vapid_config_command_provisions_local_sender_keys",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_generate_web_push_vapid_config_command_provisions_local_sender_keys",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_generate_web_push_vapid_config_command_provisions_local_sender_keys. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_send_web_push_notification_command_records_real_sender_gap",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_send_web_push_notification_command_records_real_sender_gap",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_send_web_push_notification_command_records_real_sender_gap. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_ntfy_status_and_send_command_expose_open_source_phone_channel",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_ntfy_status_and_send_command_expose_open_source_phone_channel",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_ntfy_status_and_send_command_expose_open_source_phone_channel. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_ntfy_send_command_records_dry_run_receipt_when_topic_is_configured",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_ntfy_send_command_records_dry_run_receipt_when_topic_is_configured",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_ntfy_send_command_records_dry_run_receipt_when_topic_is_configured. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_send_web_push_notification_command_supports_dry_run_delivery_receipt",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_send_web_push_notification_command_supports_dry_run_delivery_receipt",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_send_web_push_notification_command_supports_dry_run_delivery_receipt. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_start_control_room_mission_command_uses_async_dispatch",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_start_control_room_mission_command_uses_async_dispatch",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_start_control_room_mission_command_uses_async_dispatch. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_save_workspace_profile_command_skips_full_snapshot",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_save_workspace_profile_command_skips_full_snapshot",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_save_workspace_profile_command_skips_full_snapshot. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_save_workspace_profile_command_reuses_workspace_with_matching_path",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_save_workspace_profile_command_reuses_workspace_with_matching_path",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_save_workspace_profile_command_reuses_workspace_with_matching_path. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_start_control_room_mission_command_omits_unconfigured_budget",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_start_control_room_mission_command_omits_unconfigured_budget",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_start_control_room_mission_command_omits_unconfigured_budget. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_serve_artifact_requires_login_session",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_serve_artifact_requires_login_session",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_serve_artifact_requires_login_session. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_local_session_bootstrap_is_loopback_only",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_local_session_bootstrap_is_loopback_only",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_local_session_bootstrap_is_loopback_only. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_quickstart_mission_command_forwards_turn_mode",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_quickstart_mission_command_forwards_turn_mode",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_quickstart_mission_command_forwards_turn_mode. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_quickstart_mission_command_dedupes_retried_client_launch_token",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_quickstart_mission_command_dedupes_retried_client_launch_token",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_quickstart_mission_command_dedupes_retried_client_launch_token. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_apply_control_room_mission_action_resume_uses_async_dispatch",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_apply_control_room_mission_action_resume_uses_async_dispatch",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_apply_control_room_mission_action_resume_uses_async_dispatch. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_apply_control_room_mission_action_extend_budget_can_resume_async",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_apply_control_room_mission_action_extend_budget_can_resume_async",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_apply_control_room_mission_action_extend_budget_can_resume_async. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_apply_control_room_mission_action_parallelize_worktree_can_launch_async",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_apply_control_room_mission_action_parallelize_worktree_can_launch_async",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_apply_control_room_mission_action_parallelize_worktree_can_launch_async. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_apply_control_room_mission_action_complete_forwards_operator_closeout",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_apply_control_room_mission_action_complete_forwards_operator_closeout",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_apply_control_room_mission_action_complete_forwards_operator_closeout. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_record_control_room_lane_control_uses_cli_receipt_command",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_record_control_room_lane_control_uses_cli_receipt_command",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_record_control_room_lane_control_uses_cli_receipt_command. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_health_response_includes_security_headers",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_health_response_includes_security_headers",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_health_response_includes_security_headers. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_static_manifest_uses_installable_pwa_content_type",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_static_manifest_uses_installable_pwa_content_type",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_static_manifest_uses_installable_pwa_content_type. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_static_shell_and_service_worker_are_not_browser_cached",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_static_shell_and_service_worker_are_not_browser_cached",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_static_shell_and_service_worker_are_not_browser_cached. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_main_refuses_duplicate_backend_port",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_main_refuses_duplicate_backend_port",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_main_refuses_duplicate_backend_port. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_backend_refreshes_live_storage_pressure_and_writes_latest",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_backend_refreshes_live_storage_pressure_and_writes_latest",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_backend_refreshes_live_storage_pressure_and_writes_latest. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend.py",
+      "case": "FluxioWebBackendTests.test_backend_attaches_verifier_proof_with_preview_urls",
+      "case_id": "tests/test_web_backend.py::FluxioWebBackendTests.test_backend_attaches_verifier_proof_with_preview_urls",
+      "status": "pending-real-action-replacement",
+      "reason": "No complete action-site contract and observed self-check procedure yet protects FluxioWebBackendTests.test_backend_attaches_verifier_proof_with_preview_urls. The original is retained; this is pending work, not an external authority blocker."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_command_classification",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_command_classification",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_command_classification is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_computer_use_from_a_browser_says_the_pc_app_is_offline_and_runs_nothing_here",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_computer_use_from_a_browser_says_the_pc_app_is_offline_and_runs_nothing_here",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_computer_use_from_a_browser_says_the_pc_app_is_offline_and_runs_nothing_here is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_computer_use_is_relayed_to_the_pc_app_when_it_is_online",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_computer_use_is_relayed_to_the_pc_app_when_it_is_online",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_computer_use_is_relayed_to_the_pc_app_when_it_is_online is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_computer_use_from_a_foreign_page_is_refused",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_computer_use_from_a_foreign_page_is_refused",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_computer_use_from_a_foreign_page_is_refused is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_a_backend_with_no_paired_pc_app_keeps_running_computer_use_on_its_host",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_a_backend_with_no_paired_pc_app_keeps_running_computer_use_on_its_host",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_a_backend_with_no_paired_pc_app_keeps_running_computer_use_on_its_host is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_only_the_pc_side_native_tools_are_routed_to_the_pc",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_only_the_pc_side_native_tools_are_routed_to_the_pc",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_only_the_pc_side_native_tools_are_routed_to_the_pc is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_the_desktop_ipc_proxy_without_an_origin_still_reaches_the_local_service",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_the_desktop_ipc_proxy_without_an_origin_still_reaches_the_local_service",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_the_desktop_ipc_proxy_without_an_origin_still_reaches_the_local_service is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_a_phone_save_of_a_whole_chat_is_kept_by_the_shared_state_root_not_relayed",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_a_phone_save_of_a_whole_chat_is_kept_by_the_shared_state_root_not_relayed",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_a_phone_save_of_a_whole_chat_is_kept_by_the_shared_state_root_not_relayed is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_web_backend_browser_parity.py",
+      "case": "ControllerRoutingTests.test_saving_conversation_state_reports_an_offline_pc_instead_of_writing",
+      "case_id": "tests/test_web_backend_browser_parity.py::ControllerRoutingTests.test_saving_conversation_state_reports_an_offline_pc_instead_of_writing",
+      "status": "pending-real-action-replacement",
+      "reason": "The retained controller routing predicate ControllerRoutingTests.test_saving_conversation_state_reports_an_offline_pc_instead_of_writing is not covered by the local HTTP compression/persistence fixtures. An actual controller state transition and authority-bound request/relay proof is still needed; physical PC connectivity is not claimed."
+    },
+    {
+      "test": "tests/test_windows_hidden_process_contract.py",
+      "case": "WindowsHiddenProcessContractTests.test_taskkill_calls_cannot_open_a_console_window",
+      "case_id": "tests/test_windows_hidden_process_contract.py::WindowsHiddenProcessContractTests.test_taskkill_calls_cannot_open_a_console_window",
+      "status": "pending-test-tooling-impact-review",
+      "reason": "This remaining case validates AST scanner/test-only machinery. Runtime hidden-spawn proofs do not prove the scanner. Lead must inspect test-tooling dependants before retiring an unneeded sentinel."
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_every_product_spawn_passes_a_hidden_window_argument",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_every_product_spawn_passes_a_hidden_window_argument",
+      "status": "pending-test-tooling-impact-review",
+      "reason": "This remaining case validates AST scanner/test-only machinery. Runtime hidden-spawn proofs do not prove the scanner. Lead must inspect test-tooling dependants before retiring an unneeded sentinel."
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_visible_allowlist_has_no_stale_entries",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_visible_allowlist_has_no_stale_entries",
+      "status": "pending-test-tooling-impact-review",
+      "reason": "This remaining case validates AST scanner/test-only machinery. Runtime hidden-spawn proofs do not prove the scanner. Lead must inspect test-tooling dependants before retiring an unneeded sentinel."
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_scanner_flags_spawns_that_can_show_a_window",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_scanner_flags_spawns_that_can_show_a_window",
+      "status": "pending-test-tooling-impact-review",
+      "reason": "This remaining case validates AST scanner/test-only machinery. Runtime hidden-spawn proofs do not prove the scanner. Lead must inspect test-tooling dependants before retiring an unneeded sentinel."
+    },
+    {
+      "test": "tests/test_windows_hidden_subprocesses.py",
+      "case": "test_scanner_accepts_hidden_spawns",
+      "case_id": "tests/test_windows_hidden_subprocesses.py::test_scanner_accepts_hidden_spawns",
+      "status": "pending-test-tooling-impact-review",
+      "reason": "This remaining case validates AST scanner/test-only machinery. Runtime hidden-spawn proofs do not prove the scanner. Lead must inspect test-tooling dependants before retiring an unneeded sentinel."
+    },
+    {
+      "test": "tests/test_workspace_selection_behavior.py",
+      "case": "WorkspaceSelectionBehaviorTests.test_live_refresh_preserves_explicit_selection",
+      "case_id": "tests/test_workspace_selection_behavior.py::WorkspaceSelectionBehaviorTests.test_live_refresh_preserves_explicit_selection",
+      "status": "pending-absent-owner-impact-review",
+      "reason": "The imported desktop-ui/fluxioHelpers.js and desktop-ui directory are absent in the selected current worktree. No production caller was found. History/impact review is required before obsolete-test retirement."
+    },
+    {
+      "test": "tests/test_workspace_selection_behavior.py",
+      "case": "WorkspaceSelectionBehaviorTests.test_agent_launch_uses_exact_selected_workspace",
+      "case_id": "tests/test_workspace_selection_behavior.py::WorkspaceSelectionBehaviorTests.test_agent_launch_uses_exact_selected_workspace",
+      "status": "pending-absent-owner-impact-review",
+      "reason": "The imported desktop-ui/fluxioHelpers.js and desktop-ui directory are absent in the selected current worktree. No production caller was found. History/impact review is required before obsolete-test retirement."
+    },
+    {
+      "test": "tests/test_workspace_selection_behavior.py",
+      "case": "WorkspaceSelectionBehaviorTests.test_agent_launch_fails_closed_when_selected_workspace_is_missing",
+      "case_id": "tests/test_workspace_selection_behavior.py::WorkspaceSelectionBehaviorTests.test_agent_launch_fails_closed_when_selected_workspace_is_missing",
+      "status": "pending-absent-owner-impact-review",
+      "reason": "The imported desktop-ui/fluxioHelpers.js and desktop-ui directory are absent in the selected current worktree. No production caller was found. History/impact review is required before obsolete-test retirement."
+    }
+  ],
+  "portRoles": [48503]
+}

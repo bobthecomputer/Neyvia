@@ -1,0 +1,390 @@
+--- a/crates/obscura-js/src/ops.rs
++++ b/crates/obscura-js/src/ops.rs
+@@ -159,7 +159,11 @@
+     }
+ }
+ 
++pub type WebStorage = Arc<std::sync::Mutex<HashMap<String, Vec<(String, String)>>>>;
++
+ pub struct ObscuraState {
++    pub local_storage: WebStorage,
++    pub session_storage: WebStorage,
+     pub dom: Option<DomTree>,
+     pub url: String,
+     /// Initial about:blank documents retain their creator's base URL and origin.
+@@ -409,6 +413,8 @@
+ 
+ impl ObscuraState {
+     pub(crate) fn inherit_resources(&mut self, parent: &Self) {
++        self.local_storage = parent.local_storage.clone();
++        self.session_storage = parent.session_storage.clone();
+         self.cookie_jar = parent.cookie_jar.clone();
+         self.http_client = parent.http_client.clone();
+         self.callbacks = parent.callbacks.clone();
+@@ -430,6 +436,8 @@
+         #[cfg(feature = "render")]
+         let (render_resource_tx, render_resource_rx) = tokio::sync::mpsc::unbounded_channel();
+         ObscuraState {
++            local_storage: WebStorage::default(),
++            session_storage: WebStorage::default(),
+             dom: None,
+             url: "about:blank".to_string(),
+             about_base_url: None,
+@@ -6949,8 +6957,41 @@
+     connected
+ }
+ 
++
++/// Storage belongs to an origin and browser context, not its transient V8 realm.
++#[op2]
++#[string]
++fn op_web_storage(scope: &mut v8::PinScope, state: &mut OpState, #[string] kind: String,
++                  #[string] action: String, #[string] key: String,
++                  #[string] value: String) -> String {
++    let realm = realm_state(scope, state);
++    let realm = realm.borrow();
++    let origin = realm.inherited_origin.clone().or_else(|| request_origin(&realm.url))
++        .unwrap_or_else(|| "null".into());
++    if origin == "null" { return r#"{"error":"SecurityError"}"#.into(); }
++    let storage = if kind == "local" { &realm.local_storage } else { &realm.session_storage };
++    let mut storage = storage.lock().unwrap();
++    let entries = storage.entry(origin).or_default();
++    match action.as_str() {
++        "set" => {
++            let size: usize = entries.iter().filter(|(k,_)| k != &key)
++                .map(|(k,v)| (k.encode_utf16().count()+v.encode_utf16().count())*2).sum();
++            if size + (key.encode_utf16().count()+value.encode_utf16().count())*2 > 5*1024*1024 {
++                return r#"{"error":"QuotaExceededError"}"#.into();
++            }
++            if let Some((_,v)) = entries.iter_mut().find(|(k,_)| k == &key) { *v=value; }
++            else { entries.push((key,value)); }
++        },
++        "remove" => entries.retain(|(k,_)| k != &key),
++        "clear" => entries.clear(),
++        _ => (),
++    }
++    serde_json::to_string(entries).unwrap()
++}
++
+ pub fn build_extension() -> Extension {
+     let mut ops = vec![
++        op_web_storage(),
+         op_dom(),
+         op_script_mark_started(),
+         op_script_try_start(),
+--- a/crates/obscura-js/src/runtime.rs
++++ b/crates/obscura-js/src/runtime.rs
+@@ -1165,6 +1165,12 @@
+             .map_err(|_| "Import map is already borrowed".to_string())?
+             .merge(map);
+         Ok(())
++    }
++
++    pub fn set_web_storage(&self, local: crate::ops::WebStorage, session: crate::ops::WebStorage) {
++        let mut state = self.state.borrow_mut();
++        state.local_storage = local;
++        state.session_storage = session;
+     }
+ 
+     pub fn set_cookie_jar(&self, jar: std::sync::Arc<obscura_net::CookieJar>) {
+--- a/crates/obscura-js/js/bootstrap.js
++++ b/crates/obscura-js/js/bootstrap.js
+@@ -56,7 +56,6 @@
+     '_commonFonts', '_isXMLDocument', '_isValidPITarget', '_isHTMLEl',
+     '_nodeList', '_rngNodeLength', '_rngNodeIndex', '_rngSame', '_rngRoot',
+     '_rngAncestors', '_rngOrder', '_rngCmp', '_rngCheckOffset',
+-    '_idbRequest', '_idbObjectStore', '_idbTransaction', '_idbDatabase',
+     '_makeListenerBox',
+     // WebIDL interfaces. A real browser exposes these on the global as
+     // enumerable:false; here they were assigned with `globalThis.X = X`, which
+@@ -12185,17 +12184,23 @@
+ // backing map. Plain prototype methods alone could not intercept direct
+ // property access, so `localStorage.foo = x` never updated length before.
+ globalThis.Storage = function Storage() {};
+-Storage.prototype.getItem = function(k) { k = String(k); return Object.prototype.hasOwnProperty.call(this._data, k) ? this._data[k] : null; };
+-Storage.prototype.setItem = function(k, v) { this._data[String(k)] = String(v); };
+-Storage.prototype.removeItem = function(k) { delete this._data[String(k)]; };
+-Storage.prototype.clear = function() { const d = this._data; for (const k in d) delete d[k]; };
+-Storage.prototype.key = function(i) { const ks = Object.keys(this._data); i = i >>> 0; return i < ks.length ? ks[i] : null; };
++function _storageCall(store, action, key = '', value = '') {
++  const result = JSON.parse(__obscuraCore.ops.op_web_storage(store._kind, action, String(key), String(value)));
++  if (result.error) throw new DOMException('Browser storage is unavailable: ' + result.error, result.error);
++  return result;
++}
++Storage.prototype.getItem = function(k) { const row = _storageCall(this, 'get').find(([key]) => key === String(k)); return row ? row[1] : null; };
++Storage.prototype.setItem = function(k, v) { _storageCall(this, 'set', k, v); };
++Storage.prototype.removeItem = function(k) { _storageCall(this, 'remove', k); };
++Storage.prototype.clear = function() { _storageCall(this, 'clear'); };
++Storage.prototype.key = function(i) { const rows = _storageCall(this, 'get'); return rows[i >>> 0]?.[0] ?? null; };
+ Object.defineProperty(Storage.prototype, 'length', { get: function() { return Object.keys(this._data).length; }, configurable: true });
+ 
+-const _mkStore = () => {
++const _mkStore = kind => {
+   const target = Object.create(Storage.prototype);
+-  Object.defineProperty(target, '_data', { value: Object.create(null), writable: true, enumerable: false, configurable: true });
+-  const isReal = (p) => p === '_data' || p === 'constructor' || (p in Storage.prototype);
++  Object.defineProperty(target, '_kind', { value: kind, configurable: true });
++  Object.defineProperty(target, '_data', { get: () => Object.fromEntries(_storageCall(target, 'get')), configurable: true });
++  const isReal = (p) => p === '_kind' || p === '_data' || p === 'constructor' || (p in Storage.prototype);
+   return new Proxy(target, {
+     get(t, p, recv) { if (typeof p === 'symbol' || isReal(p)) return Reflect.get(t, p, recv); const v = t.getItem(p); return v === null ? undefined : v; },
+     set(t, p, v, recv) { if (typeof p === 'symbol' || isReal(p)) return Reflect.set(t, p, v, recv); t.setItem(p, v); return true; },
+@@ -12209,8 +12214,8 @@
+     },
+   });
+ };
+-globalThis.localStorage = _mkStore();
+-globalThis.sessionStorage = _mkStore();
++globalThis.localStorage = _mkStore('local');
++globalThis.sessionStorage = _mkStore('session');
+ 
+ globalThis.btoa = globalThis.btoa || ((s) => { s = String(s); const b = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) { const cp = s.charCodeAt(i); if (cp > 0xFF) throw new DOMException("The string to be encoded contains characters outside of the Latin1 range.", "InvalidCharacterError"); b[i] = cp; } const c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"; let r=""; for(let i=0;i<b.length;i+=3){const a=b[i],bb=b[i+1]??0,cc=b[i+2]??0; r+=c[a>>2]+c[((a&3)<<4)|(bb>>4)]+(i+1<b.length?c[((bb&15)<<2)|(cc>>6)]:"=")+(i+2<b.length?c[cc&63]:"=");} return r; });
+ globalThis.atob = globalThis.atob || ((s) => {
+@@ -15239,127 +15244,8 @@
+ globalThis.RTCSessionDescription = class RTCSessionDescription { constructor(d){this.type=d?.type;this.sdp=d?.sdp;} };
+ globalThis.RTCIceCandidate = class RTCIceCandidate { constructor(d){this.candidate=d?.candidate||'';} };
+ 
+-// Minimal but spec-shape-correct IndexedDB shim. We don't persist anything,
+-// but authentication libraries (Firebase, Supabase, dexie) hang forever on
+-// the first `get` because their request's `onsuccess` is never called. Fire
+-// `onsuccess` asynchronously with `null` so reads complete-but-empty, which
+-// most libraries treat as a cache miss and fall back to the network.
+-function _idbRequest(produceResult) {
+-  const req = {
+-    result: undefined,
+-    error: null,
+-    source: null,
+-    transaction: null,
+-    readyState: 'pending',
+-    onsuccess: null,
+-    onerror: null,
+-    addEventListener(type, fn) { req['on' + type] = fn; },
+-    removeEventListener(type, fn) { if (req['on' + type] === fn) req['on' + type] = null; },
+-  };
+-  Promise.resolve().then(() => {
+-    try {
+-      req.result = produceResult();
+-      req.readyState = 'done';
+-      if (typeof req.onsuccess === 'function') {
+-        try { req.onsuccess({ target: req, type: 'success' }); } catch (e) {}
+-      }
+-    } catch (e) {
+-      req.error = e; req.readyState = 'done';
+-      if (typeof req.onerror === 'function') {
+-        try { req.onerror({ target: req, type: 'error' }); } catch (e2) {}
+-      }
+-    }
+-  });
+-  return req;
+-}
+-
+-function _idbObjectStore(name) {
+-  const data = new Map();
+-  return {
+-    name,
+-    keyPath: null,
+-    autoIncrement: false,
+-    indexNames: { contains() { return false; }, length: 0, item() { return null; } },
+-    transaction: null,
+-    add(value, key) { const k = key ?? Date.now(); data.set(k, value); return _idbRequest(() => k); },
+-    put(value, key) { const k = key ?? Date.now(); data.set(k, value); return _idbRequest(() => k); },
+-    get(key) { return _idbRequest(() => data.get(key) ?? undefined); },
+-    getAll() { return _idbRequest(() => Array.from(data.values())); },
+-    getAllKeys() { return _idbRequest(() => Array.from(data.keys())); },
+-    getKey(key) { return _idbRequest(() => (data.has(key) ? key : undefined)); },
+-    delete(key) { return _idbRequest(() => { data.delete(key); return undefined; }); },
+-    clear() { return _idbRequest(() => { data.clear(); return undefined; }); },
+-    count() { return _idbRequest(() => data.size); },
+-    openCursor() { return _idbRequest(() => null); },
+-    openKeyCursor() { return _idbRequest(() => null); },
+-    createIndex() { return { name: '', keyPath: '', unique: false, multiEntry: false, get() { return _idbRequest(() => undefined); } }; },
+-    index() { return { get() { return _idbRequest(() => undefined); }, getAll() { return _idbRequest(() => []); }, count() { return _idbRequest(() => 0); }, openCursor() { return _idbRequest(() => null); } }; },
+-    deleteIndex() {},
+-  };
+-}
+-
+-function _idbTransaction(storeNames) {
+-  const stores = new Map();
+-  const names = Array.isArray(storeNames) ? storeNames : [storeNames];
+-  for (const n of names) stores.set(String(n), _idbObjectStore(String(n)));
+-  const tx = {
+-    db: null,
+-    mode: 'readonly',
+-    objectStoreNames: { contains: (n) => stores.has(String(n)), length: stores.size },
+-    onabort: null, oncomplete: null, onerror: null,
+-    error: null,
+-    objectStore(name) {
+-      let s = stores.get(name);
+-      if (!s) { s = _idbObjectStore(name); stores.set(name, s); }
+-      s.transaction = tx;
+-      return s;
+-    },
+-    abort() {},
+-    commit() {},
+-    addEventListener(type, fn) { tx['on' + type] = fn; },
+-    removeEventListener(type, fn) { if (tx['on' + type] === fn) tx['on' + type] = null; },
+-  };
+-  Promise.resolve().then(() => {
+-    if (typeof tx.oncomplete === 'function') {
+-      try { tx.oncomplete({ target: tx, type: 'complete' }); } catch (e) {}
+-    }
+-  });
+-  return tx;
+-}
+-
+-function _idbDatabase(name, version) {
+-  return {
+-    name,
+-    version,
+-    objectStoreNames: { contains() { return false; }, length: 0, item() { return null; } },
+-    createObjectStore(n) { return _idbObjectStore(n); },
+-    deleteObjectStore() {},
+-    transaction(storeNames, mode) {
+-      const tx = _idbTransaction(storeNames);
+-      tx.mode = mode || 'readonly';
+-      return tx;
+-    },
+-    close() {},
+-    onversionchange: null, onabort: null, onerror: null, onclose: null,
+-    addEventListener() {}, removeEventListener() {},
+-  };
+-}
+-
+-globalThis.indexedDB = {
+-  open(name, version) {
+-    return _idbRequest(() => _idbDatabase(name, version || 1));
+-  },
+-  deleteDatabase(_name) { return _idbRequest(() => undefined); },
+-  databases() { return Promise.resolve([]); },
+-  cmp(a, b) { return a < b ? -1 : a > b ? 1 : 0; },
+-};
+-globalThis.IDBKeyRange = {
+-  only(v) { return { lower: v, upper: v, lowerOpen: false, upperOpen: false, includes(x) { return x === v; } }; },
+-  lowerBound(v, open) { return { lower: v, upper: null, lowerOpen: !!open, upperOpen: false, includes(x) { return open ? x > v : x >= v; } }; },
+-  upperBound(v, open) { return { lower: null, upper: v, lowerOpen: false, upperOpen: !!open, includes(x) { return open ? x < v : x <= v; } }; },
+-  bound(l, u, lo, uo) { return { lower: l, upper: u, lowerOpen: !!lo, upperOpen: !!uo, includes(x) { return (lo ? x > l : x >= l) && (uo ? x < u : x <= u); } }; },
+-};
+-
++// IndexedDB is unsupported: do not claim successful writes or incomplete transactions.
++// Applications can detect its absence and report their storage limitation.
+ // Do not advertise CacheStorage until it can retain responses. A successful
+ // no-op cache selects broken persistence paths instead of normal fetch fallbacks.
+ 
+--- a/crates/obscura-browser/src/context.rs
++++ b/crates/obscura-browser/src/context.rs
+@@ -5,6 +5,7 @@
+ 
+ pub struct BrowserContext {
+     pub id: String,
++    pub local_storage: obscura_js::ops::WebStorage,
+     pub cookie_jar: Arc<CookieJar>,
+     pub http_client: Arc<ObscuraHttpClient>,
+     pub user_agent: String,
+@@ -121,6 +122,7 @@
+         let http_client = Arc::new(client);
+         BrowserContext {
+             id,
++            local_storage: Default::default(),
+             cookie_jar,
+             http_client,
+             user_agent: resolved_ua,
+@@ -178,6 +180,7 @@
+ 
+         BrowserContext {
+             id,
++            local_storage: Default::default(),
+             cookie_jar,
+             http_client: Arc::new(client),
+             user_agent: self.user_agent.clone(),
+--- a/crates/obscura-browser/src/page.rs
++++ b/crates/obscura-browser/src/page.rs
+@@ -317,6 +317,7 @@
+     // contract. Includes `Runtime.addBinding` shims so puppeteer's
+     // `exposeFunction` bindings exist before inline `<script>` tags execute.
+     preload_scripts: Vec<String>,
++    session_storage: obscura_js::ops::WebStorage,
+     /// Whether at least one attached CDP session enabled the Runtime domain.
+     /// Page-owned so the subscription survives replacement of the JS runtime
+     /// during navigation.
+@@ -1132,6 +1133,7 @@
+             blocked_url_patterns: Vec::new(),
+             intercept_tx: None,
+             preload_scripts: Vec::new(),
++            session_storage: Default::default(),
+             runtime_events_enabled: std::cell::Cell::new(false),
+             console_messages_enabled: std::cell::Cell::new(false),
+             pending_frame_work: std::collections::VecDeque::new(),
+@@ -1237,7 +1239,18 @@
+             // Discover author scripts before preload code can mutate the frame
+             // DOM, preserving the existing preparation order.
+             let urls = match self.js.as_mut() {
+-                Some(js) => realm.external_script_urls(js),
++                Some(js) => {
++                    let mut urls = realm.evaluate(js,
++                        "Array.from(document.querySelectorAll('link[rel~=\"stylesheet\"]')).map(link => link.getAttribute('href'))")
++                        .ok().and_then(|value| value.as_array().cloned()).unwrap_or_default()
++                        .into_iter().filter_map(|value| value.as_str().map(str::to_owned))
++                        .filter_map(|href| Url::parse(&frame.url).ok()?.join(&href).ok().map(|url| url.to_string()))
++                        .filter(|url| Url::parse(url).ok().zip(Url::parse(&frame.url).ok())
++                            .is_some_and(|(sheet, document)| sheet.origin() == document.origin()))
++                        .collect::<Vec<_>>();
++                    urls.extend(realm.external_script_urls(js));
++                    urls
++                },
+                 None => Vec::new(),
+             };
+ 
+@@ -1338,6 +1351,25 @@
+             return true;
+         };
+         if let Some(js) = self.js.as_mut() {
++            // Fetched frames previously ran scripts but never installed their
++            // linked author CSS. Materialize same-origin sheets before scripts,
++            // preserving source order and the stylesheet-relative asset base.
++            // Cross-origin CSS is not exposed as readable inline author text.
++            let links = self.frames[index].evaluate(js,
++                "Array.from(document.querySelectorAll('link[rel~=\"stylesheet\"]')).map(link => link.getAttribute('href'))")
++                .ok().and_then(|value| value.as_array().cloned()).unwrap_or_default();
++            for raw_href in links.into_iter().filter_map(|value| value.as_str().map(str::to_owned)) {
++                let Some(base) = Url::parse(&frame_url).ok().and_then(|url| url.join(&raw_href).ok()) else { continue };
++                let href = base.to_string();
++                let Some(css) = sources.get(&href) else { continue };
++                if !Url::parse(&frame_url).is_ok_and(|document| document.origin() == base.origin()) { continue; }
++                let css = rebase_css_urls(css, &base);
++                let code = format!("(() => {{ for (const link of document.querySelectorAll('link[rel~=\"stylesheet\"]')) {{ if (link.getAttribute('href') === {}) {{ const style = document.createElement('style'); style.textContent = {}; link.parentNode.insertBefore(style, link.nextSibling); }} }} }})()",
++                    serde_json::to_string(&raw_href).unwrap(), serde_json::to_string(&css).unwrap());
++                if let Err(error) = self.frames[index].execute_script(js, &code) {
++                    tracing::debug!("frame {} stylesheet failed: {error}", frame_url);
++                }
++            }
+             for problem in self.frames[index]
+                 .run_document_scripts(js, |url| sources.get(url).cloned())
+             {
+@@ -1833,6 +1865,7 @@
+             self.screen_metrics_emulated,
+         );
+ 
++        rt.set_web_storage(self.context.local_storage.clone(), self.session_storage.clone());
+         rt.set_cookie_jar(self.context.cookie_jar.clone());
+         rt.set_http_client(self.http_client.clone());
+         rt.set_callbacks(self.callbacks.clone());
+--- a/crates/obscura-cdp/src/domains/dom.rs
++++ b/crates/obscura-cdp/src/domains/dom.rs
+@@ -156,9 +156,16 @@
+                 return Err("nodeId or objectId required".to_string());
+             };
+ 
+-            let node = page.with_dom(|dom| {
++            let mut node = page.with_dom(|dom| {
+                 serialize_node(dom, NodeId::new(node_id as u32), depth as u32, 0)
+             }).unwrap_or(json!(null));
++            if node["nodeName"] == "IFRAME" {
++                let frame = page.evaluate(&format!(
++                    "Array.from(document.querySelectorAll('iframe')).find(e => e._nid === {})?._frameId || 0", node_id));
++                if let Some(id) = frame.as_f64().filter(|id| *id > 0.0 && *id <= u32::MAX as f64) {
++                    node["frameId"] = json!(format!("{}-frame-{}", page.frame_id, id as u32));
++                }
++            }
+             Ok(json!({ "node": node }))
+         }
+         "resolveNode" => {

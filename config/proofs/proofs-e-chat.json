@@ -1,0 +1,3138 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "proofs-e-chat",
+  "runner": "scripts/proofs-e-chat.mjs",
+  "modules": {
+    "transcriptVisibility": "web/src/neyvia/transcriptVisibility.js",
+    "neyviaChatRecovery": "web/src/neyvia/neyviaChatRecovery.js",
+    "neyviaRunActivity": "web/src/neyvia/neyviaRunActivity.js",
+    "neyviaChatStream": "web/src/neyvia/neyviaChatStream.js"
+  },
+  "actions": [
+    {
+      "module": "neyviaChatRecovery",
+      "function": "chatRecoveryDecision",
+      "args": [
+        {
+          "status": "interrupted",
+          "message": "Neyvia closed while this response was running, so it could not finish."
+        },
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "now": 1790354400000
+        }
+      ],
+      "contract": "recovery.decision",
+      "goals": [
+        {
+          "path": "action",
+          "value": "settle"
+        },
+        {
+          "path": "patch.title",
+          "match": "api.py"
+        },
+        {
+          "path": "patch.detail",
+          "match": "arrived before it stopped"
+        },
+        {
+          "path": "patch.toolCalls.0.status",
+          "value": "completed"
+        },
+        {
+          "path": "patch.toolCalls.1.status",
+          "value": "interrupted"
+        }
+      ],
+      "corrupt": {
+        "action": "watch"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "interruptedChatTurnPatch",
+      "args": [
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "Thinking...",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        }
+      ],
+      "contract": "recovery.interrupted",
+      "goals": [
+        {
+          "path": "title",
+          "value": "This response was interrupted before a reply arrived."
+        }
+      ],
+      "corrupt": {
+        "title": "Thinking...",
+        "pending": true
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "interruptedChatTurnPatch",
+      "args": [
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        }
+      ],
+      "contract": "recovery.interrupted",
+      "saveAs": "interrupted",
+      "goals": [
+        {
+          "path": "title",
+          "value": "The UI calls /api/tools/status. Confirm which routes api.py serves."
+        }
+      ],
+      "corrupt": {
+        "title": "Lost",
+        "pending": false,
+        "source": "chat-interrupted"
+      }
+    },
+    {
+      "module": "transcriptVisibility",
+      "function": "describeHiddenTurn",
+      "args": [
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": false,
+          "source": "chat-interrupted",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        }
+      ],
+      "contract": "chat.stopped-visibility",
+      "goals": [
+        {
+          "value": null
+        }
+      ],
+      "corrupt": "hidden"
+    },
+    {
+      "module": "transcriptVisibility",
+      "function": "dialogueBody",
+      "args": [
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": false,
+          "source": "chat-interrupted",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        }
+      ],
+      "contract": "chat.stopped-body",
+      "goals": [
+        {
+          "value": "The UI calls /api/tools/status. Confirm which routes api.py serves."
+        }
+      ]
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "chatRecoveryDecision",
+      "args": [
+        {
+          "status": "running",
+          "lastActivityAt": 1790344925.25
+        },
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "now": 1790354400000
+        }
+      ],
+      "contract": "recovery.decision",
+      "goals": [
+        {
+          "value": {
+            "action": "watch",
+            "lastActivityAt": 1790344925250
+          }
+        }
+      ],
+      "corrupt": {
+        "action": "watch",
+        "lastActivityAt": 0
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "chatRecoveryDecision",
+      "args": [
+        {
+          "status": "finished",
+          "result": {
+            "reply": "Here is the finished UI.",
+            "status": "completed",
+            "runtime": "neyvia-agent",
+            "compartment": {
+              "turnReceipt": {
+                "status": "completed"
+              }
+            }
+          }
+        },
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "now": 1790354400000
+        }
+      ],
+      "contract": "recovery.decision",
+      "goals": [
+        {
+          "path": "patch.title",
+          "value": "Here is the finished UI."
+        },
+        {
+          "path": "patch.source",
+          "value": "backend-runtime-reply"
+        },
+        {
+          "path": "patch.rawTurnReceipt",
+          "value": {
+            "status": "completed"
+          }
+        }
+      ],
+      "corrupt": {
+        "action": "wait"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "recordedResultChatTurnPatch",
+      "args": [
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "status": "cancelled",
+          "cancelledByUser": true
+        }
+      ],
+      "contract": "recovery.recorded",
+      "goals": [
+        {
+          "path": "source",
+          "value": "chat-cancelled"
+        },
+        {
+          "path": "pending",
+          "value": false
+        }
+      ],
+      "corrupt": {
+        "source": "backend-runtime-reply",
+        "pending": false
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "recordedResultChatTurnPatch",
+      "args": [
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "ok": false,
+          "status": "failed",
+          "error": "Provider refused the request."
+        }
+      ],
+      "contract": "recovery.recorded",
+      "goals": [
+        {
+          "path": "source",
+          "value": "backend-runtime-error"
+        },
+        {
+          "path": "detail",
+          "value": "Provider refused the request."
+        },
+        {
+          "path": "tone",
+          "value": "bad"
+        }
+      ],
+      "corrupt": {
+        "source": "backend-runtime-reply",
+        "pending": false
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "chatRecoveryDecision",
+      "args": [
+        {
+          "status": "finished",
+          "finishedAt": 1790354398
+        },
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "now": 1790354400000
+        }
+      ],
+      "contract": "recovery.decision",
+      "goals": [
+        {
+          "path": "action",
+          "value": "wait"
+        }
+      ],
+      "corrupt": {
+        "action": "settle"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "chatRecoveryDecision",
+      "args": [
+        {
+          "status": "finished",
+          "finishedAt": 1790354340
+        },
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "now": 1790354400000
+        }
+      ],
+      "contract": "recovery.decision",
+      "goals": [
+        {
+          "path": "action",
+          "value": "settle"
+        }
+      ],
+      "corrupt": {
+        "action": "wait"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "chatRecoveryDecision",
+      "args": [
+        {
+          "status": "unknown"
+        },
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T16:39:55.000Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "now": 1790354400000
+        }
+      ],
+      "contract": "recovery.decision",
+      "goals": [
+        {
+          "path": "action",
+          "value": "wait"
+        }
+      ],
+      "corrupt": {
+        "action": "settle"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "chatRecoveryDecision",
+      "args": [
+        {
+          "status": "unknown"
+        },
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T16:37:59.000Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "now": 1790354400000
+        }
+      ],
+      "contract": "recovery.decision",
+      "goals": [
+        {
+          "path": "action",
+          "value": "settle"
+        }
+      ],
+      "corrupt": {
+        "action": "wait"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "chatRecoveryDecision",
+      "args": [
+        null,
+        {
+          "id": "chat-turn-1",
+          "role": "assistant",
+          "pending": true,
+          "source": "runtime-stream",
+          "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+          "createdAt": "2026-09-25T13:57:47.555Z",
+          "toolCalls": [
+            {
+              "id": "a",
+              "tool": "terminal.exec",
+              "status": "completed"
+            },
+            {
+              "id": "b",
+              "tool": "workspace.read",
+              "status": "started"
+            }
+          ]
+        },
+        {
+          "now": 1790354400000
+        }
+      ],
+      "contract": "recovery.decision",
+      "goals": [
+        {
+          "path": "action",
+          "value": "wait"
+        }
+      ],
+      "corrupt": {
+        "action": "settle"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "unownedPendingChatTurns",
+      "args": [
+        {
+          "a": [
+            {
+              "id": "u1",
+              "role": "user",
+              "pending": false,
+              "createdAt": "2026-09-25T10:00:00Z"
+            },
+            {
+              "id": "old",
+              "role": "assistant",
+              "pending": true,
+              "createdAt": "2026-09-24T10:00:00Z"
+            },
+            {
+              "id": "done",
+              "role": "assistant",
+              "pending": false
+            }
+          ],
+          "b": [
+            {
+              "id": "mine",
+              "role": "assistant",
+              "pending": true,
+              "createdAt": "2026-09-25T12:00:00Z"
+            },
+            {
+              "id": "new",
+              "role": "assistant",
+              "pending": true,
+              "createdAt": "2026-09-25T11:00:00Z"
+            }
+          ]
+        },
+        {
+          "$set": [
+            "mine"
+          ]
+        }
+      ],
+      "contract": "recovery.unowned",
+      "goals": [
+        {
+          "path": "0.turn.id",
+          "value": "new"
+        },
+        {
+          "path": "1.turn.id",
+          "value": "old"
+        },
+        {
+          "path": "0.sessionId",
+          "value": "b"
+        }
+      ],
+      "corrupt": []
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "quietResponseLabel",
+      "args": [
+        "2026-09-25T16:39:30.000Z",
+        1790354400000
+      ],
+      "contract": "recovery.quiet",
+      "goals": [
+        {
+          "value": ""
+        }
+      ]
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "quietResponseLabel",
+      "args": [
+        "2026-09-25T16:38:20.000Z",
+        1790354400000
+      ],
+      "contract": "recovery.quiet",
+      "goals": [
+        {
+          "value": "No new output for over a minute"
+        }
+      ]
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "quietResponseLabel",
+      "args": [
+        "2026-09-25T16:20:00.000Z",
+        1790354400000
+      ],
+      "contract": "recovery.quiet",
+      "goals": [
+        {
+          "value": "No new output for 20 min"
+        }
+      ]
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "quietResponseLabel",
+      "args": [
+        "",
+        1790354400000
+      ],
+      "contract": "recovery.quiet",
+      "goals": [
+        {
+          "value": ""
+        }
+      ]
+    },
+    {
+      "module": "neyviaChatStream",
+      "function": "createNeyviaChatStreamState",
+      "args": [],
+      "saveAs": "stream"
+    },
+    {
+      "module": "neyviaChatStream",
+      "function": "applyNeyviaChatStreamEvents",
+      "args": [
+        {
+          "$ref": "stream"
+        },
+        [
+          {
+            "kind": "runtime.tool",
+            "data": {
+              "tool": "terminal.exec",
+              "callId": "x1",
+              "toolStatus": "started",
+              "input": "{\"command\":\"dir\"}"
+            }
+          },
+          {
+            "kind": "runtime.answer_delta",
+            "message": "Checked the folder, now writing"
+          }
+        ]
+      ],
+      "saveAs": "stream"
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "mergeStreamedTrace",
+      "args": [
+        {
+          "id": "t",
+          "title": "Thinking...",
+          "source": "runtime-pending",
+          "toolCalls": []
+        },
+        {
+          "$ref": "stream"
+        }
+      ],
+      "contract": "recovery.merge",
+      "saveAs": "merged",
+      "goals": [
+        {
+          "path": "title",
+          "value": "Checked the folder, now writing"
+        },
+        {
+          "path": "source",
+          "value": "runtime-stream"
+        },
+        {
+          "path": "toolCalls.length",
+          "value": 1
+        }
+      ],
+      "corrupt": {
+        "title": "Lost",
+        "source": "runtime-pending"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "interruptedChatTurnPatch",
+      "args": [
+        {
+          "$ref": "merged"
+        }
+      ],
+      "contract": "recovery.interrupted",
+      "goals": [
+        {
+          "path": "title",
+          "value": "Checked the folder, now writing"
+        },
+        {
+          "path": "toolCalls.0.status",
+          "value": "interrupted"
+        }
+      ],
+      "corrupt": {
+        "pending": true,
+        "title": "Lost"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "mergeStreamedTrace",
+      "args": [
+        {
+          "title": "A much longer saved partial answer",
+          "source": "runtime-stream"
+        },
+        {
+          "answer": "A much",
+          "toolCalls": []
+        }
+      ],
+      "contract": "recovery.merge",
+      "goals": [
+        {
+          "path": "title",
+          "value": "A much longer saved partial answer"
+        }
+      ],
+      "corrupt": {
+        "title": "A much"
+      }
+    },
+    {
+      "module": "neyviaChatRecovery",
+      "function": "mergeStreamedTrace",
+      "args": [
+        {
+          "title": "kept"
+        },
+        null
+      ],
+      "contract": "recovery.merge",
+      "goals": [
+        {
+          "value": {
+            "title": "kept"
+          }
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "safeReceiptHref",
+      "args": [
+        "javascript:alert(1)"
+      ],
+      "contract": "activity.href",
+      "goals": [
+        {
+          "value": ""
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "safeReceiptHref",
+      "args": [
+        "data:text/html,test"
+      ],
+      "contract": "activity.href",
+      "goals": [
+        {
+          "value": ""
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "safeReceiptHref",
+      "args": [
+        "file:///C:/secret"
+      ],
+      "contract": "activity.href",
+      "goals": [
+        {
+          "value": ""
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "safeReceiptHref",
+      "args": [
+        "//external.test"
+      ],
+      "contract": "activity.href",
+      "goals": [
+        {
+          "value": ""
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "safeReceiptHref",
+      "args": [
+        "/\\external.test"
+      ],
+      "contract": "activity.href",
+      "goals": [
+        {
+          "value": ""
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "safeReceiptHref",
+      "args": [
+        "/\npath"
+      ],
+      "contract": "activity.href",
+      "goals": [
+        {
+          "value": ""
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "safeReceiptHref",
+      "args": [
+        "/api/artifacts/proof"
+      ],
+      "contract": "activity.href",
+      "goals": [
+        {
+          "value": "/api/artifacts/proof"
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "safeReceiptHref",
+      "args": [
+        "https://example.org/proof"
+      ],
+      "contract": "activity.href",
+      "goals": [
+        {
+          "value": "https://example.org/proof"
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "runDurationLabel",
+      "args": [
+        null
+      ],
+      "contract": "activity.duration",
+      "goals": [
+        {
+          "value": "Not recorded"
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "runDurationLabel",
+      "args": [
+        0
+      ],
+      "contract": "activity.duration",
+      "goals": [
+        {
+          "value": "0ms"
+        }
+      ]
+    },
+    {
+      "module": "neyviaRunActivity",
+      "function": "runDurationLabel",
+      "args": [
+        181000
+      ],
+      "contract": "activity.duration",
+      "goals": [
+        {
+          "value": "3m 1s"
+        }
+      ]
+    }
+  ],
+  "contracts": [
+    {
+      "id": "recovery.interrupted",
+      "phase": "post",
+      "claim": "recovery.interrupted",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "neyviaChatRecovery"
+      ]
+    },
+    {
+      "id": "recovery.decision",
+      "phase": "post",
+      "claim": "recovery.decision",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "neyviaChatRecovery"
+      ]
+    },
+    {
+      "id": "recovery.recorded",
+      "phase": "post",
+      "claim": "recovery.recorded",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "neyviaChatRecovery"
+      ]
+    },
+    {
+      "id": "recovery.unowned",
+      "phase": "post",
+      "claim": "recovery.unowned",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "neyviaChatRecovery"
+      ]
+    },
+    {
+      "id": "recovery.quiet",
+      "phase": "post",
+      "claim": "recovery.quiet",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "neyviaChatRecovery"
+      ]
+    },
+    {
+      "id": "recovery.merge",
+      "phase": "post",
+      "claim": "recovery.merge",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "neyviaChatRecovery"
+      ]
+    },
+    {
+      "id": "activity.href",
+      "phase": "post",
+      "claim": "activity.href",
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:safeReceiptHref -> checkedFrontendAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "neyviaRunActivity"
+      ]
+    },
+    {
+      "id": "activity.duration",
+      "phase": "post",
+      "claim": "activity.duration",
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:runDurationLabel -> checkedFrontendAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "neyviaRunActivity"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.streamState",
+      "phase": "post",
+      "claim": "New streams begin empty without fabricated reply or activity",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:createNeyviaChatStreamState",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.normalizedCalls",
+      "phase": "post",
+      "claim": "Tool projections preserve actual ids,input,output and errors; failure results override legacy completed status",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:normalizeNeyviaChatStreamToolCalls",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.trace",
+      "phase": "post",
+      "claim": "Live and receipt-only projections preserve reasoning summaries and normalized recorded tool evidence",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:neyviaChatTraceFields",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.streamTransition",
+      "phase": "post",
+      "claim": "Every real streamed event updates its actual answer identity,Unicode text,summary or id-merged tool call preserving earlier evidence",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:applyNeyviaChatStreamEvents -> checkStreamTransition",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.pollDelivery",
+      "phase": "post",
+      "claim": "Only an active poll delivers exact snapshot events with its observed cursor; stop ignores late responses",
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:startNeyviaChatStreamPoll -> checkPollDelivery",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.phase",
+      "phase": "post",
+      "claim": "Recorded failure and cancelled or uncertain states take precedence over pending/success hints",
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolVisuals.js:inferNeyviaToolPhase",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.chip",
+      "phase": "post",
+      "claim": "Recorded outcomes survive chip-label guesses; labels alone never turn tool results into success",
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolVisuals.js:resolveNeyviaMessageChip",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.activity",
+      "phase": "post",
+      "claim": "Activity cards retain real command/input/output and category, readable app title,summary,phase and distinct indexed identity",
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:presentRunActivity",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.visibleActivity",
+      "phase": "post",
+      "claim": "Answer/progress deltas stay out of tool cards and one item-id lifecycle preserves earlier command and completion output",
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:visibleRunActivityEvents",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.surfaces",
+      "phase": "post",
+      "claim": "Every canonical workspace surface is addressable and installed studio/workflow destinations remain available",
+      "checkedAt": [
+        "web/src/neyvia/workspaceModel.js:WORKSPACE_SURFACE_IDS",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.presentation",
+      "phase": "post",
+      "claim": "Recorded commands,reads,created files and edits show authentic shell,cwd,exit,error,output and bounded diffs with correct line numbers",
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.commandSummary",
+      "phase": "post",
+      "claim": "Collapsed command summaries preserve signed Windows exit code and actual stdout/stderr line counts",
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:commandOutputSummary",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.stringField",
+      "phase": "post",
+      "claim": "Lenient recorded field parsing decodes escapes and exposes truncation while dropping incomplete escapes",
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:readJsonStringField",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.utf16",
+      "phase": "post",
+      "claim": "Repair genuine NUL-heavy UTF16 misreads while preserving ordinary output",
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:repairUtf16Text",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.diff",
+      "phase": "post",
+      "claim": "Unified diff lines retain add/remove/context types and independently advancing old/new hunk line numbers",
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:parseUnifiedDiff",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.family",
+      "phase": "post",
+      "claim": "Gateway and harness aliases resolve the actual command/edit/write/read/search/fetch family",
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:toolFamily",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.safe-display",
+      "phase": "post",
+      "claim": "Activity display redacts secrets and inline media without mutating the actual transport; readable ordinary output survives",
+      "checkedAt": [
+        "grant_agent.chat_stream.safe_tool_display -> grant_agent.proofs_e_chat.check_tool_display",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.chat.desktop-stream",
+      "phase": "post",
+      "claim": "Flat and wrapped desktop polls return only complete UTF8 rows with byte cursors and refuse unsafe turn ids",
+      "checkedAt": [
+        "grant_agent.chat_stream.read_chat_stream -> grant_agent.proofs_e_chat.check_read_snapshot",
+        "scripts/proofs-e-chat.mjs:runProofsEChat"
+      ],
+      "impact": [
+        "Chat and run activity consumers"
+      ]
+    },
+    {
+      "id": "chat.stopped-visibility",
+      "phase": "post",
+      "claim": "Stopped dialogue preserves arrived words, stays visible, and never claims a provider reply.",
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.chat.stopped-visibility",
+        "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.chat.stopped-visibility",
+        "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.chat.stopped-visibility"
+      ],
+      "impact": [
+        "transcriptVisibility"
+      ]
+    },
+    {
+      "id": "chat.stopped-body",
+      "phase": "post",
+      "claim": "Stopped dialogue preserves arrived words, stays visible, and never claims a provider reply.",
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.chat.stopped-body",
+        "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.chat.stopped-body",
+        "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.chat.stopped-body"
+      ],
+      "impact": [
+        "transcriptVisibility"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "recovery.crash-result-grace-and-replay",
+      "actions": [
+        {
+          "module": "neyviaChatRecovery",
+          "function": "chatRecoveryDecision",
+          "args": [
+            {
+              "status": "interrupted",
+              "message": "Neyvia closed while this response was running, so it could not finish."
+            },
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "now": 1790354400000
+            }
+          ],
+          "contract": "recovery.decision",
+          "goals": [
+            {
+              "path": "action",
+              "value": "settle"
+            },
+            {
+              "path": "patch.title",
+              "match": "api.py"
+            },
+            {
+              "path": "patch.detail",
+              "match": "arrived before it stopped"
+            },
+            {
+              "path": "patch.toolCalls.0.status",
+              "value": "completed"
+            },
+            {
+              "path": "patch.toolCalls.1.status",
+              "value": "interrupted"
+            }
+          ],
+          "corrupt": {
+            "action": "watch"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "interruptedChatTurnPatch",
+          "args": [
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "Thinking...",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            }
+          ],
+          "contract": "recovery.interrupted",
+          "goals": [
+            {
+              "path": "title",
+              "value": "This response was interrupted before a reply arrived."
+            }
+          ],
+          "corrupt": {
+            "title": "Thinking...",
+            "pending": true
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "interruptedChatTurnPatch",
+          "args": [
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            }
+          ],
+          "contract": "recovery.interrupted",
+          "saveAs": "interrupted",
+          "goals": [
+            {
+              "path": "title",
+              "value": "The UI calls /api/tools/status. Confirm which routes api.py serves."
+            }
+          ],
+          "corrupt": {
+            "title": "Lost",
+            "pending": false,
+            "source": "chat-interrupted"
+          }
+        },
+        {
+          "module": "transcriptVisibility",
+          "function": "describeHiddenTurn",
+          "args": [
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": false,
+              "source": "chat-interrupted",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            }
+          ],
+          "contract": "chat.stopped-visibility",
+          "goals": [
+            {
+              "value": null
+            }
+          ],
+          "corrupt": "hidden"
+        },
+        {
+          "module": "transcriptVisibility",
+          "function": "dialogueBody",
+          "args": [
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": false,
+              "source": "chat-interrupted",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            }
+          ],
+          "contract": "chat.stopped-body",
+          "goals": [
+            {
+              "value": "The UI calls /api/tools/status. Confirm which routes api.py serves."
+            }
+          ]
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "chatRecoveryDecision",
+          "args": [
+            {
+              "status": "running",
+              "lastActivityAt": 1790344925.25
+            },
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "now": 1790354400000
+            }
+          ],
+          "contract": "recovery.decision",
+          "goals": [
+            {
+              "value": {
+                "action": "watch",
+                "lastActivityAt": 1790344925250
+              }
+            }
+          ],
+          "corrupt": {
+            "action": "watch",
+            "lastActivityAt": 0
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "chatRecoveryDecision",
+          "args": [
+            {
+              "status": "finished",
+              "result": {
+                "reply": "Here is the finished UI.",
+                "status": "completed",
+                "runtime": "neyvia-agent",
+                "compartment": {
+                  "turnReceipt": {
+                    "status": "completed"
+                  }
+                }
+              }
+            },
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "now": 1790354400000
+            }
+          ],
+          "contract": "recovery.decision",
+          "goals": [
+            {
+              "path": "patch.title",
+              "value": "Here is the finished UI."
+            },
+            {
+              "path": "patch.source",
+              "value": "backend-runtime-reply"
+            },
+            {
+              "path": "patch.rawTurnReceipt",
+              "value": {
+                "status": "completed"
+              }
+            }
+          ],
+          "corrupt": {
+            "action": "wait"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "recordedResultChatTurnPatch",
+          "args": [
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "status": "cancelled",
+              "cancelledByUser": true
+            }
+          ],
+          "contract": "recovery.recorded",
+          "goals": [
+            {
+              "path": "source",
+              "value": "chat-cancelled"
+            },
+            {
+              "path": "pending",
+              "value": false
+            }
+          ],
+          "corrupt": {
+            "source": "backend-runtime-reply",
+            "pending": false
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "recordedResultChatTurnPatch",
+          "args": [
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "ok": false,
+              "status": "failed",
+              "error": "Provider refused the request."
+            }
+          ],
+          "contract": "recovery.recorded",
+          "goals": [
+            {
+              "path": "source",
+              "value": "backend-runtime-error"
+            },
+            {
+              "path": "detail",
+              "value": "Provider refused the request."
+            },
+            {
+              "path": "tone",
+              "value": "bad"
+            }
+          ],
+          "corrupt": {
+            "source": "backend-runtime-reply",
+            "pending": false
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "chatRecoveryDecision",
+          "args": [
+            {
+              "status": "finished",
+              "finishedAt": 1790354398
+            },
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "now": 1790354400000
+            }
+          ],
+          "contract": "recovery.decision",
+          "goals": [
+            {
+              "path": "action",
+              "value": "wait"
+            }
+          ],
+          "corrupt": {
+            "action": "settle"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "chatRecoveryDecision",
+          "args": [
+            {
+              "status": "finished",
+              "finishedAt": 1790354340
+            },
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "now": 1790354400000
+            }
+          ],
+          "contract": "recovery.decision",
+          "goals": [
+            {
+              "path": "action",
+              "value": "settle"
+            }
+          ],
+          "corrupt": {
+            "action": "wait"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "chatRecoveryDecision",
+          "args": [
+            {
+              "status": "unknown"
+            },
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T16:39:55.000Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "now": 1790354400000
+            }
+          ],
+          "contract": "recovery.decision",
+          "goals": [
+            {
+              "path": "action",
+              "value": "wait"
+            }
+          ],
+          "corrupt": {
+            "action": "settle"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "chatRecoveryDecision",
+          "args": [
+            {
+              "status": "unknown"
+            },
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T16:37:59.000Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "now": 1790354400000
+            }
+          ],
+          "contract": "recovery.decision",
+          "goals": [
+            {
+              "path": "action",
+              "value": "settle"
+            }
+          ],
+          "corrupt": {
+            "action": "wait"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "chatRecoveryDecision",
+          "args": [
+            null,
+            {
+              "id": "chat-turn-1",
+              "role": "assistant",
+              "pending": true,
+              "source": "runtime-stream",
+              "title": "The UI calls /api/tools/status. Confirm which routes api.py serves.",
+              "createdAt": "2026-09-25T13:57:47.555Z",
+              "toolCalls": [
+                {
+                  "id": "a",
+                  "tool": "terminal.exec",
+                  "status": "completed"
+                },
+                {
+                  "id": "b",
+                  "tool": "workspace.read",
+                  "status": "started"
+                }
+              ]
+            },
+            {
+              "now": 1790354400000
+            }
+          ],
+          "contract": "recovery.decision",
+          "goals": [
+            {
+              "path": "action",
+              "value": "wait"
+            }
+          ],
+          "corrupt": {
+            "action": "settle"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "unownedPendingChatTurns",
+          "args": [
+            {
+              "a": [
+                {
+                  "id": "u1",
+                  "role": "user",
+                  "pending": false,
+                  "createdAt": "2026-09-25T10:00:00Z"
+                },
+                {
+                  "id": "old",
+                  "role": "assistant",
+                  "pending": true,
+                  "createdAt": "2026-09-24T10:00:00Z"
+                },
+                {
+                  "id": "done",
+                  "role": "assistant",
+                  "pending": false
+                }
+              ],
+              "b": [
+                {
+                  "id": "mine",
+                  "role": "assistant",
+                  "pending": true,
+                  "createdAt": "2026-09-25T12:00:00Z"
+                },
+                {
+                  "id": "new",
+                  "role": "assistant",
+                  "pending": true,
+                  "createdAt": "2026-09-25T11:00:00Z"
+                }
+              ]
+            },
+            {
+              "$set": [
+                "mine"
+              ]
+            }
+          ],
+          "contract": "recovery.unowned",
+          "goals": [
+            {
+              "path": "0.turn.id",
+              "value": "new"
+            },
+            {
+              "path": "1.turn.id",
+              "value": "old"
+            },
+            {
+              "path": "0.sessionId",
+              "value": "b"
+            }
+          ],
+          "corrupt": []
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "quietResponseLabel",
+          "args": [
+            "2026-09-25T16:39:30.000Z",
+            1790354400000
+          ],
+          "contract": "recovery.quiet",
+          "goals": [
+            {
+              "value": ""
+            }
+          ]
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "quietResponseLabel",
+          "args": [
+            "2026-09-25T16:38:20.000Z",
+            1790354400000
+          ],
+          "contract": "recovery.quiet",
+          "goals": [
+            {
+              "value": "No new output for over a minute"
+            }
+          ]
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "quietResponseLabel",
+          "args": [
+            "2026-09-25T16:20:00.000Z",
+            1790354400000
+          ],
+          "contract": "recovery.quiet",
+          "goals": [
+            {
+              "value": "No new output for 20 min"
+            }
+          ]
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "quietResponseLabel",
+          "args": [
+            "",
+            1790354400000
+          ],
+          "contract": "recovery.quiet",
+          "goals": [
+            {
+              "value": ""
+            }
+          ]
+        },
+        {
+          "module": "neyviaChatStream",
+          "function": "createNeyviaChatStreamState",
+          "args": [],
+          "saveAs": "stream"
+        },
+        {
+          "module": "neyviaChatStream",
+          "function": "applyNeyviaChatStreamEvents",
+          "args": [
+            {
+              "$ref": "stream"
+            },
+            [
+              {
+                "kind": "runtime.tool",
+                "data": {
+                  "tool": "terminal.exec",
+                  "callId": "x1",
+                  "toolStatus": "started",
+                  "input": "{\"command\":\"dir\"}"
+                }
+              },
+              {
+                "kind": "runtime.answer_delta",
+                "message": "Checked the folder, now writing"
+              }
+            ]
+          ],
+          "saveAs": "stream"
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "mergeStreamedTrace",
+          "args": [
+            {
+              "id": "t",
+              "title": "Thinking...",
+              "source": "runtime-pending",
+              "toolCalls": []
+            },
+            {
+              "$ref": "stream"
+            }
+          ],
+          "contract": "recovery.merge",
+          "saveAs": "merged",
+          "goals": [
+            {
+              "path": "title",
+              "value": "Checked the folder, now writing"
+            },
+            {
+              "path": "source",
+              "value": "runtime-stream"
+            },
+            {
+              "path": "toolCalls.length",
+              "value": 1
+            }
+          ],
+          "corrupt": {
+            "title": "Lost",
+            "source": "runtime-pending"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "interruptedChatTurnPatch",
+          "args": [
+            {
+              "$ref": "merged"
+            }
+          ],
+          "contract": "recovery.interrupted",
+          "goals": [
+            {
+              "path": "title",
+              "value": "Checked the folder, now writing"
+            },
+            {
+              "path": "toolCalls.0.status",
+              "value": "interrupted"
+            }
+          ],
+          "corrupt": {
+            "pending": true,
+            "title": "Lost"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "mergeStreamedTrace",
+          "args": [
+            {
+              "title": "A much longer saved partial answer",
+              "source": "runtime-stream"
+            },
+            {
+              "answer": "A much",
+              "toolCalls": []
+            }
+          ],
+          "contract": "recovery.merge",
+          "goals": [
+            {
+              "path": "title",
+              "value": "A much longer saved partial answer"
+            }
+          ],
+          "corrupt": {
+            "title": "A much"
+          }
+        },
+        {
+          "module": "neyviaChatRecovery",
+          "function": "mergeStreamedTrace",
+          "args": [
+            {
+              "title": "kept"
+            },
+            null
+          ],
+          "contract": "recovery.merge",
+          "goals": [
+            {
+              "value": {
+                "title": "kept"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "activity.links-and-duration-evidence",
+      "actions": [
+        {
+          "module": "neyviaRunActivity",
+          "function": "safeReceiptHref",
+          "args": [
+            "javascript:alert(1)"
+          ],
+          "contract": "activity.href",
+          "goals": [
+            {
+              "value": ""
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "safeReceiptHref",
+          "args": [
+            "data:text/html,test"
+          ],
+          "contract": "activity.href",
+          "goals": [
+            {
+              "value": ""
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "safeReceiptHref",
+          "args": [
+            "file:///C:/secret"
+          ],
+          "contract": "activity.href",
+          "goals": [
+            {
+              "value": ""
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "safeReceiptHref",
+          "args": [
+            "//external.test"
+          ],
+          "contract": "activity.href",
+          "goals": [
+            {
+              "value": ""
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "safeReceiptHref",
+          "args": [
+            "/\\external.test"
+          ],
+          "contract": "activity.href",
+          "goals": [
+            {
+              "value": ""
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "safeReceiptHref",
+          "args": [
+            "/\npath"
+          ],
+          "contract": "activity.href",
+          "goals": [
+            {
+              "value": ""
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "safeReceiptHref",
+          "args": [
+            "/api/artifacts/proof"
+          ],
+          "contract": "activity.href",
+          "goals": [
+            {
+              "value": "/api/artifacts/proof"
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "safeReceiptHref",
+          "args": [
+            "https://example.org/proof"
+          ],
+          "contract": "activity.href",
+          "goals": [
+            {
+              "value": "https://example.org/proof"
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "runDurationLabel",
+          "args": [
+            null
+          ],
+          "contract": "activity.duration",
+          "goals": [
+            {
+              "value": "Not recorded"
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "runDurationLabel",
+          "args": [
+            0
+          ],
+          "contract": "activity.duration",
+          "goals": [
+            {
+              "value": "0ms"
+            }
+          ]
+        },
+        {
+          "module": "neyviaRunActivity",
+          "function": "runDurationLabel",
+          "args": [
+            181000
+          ],
+          "contract": "activity.duration",
+          "goals": [
+            {
+              "value": "3m 1s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chat.stream-answer-tools-and-receipt",
+      "goal": "Compose production chat events,state,presentation and scratch desktop calls,then reject semantic corruption"
+    },
+    {
+      "id": "chat.poll-recovery-and-late-stop",
+      "goal": "Compose production chat events,state,presentation and scratch desktop calls,then reject semantic corruption"
+    },
+    {
+      "id": "chat.activity-outcomes-and-command-lifecycle",
+      "goal": "Compose production chat events,state,presentation and scratch desktop calls,then reject semantic corruption"
+    },
+    {
+      "id": "chat.command-file-diff-and-truncated-evidence",
+      "goal": "Compose production chat events,state,presentation and scratch desktop calls,then reject semantic corruption"
+    },
+    {
+      "id": "chat.local-media-safety-and-desktop-cursor",
+      "goal": "Compose production chat events,state,presentation and scratch desktop calls,then reject semantic corruption"
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "a turn whose process died is settled as interrupted, keeping the partial answer",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "an interrupted turn stays visible in the transcript",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "an interrupted turn with no streamed text says so instead of Thinking",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "a live run is watched, never settled",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "a result recorded while the window was closed becomes the reply",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "recorded cancellations and failures are shown as such",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "a just-finished run waits briefly for its result before giving up",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "an unregistered turn gets a grace period, then settles",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "a failed status read never settles a turn",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "only pending assistant turns this window does not own are recovered, newest first",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "a quiet response is labelled only after a real silence",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-recovery.test.mjs",
+      "case": "settling folds in stream output the saved copy missed before a crash",
+      "contracts": [
+        "recovery.decision",
+        "recovery.interrupted",
+        "chat.stopped-visibility",
+        "chat.stopped-body",
+        "recovery.recorded",
+        "recovery.unowned",
+        "recovery.quiet",
+        "recovery.merge"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/transcriptVisibility.js:describeHiddenTurn -> checkedFrontendAction",
+        "web/src/neyvia/transcriptVisibility.js:dialogueBody -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:interruptedChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:chatRecoveryDecision -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:recordedResultChatTurnPatch -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:unownedPendingChatTurns -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:quietResponseLabel -> checkedFrontendAction",
+        "web/src/neyvia/neyviaChatRecovery.js:mergeStreamedTrace -> checkedFrontendAction"
+      ],
+      "procedure": "recovery.crash-result-grace-and-replay",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-run-activity.test.mjs",
+      "case": "artifact links allow web routes without making tool output executable",
+      "contracts": [
+        "activity.href",
+        "activity.duration"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:safeReceiptHref -> checkedFrontendAction",
+        "web/src/neyvia/neyviaRunActivity.js:runDurationLabel -> checkedFrontendAction"
+      ],
+      "procedure": "activity.links-and-duration-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-run-activity.test.mjs",
+      "case": "duration distinguishes absent evidence from zero",
+      "contracts": [
+        "activity.href",
+        "activity.duration"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:safeReceiptHref -> checkedFrontendAction",
+        "web/src/neyvia/neyviaRunActivity.js:runDurationLabel -> checkedFrontendAction"
+      ],
+      "procedure": "activity.links-and-duration-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-stream.test.mjs",
+      "case": "tool activity omits inline media while preserving its real transport and useful output",
+      "contracts": [
+        "proofs-e.chat.safe-display"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.safe_tool_display -> grant_agent.proofs_e_chat.check_tool_display"
+      ],
+      "procedure": "chat.local-media-safety-and-desktop-cursor",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-stream.test.mjs",
+      "case": "chat projections retain live traces and restore receipt-only calls",
+      "contracts": [
+        "proofs-e.chat.trace",
+        "proofs-e.chat.normalizedCalls"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:normalizeNeyviaChatStreamToolCalls",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaChatStream.js:neyviaChatTraceFields",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.stream-answer-tools-and-receipt",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-stream.test.mjs",
+      "case": "new provider answers replace tool-round prose while repeated starts preserve Unicode",
+      "contracts": [
+        "proofs-e.chat.streamTransition"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:applyNeyviaChatStreamEvents -> checkStreamTransition",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.stream-answer-tools-and-receipt",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-stream.test.mjs",
+      "case": "live tool events merge by call id and retain real input, output, failure and thinking summaries",
+      "contracts": [
+        "proofs-e.chat.streamTransition",
+        "proofs-e.chat.normalizedCalls"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:normalizeNeyviaChatStreamToolCalls",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaChatStream.js:applyNeyviaChatStreamEvents -> checkStreamTransition",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.stream-answer-tools-and-receipt",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-stream.test.mjs",
+      "case": "poll reports errors, recovers, delivers final deltas and stops on done",
+      "contracts": [
+        "proofs-e.chat.pollDelivery"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:startNeyviaChatStreamPoll -> checkPollDelivery",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.poll-recovery-and-late-stop",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-stream.test.mjs",
+      "case": "stopped polls ignore late events",
+      "contracts": [
+        "proofs-e.chat.pollDelivery"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaChatStream.js:startNeyviaChatStreamPoll -> checkPollDelivery",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.poll-recovery-and-late-stop",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-stream.test.mjs",
+      "case": "desktop stream CLI reads flat and Tauri-wrapped poll payloads incrementally",
+      "contracts": [
+        "proofs-e.chat.desktop-stream"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.read_chat_stream -> grant_agent.proofs_e_chat.check_read_snapshot"
+      ],
+      "procedure": "chat.local-media-safety-and-desktop-cursor",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-chat-stream.test.mjs",
+      "case": "desktop stream CLI rejects unsafe turn ids",
+      "contracts": [
+        "proofs-e.chat.desktop-stream"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.read_chat_stream -> grant_agent.proofs_e_chat.check_read_snapshot"
+      ],
+      "procedure": "chat.local-media-safety-and-desktop-cursor",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-run-activity.test.mjs",
+      "case": "recorded outcomes override pending and label hints",
+      "contracts": [
+        "proofs-e.chat.phase",
+        "proofs-e.chat.chip"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolVisuals.js:inferNeyviaToolPhase",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaToolVisuals.js:resolveNeyviaMessageChip",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.activity-outcomes-and-command-lifecycle",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-run-activity.test.mjs",
+      "case": "activity preserves structured input and distinguishes app events",
+      "contracts": [
+        "proofs-e.chat.activity"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:presentRunActivity",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.activity-outcomes-and-command-lifecycle",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-run-activity.test.mjs",
+      "case": "stream deltas do not masquerade as tool calls while recorded code remains visible",
+      "contracts": [
+        "proofs-e.chat.visibleActivity",
+        "proofs-e.chat.activity"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:presentRunActivity",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaRunActivity.js:visibleRunActivityEvents",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.activity-outcomes-and-command-lifecycle",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-run-activity.test.mjs",
+      "case": "one tool card retains the recorded command and completion output",
+      "contracts": [
+        "proofs-e.chat.visibleActivity",
+        "proofs-e.chat.activity"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaRunActivity.js:presentRunActivity",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaRunActivity.js:visibleRunActivityEvents",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.activity-outcomes-and-command-lifecycle",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-run-activity.test.mjs",
+      "case": "installed studio and workflow links survive direct navigation",
+      "contracts": [
+        "proofs-e.chat.surfaces"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/workspaceModel.js:WORKSPACE_SURFACE_IDS",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.activity-outcomes-and-command-lifecycle",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "a command shows what ran, where, and how it ended",
+      "contracts": [
+        "proofs-e.chat.presentation",
+        "proofs-e.chat.commandSummary"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaToolCallPresentation.js:commandOutputSummary",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "a failed command keeps its exit code and error, recorded in the error field",
+      "contracts": [
+        "proofs-e.chat.presentation",
+        "proofs-e.chat.commandSummary"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaToolCallPresentation.js:commandOutputSummary",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "a command is still readable when its recorded input was cut short",
+      "contracts": [
+        "proofs-e.chat.presentation",
+        "proofs-e.chat.stringField"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaToolCallPresentation.js:readJsonStringField",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "a created file shows every line as added, numbered from 1",
+      "contracts": [
+        "proofs-e.chat.presentation"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "an updated file shows the recorded diff with line numbers",
+      "contracts": [
+        "proofs-e.chat.presentation",
+        "proofs-e.chat.diff"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaToolCallPresentation.js:parseUnifiedDiff",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "an in-progress update to an existing file is not mistaken for a new file",
+      "contracts": [
+        "proofs-e.chat.presentation"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "string-replace edits and apply_patch edits both become diffs",
+      "contracts": [
+        "proofs-e.chat.presentation",
+        "proofs-e.chat.diff"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaToolCallPresentation.js:parseUnifiedDiff",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "reads, searches and tool families are recognised across harness names",
+      "contracts": [
+        "proofs-e.chat.presentation",
+        "proofs-e.chat.family"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:presentToolCall",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaToolCallPresentation.js:toolFamily",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "UTF-16 output read as UTF-8 is repaired for display",
+      "contracts": [
+        "proofs-e.chat.utf16"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:repairUtf16Text",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/neyvia-tool-call-presentation.test.mjs",
+      "case": "lenient field reads decode escapes and survive a dangling escape",
+      "contracts": [
+        "proofs-e.chat.stringField",
+        "proofs-e.chat.diff"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/neyviaToolCallPresentation.js:readJsonStringField",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction",
+        "web/src/neyvia/neyviaToolCallPresentation.js:parseUnifiedDiff",
+        "web/src/neyvia/neyviaChatContracts.js:checkedChatAction"
+      ],
+      "procedure": "chat.command-file-diff-and-truncated-evidence",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    }
+  ],
+  "frontier": [
+    "Real pure stream/recovery/presentation and scratch desktop polling boundaries; rendered UI and provider execution are separate proof boundaries"
+  ],
+  "sourceFiles": [
+    "src/grant_agent/desktop_bridge.py"
+  ],
+  "sharedContractOwners": {
+    "chat.stopped-visibility": "proofs-e-frontend",
+    "chat.stopped-body": "proofs-e-frontend"
+  },
+  "portRoles": [],
+  "traceMode": "children"
+}

@@ -1,0 +1,55 @@
+CL 1
+L filmcraft v1 -- Authored executable manual
+-- @manual {"chapters":{"overview":{"title":"Agent-usable FilmCraft (ArtCraft/storytold, MIT or Apache-2.0; a Premiere-style editor in Rust) through its headless CLI: commands, the sequence as a CL Scene, scripted edits, export and frames."}},"clVersion":"1.1","id":"filmcraft","kind":"environment","schema":"neyvia.manual.v1","schemas":{"neyvia.mod.filmcraft.commands":"live_schema_9","neyvia.mod.filmcraft.export":"live_schema_10","neyvia.mod.filmcraft.frame":"live_schema_11","neyvia.mod.filmcraft.inspect":"live_schema_12","neyvia.mod.filmcraft.run":"live_schema_13","neyvia.mod.filmcraft.verify":"live_schema_14"},"tool_metadata":{"neyvia.mod.filmcraft.commands":{"mutability_class":"read"},"neyvia.mod.filmcraft.export":{"mutability_class":"artifact_write"},"neyvia.mod.filmcraft.frame":{"mutability_class":"artifact_write"},"neyvia.mod.filmcraft.inspect":{"mutability_class":"read"},"neyvia.mod.filmcraft.run":{"mutability_class":"artifact_write"},"neyvia.mod.filmcraft.verify":{"mutability_class":"artifact_write"}}}
+T live_schema_9 {filter?:str#..200 ..}
+T live_schema_10 json:"{\"type\":\"object\",\"properties\":{\"project\":{\"type\":\"string\",\"maxLength\":4000},\"out\":{\"type\":\"string\",\"maxLength\":4000},\"format\":{\"type\":\"string\",\"maxLength\":20}},\"required\":[\"project\",\"out\"],\"allOf\":[{\"properties\":{\"project\":{\"not\":{\"enum\":[\"\"]}},\"out\":{\"not\":{\"enum\":[\"\"]}}}}]}"
+T live_schema_11 json:"{\"type\":\"object\",\"properties\":{\"project\":{\"type\":\"string\",\"maxLength\":4000},\"seconds\":{\"type\":\"number\",\"minimum\":0},\"out\":{\"type\":\"string\",\"maxLength\":4000}},\"required\":[\"project\",\"seconds\",\"out\"],\"allOf\":[{\"properties\":{\"project\":{\"not\":{\"enum\":[\"\"]}},\"out\":{\"not\":{\"enum\":[\"\"]}}}}]}"
+T live_schema_12 json:"{\"type\":\"object\",\"properties\":{\"project\":{\"type\":\"string\",\"maxLength\":4000}},\"required\":[\"project\"],\"allOf\":[{\"properties\":{\"project\":{\"not\":{\"enum\":[\"\"]}}}}]}"
+T live_schema_13 json:"{\"type\":\"object\",\"properties\":{\"project\":{\"type\":\"string\",\"maxLength\":4000},\"steps\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"maxLength\":200},\"params\":{\"type\":\"object\"}},\"required\":[\"id\"]}},\"saveAs\":{\"type\":\"string\",\"maxLength\":4000}},\"required\":[\"steps\",\"saveAs\"],\"allOf\":[{\"properties\":{\"saveAs\":{\"not\":{\"enum\":[\"\"]}}}}]}"
+T live_schema_14 {..}
+T t1{filter?:str#..200}
+T t2{project:str#..4000}
+T t3{project?:str#..4000 steps:[{id:str#..200 params?:json:"{\"type\":\"object\"}" ..}]#..500 saveAs:str#..4000}
+T t4{project:str#..4000 out:str#..4000 format?:str#..20}
+T t5{project:str#..4000 seconds:json:"{\"type\":\"number\",\"minimum\":0}" out:str#..4000}
+T t6{}
+T t7 json:"{\"type\":\"object\"}"
+T t8 json:"{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}"
+L filmcraft.overview v1 -- Agent-usable FilmCraft (ArtCraft/storytold, MIT or Apache-2.0; a Premiere-style editor in Rust) through its headless CLI: commands, the sequence as a CL Scene, scripted edits, export and frames.
+-- @record {"chapter":"overview","data":{"effect":"List FilmCraft engine commands (id, label, params) matching a filter.","pre":"Selected workspace; the mod is installed, enabled and its local tool is present","returns":{"type":"object"},"reversible":true,"schema":"neyvia.mod.filmcraft.commands","tool":"neyvia.mod.filmcraft.commands"},"key":"mod.filmcraft.commands","section":"actions"}
+A neyvia.mod.filmcraft.commands(filter?:str#..200) -> json:"{\"type\":\"object\"}" -- List FilmCraft engine commands (id, label, params) matching a filter.
+F verify-mod-filmcraft-commands "No authored observer check is bound to neyvia.mod.filmcraft.commands" -> ask operator blocks:neyvia.mod.filmcraft.commands
+-- @record {"chapter":"overview","data":{"effect":"Observe a project's active sequence as a CL Scene: tracks, clips, in/out, effects, transitions, markers.","pre":"Selected workspace; the mod is installed, enabled and its local tool is present","returns":{"type":"object"},"reversible":true,"schema":"neyvia.mod.filmcraft.inspect","tool":"neyvia.mod.filmcraft.inspect"},"key":"mod.filmcraft.inspect","section":"actions"}
+A neyvia.mod.filmcraft.inspect(project:str#..4000) -> json:"{\"type\":\"object\"}" -- Observe a project's active sequence as a CL Scene: tracks, clips, in/out, effects, transitions, markers.
+F verify-mod-filmcraft-inspect "No authored observer check is bound to neyvia.mod.filmcraft.inspect" -> ask operator blocks:neyvia.mod.filmcraft.inspect
+-- @record {"chapter":"overview","data":{"effect":"Run engine commands in order on a project (a new project when omitted) and save it.","pre":"Selected workspace; the mod is installed, enabled and its local tool is present","returns":{"type":"object"},"reversible":false,"schema":"neyvia.mod.filmcraft.run","tool":"neyvia.mod.filmcraft.run"},"key":"mod.filmcraft.run","section":"actions"}
+A neyvia.mod.filmcraft.run(project?:str#..4000 steps:[{id:str#..200 params?:json:"{\"type\":\"object\"}" ..}]#..500 saveAs:str#..4000) -> json:"{\"type\":\"object\"}" ! -- Run engine commands in order on a project (a new project when omitted) and save it.
+F verify-mod-filmcraft-run "No authored observer check is bound to neyvia.mod.filmcraft.run" -> ask operator blocks:neyvia.mod.filmcraft.run
+-- @record {"chapter":"overview","data":{"effect":"Export the active sequence and check the outcome contracts on the file.","pre":"Selected workspace; the mod is installed, enabled and its local tool is present","returns":{"type":"object"},"reversible":false,"schema":"neyvia.mod.filmcraft.export","tool":"neyvia.mod.filmcraft.export"},"key":"mod.filmcraft.export","section":"actions"}
+A neyvia.mod.filmcraft.export(project:str#..4000 out:str#..4000 format?:str#..20) -> json:"{\"type\":\"object\"}" ! -- Export the active sequence and check the outcome contracts on the file.
+F verify-mod-filmcraft-export "No authored observer check is bound to neyvia.mod.filmcraft.export" -> ask operator blocks:neyvia.mod.filmcraft.export
+-- @record {"chapter":"overview","data":{"effect":"Render one Program frame to PNG.","pre":"Selected workspace; the mod is installed, enabled and its local tool is present","returns":{"type":"object"},"reversible":false,"schema":"neyvia.mod.filmcraft.frame","tool":"neyvia.mod.filmcraft.frame"},"key":"mod.filmcraft.frame","section":"actions"}
+A neyvia.mod.filmcraft.frame(project:str#..4000 seconds:json:"{\"type\":\"number\",\"minimum\":0}" out:str#..4000) -> json:"{\"type\":\"object\"}" ! -- Render one Program frame to PNG.
+F verify-mod-filmcraft-frame "No authored observer check is bound to neyvia.mod.filmcraft.frame" -> ask operator blocks:neyvia.mod.filmcraft.frame
+-- @record {"chapter":"overview","data":{"effect":"Real round trip: import real Neyvia captures, place clips, export, then the outcome contracts.","pre":"Selected workspace; the mod is installed, enabled and its local tool is present","returns":{"type":"object","properties":{"passed":{"const":true}},"required":["passed"]},"reversible":false,"schema":"neyvia.mod.filmcraft.verify","tool":"neyvia.mod.filmcraft.verify"},"key":"mod.filmcraft.verify","section":"actions"}
+A neyvia.mod.filmcraft.verify() -> {passed:true ..} ! -- Real round trip: import real Neyvia captures, place clips, export, then the outcome contracts.
+F verify-mod-filmcraft-verify "No authored observer check is bound to neyvia.mod.filmcraft.verify" -> ask operator blocks:neyvia.mod.filmcraft.verify
+-- @record {"chapter":"overview","data":{"goal":"Run the real round trip and check its outcome contracts","inputs":{"type":"object","properties":{},"additionalProperties":false},"steps":[{"action":"mod.filmcraft.verify","args":{},"save":"verified"}]},"key":"verify-filmcraft","section":"procedures"}
+P verify-filmcraft(): verified=neyvia.mod.filmcraft.verify() -- Run the real round trip and check its outcome contracts
+V P verify-filmcraft -> script why:"typed manual runner; stops at every judgement"
+-- @record {"chapter":"overview","data":{"failure":"The local tool is missing","recovery":"Build or point the NEYVIA_* path at it; the action refuses rather than downloading anything."},"key":"0","section":"pitfalls"}
+X The local tool is missing -> Build or point the NEYVIA_* path at it; the action refuses rather than downloading anything.
+-- @record {"chapter":"overview","data":{"failure":"A render exists but is wrong","recovery":"Read the outcome block (duration, frames, black/frozen runs, clipping); never call a render good from its exit code."},"key":"1","section":"pitfalls"}
+X A render exists but is wrong -> Read the outcome block (duration, frames, black/frozen runs, clipping); never call a render good from its exit code.
+-- @record {"chapter":"overview","data":"Built from source with the local Rust toolchain into D:/NeyviaRuns/video/track-video/target; set NEYVIA_FILMCRAFT_CLI to use another build.","key":"0","section":"frontier"}
+F Built from source with the local Rust toolchain into D:/NeyviaRuns/video/track-video/target; set NEYVIA_FILMCRAFT_CLI to use another build.
+-- @record {"chapter":"overview","data":"Adapted, not forked: every action runs the unmodified upstream program. FilmCraft by the ArtCraft team, MIT OR Apache-2.0, https://github.com/storytold/filmcraft.","key":"1","section":"frontier"}
+F Adapted, not forked: every action runs the unmodified upstream program. FilmCraft by the ArtCraft team, MIT OR Apache-2.0, https://github.com/storytold/filmcraft.
+-- @record {"chapter":"overview","data":"Every FilmCraft menu item is an engine command with typed params; list them with mod.filmcraft.commands and run them with mod.filmcraft.run.","key":"0","section":"guidance"}
+M filmcraft "Every FilmCraft menu item is an engine command with typed params; list them with mod.filmcraft.commands and run them with mod.filmcraft.run." src:"authored manual" state:verified
+-- @record {"chapter":"overview","data":"Times are integer ticks (254016000000 per second); most commands also accept seconds=.","key":"1","section":"guidance"}
+M filmcraft "Times are integer ticks (254016000000 per second); most commands also accept seconds=." src:"authored manual" state:verified
+-- @record {"chapter":"overview","data":"Read the sequence back with mod.filmcraft.inspect after every edit; export and read the outcome contracts before claiming a render.","key":"2","section":"guidance"}
+M filmcraft "Read the sequence back with mod.filmcraft.inspect after every edit; export and read the outcome contracts before claiming a render." src:"authored manual" state:verified
+-- @record {"chapter":"overview","data":"Installs switched off from Marketplace > Apps & mods; read this manual and the declared permissions, then enable it.","key":"3","section":"guidance"}
+M filmcraft "Installs switched off from Marketplace > Apps & mods; read this manual and the declared permissions, then enable it." src:"authored manual" state:verified

@@ -1,0 +1,71 @@
+/* The pop-out chat (NxPopout): a floating window over whatever is open. Same chat, same composer;
+   only the frame is new. Theme tokens only. */
+
+.nx .nx-pw {
+  position: fixed; z-index: 68; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden;
+  border-radius: var(--nx-r-xl); background: var(--nx-panel); color: var(--nx-text); box-shadow: var(--nx-shadow-pop);
+  --nx-thread-w: 100%;
+  animation: nx-pw-in var(--nx-settle) var(--nx-spring-settle) both;
+}
+.nx .nx-pw.is-expanded { transition: left var(--nx-settle) var(--nx-spring-settle), top var(--nx-settle) var(--nx-spring-settle), width var(--nx-settle) var(--nx-spring-settle), height var(--nx-settle) var(--nx-spring-settle); }
+@keyframes nx-pw-in { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+.nx .nx-pw-head {
+  flex: none; display: flex; align-items: center; gap: var(--nx-space-6); height: 46px; padding: 0 var(--nx-space-8) 0 var(--nx-space-14);
+  border-bottom: 1px solid var(--nx-line); user-select: none;
+}
+.nx .nx-pw-head.is-handle { cursor: grab; touch-action: none; }
+.nx .nx-pw-head.is-handle:active { cursor: grabbing; }
+.nx .nx-pw-title { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; justify-content: center; line-height: 1.2; margin-left: var(--nx-space-4); }
+.nx .nx-pw-title strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--nx-fs); font-weight: 600; }
+.nx .nx-pw-title span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+
+.nx .nx-pw-thread { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.nx .nx-pw-thread .nx-thread-wrap { flex: 1 1 auto; }
+.nx .nx-pw-composer { padding: 0 var(--nx-space-12) var(--nx-space-12); }
+.nx .nx-pw-composer > * { max-width: none; }
+/* The pop-out is narrow: the pickers wrap onto a second line and the send button stays in view (as on a phone). */
+.nx .nx-pw .nx-composer-left { flex-wrap: wrap; overflow: visible; row-gap: var(--nx-space-4); }
+.nx .nx-pw .nx-composer-bar { align-items: flex-end; }
+.nx .nx-pw .nx-composer-right { gap: var(--nx-space-10); }
+.nx .nx-pw .nx-composer-left .nx-chip { max-width: 100%; }
+.nx .nx-pw .nx-composer-left .nx-chip-label { max-width: 8.5em; white-space: nowrap; }
+.nx .nx-pw .nx-composer-left .nx-chip-sub { display: none; }
+/* The + menu already holds attach and compact: their own buttons step aside so the row has room. */
+.nx .nx-pw .nx-composer-left .nx-compact-btn, .nx .nx-pw .nx-composer-left .nx-iconbtn[aria-label="Attach files"] { display: none; }
+/* Only the model keeps its name; permissions and route show their icon (their tooltip says the rest), so the three chips fit on one line. */
+.nx .nx-pw .nx-composer-left .nx-chip ~ .nx-chip .nx-chip-label { display: none; }
+
+/* A new chat about this app */
+.nx .nx-pw-new { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: var(--nx-space-12); padding: var(--nx-space-16) var(--nx-space-12) var(--nx-space-12); overflow: auto; }
+.nx .nx-pw-new-intro { display: flex; align-items: center; flex-wrap: wrap; gap: var(--nx-space-8); margin-bottom: auto; padding: var(--nx-space-8) var(--nx-space-4); }
+.nx .nx-pw-new-intro strong { font-family: var(--nx-display); font-weight: var(--nx-display-weight); font-size: var(--nx-fs-xl); letter-spacing: var(--nx-display-tracking); }
+.nx .nx-pw-new-intro span { flex: 1 1 100%; color: var(--nx-muted); font-size: var(--nx-fs-sm); }
+.nx .nx-pw-agents { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: var(--nx-space-6); margin-top: var(--nx-space-8); }
+.nx .nx-pw-agents button {
+  display: inline-flex; align-items: center; gap: var(--nx-space-6); height: 28px; padding: 0 var(--nx-space-10) 0 var(--nx-space-8); border-radius: var(--nx-r-pill);
+  color: var(--nx-text-2); font-size: var(--nx-fs-sm); font-weight: 550; box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease), box-shadow var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-pw-agents button:hover { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-pw-agents button.is-on { background: var(--nx-accent-soft); color: var(--nx-accent-text); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-accent); }
+.nx .nx-pw-agents button:focus-visible { outline: none; box-shadow: var(--nx-focus); }
+.nx .nx-pw-new-intro > span { flex: 1 1 100%; }
+.nx .nx-pw-pending { margin: 0; display: flex; align-items: center; gap: var(--nx-space-8); padding: var(--nx-space-8) var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-hover); color: var(--nx-text-2); font-size: var(--nx-fs-sm); }
+.nx .nx-pw-form { margin: 0; }
+.nx .nx-pw-error { margin: 0; color: var(--nx-state-error); font-size: var(--nx-fs-sm); }
+
+/* Resize edges and corners */
+.nx .nx-pw-edge { position: absolute; z-index: 2; touch-action: none; }
+.nx .nx-pw-edge.is-n, .nx .nx-pw-edge.is-s { left: 14px; right: 14px; height: 8px; cursor: ns-resize; }
+.nx .nx-pw-edge.is-e, .nx .nx-pw-edge.is-w { top: 14px; bottom: 14px; width: 8px; cursor: ew-resize; }
+.nx .nx-pw-edge.is-n { top: -3px; } .nx .nx-pw-edge.is-s { bottom: -3px; }
+.nx .nx-pw-edge.is-e { right: -3px; } .nx .nx-pw-edge.is-w { left: -3px; }
+.nx .nx-pw-edge.is-ne, .nx .nx-pw-edge.is-nw, .nx .nx-pw-edge.is-se, .nx .nx-pw-edge.is-sw { width: 16px; height: 16px; }
+.nx .nx-pw-edge.is-ne { top: -3px; right: -3px; cursor: nesw-resize; } .nx .nx-pw-edge.is-sw { bottom: -3px; left: -3px; cursor: nesw-resize; }
+.nx .nx-pw-edge.is-nw { top: -3px; left: -3px; cursor: nwse-resize; } .nx .nx-pw-edge.is-se { bottom: -3px; right: -3px; cursor: nwse-resize; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nx .nx-pw { animation: none; }
+  .nx .nx-pw.is-expanded { transition: none; }
+}

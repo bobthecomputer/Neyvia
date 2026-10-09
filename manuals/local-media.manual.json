@@ -1,0 +1,776 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "local-media",
+  "kind": "workflow",
+  "schemas": {
+    "preview.annotate": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "rectangle": {
+          "type": "object"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "viewport": {
+          "type": "object"
+        },
+        "outputDir": {
+          "type": "string"
+        },
+        "delayMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "url",
+        "rectangle"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "url": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "preview.screenshot": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "outputPath": {
+          "type": "string"
+        },
+        "fullPage": {
+          "type": "boolean"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 320,
+          "maximum": 3840
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 240,
+          "maximum": 2160
+        },
+        "waitFor": {
+          "type": "string"
+        },
+        "delayMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "waitUntil": {
+          "type": "string",
+          "enum": [
+            "domcontentloaded",
+            "load",
+            "networkidle"
+          ]
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "url": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "preview.taste": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "viewports": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "desktop",
+              "phone"
+            ]
+          }
+        },
+        "colorScheme": {
+          "type": "string",
+          "enum": [
+            "dark",
+            "light"
+          ]
+        },
+        "waitFor": {
+          "type": "string"
+        },
+        "delayMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "includeImageData": {
+          "type": "boolean",
+          "description": "Inline capped screenshots for the installed desktop Preview, which has no HTTP artifact route."
+        },
+        "journey": {
+          "type": "object",
+          "description": "Controls to exercise through Laya: actions [{kind: click|fill|select|press, label, value?, expect?}], expect [{kind: selector_text|text_present|selector_exists|url_contains, ...}]."
+        },
+        "outputDir": {
+          "type": "string",
+          "description": "Optional report directory inside the active workspace. Omit to use the managed artifact directory."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "url": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "skill.live.iterate": {
+      "type": "object",
+      "properties": {
+        "skillId": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "expectedSha256": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "request": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "content",
+        "sessionId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "content": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "sessionId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "video.digest": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "outputDir": {
+          "type": "string"
+        },
+        "maxFrames": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 36
+        },
+        "maxSceneFrames": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 24
+        },
+        "sceneThreshold": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.95
+        },
+        "sceneScanSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600
+        },
+        "extractAudio": {
+          "type": "boolean"
+        },
+        "transcribe": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "none",
+            "local"
+          ]
+        },
+        "whisperModel": {
+          "type": "string"
+        },
+        "timeoutSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7200
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "evidence": {
+      "title": "Fresh retained browser, video and skill evidence",
+      "state": {},
+      "actions": {
+        "preview-screenshot": {
+          "effect": "Capture a real PNG from a URL with Playwright or Chromium and return dimensions, SHA-256, and engine proof.",
+          "pre": "Authorized current browser URL, workspace-owned artifacts and successful real rendering",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "preview.screenshot",
+          "tool": "preview.screenshot"
+        },
+        "preview-annotate": {
+          "effect": "Capture a preview, draw an operator-selected rectangle and comment, create a cropped region, and write a W3C-shaped annotation receipt with hashes.",
+          "pre": "Authorized current browser URL, workspace-owned artifacts and successful real rendering",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "preview.annotate",
+          "tool": "preview.annotate"
+        },
+        "preview-taste": {
+          "effect": "See and measure your own rendered UI before calling visual work done. Renders the page at desktop and phone widths, returns screenshots to inspect, and reports colliding text, overflow, contrast, typeface and colour discipline, tap targets, competing primary actions and box clutter with evidence and fixes. Optional journey: Laya exercises the controls the goal depends on and reports what it actually tested. Use this tool for a Laya browser journey: provide the page URL, goal, and journey actions with expected outcomes. Measurements inform judgment; they never certify beauty.",
+          "pre": "Authorized current browser URL, workspace-owned artifacts and successful real rendering",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "preview.taste",
+          "tool": "preview.taste"
+        },
+        "video-digest": {
+          "effect": "Convert a video into model-readable timestamped frames, scene-change frames, a storyboard, audio, optional local Whisper transcript, and a JSON manifest.",
+          "pre": "Intact scoped video input, installed FFmpeg and FFprobe, workspace-owned outputs",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "video.digest",
+          "tool": "video.digest"
+        },
+        "skill-live-iterate": {
+          "effect": "Validate and atomically revise a live session SKILL.md with optimistic conflict detection, an external backup, and durable version receipts.",
+          "pre": "Local Codex SKILL.md, valid replacement, exact loaded version hash and host-managed session",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "skill.live.iterate",
+          "tool": "skill.live.iterate"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "preview-screenshot": {
+          "goal": "Capture and independently verify retained media bytes, requested inputs and persisted receipts",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "outputPath": {
+                "type": "string"
+              },
+              "fullPage": {
+                "type": "boolean"
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 320,
+                "maximum": 3840
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 240,
+                "maximum": 2160
+              },
+              "waitFor": {
+                "type": "string"
+              },
+              "delayMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "waitUntil": {
+                "type": "string",
+                "enum": [
+                  "domcontentloaded",
+                  "load",
+                  "networkidle"
+                ]
+              }
+            },
+            "required": [
+              "url",
+              "outputPath",
+              "fullPage",
+              "width",
+              "height",
+              "waitFor",
+              "delayMs",
+              "waitUntil"
+            ]
+          },
+          "steps": [
+            {
+              "action": "preview-screenshot",
+              "args": {
+                "delayMs": {
+                  "$input": "delayMs"
+                },
+                "fullPage": {
+                  "$input": "fullPage"
+                },
+                "height": {
+                  "$input": "height"
+                },
+                "outputPath": {
+                  "$input": "outputPath"
+                },
+                "url": {
+                  "$input": "url"
+                },
+                "waitFor": {
+                  "$input": "waitFor"
+                },
+                "waitUntil": {
+                  "$input": "waitUntil"
+                },
+                "width": {
+                  "$input": "width"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "preview-annotate": {
+          "goal": "Capture and independently verify retained media bytes, requested inputs and persisted receipts",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "rectangle": {
+                "type": "object"
+              },
+              "comment": {
+                "type": "string"
+              },
+              "viewport": {
+                "type": "object"
+              },
+              "outputDir": {
+                "type": "string"
+              },
+              "delayMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000
+              }
+            },
+            "required": [
+              "url",
+              "rectangle",
+              "comment",
+              "viewport",
+              "outputDir",
+              "delayMs"
+            ]
+          },
+          "steps": [
+            {
+              "action": "preview-annotate",
+              "args": {
+                "comment": {
+                  "$input": "comment"
+                },
+                "delayMs": {
+                  "$input": "delayMs"
+                },
+                "outputDir": {
+                  "$input": "outputDir"
+                },
+                "rectangle": {
+                  "$input": "rectangle"
+                },
+                "url": {
+                  "$input": "url"
+                },
+                "viewport": {
+                  "$input": "viewport"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "preview-taste": {
+          "goal": "Capture and independently verify retained media bytes, requested inputs and persisted receipts",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "goal": {
+                "type": "string",
+                "maxLength": 600
+              },
+              "viewports": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "desktop",
+                    "phone"
+                  ]
+                }
+              },
+              "colorScheme": {
+                "type": "string",
+                "enum": [
+                  "dark",
+                  "light"
+                ]
+              },
+              "waitFor": {
+                "type": "string"
+              },
+              "delayMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "includeImageData": {
+                "type": "boolean",
+                "description": "Inline capped screenshots for the installed desktop Preview, which has no HTTP artifact route."
+              },
+              "journey": {
+                "type": "object",
+                "description": "Controls to exercise through Laya: actions [{kind: click|fill|select|press, label, value?, expect?}], expect [{kind: selector_text|text_present|selector_exists|url_contains, ...}]."
+              },
+              "outputDir": {
+                "type": "string",
+                "description": "Optional report directory inside the active workspace. Omit to use the managed artifact directory."
+              }
+            },
+            "required": [
+              "url",
+              "goal",
+              "viewports",
+              "colorScheme",
+              "waitFor",
+              "delayMs",
+              "includeImageData",
+              "journey",
+              "outputDir"
+            ]
+          },
+          "steps": [
+            {
+              "action": "preview-taste",
+              "args": {
+                "colorScheme": {
+                  "$input": "colorScheme"
+                },
+                "delayMs": {
+                  "$input": "delayMs"
+                },
+                "goal": {
+                  "$input": "goal"
+                },
+                "includeImageData": {
+                  "$input": "includeImageData"
+                },
+                "journey": {
+                  "$input": "journey"
+                },
+                "outputDir": {
+                  "$input": "outputDir"
+                },
+                "url": {
+                  "$input": "url"
+                },
+                "viewports": {
+                  "$input": "viewports"
+                },
+                "waitFor": {
+                  "$input": "waitFor"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "video-digest": {
+          "goal": "Capture and independently verify retained media bytes, requested inputs and persisted receipts",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "outputDir": {
+                "type": "string"
+              },
+              "maxFrames": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 36
+              },
+              "maxSceneFrames": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 24
+              },
+              "sceneThreshold": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.95
+              },
+              "sceneScanSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3600
+              },
+              "extractAudio": {
+                "type": "boolean"
+              },
+              "transcribe": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "none",
+                  "local"
+                ]
+              },
+              "whisperModel": {
+                "type": "string"
+              },
+              "timeoutSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7200
+              }
+            },
+            "required": [
+              "path",
+              "outputDir",
+              "maxFrames",
+              "maxSceneFrames",
+              "sceneThreshold",
+              "sceneScanSeconds",
+              "extractAudio",
+              "transcribe",
+              "whisperModel",
+              "timeoutSeconds"
+            ]
+          },
+          "steps": [
+            {
+              "action": "video-digest",
+              "args": {
+                "extractAudio": {
+                  "$input": "extractAudio"
+                },
+                "maxFrames": {
+                  "$input": "maxFrames"
+                },
+                "maxSceneFrames": {
+                  "$input": "maxSceneFrames"
+                },
+                "outputDir": {
+                  "$input": "outputDir"
+                },
+                "path": {
+                  "$input": "path"
+                },
+                "sceneScanSeconds": {
+                  "$input": "sceneScanSeconds"
+                },
+                "sceneThreshold": {
+                  "$input": "sceneThreshold"
+                },
+                "timeoutSeconds": {
+                  "$input": "timeoutSeconds"
+                },
+                "transcribe": {
+                  "$input": "transcribe"
+                },
+                "whisperModel": {
+                  "$input": "whisperModel"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "skill-live-iterate": {
+          "goal": "Capture and independently verify retained media bytes, requested inputs and persisted receipts",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "skillId": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "expectedSha256": {
+                "type": "string"
+              },
+              "sessionId": {
+                "type": "string"
+              },
+              "request": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "skillId",
+              "path",
+              "content",
+              "expectedSha256",
+              "sessionId",
+              "request"
+            ]
+          },
+          "steps": [
+            {
+              "action": "skill-live-iterate",
+              "args": {
+                "content": {
+                  "$input": "content"
+                },
+                "expectedSha256": {
+                  "$input": "expectedSha256"
+                },
+                "path": {
+                  "$input": "path"
+                },
+                "request": {
+                  "$input": "request"
+                },
+                "sessionId": {
+                  "$input": "sessionId"
+                },
+                "skillId": {
+                  "$input": "skillId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Retained proof changes after capture",
+          "recovery": "Restore the exact retained bytes or make a new capture and verify it."
+        }
+      ],
+      "frontier": [
+        "Remote authenticated pages and model-backed Laya journeys need account and provider authority."
+      ],
+      "guidance": [
+        "Capture pages in the current browser; verify PNG byte hashes and requested geometry.",
+        "Video needs installed FFmpeg and FFprobe; bind actual selected frames, timestamps, storyboard, audio and transcript artifacts.",
+        "Skill revisions retain loaded-version CAS, validated contents, preserved original, durable receipt and ledger. Session identity belongs to the host.",
+        "Taste measures retained captures; it never certifies beauty."
+      ]
+    }
+  }
+}

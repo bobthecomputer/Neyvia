@@ -1,0 +1,617 @@
+{
+  "area": "a-native-sessions",
+  "manual": "agents",
+  "module": "grant_agent.proofs_a_native_sessions",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "sessions.neyvia.payload",
+      "phase": "post",
+      "claim": "Attachment base64, decoded size, MIME/name and composer message/permissions/route/IDs exactly project admitted inputs.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._attachments",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+        "grant_agent.proofs_a_sessions.check_native_attachments",
+        "grant_agent.proofs_a_sessions.check_native_payload"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.options",
+      "phase": "post",
+      "claim": "Picker runtime order excludes security-only profiles; catalogue labels/groups/efforts and permission rows preserve their source, default is unique and follows the stored route or configured Native model.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.options",
+        "grant_agent.proofs_a_native_sessions.check_options",
+        "grant_agent.connected_sessions.neyvia_options.model_rows",
+        "grant_agent.connected_sessions.neyvia_options.runtime_rows",
+        "grant_agent.connected_sessions.neyvia_options.permission_mode_rows"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.route",
+      "phase": "post",
+      "claim": "Explicit composite selections preserve runtime/provider/model; bare/default selections inherit the durable conversation route and effort defaults remain explicit.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._route",
+        "grant_agent.proofs_a_native_sessions.check_route",
+        "grant_agent.connected_sessions.neyvia_options.parse_route_id",
+        "grant_agent.connected_sessions.neyvia_options.normalize_runtime"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.permission",
+      "phase": "post",
+      "claim": "A successful turn permission is the requested or read-only default mode and is supported by the selected runtime.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._permission_mode",
+        "grant_agent.proofs_a_native_sessions.check_permission",
+        "grant_agent.connected_sessions.neyvia_options.runtime_permission_modes"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.payload",
+      "phase": "post",
+      "claim": "Classic composer fields are exact; workspace context follows selected/metadata/registry precedence, history is the newest eight meaningful dialogue rows in chronological order, and turn identities differ.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+        "grant_agent.proofs_a_native_sessions.check_payload"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.refusal",
+      "phase": "pre",
+      "claim": "Invalid mode, unsupported permission, invalid image, missing session and orchestration refusals emit no conversation or turn event; routing/attachment validation occurs before create/restore.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.proofs_a_native_sessions.before_conversation_mutation",
+        "grant_agent.proofs_a_native_sessions.admitted_attachments",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._create"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.lifecycle",
+      "phase": "invariant",
+      "claim": "All emitted turn events share the returned session, an admitted turn announces its user and ends with that session summary, and every exit releases live ownership.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.create",
+      "phase": "post",
+      "claim": "A new chat is announced before its first item and records the selected workspace path in its durable metadata.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._create",
+        "grant_agent.proofs_a_native_sessions.turn_contract"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.restore",
+      "phase": "post",
+      "claim": "An admitted send to an existing archived conversation restores that durable conversation before returning.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.live",
+      "phase": "invariant",
+      "claim": "Each incoming stream event preserves item/session identity and stable slots; answer deltas append exactly, new response identities clear drafts, private reasoning changes no public row and stream errors produce bounded notices.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia_items.LiveTurn.apply",
+        "grant_agent.proofs_a_native_sessions.live_contract"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.outcome",
+      "phase": "post",
+      "claim": "Terminal adapter events exactly project backend cancelled/stop_unconfirmed/failed outcomes and bounded errors; completed turns emit no redundant run-state event and transport exceptions become broker refusals.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._finish",
+        "grant_agent.proofs_a_native_sessions.finish_contract"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.cancel",
+      "phase": "post",
+      "claim": "Each actual stop attempt records its retry timestamp; acknowledgement matches the real dispatcher status, so unregistered runs remain eligible for retry.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._cancel",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._follow",
+        "grant_agent.proofs_a_native_sessions.check_cancel_result",
+        "grant_agent.proofs_a_native_sessions.check_cancel"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.goal",
+      "phase": "post",
+      "claim": "Native goal get/set/clear exactly reflects the durable boolean preference; supplied free text is not returned or stored by the goal action.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.goal",
+        "grant_agent.proofs_a_native_sessions.check_goal",
+        "grant_agent.proofs_a_native_sessions.goal_contract"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.unsupported",
+      "phase": "pre",
+      "claim": "Question answers and goal mode on hybrid/orchestration sessions are refused with readable not_supported HTTP409 errors.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.goal",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.answer",
+        "grant_agent.proofs_a_native_sessions.unsupported_contract"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.foreign",
+      "phase": "post",
+      "claim": "Foreign live runs are assigned at most once to a durable awaiting user turn within five minutes and never duplicate an adapter-owned run.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._foreign_runs",
+        "grant_agent.proofs_a_native_sessions.check_foreign"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.context",
+      "phase": "post",
+      "claim": "Context usage is the final recorded provider usage of the newest eligible assistant stream; absent usage never invents a token count.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._last_context_usage",
+        "grant_agent.proofs_a_native_sessions.check_context"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    },
+    {
+      "id": "native.registry",
+      "phase": "post",
+      "claim": "The native adapter registry factory preserves the backend identity used for every real command and store action.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.create_adapter",
+        "grant_agent.proofs_a_native_sessions.check_factory"
+      ],
+      "impact": [
+        "native connected chat turns, transcript and workspace receipts",
+        "owned runtime cancellation and durable conversations"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_options_offer_ordered_runtimes_models_and_permission_modes",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_options_offer_ordered_runtimes_models_and_permission_modes",
+      "contracts": [
+        "native.options"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.options",
+        "grant_agent.proofs_a_native_sessions.check_options"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_options_default_to_the_conversations_last_route",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_options_default_to_the_conversations_last_route",
+      "contracts": [
+        "native.options"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.options",
+        "grant_agent.proofs_a_native_sessions.check_options"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_turn_sends_the_classic_payload_and_streams_items",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_turn_sends_the_classic_payload_and_streams_items",
+      "contracts": [
+        "sessions.neyvia.payload",
+        "native.payload",
+        "native.live",
+        "native.lifecycle",
+        "native.outcome"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._attachments",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+        "grant_agent.proofs_a_sessions.check_native_attachments",
+        "grant_agent.proofs_a_sessions.check_native_payload",
+        "grant_agent.proofs_a_native_sessions.check_payload",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.connected_sessions.neyvia_items.LiveTurn.apply",
+        "grant_agent.proofs_a_native_sessions.live_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._finish",
+        "grant_agent.proofs_a_native_sessions.finish_contract"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_new_session_creates_the_conversation_first",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_new_session_creates_the_conversation_first",
+      "contracts": [
+        "native.create",
+        "native.lifecycle",
+        "native.payload"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+        "grant_agent.proofs_a_native_sessions.check_payload",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._create"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_turn_options_pick_the_runtime_and_mode",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_turn_options_pick_the_runtime_and_mode",
+      "contracts": [
+        "native.route",
+        "native.permission",
+        "native.payload"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._route",
+        "grant_agent.proofs_a_native_sessions.check_route",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._permission_mode",
+        "grant_agent.proofs_a_native_sessions.check_permission",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+        "grant_agent.proofs_a_native_sessions.check_payload"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_bad_options_are_refused_before_anything_is_created",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_bad_options_are_refused_before_anything_is_created",
+      "contracts": [
+        "native.refusal",
+        "native.permission",
+        "sessions.neyvia.payload"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._attachments",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+        "grant_agent.proofs_a_sessions.check_native_attachments",
+        "grant_agent.proofs_a_sessions.check_native_payload",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._permission_mode",
+        "grant_agent.proofs_a_native_sessions.check_permission",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.proofs_a_native_sessions.before_conversation_mutation",
+        "grant_agent.proofs_a_native_sessions.admitted_attachments",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._create"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_images_travel_as_chat_attachments",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_images_travel_as_chat_attachments",
+      "contracts": [
+        "sessions.neyvia.payload",
+        "native.payload",
+        "native.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._attachments",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+        "grant_agent.proofs_a_sessions.check_native_attachments",
+        "grant_agent.proofs_a_sessions.check_native_payload",
+        "grant_agent.proofs_a_native_sessions.check_payload",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_sending_restores_an_archived_conversation",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_sending_restores_an_archived_conversation",
+      "contracts": [
+        "native.restore",
+        "native.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_orchestrations_are_not_continued_here",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_orchestrations_are_not_continued_here",
+      "contracts": [
+        "native.refusal"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.proofs_a_native_sessions.before_conversation_mutation",
+        "grant_agent.proofs_a_native_sessions.admitted_attachments",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._create"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_failed_run_reports_state_and_saves_the_error",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_failed_run_reports_state_and_saves_the_error",
+      "contracts": [
+        "native.outcome",
+        "native.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._finish",
+        "grant_agent.proofs_a_native_sessions.finish_contract"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_a_backend_error_becomes_a_refusal_the_broker_can_record",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_a_backend_error_becomes_a_refusal_the_broker_can_record",
+      "contracts": [
+        "native.outcome",
+        "native.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._finish",
+        "grant_agent.proofs_a_native_sessions.finish_contract"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_live_turn_applies_stream_events_like_the_classic_ui",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_live_turn_applies_stream_events_like_the_classic_ui",
+      "contracts": [
+        "native.live"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia_items.LiveTurn.apply",
+        "grant_agent.proofs_a_native_sessions.live_contract"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_cancel_stops_the_run_and_live_status_follows_it",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_cancel_stops_the_run_and_live_status_follows_it",
+      "contracts": [
+        "native.cancel",
+        "native.outcome",
+        "native.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._finish",
+        "grant_agent.proofs_a_native_sessions.finish_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._cancel",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._follow",
+        "grant_agent.proofs_a_native_sessions.check_cancel_result",
+        "grant_agent.proofs_a_native_sessions.check_cancel"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_an_unconfirmed_stop_is_reported_as_interrupted",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_an_unconfirmed_stop_is_reported_as_interrupted",
+      "contracts": [
+        "native.cancel",
+        "native.outcome"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._finish",
+        "grant_agent.proofs_a_native_sessions.finish_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._cancel",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._follow",
+        "grant_agent.proofs_a_native_sessions.check_cancel_result",
+        "grant_agent.proofs_a_native_sessions.check_cancel"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_stop_before_the_run_registers_is_retried",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_stop_before_the_run_registers_is_retried",
+      "contracts": [
+        "native.cancel",
+        "native.outcome",
+        "native.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._finish",
+        "grant_agent.proofs_a_native_sessions.finish_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._cancel",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._follow",
+        "grant_agent.proofs_a_native_sessions.check_cancel_result",
+        "grant_agent.proofs_a_native_sessions.check_cancel"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_a_run_started_elsewhere_is_attributed_to_its_conversation",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_a_run_started_elsewhere_is_attributed_to_its_conversation",
+      "contracts": [
+        "native.foreign"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._foreign_runs",
+        "grant_agent.proofs_a_native_sessions.check_foreign"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_goal_mode_is_a_native_chat_switch",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_goal_mode_is_a_native_chat_switch",
+      "contracts": [
+        "native.goal",
+        "native.unsupported"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.goal",
+        "grant_agent.proofs_a_native_sessions.check_goal",
+        "grant_agent.proofs_a_native_sessions.goal_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.answer",
+        "grant_agent.proofs_a_native_sessions.unsupported_contract"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_the_broker_loads_the_adapter_through_its_registry_hook",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_the_broker_loads_the_adapter_through_its_registry_hook",
+      "contracts": [
+        "native.registry"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.create_adapter",
+        "grant_agent.proofs_a_native_sessions.check_factory"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_the_broker_lists_reads_and_sends_through_the_adapter",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_the_broker_lists_reads_and_sends_through_the_adapter",
+      "contracts": [
+        "native.registry",
+        "native.lifecycle",
+        "native.payload",
+        "native.create"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+        "grant_agent.proofs_a_native_sessions.check_payload",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+        "grant_agent.proofs_a_native_sessions.turn_contract",
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._create",
+        "grant_agent.connected_sessions.neyvia.create_adapter",
+        "grant_agent.proofs_a_native_sessions.check_factory"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_context_usage_comes_from_the_end_of_a_long_turn",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_context_usage_comes_from_the_end_of_a_long_turn",
+      "contracts": [
+        "native.context"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.NeyviaAdapter._last_context_usage",
+        "grant_agent.proofs_a_native_sessions.check_context"
+      ],
+      "procedure": "self_check"
+    }
+  ],
+  "frontier": [
+    "Real provider accounts, installed CLIs, backend constructor/login initialization, completion push delivery and rendered UI are outside the finite provider boundary.",
+    "Unconfirmed cancellation deliberately withholds the transport termination receipt even though its confined child is reaped; the adapter must report uncertainty rather than claim confirmed stopping."
+  ],
+  "pending": [],
+  "migrationNotes": [
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_an_unconfirmed_stop_is_reported_as_interrupted",
+      "case_id": "tests/test_connected_sessions_neyvia.py::test_an_unconfirmed_stop_is_reported_as_interrupted",
+      "obsoleteAssertion": "The original FakeBackend returned stop_unconfirmed with error Stopped by you.; its exact error-text assertion does not describe the current production backend.",
+      "currentBehavior": "Actual _run_agent_chat saves and emits Stop was requested, but runtime process termination could not be confirmed., interrupted state and warning notice. The self-check exercises that actual backend path."
+    }
+  ],
+  "sourceFiles": [
+    "src/grant_agent/connected_sessions/neyvia_options.py",
+    "src/grant_agent/model_catalog.py",
+    "src/grant_agent/harness_registry.py",
+    "src/grant_agent/chat_run_control.py",
+    "src/grant_agent/chat_stream.py",
+    "src/grant_agent/web_backend_receipts.py",
+    "src/grant_agent/neyvia_conversations.py",
+    "src/grant_agent/connected_sessions/broker.py",
+    "src/grant_agent/connected_sessions/registry.py"
+  ]
+}

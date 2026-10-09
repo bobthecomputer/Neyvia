@@ -1,0 +1,284 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "language",
+  "kind": "workflow",
+  "schemas": {
+    "neyvia.language.check": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 40
+        },
+        "text": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "report",
+            "ui"
+          ]
+        }
+      },
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Words in UI and reports: no decorative dashes, hype, filler, noise labels or padding; numbers over adjectives",
+      "state": {
+        "file": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "clean": {
+                "type": "boolean"
+              },
+              "verdict": {
+                "type": "string"
+              },
+              "blocking": {
+                "type": "integer"
+              },
+              "warnings": {
+                "type": "integer"
+              },
+              "words": {
+                "type": "integer"
+              },
+              "failed": {
+                "type": "array"
+              },
+              "cl": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ok",
+              "clean",
+              "blocking",
+              "warnings",
+              "failed"
+            ]
+          },
+          "tool": "neyvia.language.check"
+        }
+      },
+      "actions": {
+        "language.check": {
+          "effect": "Run the no-slop CL-Skill checks on files or text; return each hit with file, line, match and fix",
+          "pre": "Paths inside the workspace (or absolute) to Markdown, text, HTML or JSX; or inline text",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "clean": {
+                "type": "boolean"
+              },
+              "verdict": {
+                "type": "string"
+              },
+              "blocking": {
+                "type": "integer"
+              },
+              "warnings": {
+                "type": "integer"
+              },
+              "words": {
+                "type": "integer"
+              },
+              "failed": {
+                "type": "array"
+              },
+              "cl": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ok",
+              "clean",
+              "blocking",
+              "warnings",
+              "failed"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.language.check",
+          "tool": "neyvia.language.check"
+        }
+      },
+      "checks": {
+        "clean": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "blocking",
+            "value": 0
+          },
+          "tool": "neyvia.language.check"
+        },
+        "clean-text": {
+          "args": {
+            "text": {
+              "$input": "text"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "blocking",
+            "value": 0
+          },
+          "tool": "neyvia.language.check"
+        }
+      },
+      "procedures": {
+        "check-file": {
+          "goal": "A report or UI file passes every block check of the no-slop skill",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "language.check",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "clean",
+              "save": "result"
+            }
+          ]
+        },
+        "check-text": {
+          "goal": "A summary, label or message passes every block check before it is sent",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "language.check",
+              "args": {
+                "text": {
+                  "$input": "text"
+                }
+              },
+              "check": "clean-text",
+              "save": "result"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "cut": {
+          "constraints": "Removal test: if cutting the sentence loses no fact, number, step or decision, cut it. Openers that restate the task and closers that restate the body or offer help are cuts.",
+          "options": [
+            "keep",
+            "cut"
+          ],
+          "question": "Does each flagged sentence carry a fact, a number, a step or a decision the reader needs?"
+        },
+        "number": {
+          "constraints": "give = write the measured number with its unit next to the claim (37 ms, 4 of 6, $0.02); drop = delete the size word. Never invent a number.",
+          "options": [
+            "give",
+            "drop"
+          ],
+          "question": "For each size or speed word: is the measured number known?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "An em dash, en dash or spaced hyphen joins two thoughts or decorates a heading",
+          "recovery": "Full stop for two thoughts, colon for a result or list, brackets for an aside; a tight en dash stays only in number or day ranges"
+        },
+        {
+          "failure": "Hype or filler words (seamless, powerful, in order to, it's worth noting, breathing room) stand where a fact belongs",
+          "recovery": "Delete the phrase; name the effect and its size"
+        },
+        {
+          "failure": "A UI label is chatty or soothing (Your plan eyebrow, comfortably, just, simply, let's)",
+          "recovery": "A label is the noun, the verb or the state: Plan limits, Slow down, 62% used"
+        },
+        {
+          "failure": "A report opens with Here is or closes with Let me know / In summary",
+          "recovery": "Start with the answer; stop when it is said"
+        },
+        {
+          "failure": "much faster, a lot cheaper, several, significantly with no number in the sentence",
+          "recovery": "Give the measured number or delete the word"
+        },
+        {
+          "failure": "done() is refused with X language lines",
+          "recovery": "Rewrite exactly the quoted lines, run language.check(path=...) on the file, then done() again"
+        }
+      ],
+      "frontier": [
+        "Tone that is clean by these checks but cold or rude needs a reader; word lists are English, dash and number rules apply to every language.",
+        "The host gate checks prose and UI files written during the task (.md .txt .html .jsx .tsx) and the done() summary; code comments and quoted sources are not checked."
+      ],
+      "guidance": [
+        "Plain short sentences, 30 words or fewer; UI lines 14 words or fewer.",
+        "No em dash or en dash as punctuation, in headings too: 'Weekend plan: final note', not 'Weekend plan — final note'.",
+        "No hype (seamless, powerful, cutting-edge, leverage, unlock, elevate, delve, robust as praise) and no filler (in order to, it's worth noting, basically, essentially, at the end of the day).",
+        "UI labels name the thing, the action or the state; no eyebrow that repeats the title, no soothing words (comfortably, gently, breathing room, all set, just, simply).",
+        "Numbers over adjectives: 7x cheaper ($0.15 to $0.02), not much cheaper; 4 of 6 tests, not most tests. With no number, drop the adjective.",
+        "One hedge per sentence at most; say what is known and what is not.",
+        "Reports start with the result and stop when it is said: no 'Here is', 'Let me know', 'In summary', 'I hope this helps'.",
+        "Before done(), run language.check on every report and UI file you wrote; the host refuses done() while a block check fails and names each line.",
+        "The full rule set with sources is the CL-Skill manuals/skills/no-slop.cl; its checks are the same code the host runs."
+      ]
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "schema": "neyvia.p22-python-coverage.v1",
+  "retired": [
+    {
+      "path": "tests/test_cl_config_validation.py",
+      "sha256": "12c6f35e675064678d07ce03eb2f41bb4fe1a01b073038307bbc63429eb4a906",
+      "cases": [
+        "inferred-grants",
+        "explicit-cap",
+        "changed-copy"
+      ],
+      "contract": "p22.permission-validation",
+      "checkedAt": "grant_agent.proofs_fast_contracts.self_check",
+      "freshReceipt": ".agent_control/p22/retirement-final/fast-contracts/outcomes.json"
+    },
+    {
+      "path": "tests/test_runtime_budget_contract.py",
+      "sha256": "03985002320a5e0ccede28d3c17256bf5c4533e3bfe33eac744e20847145c1a1",
+      "cases": [
+        "test_omitted_budget_is_unlimited_and_not_forwarded_to_engine",
+        "test_explicit_budget_remains_enforced",
+        "test_resume_clears_legacy_implicit_budget_without_inventing_hours",
+        "test_control_store_uses_configured_authority_root"
+      ],
+      "contract": "p22.runtime-budget",
+      "checkedAt": "grant_agent.proofs_runtime_edges.budget",
+      "freshReceipt": ".agent_control/p22/retirement-final/fast-contracts/outcomes.json",
+      "boundary": "C7 case functions; no live provider or external release lookup"
+    },
+    {
+      "path": "tests/test_runtime_updates.py",
+      "sha256": "df03aef9b4d81bf1e70e8af90841e46cd2418da5af53bc27b7212304e00fce3a",
+      "cases": [
+        "test_compare_version_tokens_handles_semver_and_date_versions",
+        "test_latest_openclaw_release_reads_npm_latest_version",
+        "test_latest_hermes_release_reads_release_files_from_github_contents"
+      ],
+      "contract": "p22.release-parsing",
+      "checkedAt": "grant_agent.proofs_runtime_edges.releases",
+      "freshReceipt": ".agent_control/p22/retirement-final/fast-contracts/outcomes.json",
+      "boundary": "C7 case functions; no live provider or external release lookup"
+    },
+    {
+      "path": "tests/test_workspace_selection_behavior.py",
+      "sha256": "927a1edf72a1e44d3e8c9e71a9a57f7b90ffe7e05c1cc520610fff17baca402c",
+      "cases": [
+        "WorkspaceSelectionBehaviorTests.test_live_refresh_preserves_explicit_selection",
+        "WorkspaceSelectionBehaviorTests.test_agent_launch_uses_exact_selected_workspace",
+        "WorkspaceSelectionBehaviorTests.test_agent_launch_fails_closed_when_selected_workspace_is_missing"
+      ],
+      "contract": "p22.workspace-selection",
+      "checkedAt": "grant_agent.proofs_runtime_edges.workspace",
+      "freshReceipt": ".agent_control/p22/workspace-migration/fast-contracts/outcomes.json",
+      "boundary": "C7/CL invokes actual production JavaScript helpers; no rendered UI claim"
+    },
+    {
+      "path": "tests/test_connected_codex_exec_threads.py",
+      "sha256": "95cdaccf7fd4e45b079ff080a3f253b01abb5c9209ec0687613120a66ac5e1e5",
+      "cases": [
+        "test_exec_thread_with_extended_prefix_cwd_is_listed_and_marked_background",
+        "test_interactive_thread_is_not_background",
+        "test_project_roots_match_through_extended_prefix"
+      ],
+      "contract": "p22.codex-threads",
+      "checkedAt": "grant_agent.proofs_runtime_edges.codex_threads",
+      "freshReceipt": ".agent_control/p22/continued-migration-final/fast-contracts/outcomes.json",
+      "boundary": "Actual local projections and disposable synthetic state; no operator account, provider invocation or supervisor is used"
+    },
+    {
+      "path": "tests/test_provider_auth_broker.py",
+      "sha256": "4cef3b186481212a32d15bf062c2fc8b9b74734564d1bf796e31460f34a00608",
+      "cases": [
+        "test_codex_oauth_has_one_refresh_owner_and_nonsecret_state"
+      ],
+      "contract": "p22.oauth-owner",
+      "checkedAt": "grant_agent.proofs_runtime_edges.oauth_owner",
+      "freshReceipt": ".agent_control/p22/continued-migration-final/fast-contracts/outcomes.json",
+      "boundary": "Actual local projections and disposable synthetic state; no operator account, provider invocation or supervisor is used"
+    },
+    {
+      "path": "tests/test_nightshift_plan_hold.py",
+      "sha256": "a97221cc1ac865665ad1a057febed67baee86d0ba06150c4f9c869b4a9eeb24a",
+      "cases": [
+        "test_tasks_hold_while_a_plan_window_is_past_the_line"
+      ],
+      "contract": "p22.plan-hold",
+      "checkedAt": "grant_agent.proofs_runtime_edges.plan_hold",
+      "freshReceipt": ".agent_control/p22/continued-migration-final/fast-contracts/outcomes.json",
+      "boundary": "Actual local projections and disposable synthetic state; no operator account, provider invocation or supervisor is used"
+    }
+  ]
+}

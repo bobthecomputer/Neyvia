@@ -1,0 +1,32 @@
+{
+  "area": "measured-coverage",
+  "module": "grant_agent.proofs_measured_coverage",
+  "self_check": "self_check",
+  "manuals": [
+    "proofs"
+  ],
+  "contracts": [
+    {
+      "id": "p22.measured-coverage",
+      "phase": "post",
+      "claim": "Measured Python trace streams bind an explicit changed-line scope to source-stable receipts; only executed in-scope lines gain admission, out-of-scope and unexecuted lines stay uncovered, stale sources or specifications invalidate reuse, and resource boundaries fail closed.",
+      "checkedAt": [
+        "grant_agent.contract_execution.start",
+        "grant_agent.contract_execution.TraceSession.stop",
+        "grant_agent.contract_measurements.measured_record",
+        "grant_agent.contract_measurements.write_cache",
+        "grant_agent.contract_measurements.read_cache",
+        "grant_agent.contract_measurements.fresh",
+        "grant_agent.contract_measurements.admission",
+        "grant_agent.contract_measurements.impacted",
+        "grant_agent.contract_coverage.classify",
+        "grant_agent.proofs_measured_coverage._exercise_measurement_runtime",
+        "grant_agent.contract_resources.memory_limit_exceeded"
+      ],
+      "impact": [
+        "Contract gate execution tracing, source-bound coverage cache, and changed-line admission"
+      ]
+    }
+  ],
+  "networkContracts": []
+}

@@ -1,0 +1,348 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "transparency",
+  "kind": "workflow",
+  "proofs": {
+    "area": "transparency",
+    "contracts": [
+      {
+        "id": "transparency.helper-reports",
+        "phase": "invariant",
+        "claim": "Claude Code agent-message and task-notification envelopes render as compact Helper reported items with the helper name and report body; harness authority framing never becomes a human bubble.",
+        "checkedAt": [
+          "grant_agent.connected_sessions.claude_items.helper_reports",
+          "grant_agent.connected_sessions.claude_transcript.ItemStore._helper_notices",
+          "web/src/neyvia/next/NxThread.jsx"
+        ],
+        "impact": [
+          "Launch film behavior"
+        ]
+      },
+      {
+        "id": "transparency.quiet-unreported",
+        "phase": "invariant",
+        "claim": "At most one not-reported reasoning notice appears per human turn, and none when that turn displays tool steps; shared and explicitly withheld reasoning remain available.",
+        "checkedAt": [
+          "web/src/neyvia/next/nxTransparencyModel.js:visibleTranscriptItems"
+        ],
+        "impact": [
+          "Launch film behavior"
+        ]
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.view.transparency": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "everything",
+            "summaries",
+            "minimal"
+          ]
+        }
+      },
+      "required": [
+        "level"
+      ]
+    },
+    "proofs-e-chat.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Thinking and actions in every chat",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "transparency": {
+                "enum": [
+                  "everything",
+                  "summaries",
+                  "minimal"
+                ]
+              }
+            },
+            "required": [
+              "transparency"
+            ]
+          },
+          "tool": "neyvia.view.transparency.state"
+        }
+      },
+      "actions": {
+        "choose": {
+          "effect": "Persist the display level and notify every connected UI; capture still retains all provider-exposed data",
+          "pre": "Owner-authorized workspace; choose an advertised display level",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "level": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ok",
+              "level"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.view.transparency",
+          "tool": "neyvia.view.transparency"
+        }
+      },
+      "checks": {
+        "retained": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "transparency",
+            "value": {
+              "$input": "level"
+            }
+          },
+          "tool": "neyvia.view.transparency.state"
+        }
+      },
+      "procedures": {
+        "choose-detail": {
+          "goal": "Change the thread detail level and verify durable workspace state",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "string",
+                "enum": [
+                  "everything",
+                  "summaries",
+                  "minimal"
+                ]
+              }
+            },
+            "required": [
+              "level"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "choose",
+              "args": {
+                "level": {
+                  "$input": "level"
+                }
+              },
+              "check": "retained",
+              "save": "choice"
+            }
+          ]
+        },
+        "verify-effect-choose": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "string",
+                "enum": [
+                  "everything",
+                  "summaries",
+                  "minimal"
+                ]
+              }
+            },
+            "required": [
+              "level"
+            ]
+          },
+          "steps": [
+            {
+              "action": "choose",
+              "args": {
+                "level": {
+                  "$input": "level"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A provider does not share reasoning",
+          "recovery": "Keep at most one quiet availability notice per turn; omit it when visible tool steps explain the turn; never invent hidden thought text"
+        },
+        {
+          "failure": "Output is shortened on a thread page",
+          "recovery": "Expand the tool to request the existing full-output command; retain any explicit transport limit notice"
+        }
+      ],
+      "frontier": [
+        "Native desktop interaction and providers/models not present in the T22 real-turn receipt remain unverified"
+      ],
+      "guidance": [
+        "Settings > Thinking and actions: Show everything is default; Summaries keeps details a click away; Minimal retains messages, failures and reasoning availability notices.",
+        "Codex app-server requests detailed summaries and retains exposed summary/content; opaque underlying reasoning is never decrypted or reconstructed.",
+        "Claude Code 2.1.295 launches and resumes with --thinking-display summarized; terminal hook settings also request showThinkingSummaries. Readable provider thinking blocks are labelled Reasoning summary and collapsed by default. Redacted blocks and opaque signatures are never decoded; an availability notice appears only when no summary is available for the turn.",
+        "OpenCode ACP and native history expose provider thought chunks and tool parts; DeepSeek reasoning depends on the selected provider and model.",
+        "Every harness uses reasoning/tool/diff items with command, arguments, output, exit code and duration where exposed or measured; missing measurements remain explicit.",
+        "Thinking settings are display controls, independent of model effort or provider capture. No global CLI settings are modified."
+      ]
+    },
+    "proofs-e-chat": {
+      "title": "PROOFS-e chat stream, recovery and recorded evidence",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "available": {
+                "type": "boolean"
+              },
+              "complete": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the latest real chat-contract verification receipt and its completeness boundary",
+          "pre": "Selected local workspace; observation does not replay any chat action",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-chat.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-chat-proof-receipt": {
+          "goal": "Read fresh proof status without restarting any chat or provider",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Pending text remains Thinking after a crashed owner",
+          "recovery": "Observe actual run status; wait during grace, watch a live run, settle only a terminal or unowned turn; retain partial output"
+        },
+        {
+          "failure": "A tool result label is treated as successful execution",
+          "recovery": "Recorded failure/cancellation outranks hints; command and diff cards display actual recorded evidence"
+        }
+      ],
+      "frontier": [
+        "Real pure stream/recovery/presentation and scratch desktop polling boundaries; rendered UI and provider execution are separate proof boundaries"
+      ],
+      "guidance": [
+        "recovery.interrupted: recovery.interrupted",
+        "recovery.decision: recovery.decision",
+        "recovery.recorded: recovery.recorded",
+        "recovery.unowned: recovery.unowned",
+        "recovery.quiet: recovery.quiet",
+        "recovery.merge: recovery.merge",
+        "activity.href: activity.href",
+        "activity.duration: activity.duration",
+        "proofs-e.chat.streamState: New streams begin empty without fabricated reply or activity",
+        "proofs-e.chat.normalizedCalls: Tool projections preserve actual ids,input,output and errors; failure results override legacy completed status",
+        "proofs-e.chat.trace: Live and receipt-only projections preserve reasoning summaries and normalized recorded tool evidence",
+        "proofs-e.chat.streamTransition: Every real streamed event updates its actual answer identity,Unicode text,summary or id-merged tool call preserving earlier evidence",
+        "proofs-e.chat.pollDelivery: Only an active poll delivers exact snapshot events with its observed cursor; stop ignores late responses",
+        "proofs-e.chat.phase: Recorded failure and cancelled or uncertain states take precedence over pending/success hints",
+        "proofs-e.chat.chip: Recorded outcomes survive chip-label guesses; labels alone never turn tool results into success",
+        "proofs-e.chat.activity: Activity cards retain real command/input/output and category, readable app title,summary,phase and distinct indexed identity",
+        "proofs-e.chat.visibleActivity: Answer/progress deltas stay out of tool cards and one item-id lifecycle preserves earlier command and completion output",
+        "proofs-e.chat.surfaces: Every canonical workspace surface is addressable and installed studio/workflow destinations remain available",
+        "proofs-e.chat.presentation: Recorded commands,reads,created files and edits show authentic shell,cwd,exit,error,output and bounded diffs with correct line numbers",
+        "proofs-e.chat.commandSummary: Collapsed command summaries preserve signed Windows exit code and actual stdout/stderr line counts",
+        "proofs-e.chat.stringField: Lenient recorded field parsing decodes escapes and exposes truncation while dropping incomplete escapes",
+        "proofs-e.chat.utf16: Repair genuine NUL-heavy UTF16 misreads while preserving ordinary output",
+        "proofs-e.chat.diff: Unified diff lines retain add/remove/context types and independently advancing old/new hunk line numbers",
+        "proofs-e.chat.family: Gateway and harness aliases resolve the actual command/edit/write/read/search/fetch family",
+        "proofs-e.chat.safe-display: Activity display redacts secrets and inline media without mutating the actual transport; readable ordinary output survives",
+        "proofs-e.chat.desktop-stream: Flat and wrapped desktop polls return only complete UTF8 rows with byte cursors and refuse unsafe turn ids",
+        "Startup: scripts/proofs-e-chat.mjs --root <owned-scratch> invokes seven actual recovery/stream/poll/presentation/desktop procedures and rejects semantic corruption",
+        "Desktop proof uses only get_agent_chat_stream_command local file fast path; flat and Tauri-wrapped arguments share its byte cursor and turn-id checks"
+      ]
+    },
+    "filmbugs": {
+      "title": "Launch film behavior contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [],
+      "guidance": [
+        "Claude Code agent-message and task-notification envelopes render as compact Helper reported items with the helper name and report body; harness authority framing never becomes a human bubble.",
+        "At most one not-reported reasoning notice appears per human turn, and none when that turn displays tool steps; shared and explicitly withheld reasoning remain available."
+      ]
+    }
+  }
+}

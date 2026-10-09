@@ -1,0 +1,669 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neyvia.local/schemas/scroll-study-pack/1",
+  "type": "object",
+  "required": [
+    "meta",
+    "concepts",
+    "cards",
+    "sources",
+    "generation"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "subjects",
+        "version",
+        "generator",
+        "created",
+        "lang"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "subjects": {
+          "$ref": "#/$defs/ids"
+        },
+        "version": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "generator": {
+          "const": "neyvia"
+        },
+        "created": {
+          "$ref": "#/$defs/text"
+        },
+        "lang": {
+          "enum": [
+            "en",
+            "fr"
+          ]
+        },
+        "studyFormat": {
+          "const": "paul-seven-part.v1"
+        }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "chapter",
+          "subject",
+          "prereqs",
+          "kind",
+          "definition"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "name": {
+            "$ref": "#/$defs/text"
+          },
+          "chapter": {
+            "$ref": "#/$defs/id"
+          },
+          "subject": {
+            "$ref": "#/$defs/id"
+          },
+          "prereqs": {
+            "$ref": "#/$defs/ids"
+          },
+          "kind": {
+            "enum": [
+              "fact",
+              "procedure",
+              "formula",
+              "term"
+            ]
+          },
+          "definition": {
+            "$ref": "#/$defs/text"
+          },
+          "confusableWith": {
+            "$ref": "#/$defs/ids"
+          }
+        }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/card"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "sha256",
+          "kind"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/text"
+          },
+          "title": {
+            "$ref": "#/$defs/text"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "kind": {
+            "enum": [
+              "markdown",
+              "text",
+              "pdf",
+              "ocr"
+            ]
+          }
+        }
+      }
+    },
+    "generation": {
+      "type": "object",
+      "required": [
+        "run",
+        "costs"
+      ],
+      "properties": {
+        "run": {
+          "$ref": "#/$defs/text"
+        },
+        "costs": {
+          "type": [
+            "object",
+            "array"
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+    },
+    "ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "card": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "subject",
+        "chapter",
+        "concepts",
+        "body",
+        "difficulty",
+        "seconds",
+        "lang",
+        "provenance"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "enum": [
+            "fact",
+            "explainer",
+            "worked",
+            "flashcard",
+            "cloze",
+            "why",
+            "truefalse",
+            "mcq",
+            "order",
+            "spot",
+            "recap",
+            "formula",
+            "when",
+            "write",
+            "pattern",
+            "course_example",
+            "your_exercise",
+            "variations_traps",
+            "exercise_variant",
+            "pattern_drill"
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/id"
+        },
+        "chapter": {
+          "$ref": "#/$defs/id"
+        },
+        "concepts": {
+          "type": "object",
+          "required": [
+            "teaches",
+            "requires",
+            "tests"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "teaches": {
+              "$ref": "#/$defs/ids"
+            },
+            "requires": {
+              "$ref": "#/$defs/ids"
+            },
+            "tests": {
+              "$ref": "#/$defs/ids"
+            }
+          }
+        },
+        "body": {
+          "$ref": "#/$defs/text"
+        },
+        "explanation": {
+          "$ref": "#/$defs/text"
+        },
+        "difficulty": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "seconds": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 40
+        },
+        "lang": {
+          "enum": [
+            "en",
+            "fr"
+          ]
+        },
+        "media": {
+          "type": "array",
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "figure": {
+          "$ref": "#/$defs/text"
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "doc",
+            "span"
+          ],
+          "properties": {
+            "doc": {
+              "$ref": "#/$defs/text"
+            },
+            "span": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "required": [
+            "stage",
+            "tier",
+            "runId"
+          ],
+          "properties": {
+            "stage": {
+              "$ref": "#/$defs/text"
+            },
+            "tier": {
+              "enum": [
+                "script",
+                "memory",
+                "cache",
+                "small",
+                "big"
+              ]
+            },
+            "runId": {
+              "$ref": "#/$defs/text"
+            },
+            "model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "front": {
+          "$ref": "#/$defs/text"
+        },
+        "back": {
+          "$ref": "#/$defs/text"
+        },
+        "answer": {
+          "type": [
+            "string",
+            "boolean",
+            "number",
+            "array"
+          ]
+        },
+        "fade": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "why": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "cloze": {
+          "type": "object",
+          "required": [
+            "before",
+            "blank",
+            "after"
+          ],
+          "properties": {
+            "before": {
+              "type": "string"
+            },
+            "blank": {
+              "$ref": "#/$defs/text"
+            },
+            "after": {
+              "type": "string"
+            }
+          }
+        },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "$ref": "#/$defs/text"
+              },
+              "correct": {
+                "type": "boolean"
+              },
+              "why": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "spot": {
+          "type": "object",
+          "required": [
+            "lines",
+            "wrong",
+            "fix"
+          ],
+          "properties": {
+            "lines": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/text"
+              }
+            },
+            "wrong": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fix": {
+              "$ref": "#/$defs/text"
+            }
+          }
+        },
+        "part": {
+          "enum": [
+            "formula",
+            "when",
+            "write",
+            "pattern",
+            "course_example",
+            "your_exercise",
+            "variations_traps"
+          ]
+        },
+        "partIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "phase": {
+          "enum": [
+            "teach",
+            "practise",
+            "test"
+          ]
+        },
+        "requiresParts": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "formula",
+              "when",
+              "write",
+              "pattern",
+              "course_example",
+              "your_exercise",
+              "variations_traps"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "not": {
+                  "const": "recap"
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "source"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "flashcard",
+                  "why"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "front",
+              "back"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "worked"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "steps",
+              "fade"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "cloze"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "cloze"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "truefalse"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "answer"
+            ],
+            "properties": {
+              "answer": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mcq"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "options"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "order"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "spot"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "spot"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "exercise_variant",
+                  "pattern_drill",
+                  "your_exercise"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "front",
+              "back",
+              "explanation",
+              "requiresParts"
+            ],
+            "properties": {
+              "phase": {
+                "const": "test"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "meta": {
+            "properties": {
+              "subjects": {
+                "contains": {
+                  "enum": [
+                    "math",
+                    "maths",
+                    "mathematics",
+                    "physics"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "meta": {
+            "required": [
+              "studyFormat"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

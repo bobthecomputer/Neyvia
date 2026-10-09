@@ -1,0 +1,965 @@
+\documentclass[sheet,noautoquant,noautokw]{neyvia-study}
+% Ported from Linear_Algebra_Formula_Method_Sheet.tex (chapters 1) by scripts/study_docs.py port.
+\studytitle{Linear Algebra}
+\studysubtitle{Formula \& Method Sheet}
+\studysubject{Linear algebra course}
+\studytagline{Same order as the course. Formula $\to$ method skeleton \ → \ reflex. Quantifiers in colour: $\ALL\ \EX\ \EXU$.}
+\begin{document}
+\maketitle
+
+\studychapter{Review and complements on set theory and linear algebra}
+\studypart{I}{Sets}
+\begin{concept}[1.1]{Operations on sets, products and sets of numbers}{p1 col1}
+\begin{definition}
+\dline{B\setminus A=\set{x\in B\mid x\notin A},\qquad A^c=E\setminus A,\qquad A\times B=\set{(x;y)\mid x\in A,\ y\in B}}
+\dline{E^A=\set{\text{maps }A\to E},\qquad A\in\mathcal{P}(E)\iff A\subseteq E}
+\end{definition}
+\begin{method}{Prove that $A\subseteq B$}
+\step{\kw{Let} $x\in A$.}
+\step{$\displaystyle \cdots$}
+\step{$x\in B$.}
+\step{$\therefore A\subseteq B$.}
+\end{method}
+\begin{method}{Prove that $A=B$ (double inclusion)}
+\step{\kw{$\subseteq$)} \kw{Let} $x\in A$. $\ \cdots\ $ Then $x\in B$.}
+\step{\kw{$\supseteq$)} \kw{Let} $x\in B$. $\ \cdots\ $ Then $x\in A$.}
+\step{$\therefore A=B$.}
+\end{method}
+\begin{reflex}
+Set equality \ensuremath{\rightarrow} prove both inclusions; each inclusion starts with \kw{Let $x\in$ smaller set}.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.2]{Maps (functions) between sets}{p1 col1}
+\begin{definition}
+\dline{f\in F^E\iff\ALL x\in E,\ \EX y\in F,\ f(x)=y\quad(\text{one }y\text{ only})}
+\end{definition}
+\begin{method}{Check that a rule defines a map $E\to F$}
+\step{\kw{Let} $x\in E$ be any point.}
+\step{The rule gives a value $f(x)$ (it is defined for every $x\in E$).}
+\step{$f(x)$ is unique (one value, not two).}
+\step{$f(x)\in F$.}
+\step{$\therefore f\in F^E$.}
+\end{method}
+\begin{reflex}
+Is it a map $E\to F$? \ensuremath{\rightarrow} every $x\in E$ has one and only one image in $F$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.3]{Image and preimage of a subset}{p1 col1}
+\begin{definition}
+\dline{y\in f^{\to}(A)\iff\EX x\in A,\ f(x)=y}
+\dline{x\in f^{\leftarrow}(B)\iff f(x)\in B}
+\end{definition}
+\begin{method}{Show that $y\in f^{\to}(A)$}
+\step{\kw{We look for} $x\in A$ such that $f(x)=y$.}
+\step{\kw{Take} $x=\cdots$ (check $x\in A$).}
+\step{\kw{Then} $f(x)=y$.}
+\step{$\therefore y\in f^{\to}(A)$.}
+\end{method}
+\begin{method}{Show that $x\in f^{\leftarrow}(B)$}
+\step{\kw{Let} $x\in E$.}
+\step{Compute $f(x)=\cdots$}
+\step{$f(x)\in B$.}
+\step{$\therefore x\in f^{\leftarrow}(B)$.}
+\end{method}
+\begin{reflex}
+Preimage \ensuremath{\rightarrow} never invert $f$: just test "does $f(x)$ land in $B$?".
+\end{reflex}
+\end{concept}
+\begin{concept}[1.4]{Injective, surjective, bijective maps}{p1 col1}
+\begin{definition}
+\dline{f\text{ inj.}\iff\ALL x,x'\in E,\ f(x)=f(x')\Rightarrow x=x'}
+\dline{f\text{ surj.}\iff\ALL y\in F,\ \EX x\in E,\ y=f(x)}
+\dline{f\text{ bij.}\iff\ALL y\in F,\ \EXU x\in E,\ y=f(x)}
+\end{definition}
+\begin{method}{Prove that $f$ is injective}
+\step{\kw{Let} $x,x'\in E$.}
+\step{\kw{Assume} $f(x)=f(x')$.}
+\step{$\displaystyle \cdots$}
+\step{$x=x'$.}
+\step{$\therefore f$ is injective.}
+\end{method}
+\begin{method}{Prove that $f$ is surjective}
+\step{\kw{Let} $y\in F$.}
+\step{\kw{We look for} $x\in E$ such that $f(x)=y$.}
+\step{\kw{Take} $x=\cdots$ (it lies in $E$).}
+\step{\kw{Then} $f(x)=\cdots=y$.}
+\step{$\therefore f$ is surjective.}
+\end{method}
+\begin{reflex}
+Injective \ensuremath{\rightarrow} start with $f(x)=f(x')$; surjective \ensuremath{\rightarrow} start with $y\in F$, solve $y=f(x)$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.5]{Invertible maps and the inverse}{p1 col1}
+\begin{definition}
+\dline{f\circ g=\Id_F,\qquad g\circ f=\Id_E\ \Longrightarrow\ g=f^{-1}}
+\dline{f\text{ bijective}\iff f\text{ invertible}}
+\end{definition}
+\begin{method}{Prove that $f$ is invertible (give $g$)}
+\step{\kw{We look for} $g:F\to E$.}
+\step{\kw{Take} $g(y)=\cdots$ for $y\in F$.}
+\step{\kw{Check} $f\circ g=\Id_F$: \kw{Let} $y\in F$. Then $f(g(y))=\cdots=y$.}
+\step{\kw{Check} $g\circ f=\Id_E$: \kw{Let} $x\in E$. Then $g(f(x))=\cdots=x$.}
+\step{$\therefore f$ is invertible and $f^{-1}=g$.}
+\end{method}
+\begin{method}{Proof of the proposition (proof not in the handout)}
+\step{\kw{$\Leftarrow$)} \kw{Assume} $g$ exists with $f\circ g=\Id_F$ and $g\circ f=\Id_E$.}
+\step{Injective: \kw{let} $x,x'\in E$ with $f(x)=f(x')$.}
+\step[1]{$\displaystyle g(f(x))=g(f(x'))$}
+\step[1]{$\displaystyle x=x'\why{because \(g\circ f=\Id_E\)}$}
+\step{Surjective: \kw{let} $y\in F$. \kw{Take} $x=g(y)$.}
+\step[1]{$\displaystyle f(x)=f(g(y))=y\why{because \(f\circ g=\Id_F\)}$}
+\step{\kw{$\Rightarrow$)} \kw{Assume} $f$ bijective.}
+\step{\kw{For all} $y\in F$ there is a unique $x\in E$ with $f(x)=y$: call it $g(y)$.}
+\step{Then $f(g(y))=y$, so $f\circ g=\Id_F$.}
+\step{\kw{Let} $x\in E$. Then $g(f(x))$ is the unique solution $z$ of $f(z)=f(x)$; $z=x$ is one, so $g(f(x))=x$.}
+\step{Uniqueness of $g$: if $g,h$ are two reciprocals, $g=g\circ(f\circ h)=(g\circ f)\circ h=h$.}
+\end{method}
+\begin{reflex}
+Invertible \ensuremath{\Leftrightarrow} bijective \ensuremath{\rightarrow} to invert $f$, solve $y=f(x)$ for $x$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.6]{Kronecker symbol and sign function}{p1 col1}
+\begin{definition}
+\noindent The \textbf{Kronecker symbol} is the map
+\dline{\delta:\ E\times E\to\set{0;1},\qquad(x;y)\mapsto\delta_{x;y}=\begin{cases}1&\text{if }x=y\\0&\text{if }x\neq y\end{cases}}
+\par\noindent The \textbf{sign function} is
+\dline{\sgn:\ \R\to\set{-1;0;1},\qquad x\mapsto\begin{cases}-1&\text{if }x<0\\0&\text{if }x=0\\1&\text{if }x>0\end{cases}}
+\end{definition}
+\begin{reflex}
+$\delta_{k,j}$ in a sum \ensuremath{\rightarrow} it keeps only the term $k=j$ and kills the others.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.7]{Families and sequences}{p1 col1}
+\begin{definition}
+\noindent A \textbf{family} is a map: let $I$ be a set and $E$ a set.
+\dline{x=(x_i)_{i\in I}\in E^I\ \Longleftrightarrow\ x:\ I\to E,\ \ i\mapsto x(i)=x_i}
+\par\noindent For instance a real sequence $(u_n)_{n\in\N}\in\R^{\N}$ is a function from $\N$ to $\R$:
+\dline{u:\ \N\to\R,\qquad n\mapsto u(n)=u_n}
+\end{definition}
+\begin{reflex}
+Family indexed by $I$ \ensuremath{\rightarrow} a map $I\to E$; $x_i$ is just the notation for $x(i)$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.8]{Cardinal of a set: finite sets}{p1 col1}
+\begin{definition}
+\dline{E\text{ finite}\iff\EX n\in\N,\ \EX f:E\to\ii{1}{n}\text{ bijective};\qquad \card E=n}
+\end{definition}
+\begin{method}{Prove that $E$ is finite and compute $\card E$}
+\step{\kw{We look for} $n\in\N$ and a bijection $f:E\to\ii{1}{n}$.}
+\step{\kw{Take} $n=\cdots$ and $f(e)=\cdots$ (an explicit labelling of the elements).}
+\step{\kw{Check} that $f$ is injective and surjective.}
+\step{$\therefore E$ is finite and $\card E=n$.}
+\end{method}
+\begin{reflex}
+Finite set \ensuremath{\rightarrow} counting the elements is a bijection with $\ii{1}{n}$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.9]{Countable, at most countable, uncountable sets}{p1 col1}
+\begin{definition}
+\dline{E\text{ countable}\iff\EX f:E\to\N\text{ bijection}}
+\dline{\text{at most countable}=\text{finite or countable}}
+\end{definition}
+\begin{method}{Prove that $E$ is countable (explicit bijection)}
+\step{\kw{We look for} $f:E\to\N$ bijective.}
+\step{\kw{Take} $f(x)=\cdots$.}
+\step{\kw{Let} $y\in\N$. \kw{Solve} $y=f(x)$: one and only one $x\in E$.}
+\step{$\therefore f$ is a bijection and $E$ is countable.}
+\end{method}
+\begin{reflex}
+Countable \ensuremath{\rightarrow} list the elements as $e_0,e_1,e_2,\dots$ with no repetition and no omission.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.10]{Proposition on countable sets}{p1 col2}
+\begin{definition}
+\dline{A\subseteq\N,\ A\text{ infinite}\Rightarrow A\text{ countable}}
+\dline{E_n\text{ countable }(n\in\N)\Rightarrow\bigcup_{n\in\N}E_n\text{ countable}}
+\dline{E_1,\dots,E_p\text{ countable }(p\ge1)\Rightarrow E_1\times\dots\times E_p\text{ countable}}
+\end{definition}
+\begin{method}{Use the proposition to show that $E$ is countable}
+\step{Case 1: \kw{Show} $E\subseteq\N$ and $E$ infinite $\Rightarrow$ countable.}
+\step{Case 2: \kw{Write} $E=\bigcup_{n\in\N}E_n$ with each $E_n$ countable $\Rightarrow$ countable.}
+\step{Case 3: \kw{Write} $E=E_1\times\dots\times E_p$ with each $E_i$ countable $\Rightarrow$ countable.}
+\end{method}
+\begin{reflex}
+Countable proof \ensuremath{\rightarrow} recognise a union or a product of known countable sets; do not build bijections by hand.
+\end{reflex}
+\end{concept}
+\studypart{II}{Linear algebra}
+\begin{concept}[1.11]{Vector space (linear space)}{p1 col2}
+\begin{definition}
+\noindent $(E;+;\cdot)$ is a \textbf{vector space} (= linear space) over $\F$ when:
+\par\noindent \textbf{Addition} $+:E\times E\to E$ satisfies
+\dline{\text{(commutativity)}\qquad\ALL x,y\in E,\ \ x+y=y+x}
+\dline{\text{(associativity)}\qquad\ALL x,y,z\in E,\ \ (x+y)+z=x+(y+z)}
+\dline{\text{(neutral element)}\qquad\EX0_E\in E,\ \ALL x\in E,\ \ x+0_E=x}
+\dline{\text{(inverse element)}\qquad\ALL x\in E,\ \EX y\in E,\ \ x+y=0_E}
+\par\noindent Associativity, neutral element and inverse element say that $(E;+)$ is a \textbf{group}; with commutativity, a \textbf{commutative group}.
+\par\noindent \textbf{Scalar multiplication} $\cdot:\F\times E\to E$ satisfies
+\dline{\text{(identity)}\qquad\ALL x\in E,\ \ 1\cdot x=x}
+\dline{\text{(action)}\qquad\ALL\alpha,\beta\in\F,\ \ALL x\in E,\ \ \alpha\cdot(\beta\cdot x)=(\alpha\times\beta)\cdot x}
+\dline{\text{(left distributivity)}\qquad\ALL\alpha,\beta\in\F,\ \ALL x\in E,\ \ (\alpha+\beta)\cdot x=\alpha\cdot x+\beta\cdot x}
+\dline{\text{(right distributivity)}\qquad\ALL\alpha\in\F,\ \ALL x,y\in E,\ \ \alpha\cdot(x+y)=\alpha\cdot x+\alpha\cdot y}
+\end{definition}
+\begin{method}{Check an axiom in $\R^2$ (what "check the axioms" looks like)}
+\step{\kw{Let} $x=(x_1;x_2)$ and $y=(y_1;y_2)$ in $\R^2$.}
+\step{$\displaystyle x+y=(x_1+y_1;\ x_2+y_2)\why{definition of \(+\)}$}
+\step{$\displaystyle x+y=(y_1+x_1;\ y_2+x_2)\why{commutativity in \(\R\)}$}
+\step{$\displaystyle x+y=y+x$}
+\step{$\therefore$ commutativity holds.}
+\end{method}
+\begin{reflex}
+Vector space \ensuremath{\rightarrow} eight axioms: four for $+$ (commutative group), four for $\cdot$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.12]{Vector subspace}{p1 col2}
+\begin{definition}
+\dline{V\neq\emptyset\quad\text{and}\quad\ALL\alpha,\beta\in\F,\ \ALL x,y\in V,\ \ \alpha x+\beta y\in V}
+\end{definition}
+\begin{method}{Prove that $V$ is a subspace}
+\step{$V\neq\emptyset$ (check $0_E\in V$).}
+\step{\kw{Let} $\alpha,\beta\in\F$ and $x,y\in V$.}
+\step{$\cdots$}
+\step{$\alpha x+\beta y\in V$.}
+\end{method}
+\begin{reflex}
+Subspace \ensuremath{\rightarrow} nonempty, then \kw{Let $\alpha,\beta$; $x,y\in V$} and show $\alpha x+\beta y\in V$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.13]{Concatenation of families}{p1 col2}
+\begin{definition}
+\noindent Let $(u_1;\dots;u_p)\in E^p$ and $(v_1;\dots;v_q)\in E^q$, with $p,q\in\N$.
+\par\noindent The \textbf{concatenation} is the family
+\dline{(u_1;\dots;u_p;v_1;\dots;v_q)\in E^{p+q}}
+\par\noindent This generalises to a finite number of families of vectors.
+\end{definition}
+\begin{reflex}
+Concatenation \ensuremath{\rightarrow} write the families one after the other, in order, without removing repeats.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.14]{Span of a family or of a set}{p1 col2}
+\begin{definition}
+\dline{\Span(u_1;\dots;u_p)=\set{\sum_{k=1}^{p}\alpha_k u_k\ \middle|\ \alpha_k\in\F}}
+\dline{\Span(A)=\Big\{\sum_{k=1}^{n}\alpha_k x_k\ \Big|\ n\in\N,\ \alpha_k\in\F,\ x_k\in A\Big\}}
+\end{definition}
+\begin{method}{Show that $x\in\Span(u_1;\dots;u_p)$}
+\step{\kw{We look for} $\alpha_1;\dots;\alpha_p\in\F$ such that $x=\sum_{k=1}^{p}\alpha_k u_k$.}
+\step{\kw{Solve} the linear system in the unknowns $\alpha_1;\dots;\alpha_p$.}
+\step{\kw{Take} these values.}
+\step{\kw{Then} $x=\sum_{k=1}^{p}\alpha_k u_k$.}
+\step{$\therefore x\in\Span(u_1;\dots;u_p)$.}
+\end{method}
+\begin{reflex}
+In the span \ensuremath{\rightarrow} find coefficients $\alpha_k$ with $x=\sum\alpha_k u_k$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.15]{Linear independence, generating family, basis}{p1 col2}
+\begin{definition}
+\dline{\text{lin. indep.}\iff\Big(\sum_{j=1}^{p}\alpha_j u_j=0_E\Rightarrow\alpha_1=\dots=\alpha_p=0\Big)}
+\dline{\text{generating}\iff\Span(u_1;\dots;u_p)=E}
+\end{definition}
+\begin{method}{Prove that $(u_1;\dots;u_p)$ is linearly independent}
+\step{\kw{Let} $\alpha_1;\dots;\alpha_p\in\F$.}
+\step{\kw{Assume} $\sum_{j=1}^{p}\alpha_j u_j=0_E$.}
+\step{$\displaystyle \cdots$}
+\step{$\alpha_1=\dots=\alpha_p=0$.}
+\step{$\therefore(u_1;\dots;u_p)$ is linearly independent.}
+\end{method}
+\begin{method}{Prove that $(u_1;\dots;u_p)$ generates $E$}
+\step{\kw{Let} $x\in E$.}
+\step{\kw{We look for} $\alpha_1;\dots;\alpha_p\in\F$ such that $x=\sum_{k=1}^{p}\alpha_k u_k$.}
+\step{\kw{Take} $\alpha_k=\cdots$}
+\step{\kw{Then} $x=\sum_{k=1}^{p}\alpha_k u_k\in\Span(u_1;\dots;u_p)$.}
+\step{$\therefore\Span(u_1;\dots;u_p)=E$.}
+\end{method}
+\begin{method}{Prove that $(u_1;\dots;u_p)$ is a basis}
+\step{\kw{Show} that the family is linearly independent (previous method).}
+\step{\kw{Show} that the family generates $E$ (previous method).}
+\step{$\therefore$ the family is a basis of $E$.}
+\end{method}
+\begin{reflex}
+Independent \ensuremath{\rightarrow} start from $\sum\alpha_j u_j=0_E$ and force all $\alpha_j=0$; generating \ensuremath{\rightarrow} start from any $x$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.16]{Generalisation to arbitrary families}{p1 col2}
+\begin{definition}
+\noindent Let $(u_i)_{i\in I}\in E^I$ (any index set $I$).
+\par\noindent It is \textbf{linearly independent} when (two equivalent formulations)
+\dline{\ALL\text{ finite }J\subseteq I,\ \ALL(\alpha_j)_{j\in J}\in\F^J,\ \ \sum_{j\in J}\alpha_j u_j=0_E\Rightarrow\ALL j\in J,\ \alpha_j=0_\F}
+\dline{\ALL j\in I,\ \ u_j\notin\Span\big((u_i)_{i\in I\setminus\set{j}}\big)}
+\par\noindent It \textbf{generates} $E$ when
+\dline{\Span\big((u_i)_{i\in I}\big)=E}
+\par\noindent It is a \textbf{basis} of $E$ when it is linearly independent and generating.
+\end{definition}
+\begin{method}{Prove that $(u_i)_{i\in I}$ is linearly independent}
+\step{\kw{Let} $J\subseteq I$ be a \textbf{finite} subset.}
+\step{\kw{Let} $(\alpha_j)_{j\in J}\in\F^J$.}
+\step{\kw{Assume} $\sum_{j\in J}\alpha_j u_j=0_E$.}
+\step{$\displaystyle \cdots$}
+\step{$\ALL j\in J,\ \alpha_j=0$.}
+\step{$\therefore(u_i)_{i\in I}$ is linearly independent.}
+\end{method}
+\begin{reflex}
+Infinite family \ensuremath{\rightarrow} independence is always tested on \textbf{finite} subfamilies.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.17]{Remarks on independence of infinite families}{p1 col2}
+\begin{definition}
+\noindent \textbf{Remark 1.} $(u_i)_{i\in I}$ is linearly independent $\iff$ every finite sub-family is linearly independent.
+\par\noindent \textbf{Remark 2.} If $I=\N$: $(u_n)_{n\in\N}$ is linearly independent $\iff$ for every $n\in\N$, $(u_0;\dots;u_n)$ is linearly independent.
+\end{definition}
+\begin{method}{Proof of Remark 1 (proof not in the handout)}
+\step{\kw{$\Rightarrow$)} \kw{Assume} $(u_i)_{i\in I}$ independent. \kw{Let} $J\subseteq I$ finite.}
+\step{\kw{Let} $(\alpha_j)_{j\in J}$ with $\sum_{j\in J}\alpha_j u_j=0_E$.}
+\step{By the definition applied to this $J$: $\ALL j\in J,\ \alpha_j=0$.}
+\step{$\therefore(u_j)_{j\in J}$ is linearly independent.}
+\step{\kw{$\Leftarrow$)} \kw{Assume} every finite sub-family is independent.}
+\step{\kw{Let} $J\subseteq I$ finite and $(\alpha_j)_{j\in J}$ with $\sum_{j\in J}\alpha_j u_j=0_E$.}
+\step{The sub-family $(u_j)_{j\in J}$ is independent, so $\ALL j\in J,\ \alpha_j=0$.}
+\step{$\therefore(u_i)_{i\in I}$ is independent.}
+\end{method}
+\begin{method}{Proof of Remark 2 (proof not in the handout)}
+\step{\kw{$\Rightarrow$)} $(u_0;\dots;u_n)$ is a finite sub-family: use Remark 1.}
+\step{\kw{$\Leftarrow$)} \kw{Let} $J\subseteq\N$ finite, $(\alpha_j)_{j\in J}$ with $\sum_{j\in J}\alpha_j u_j=0_E$.}
+\step{(If $J=\emptyset$ there is nothing to prove.) \kw{Take} $n=\max J$, so $J\subseteq\ii{0}{n}$.}
+\step{Put $\alpha_j=0$ for $j\in\ii{0}{n}\setminus J$.}
+\step{Then $\sum_{j=0}^{n}\alpha_j u_j=0_E$ and $(u_0;\dots;u_n)$ is independent.}
+\step{$\therefore\ALL j\in J,\ \alpha_j=0$.}
+\end{method}
+\begin{reflex}
+Independence of $(u_n)_{n\in\N}$ \ensuremath{\rightarrow} check $(u_0;\dots;u_n)$ for every $n$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.18]{Canonical bases of $\F^n$ and of $\Mat_{n;p}(\F)$}{p1 col2}
+\begin{definition}
+\noindent \textbf{1)} Let $n\in\N$. The canonical basis of $\F^n$ is $(e_1;\dots;e_n)$ where $e_i$ is the column with a $1$ in position $i$ and $0$ elsewhere:
+\dline{\left(\begin{bmatrix}1\\0\\\vdots\\0\end{bmatrix};\ \begin{bmatrix}0\\1\\\vdots\\0\end{bmatrix};\ \dots;\ \begin{bmatrix}0\\\vdots\\0\\1\end{bmatrix}\right)}
+\par\noindent \textbf{2)} Let $n,p\in\N$. The canonical basis of $\Mat_{n;p}(\F)$ is
+\dline{(C_{i;j})_{1\le i\le n,\ 1\le j\le p}}
+\par\noindent where, for every $(i;j)\in\ii{1}{n}\times\ii{1}{p}$, $C_{i;j}$ has a $1$ in \textbf{row $i$, column $j$} and $0$ elsewhere:
+\dline{C_{i;j}=\begin{bmatrix}0&\cdots&0&\cdots&0\\\vdots&&\vdots&&\vdots\\0&\cdots&1&\cdots&0\\\vdots&&\vdots&&\vdots\\0&\cdots&0&\cdots&0\end{bmatrix}\begin{matrix}\\\\\leftarrow i\\\\\\\end{matrix}\qquad(\text{column }j)}
+\end{definition}
+\begin{reflex}
+Canonical basis \ensuremath{\rightarrow} one entry equal to $1$, all the others $0$; the position labels the vector.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.19]{Canonical bases of $\F^{(\N)}$ and of $\mathrm{Pol}(\R;\R)$}{p1 col2}
+\begin{definition}
+\noindent \textbf{3)} Let
+\dline{\F^{(\N)}=\set{(u_n)_{n\in\N}\in\F^{\N}\ \middle|\ \EX N\in\N,\ \ALL n\ge N,\ u_n=0}}
+\par\noindent (sequences with finitely many non-zero terms). Its canonical basis is $(e_n)_{n\in\N}$ where
+\dline{\ALL n\in\N,\qquad e_n=(\delta_{k,n})_{k\in\N}=(0;\dots;0;1;0;\dots;0;\dots)}
+\par\noindent (the $1$ is in position $n$; the first position is $0$).
+\par\noindent \textbf{4)} The canonical basis of $\mathrm{Pol}(\R;\R)$ is $(X^k)_{k\in\N}$ where
+\dline{\ALL k\in\N,\qquad X^k:\ \R\to\R,\ \ t\mapsto t^k}
+\end{definition}
+\begin{reflex}
+Infinite-dimensional canonical basis \ensuremath{\rightarrow} indexed by $\N$: $e_n$ for sequences, $X^k$ for polynomials.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.20]{Sum of vector subspaces}{p1 col2}
+\begin{definition}
+\dline{\sum_{k=1}^{p}V_k=\set{\sum_{k=1}^{p}v_k\ \middle|\ v_k\in V_k}}
+\end{definition}
+\begin{method}{Show that $x\in V_1+\dots+V_p$}
+\step{\kw{We look for} $v_1\in V_1;\dots;v_p\in V_p$ such that $x=v_1+\dots+v_p$.}
+\step{\kw{Take} $v_k=\cdots$ (check $v_k\in V_k$ for each $k$).}
+\step{\kw{Then} $x=\sum_{k=1}^{p}v_k$.}
+\step{$\therefore x\in\sum_{k=1}^{p}V_k$.}
+\end{method}
+\begin{reflex}
+In $V+W$ \ensuremath{\rightarrow} split $x$ as $v+w$ with $v\in V$ and $w\in W$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.21]{The union $V\cup W$ is not a subspace in general}{p1 col2}
+\begin{definition}
+\noindent \textbf{Remark.} If $V$ and $W$ are vector subspaces of $E$, then $V\cup W$ is \textbf{not} a vector subspace of $E$ in general.
+\par\noindent Reminder (subspace test): $V\subseteq E$ is a subspace when $V\neq\emptyset$ and $\ALL\alpha,\beta\in\F,\ \ALL x,y\in V,\ \alpha x+\beta y\in V$.
+\end{definition}
+\begin{method}{Show that a set $S$ is not a subspace}
+\step{\kw{We look for} $\alpha,\beta\in\F$ and $x,y\in S$ with $\alpha x+\beta y\notin S$.}
+\step{\kw{Take} $x=\cdots$, $y=\cdots$ in $S$.}
+\step{\kw{Compute} $\alpha x+\beta y=\cdots$}
+\step{$\alpha x+\beta y\notin S$.}
+\step{$\therefore S$ is not a subspace.}
+\end{method}
+\begin{reflex}
+Not a subspace \ensuremath{\rightarrow} find one explicit pair $x,y\in S$ whose combination leaves $S$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.22]{$V+W=\Span(V\cup W)$}{p1 col3}
+\begin{definition}
+\noindent $\Span(V\cup W)$ is a vector subspace of $E$, and
+\dline{V+W=\Span(V\cup W)}
+\par\noindent where $V+W=\set{v+w\in E\mid v\in V,\ w\in W}$.
+\end{definition}
+\begin{method}{Prove $V+W=\Span(V\cup W)$}
+\step{$\subseteq$: $x=v+w$ with $v,w\in V\cup W$, so $x\in\Span(V\cup W)$.}
+\step{$\supseteq$: $x=\sum_{k=1}^{n}\alpha_k u_k$ with $u_k\in V\cup W$.}
+\step{Split the indices: $I=\set{k\mid u_k\in V}$, $J=\ii{1}{n}\setminus I$.}
+\step{$x=\underbrace{\sum_{k\in I}\alpha_k u_k}_{\in V}+\underbrace{\sum_{k\in J}\alpha_k u_k}_{\in W}\in V+W$.}
+\end{method}
+\begin{reflex}
+Span of a union \ensuremath{\rightarrow} it is the sum; prove "$\supseteq$" by splitting indices into "in $V$" and "in $W$".
+\end{reflex}
+\end{concept}
+\begin{concept}[1.23]{Sum of $p$ subspaces equals the span of the union}{p1 col3}
+\begin{definition}
+\noindent \textbf{Proposition.} With the previous notations ($V_1;\dots;V_p$ subspaces of $E$):
+\dline{\sum_{k=1}^{p}V_k=\Span\Big(\bigcup_{k=1}^{p}V_k\Big)}
+\par\noindent Handout proof: $p=1$ obvious; $p=2$ just done; then by induction.
+\end{definition}
+\begin{method}{Proof for general $p$ (proof not in the handout)}
+\step{\kw{$\subseteq$)} \kw{Let} $x=\sum_{k=1}^{p}v_k$ with $v_k\in V_k$.}
+\step{Each $v_k\in V_k\subseteq\bigcup_jV_j$, so $x$ is a combination of vectors of the union.}
+\step{$\therefore x\in\Span\big(\bigcup_kV_k\big)$.}
+\step{\kw{$\supseteq$)} \kw{Let} $x=\sum_{m=1}^{n}\alpha_m u_m$ with $u_m\in\bigcup_{k}V_k$.}
+\step{For each $m$ choose an index $k(m)\in\ii{1}{p}$ with $u_m\in V_{k(m)}$.}
+\step{\kw{Let} $I_k=\set{m\in\ii{1}{n}\mid k(m)=k}$ for $k\in\ii{1}{p}$.}
+\step{$\displaystyle x=\sum_{k=1}^{p}\ \underbrace{\sum_{m\in I_k}\alpha_m u_m}_{\in V_k}$}
+\step{$\therefore x\in\sum_{k=1}^{p}V_k$.}
+\end{method}
+\begin{reflex}
+Sum of subspaces = span of their union \ensuremath{\rightarrow} group the terms of a combination by the subspace they come from.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.24]{Direct sum, spanning, supplementary subspaces}{p1 col3}
+\begin{definition}
+\dline{\text{direct sum}:\ \sum_{k=1}^{p}v_k=0_E\Rightarrow\ALL k,\ v_k=0_E\qquad(v_k\in V_k)}
+\dline{\text{span }E:\ \sum_{k=1}^{p}V_k=E\qquad\text{supplementary}:\ E=\bigoplus_{k=1}^{p}V_k}
+\end{definition}
+\begin{method}{Prove that $V_1;\dots;V_p$ are in direct sum}
+\step{\kw{Let} $(v_1;\dots;v_p)\in V_1\times\dots\times V_p$.}
+\step{\kw{Assume} $\sum_{k=1}^{p}v_k=0_E$.}
+\step{$\displaystyle \cdots$}
+\step{$\ALL k\in\ii{1}{p},\ v_k=0_E$.}
+\step{$\therefore V_1;\dots;V_p$ are in direct sum.}
+\end{method}
+\begin{method}{Prove that $V_1;\dots;V_p$ are supplementary in $E$}
+\step{\kw{Direct sum.} \kw{Let} $v_k\in V_k$ with $\sum_{k}v_k=0_E$. $\ \cdots\ $ every $v_k=0_E$.}
+\step{\kw{Spanning.} \kw{Let} $x\in E$.}
+\step{\kw{There exist} $v_k\in V_k$ ($k\in\ii{1}{p}$) such that $x=\sum_{k}v_k$.}
+\step{$\therefore E=\sum_{k}V_k$.}
+\step{$\therefore E=\bigoplus_{k=1}^{p}V_k$.}
+\end{method}
+\begin{reflex}
+Direct sum \ensuremath{\rightarrow} start from $\sum v_k=0_E$ and show every $v_k=0_E$; spanning \ensuremath{\rightarrow} decompose any $x\in E$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.25]{Examples of sums and direct sums}{p1 col3}
+\begin{definition}
+\noindent Three pictures in the handout.
+\point{Two lines $V,W$ through the origin of a plane $E$ (different directions): $V\oplus W=E$.}
+\point{Three lines $U,V,W$ through the origin in $E=\R^2$: $U,V,W$ \textbf{span} $E$ but they are \textbf{not in direct sum}.}
+\point{$E=\R^3$ with $V=\R^2\times\set{0}$ and $W=\set{0}\times\set{0}\times\R$ (and the line $U$ of the first axis $x_1$):}
+\dline{V\oplus W=E,\qquad U+V+W=E,\qquad U,V\text{ are not in direct sum}}
+\end{definition}
+\begin{reflex}
+Lines in a plane \ensuremath{\rightarrow} two different lines are supplementary; a third one breaks the direct sum.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.26]{Criterion for two subspaces: $V\cap W=\set{0_E}$}{p1 col3}
+\begin{definition}
+\dline{V,W\text{ in direct sum}\iff V\cap W=\set{0_E}}
+\end{definition}
+\begin{method}{Show $V\oplus W$ with the criterion}
+\step{\kw{Show} $V\cap W=\set{0_E}$: \kw{Let} $x\in V\cap W$. $\cdots$ $x=0_E$.}
+\step{\kw{Then} $V,W$ are in direct sum.}
+\step{\kw{Add} $V+W=E$ for supplementary.}
+\end{method}
+\begin{reflex}
+Two subspaces, direct sum \ensuremath{\rightarrow} check $V\cap W=\set{0_E}$; for $p\ge3$ this is not enough.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.27]{Three subspaces: the triple intersection is not enough}{p1 col3}
+\begin{definition}
+\noindent \textbf{Remark.} For subspaces $U,V,W$ of $E$:
+\dline{U+V+W=U\oplus V\oplus W\ \Longrightarrow\ U\cap V\cap W=\set{0_E}}
+\par\noindent The converse is \textbf{false} (the handout crosses out the equivalence symbol).
+\end{definition}
+\begin{method}{Direct sum implies trivial triple intersection (proof not in the handout)}
+\step{\kw{Assume} $U,V,W$ are in direct sum.}
+\step{\kw{Let} $x\in U\cap V\cap W$.}
+\step{$\displaystyle x+(-x)+0_E=0_E\quad\text{with}\quad x\in U,\ -x\in V,\ 0_E\in W$}
+\step{\kw{Since} they are in direct sum: $x=0_E$.}
+\step{$\therefore U\cap V\cap W=\set{0_E}$.}
+\end{method}
+\begin{method}{Correct criterion for three subspaces (not in the handout)}
+\step{$\displaystyle U,V,W\text{ in direct sum}\iff U\cap V=\set{0_E}\ \text{ and }\ (U+V)\cap W=\set{0_E}$}
+\step{\kw{$\Rightarrow$)} \kw{Assume} $U,V,W$ in direct sum. If $x\in U\cap V$: $x+(-x)+0_E=0_E$ gives $x=0_E$.}
+\step{If $w\in(U+V)\cap W$, $w=u+v$: $u+v+(-w)=0_E$ gives $w=0_E$.}
+\step{\kw{$\Leftarrow$)} \kw{Assume} $u+v+w=0_E$ ($u\in U$, $v\in V$, $w\in W$).}
+\step{$\displaystyle w=-(u+v)\in(U+V)\cap W=\set{0_E}$}
+\step{So $w=0_E$ and $u+v=0_E$; then $u=-v\in U\cap V=\set{0_E}$; so $u=v=0_E$.}
+\end{method}
+\begin{reflex}
+Three or more subspaces \ensuremath{\rightarrow} test $U\cap V=\set{0}$, then $(U+V)\cap W=\set{0}$, never just the triple intersection.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.28]{Correspondence table: families, linear maps, sums of subspaces, logic}{p1 col3}
+\begin{definition}
+\noindent \textbf{Linearly independent} family $\ \iff\ $ \textbf{injectivity} $\ \iff\ $ \textbf{direct sum} $\ \iff\ $ logic symbol $!$ (uniqueness).
+\par\noindent \textbf{Generating} family $\ \iff\ $ \textbf{surjectivity} $\ \iff\ $ \textbf{spanning sum} $\ \iff\ $ logic symbol $\exists$ (existence).
+\par\noindent \textbf{Basis} $\ \iff\ $ \textbf{bijectivity} $\ \iff\ $ \textbf{supplementary spaces} $\ \iff\ $ logic symbol $\exists!$ (existence and uniqueness).
+\par\noindent Reading (not in the handout): for $(u_1;\dots;u_p)$ the map $\F^p\to E,\ (\alpha_k)\mapsto\sum\alpha_k u_k$ is injective / surjective / bijective exactly when the family is independent / generating / a basis. For subspaces, the map $V_1\times\dots\times V_p\to E,\ (v_k)\mapsto\sum v_k$ is injective / surjective / bijective exactly when the sum is direct / spanning / supplementary.
+\end{definition}
+\begin{reflex}
+Unique \ensuremath{\rightarrow} injective, independent, direct; exists \ensuremath{\rightarrow} surjective, generating, spanning; both \ensuremath{\rightarrow} bijective, basis, supplementary.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.29]{Theorem: concatenation of bases and direct sums}{p1 col3}
+\begin{definition}
+\dline{\text{(i) }E=\bigoplus_kV_k,\qquad\text{(ii) }\ALL k,\ \cE_k\text{ basis of }V_k,\qquad\text{(iii) }\cE\text{ basis of }E}
+\dline{\text{any two of (i), (ii), (iii)}\Rightarrow\text{the third}}
+\end{definition}
+\begin{method}{Concatenation of bases (i),(ii) $\Rightarrow$ (iii), $p=2$}
+\step{Independence: a relation $\sum\alpha_iv_i+\sum\beta_jw_j=0_E$ has its two parts in $V$ and $W$.}
+\step{Direct sum $\Rightarrow$ each part is $0_E$.}
+\step{$\mathcal{F},\mathcal{G}$ independent $\Rightarrow$ all $\alpha_i,\beta_j=0$.}
+\step{Generation: $x=v+w$ ($E=V+W$), expand $v$ on $\mathcal{F}$ and $w$ on $\mathcal{G}$.}
+\end{method}
+\begin{reflex}
+Basis of a direct sum \ensuremath{\rightarrow} glue a basis of each summand; direct sum gives independence, spanning gives generation.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.30]{Theorem: the two other implications}{p1 col3}
+\begin{definition}
+\noindent The handout leaves the two other implications as an exercise (boxed):
+\dline{\text{(i) and (iii)}\Rightarrow\text{(ii)}\qquad\qquad\text{(ii) and (iii)}\Rightarrow\text{(i)}}
+\end{definition}
+\begin{method}{(i) and (iii) $\Rightarrow$ (ii), $p=2$ (proof not in the handout)}
+\step{\kw{Assume} $E=V\oplus W$ and $\cE=(v_1;\dots;v_k;w_1;\dots;w_l)$ a basis of $E$.}
+\step{\kw{Show} $\mathcal{F}=(v_1;\dots;v_k)$ is a basis of $V$ ($\mathcal{G}$ is symmetric).}
+\step{\kw{Independence.} \kw{Let} $\alpha_i$ with $\sum_{i=1}^{k}\alpha_i v_i=0_E$.}
+\step{This is a relation of $\cE$ with all $\beta_j=0$; $\cE$ independent gives $\alpha_i=0$.}
+\step{\kw{Generation.} \kw{Let} $v\in V$. Since $\cE$ generates $E$:}
+\step{$\displaystyle v=\sum_{i=1}^{k}\alpha_i v_i+\sum_{j=1}^{l}\beta_j w_j$}
+\step{$\displaystyle v-\sum_{i=1}^{k}\alpha_i v_i=\sum_{j=1}^{l}\beta_j w_j$}
+\step{The left side is in $V$ and the right side is in $W$; $V\cap W=\set{0_E}$ (criterion), so $\sum_j\beta_j w_j=0_E$.}
+\step{$\therefore v=\sum_{i=1}^{k}\alpha_i v_i\in\Span(\mathcal{F})$.}
+\end{method}
+\begin{method}{(ii) and (iii) $\Rightarrow$ (i), $p=2$ (proof not in the handout)}
+\step{\kw{Assume} $\mathcal{F}$ basis of $V$, $\mathcal{G}$ basis of $W$, $\cE$ basis of $E$.}
+\step{\kw{Direct sum.} \kw{Let} $v\in V$, $w\in W$ with $v+w=0_E$.}
+\step{\kw{Let} $\alpha_i,\beta_j$ with $v=\sum\alpha_i v_i$ and $w=\sum\beta_j w_j$.}
+\step{$\displaystyle \sum_{i=1}^{k}\alpha_i v_i+\sum_{j=1}^{l}\beta_j w_j=0_E$}
+\step{$\cE$ independent gives all $\alpha_i=\beta_j=0$, so $v=0_E=w$.}
+\step{\kw{Spanning.} \kw{Let} $x\in E$. $\cE$ generates: $x=\sum\alpha_i v_i+\sum\beta_j w_j\in V+W$.}
+\step{$\therefore E=V\oplus W$.}
+\end{method}
+\begin{reflex}
+Reverse implications \ensuremath{\rightarrow} write vectors of $V$ and $W$ in the given bases, then use independence of $\cE$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.31]{Linear maps: definition}{p1 col3}
+\begin{definition}
+\noindent Let $E,F$ be vector spaces over $\F$ and $\varphi:E\to F$ a map. $\varphi$ is \textbf{linear} when
+\dline{\ALL\alpha,\beta\in\F,\ \ALL v,w\in E,\ \ \varphi(\alpha v+\beta w)=\alpha\varphi(v)+\beta\varphi(w)}
+\end{definition}
+\begin{method}{Prove that $\varphi$ is linear}
+\step{\kw{Let} $\alpha,\beta\in\F$.}
+\step{\kw{Let} $v,w\in E$.}
+\step{Compute $\varphi(\alpha v+\beta w)=\cdots$}
+\step{$\quad=\alpha\varphi(v)+\beta\varphi(w)$.}
+\step{$\therefore\varphi$ is linear.}
+\end{method}
+\begin{reflex}
+Linear map \ensuremath{\rightarrow} test $\varphi(\alpha v+\beta w)$ for all scalars and two arbitrary vectors.
+\end{reflex}
+\end{concept}
+\studypart{II (cont.)}{Linear maps, finite dimension, rank}
+\begin{concept}[1.32]{Conjugate-linear maps}{p2 col1}
+\begin{definition}
+\dline{\varphi(u+v)=\varphi(u)+\varphi(v)\qquad \varphi(\alpha v)=\overline{\alpha}\,\varphi(v)}
+\end{definition}
+\begin{method}{Prove that $\varphi$ is conjugate-linear}
+\step{\kw{Let} $u,v\in E$.}
+\step{$\displaystyle \varphi(u+v)=\cdots=\varphi(u)+\varphi(v)$}
+\step{\kw{Let} $\alpha\in\C$ and $v\in E$.}
+\step{$\displaystyle \varphi(\alpha v)=\cdots=\overline{\alpha}\,\varphi(v)$}
+\step{$\therefore\varphi$ is conjugate-linear.}
+\end{method}
+\begin{reflex}
+Conjugate-linear \ensuremath{\rightarrow} additive, but $\varphi(\alpha v)=\overline{\alpha}\varphi(v)$ (conjugate the scalar).
+\end{reflex}
+\end{concept}
+\begin{concept}[1.33]{Linear map, endomorphism, isomorphism, automorphism}{p2 col1}
+\begin{definition}
+\noindent Let $\varphi:E\to F$ be a \textbf{linear map}, i.e. $\varphi\in\Lin(E;F)$.
+\par\noindent \textbf{Endomorphism}: a linear map with $E=F$. The set is $\End(E)$.
+\par\noindent \textbf{Isomorphism}: a linear map which is bijective.
+\par\noindent \textbf{Automorphism}: an endomorphism which is bijective ($E=F$ and $\varphi$ bijective).
+\dline{\begin{array}{|l|l|}\hline \text{linear map}&\text{isomorphism (bijective)}\\ \hline \text{endomorphism }(E=F)&\text{automorphism }(E=F,\ \text{bijective})\\ \hline\end{array}}
+\par\noindent Moving down the table: add $E=F$. Moving right: add bijective.
+\end{definition}
+\begin{reflex}
+Endo- \ensuremath{\rightarrow} same space ($E=F$); iso- \ensuremath{\rightarrow} bijective; auto- \ensuremath{\rightarrow} both.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.34]{Image and preimage of a subspace}{p2 col1}
+\begin{definition}
+\dline{\varphi^{>}(V)=\{\varphi(v)\ |\ v\in V\}\subseteq F\qquad \varphi^{<}(W)=\{u\in E\ |\ \varphi(u)\in W\}\subseteq E}
+\end{definition}
+\begin{method}{Prove that $\varphi^{>}(V)$ is a subspace of $F$ (proof not in the handout)}
+\step{\kw{Since} $0_E\in V$ and $\varphi(0_E)=0_F$, we get $0_F\in\varphi^{>}(V)$.}
+\step{\kw{Let} $y_1,y_2\in\varphi^{>}(V)$ and $\lambda\in\F$.}
+\step{\kw{Let} $v_1,v_2\in V$ such that $y_1=\varphi(v_1)$ and $y_2=\varphi(v_2)$.}
+\step{$\displaystyle \lambda y_1+y_2=\lambda\varphi(v_1)+\varphi(v_2)$}
+\step{$\displaystyle \lambda y_1+y_2=\varphi(\lambda v_1+v_2)\why{linearity}$}
+\step{\kw{Since} $V$ is a subspace, $\lambda v_1+v_2\in V$.}
+\step{$\therefore\lambda y_1+y_2\in\varphi^{>}(V)$, so $\varphi^{>}(V)$ is a subspace of $F$.}
+\end{method}
+\begin{method}{Prove that $\varphi^{<}(W)$ is a subspace of $E$ (proof not in the handout)}
+\step{\kw{Since} $\varphi(0_E)=0_F\in W$, we get $0_E\in\varphi^{<}(W)$.}
+\step{\kw{Let} $u_1,u_2\in\varphi^{<}(W)$ and $\lambda\in\F$.}
+\step{\kw{Then} $\varphi(u_1)\in W$ and $\varphi(u_2)\in W$.}
+\step{$\displaystyle \varphi(\lambda u_1+u_2)=\lambda\varphi(u_1)+\varphi(u_2)\why{linearity}$}
+\step{\kw{Since} $W$ is a subspace, $\lambda\varphi(u_1)+\varphi(u_2)\in W$.}
+\step{$\therefore\lambda u_1+u_2\in\varphi^{<}(W)$, so $\varphi^{<}(W)$ is a subspace of $E$.}
+\end{method}
+\begin{reflex}
+Image or preimage of a subspace \ensuremath{\rightarrow} check $0$ and stability under $\lambda x+y$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.35]{Kernel, image, injectivity and surjectivity criteria}{p2 col1}
+\begin{definition}
+\dline{\ker\varphi=\{x\in E\ |\ \varphi(x)=0_F\}\qquad \im\varphi=\{\varphi(x)\ |\ x\in E\}}
+\dline{\varphi\text{ injective}\iff\ker\varphi=\{0_E\}\qquad\varphi\text{ surjective}\iff\im\varphi=F}
+\end{definition}
+\begin{method}{Prove that $\varphi$ is injective, by the kernel}
+\step{\kw{Let} $x\in\ker\varphi$, i.e. $\varphi(x)=0_F$.}
+\step{$\displaystyle \cdots$}
+\step{$x=0_E$, so $\ker\varphi=\{0_E\}$.}
+\step{$\therefore\varphi$ is injective.}
+\end{method}
+\begin{reflex}
+Linear and injective? \ensuremath{\rightarrow} compute $\ker\varphi$ and show it is $\{0_E\}$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.36]{Finite dimension and dimension}{p2 col1}
+\begin{definition}
+\noindent $E$ is \textbf{finite dimensional} when it has a finite generating family.
+\par\noindent Let $E$ be finite dimensional: all bases of $E$ have the same cardinal.
+\par\noindent The \textbf{dimension} of $E$ is this common cardinal, written $\dim E$.
+\dline{\dim E=\card\mathcal B\qquad(\mathcal B\text{ any basis of }E)}
+\end{definition}
+\begin{method}{Compute $\dim$ of a subspace}
+\step{\kw{Find} a basis $\mathcal B$ of the subspace:}
+\step{\textbullet\ show $\mathcal B$ is \textbf{linearly independent},}
+\step{\textbullet\ show $\mathcal B$ is \textbf{generating},}
+\step{\kw{Then} $\dim=\card\mathcal B$.}
+\end{method}
+\begin{reflex}
+Dimension \ensuremath{\rightarrow} build any basis, then count its vectors.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.37]{Cardinal inequalities for free and generating families}{p2 col1}
+\begin{definition}
+\dline{\card\mathcal F\leq\dim E\leq\card\mathcal G}
+\dline{\mathcal F\text{ free},\ \card\mathcal F=\dim E\Rightarrow\text{basis}\qquad\mathcal G\text{ generating},\ \card\mathcal G=\dim E\Rightarrow\text{basis}}
+\end{definition}
+\begin{method}{Show that a family of $n=\dim E$ vectors is a basis}
+\step{\kw{Let} $\mathcal F$ have $n=\dim E$ vectors.}
+\step{\kw{Assume} $\sum\lambda_ku_k=0_E$.}
+\step{$\displaystyle \cdots$}
+\step{$\lambda_1=\dots=\lambda_n=0$, so $\mathcal F$ is free.}
+\step{$\therefore\mathcal F$ is a basis (free and $\card\mathcal F=\dim E$).}
+\end{method}
+\begin{reflex}
+Right number of vectors ($=\dim E$) \ensuremath{\rightarrow} check only independence \textbf{or} only generation.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.38]{Rank-nullity theorem}{p2 col1}
+\begin{definition}
+\noindent Let $\varphi:E\to F$ be linear, $E$ finite dimensional.
+\dline{\dim\ker\varphi+\rk\varphi=\dim E\qquad\text{where }\rk\varphi=\dim(\im\varphi)}
+\par\noindent (Theorem \textbf{admitted} in the handout.)
+\end{definition}
+\begin{method}{Use rank-nullity to find a rank or a kernel dimension}
+\step{\kw{Let} $\varphi:E\to F$ be linear, $E$ finite dimensional.}
+\step{By the rank-nullity theorem:}
+\step{$\displaystyle \rk\varphi=\dim E-\dim\ker\varphi$}
+\step{Compute $\ker\varphi$ (solve $\varphi(x)=0_F$), take its dimension, subtract.}
+\end{method}
+\begin{reflex}
+Need the rank \ensuremath{\rightarrow} compute $\dim\ker\varphi$, then $\rk\varphi=\dim E-\dim\ker\varphi$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.39]{Rank-nullity consequence when $\dim E=\dim F$}{p2 col1}
+\begin{definition}
+\noindent Let $\varphi:E\to F$ be linear with $\dim E=\dim F$ (finite).
+\dline{\varphi\text{ injective}\iff\varphi\text{ surjective}\iff\varphi\text{ bijective}}
+\end{definition}
+\begin{method}{Prove that $\varphi$ is bijective when $\dim E=\dim F$}
+\step{\kw{Let} $x\in\ker\varphi$. $\cdots$ $x=0_E$.}
+\step{$\ker\varphi=\{0_E\}$: $\varphi$ is injective.}
+\step{$\dim E=\dim F$ and rank-nullity: $\varphi$ is surjective.}
+\step{$\therefore\varphi$ is bijective.}
+\end{method}
+\begin{reflex}
+Same finite dimension \ensuremath{\rightarrow} one of injective / surjective is enough for bijective.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.40]{Inverse on one side in equal dimension: $f\circ g=\Id_F\iff g\circ f=\Id_E$}{p2 col1}
+\begin{definition}
+\dline{f\circ g=\Id_F\iff g\circ f=\Id_E\qquad(\dim E=\dim F)}
+\end{definition}
+\begin{method}{Show that $g$ is the inverse of $f$ using one side only}
+\step{\kw{Assume} $f\circ g=\Id_F$ (or $g\circ f=\Id_E$).}
+\step{$f$ is surjective (or injective), hence bijective ($\dim E=\dim F$).}
+\step{Compose by $f^{-1}$: $g=f^{-1}$.}
+\step{$\therefore$ both $f\circ g=\Id_F$ and $g\circ f=\Id_E$.}
+\end{method}
+\begin{reflex}
+Equal finite dimensions \ensuremath{\rightarrow} one-sided inverse is automatically a two-sided inverse.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.41]{General linear group $\GL(E)$}{p2 col1}
+\begin{definition}
+\dline{\GL(E)=\{f\in\End(E)\ |\ \EX g\in\End(E),\ f\circ g=\Id_E\}=\text{automorphisms of }E}
+\end{definition}
+\begin{method}{Prove that $f\in\GL(E)$}
+\step{\kw{Let} $f\in\End(E)$, $E$ finite dimensional.}
+\step{\kw{There exists} $g\in\End(E)$ such that $f\circ g=\Id_E$:}
+\step{\kw{Take} $g=\cdots$ and check $\ (f\circ g)(x)=\cdots=x$ for all $x\in E$.}
+\step{\kw{By the previous proposition}, $g\circ f=\Id_E$ as well.}
+\step{$\therefore f\in\GL(E)$ and $f^{-1}=g$.}
+\end{method}
+\begin{reflex}
+Show $f\in\GL(E)$ \ensuremath{\rightarrow} exhibit one $g$ with $f\circ g=\Id_E$ (one side suffices).
+\end{reflex}
+\end{concept}
+\begin{concept}[1.42]{Rank of a linear map and of a family}{p2 col1}
+\begin{definition}
+\dline{\rk\varphi=\dim(\im\varphi)\qquad\rk(u_1;\dots;u_n)=\dim\Span(u_1;\dots;u_n)}
+\end{definition}
+\begin{method}{Compute the rank of a family}
+\step{\kw{Let} $(u_1;\dots;u_n)\in E^n$.}
+\step{Find a \textbf{free} subfamily $\mathcal B$ that still generates $\Span(u_1;\dots;u_n)$}
+\step{(remove each $u_j$ that is a combination of the others).}
+\step{\kw{Then} $\rk(u_1;\dots;u_n)=\card\mathcal B$.}
+\end{method}
+\begin{reflex}
+Rank of a family \ensuremath{\rightarrow} dimension of its span: keep only independent vectors.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.43]{Rank of a linear map from a basis: $\rk\varphi=\rk(\varphi(e_1);\dots;\varphi(e_p))$}{p2 col1}
+\begin{definition}
+\dline{\im\varphi=\Span\big(\varphi(e_1);\dots;\varphi(e_p)\big)\qquad\rk\varphi=\rk\big(\varphi(e_1);\dots;\varphi(e_p)\big)}
+\end{definition}
+\begin{method}{Show $\im\varphi=\Span(\varphi(e_1);\dots;\varphi(e_p))$}
+\step{($\subseteq$) \kw{Let} $v=\varphi(u)$, $u=\sum u_ke_k$. Then $v=\sum u_k\varphi(e_k)$.}
+\step{($\supseteq$) \kw{Let} $v=\sum v_k\varphi(e_k)$. Then $v=\varphi(\sum v_ke_k)\in\im\varphi$.}
+\step{$\therefore\im\varphi=\Span(\varphi(e_1);\dots;\varphi(e_p))$, so the ranks agree.}
+\end{method}
+\begin{reflex}
+Rank of $\varphi$ \ensuremath{\rightarrow} rank of the images of a basis (i.e. of the matrix columns).
+\end{reflex}
+\end{concept}
+\begin{concept}[1.44]{Sum of dimensions equal to $\dim E$: three equivalent statements}{p2 col1}
+\begin{definition}
+\noindent \textbf{Proposition.} Let $V_1;\dots;V_p$ be subspaces of $E$ with
+\dline{\sum_{k=1}^p\dim V_k=\dim E}
+\par\noindent Then the following are equivalent:
+\dline{\text{(i)}\ \ \sum_{k=1}^pV_k=\bigoplus_{k=1}^pV_k\qquad\text{(ii)}\ \ \sum_{k=1}^pV_k=E\qquad\text{(iii)}\ \ E=\bigoplus_{k=1}^pV_k}
+\par\noindent Proof scheme: (iii) $\Rightarrow$ (i) and (ii) is immediate from the definitions;
+\par\noindent (i) $\Rightarrow$ (iii) and (ii) $\Rightarrow$ (i) are proved in the next two concepts.
+\end{definition}
+\begin{method}{Use it to show $E=\bigoplus V_k$ (dimensions already match)}
+\step{\kw{Assume} $\sum_{k=1}^p\dim V_k=\dim E$.}
+\step{Prove \textbf{only one} of: (i) the sum is direct, or (ii) $\sum V_k=E$.}
+\step{\kw{Then} (iii) holds: $E=\bigoplus_{k=1}^pV_k$.}
+\end{method}
+\begin{reflex}
+$\sum\dim V_k=\dim E$ \ensuremath{\rightarrow} proving "direct" \textbf{or} "spanning" gives the full direct sum.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.45]{Proof (i) $\Rightarrow$ (iii)}{p2 col1}
+\begin{definition}
+\noindent Assume $\sum_{k=1}^p\dim V_k=\dim E$ and (i) $\sum V_k=\bigoplus V_k$. Then $E=\bigoplus_{k=1}^pV_k$.
+\par\noindent (Idea: glue bases of the $V_k$, complete to a basis of $E$, count: nothing was added.)
+\end{definition}
+\begin{method}{Proof of (i) $\Rightarrow$ (iii)}
+\step{Glue bases $\mathcal F_k$ of $V_k$: $\mathcal F$ is a basis of $\sum V_k$ (direct).}
+\step{Complete $\mathcal F$ by $\mathcal G$ into a basis $\mathcal B$ of $E$.}
+\step{$\dim E=\sum\dim V_k+\card\mathcal G=\dim E+\card\mathcal G$.}
+\step{$\card\mathcal G=0$: $\mathcal B=\mathcal F$, so $E=\sum V_k$.}
+\step{$\therefore E=\bigoplus V_k$.}
+\end{method}
+\begin{reflex}
+Direct sum plus dimension count \ensuremath{\rightarrow} glue bases, complete, count: nothing is missing.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.46]{Proof (ii) $\Rightarrow$ (i)}{p2 col2}
+\begin{definition}
+\noindent Assume $\sum_{k=1}^p\dim V_k=\dim E$ and (ii) $\sum V_k=E$. Then the sum is direct.
+\par\noindent Recall: $\sum V_k=\bigoplus V_k$ iff $\big(v_k\in V_k,\ \sum_kv_k=0_E\big)\Rightarrow v_1=\dots=v_p=0_E$.
+\par\noindent (Idea: if a nonzero relation exists, a vector can be dropped from a generating family: too few vectors.)
+\end{definition}
+\begin{method}{Proof of (ii) $\Rightarrow$ (i)}
+\step{\kw{Let} $v_k\in V_k$ with $\sum v_k=0_E$. \kw{By contradiction} $v_k\neq0_E$ for some $k$.}
+\step{Take bases $\mathcal F_j$ of $V_j$, with $v_k\in\mathcal F_k$ (incomplete basis).}
+\step{Remove $v_k$: $\mathcal H$ still generates $E$ (as $v_k=-\sum_{j\neq k}v_j$).}
+\step{$\card\mathcal H=\sum\dim V_k-1=\dim E-1<\dim E$: contradiction.}
+\step{$\therefore$ all $v_k=0_E$: the sum is direct.}
+\end{method}
+\begin{reflex}
+Show a sum is direct by contradiction \ensuremath{\rightarrow} drop one vector from a generating family: too small.
+\end{reflex}
+\end{concept}
+\studypart{III}{Matrices}
+\begin{concept}[1.47]{Identity matrix}{p2 col2}
+\begin{definition}
+\dline{I_n=\diag(1,\dots,1)\qquad [I_n]_{i,j}=\delta_{i,j}}
+\end{definition}
+\begin{reflex}
+Identity matrix \ensuremath{\rightarrow} $1$ on the diagonal, $0$ elsewhere; $AI_n=I_nA=A$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.48]{Matrix product}{p2 col2}
+\begin{definition}
+\dline{[AB]_{i,j}=\sum_{k=1}^mA_{i,k}B_{k,j}\qquad\Mat_{n,m}\times\Mat_{m,p}\to\Mat_{n,p}}
+\end{definition}
+\begin{method}{Compute an entry of a product}
+\step{\kw{Check} \#columns of $A=m=$ \#rows of $B$.}
+\step{\kw{Fix} $(i,j)$: multiply the $m$ entries of row $i$ of $A$ by the $m$ entries of column $j$ of $B$, add.}
+\end{method}
+\begin{reflex}
+Product $AB$ \ensuremath{\rightarrow} sizes $(n,m)(m,p)$; entry $(i,j)$ = row $i$ of $A$ times column $j$ of $B$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.49]{$AB=I_n\iff BA=I_n$}{p2 col2}
+\begin{definition}
+\dline{A,B\in\Mat_n(\F):\quad AB=I_n\iff BA=I_n}
+\end{definition}
+\begin{method}{Proof of $AB=I_n\iff BA=I_n$}
+\step{\kw{Let} $f,g\in\End(\F^n)$ with $A=\Mat_{can}(f)$, $B=\Mat_{can}(g)$.}
+\step{$AB=\Mat_{can}(f\circ g)$, $BA=\Mat_{can}(g\circ f)$, $I_n=\Mat_{can}(\Id)$.}
+\step{$AB=I_n\iff f\circ g=\Id\iff g\circ f=\Id\iff BA=I_n$.}
+\end{method}
+\begin{reflex}
+Square matrices \ensuremath{\rightarrow} one-sided inverse is enough: $AB=I_n$ already gives $BA=I_n$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.50]{General linear group $\GL_n(\F)$}{p2 col2}
+\begin{definition}
+\dline{\GL_n(\F)=\{A\in\Mat_n(\F)\ |\ \EX B,\ AB=I_n\ (\text{or }BA=I_n)\}}
+\end{definition}
+\begin{method}{Prove that $A\in\GL_n(\F)$}
+\step{\kw{Let} $A\in\Mat_n(\F)$.}
+\step{\kw{There exists} $B\in\Mat_n(\F)$ such that $AB=I_n$:}
+\step{\kw{Take} $B=\cdots$ and compute $AB=\cdots=I_n$.}
+\step{\kw{By the previous proposition}, $BA=I_n$ too.}
+\step{$\therefore A\in\GL_n(\F)$ and $A^{-1}=B$.}
+\end{method}
+\begin{reflex}
+Invertible matrix \ensuremath{\rightarrow} find one $B$ with $AB=I_n$; no need to check $BA$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.51]{Block matrix product}{p2 col2}
+\begin{definition}
+\dline{\begin{pmatrix}A&B\\C&D\end{pmatrix}\begin{pmatrix}E&F\\G&H\end{pmatrix}=\begin{pmatrix}AE+BG&AF+BH\\CE+DG&CF+DH\end{pmatrix}}
+\end{definition}
+\begin{method}{Multiply two matrices by blocks}
+\step{\kw{Cut} both matrices so that the column cuts of the left one equal the row cuts of the right one.}
+\step{\kw{Name} the blocks $A,B,C,D$ and $E,F,G,H$.}
+\step{\kw{Compute} each block of the result with the formula (each block product is an ordinary product).}
+\step{\kw{Assemble} the four blocks.}
+\end{method}
+\begin{reflex}
+Block product \ensuremath{\rightarrow} same rules as scalars, but keep the order and match the cuts.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.52]{Matrix of a vector and of a family}{p2 col2}
+\begin{definition}
+\dline{x=\sum_{k=1}^px_ke_k\iff\Mat_{\mathcal E}(x)=(x_1,\dots,x_p)^\tp\qquad \Mat_{\mathcal E}(U)=\big(\Mat_{\mathcal E}(u_1)\ \cdots\ \Mat_{\mathcal E}(u_n)\big)}
+\end{definition}
+\begin{method}{Find $\Mat_{\mathcal E}(x)$}
+\step{\kw{Let} $\mathcal E=(e_1;\dots;e_p)$ and $x\in E$.}
+\step{\kw{We look for} $x_1;\dots;x_p\in\F$ such that $x=\sum_{k=1}^px_ke_k$ (solve a linear system).}
+\step{\kw{Then} $\Mat_{\mathcal E}(x)=(x_1;\dots;x_p)^\tp$ (a column).}
+\end{method}
+\begin{reflex}
+Matrix of a vector \ensuremath{\rightarrow} its coordinates in the basis, written as a column.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.53]{Matrix of a linear map}{p2 col2}
+\begin{definition}
+\dline{\Mat_{\mathcal F,\mathcal E}(f)=\Mat_{\mathcal F}\big(f(e_1);\dots;f(e_p)\big)\in\Mat_{q,p}(\F)}
+\end{definition}
+\begin{method}{Find the matrix of $f$}
+\step{\kw{Let} $\mathcal E=(e_1;\dots;e_p)$ and $\mathcal F$ be bases.}
+\step{\kw{Compute} $f(e_j)$ for each $j\in\ii{1}{p}$.}
+\step{\kw{Write} each $f(e_j)$ in the basis $\mathcal F$: this is column $j$.}
+\step{\kw{Assemble} the $p$ columns: $\Mat_{\mathcal F,\mathcal E}(f)\in\Mat_{q,p}(\F)$.}
+\end{method}
+\begin{reflex}
+Matrix of $f$ \ensuremath{\rightarrow} columns = images of the \textbf{source} basis, written in the \textbf{target} basis.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.54]{Change of basis: statement}{p2 col2}
+\begin{definition}
+\dline{P=\Mat_{\mathcal E}(\mathcal E')\in\GL_n(\F)\qquad X=PX'\qquad A=PA'P^{-1}}
+\end{definition}
+\begin{method}{Change of basis in practice}
+\step{\kw{Write} $P$: column $j$ = coordinates of $e'_j$ in $\mathcal E$.}
+\step{\kw{Vectors}: old coordinates $=P\times$ new coordinates, so $X'=P^{-1}X$.}
+\step{\kw{Endomorphisms}: $A'=P^{-1}AP$.}
+\end{method}
+\begin{reflex}
+Change of basis \ensuremath{\rightarrow} $P$ = new basis written in the old one; then $X=PX'$ and $A'=P^{-1}AP$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.55]{Proof that $P\in\GL_n(\F)$ and $P^{-1}=\Mat_{\mathcal E'}(\mathcal E)$}{p2 col2}
+\begin{definition}
+\noindent In the change-of-basis proposition: $P=\Mat_{\mathcal E}(\mathcal E')$ is invertible, with
+\dline{P^{-1}=\Mat_{\mathcal E',\mathcal E}(\Id_E)=\Mat_{\mathcal E'}(\mathcal E)}
+\par\noindent Uses: $\Mat_{\mathcal G,\mathcal F}(g)\,\Mat_{\mathcal F,\mathcal E}(f)=\Mat_{\mathcal G,\mathcal E}(g\circ f)$ (matrix of a composition, from the course).
+\end{definition}
+\begin{method}{Proof that $P\in\GL_n(\F)$}
+\step{$P=\Mat_{\mathcal E,\mathcal E'}(\Id_E)$ (columns $\Id_E(e'_j)=e'_j$ in $\mathcal E$).}
+\step{$P\,\Mat_{\mathcal E',\mathcal E}(\Id_E)=\Mat_{\mathcal E,\mathcal E}(\Id_E\circ\Id_E)=I_n$.}
+\step{$\therefore P\in\GL_n(\F)$, $P^{-1}=\Mat_{\mathcal E'}(\mathcal E)$.}
+\end{method}
+\begin{reflex}
+Show $P$ invertible \ensuremath{\rightarrow} $P\times\Mat_{\mathcal E',\mathcal E}(\Id)=I_n$: swap the two bases.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.56]{Proof of $X=PX'$}{p2 col2}
+\begin{definition}
+\noindent In the change-of-basis proposition: $X=PX'$, i.e. $\Mat_{\mathcal E}(x)=\Mat_{\mathcal E,\mathcal E'}(\Id_E)\,\Mat_{\mathcal E'}(x)$.
+\par\noindent Uses: $\Mat_{\mathcal F}(f(x))=\Mat_{\mathcal F,\mathcal E}(f)\,\Mat_{\mathcal E}(x)$ (by definition of the matrix of $f$).
+\end{definition}
+\begin{method}{Proof of $X=PX'$}
+\step{$\displaystyle PX'=\Mat_{\mathcal E,\mathcal E'}(\Id_E)\,\Mat_{\mathcal E'}(x)$}
+\step{$\displaystyle PX'=\Mat_{\mathcal E}\big(\Id_E(x)\big)\why{by definition of the matrix of a map}$}
+\step{$\displaystyle PX'=\Mat_{\mathcal E}(x)$}
+\step{$\displaystyle PX'=X$}
+\end{method}
+\begin{reflex}
+Coordinates change \ensuremath{\rightarrow} $\Mat_{\mathcal E}(x)=\Mat_{\mathcal E,\mathcal E'}(\Id)\,\Mat_{\mathcal E'}(x)$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.57]{Proof of $A=PA'P^{-1}$}{p2 col2}
+\begin{definition}
+\noindent In the change-of-basis proposition: $A=PA'P^{-1}$, i.e. $A'=P^{-1}AP$. Matrices of the same endomorphism in two bases are \textbf{similar}.
+\end{definition}
+\begin{method}{Proof of $A=PA'P^{-1}$}
+\step{$\displaystyle PA'P^{-1}=\Mat_{\mathcal E,\mathcal E'}(\Id_E)\,\Mat_{\mathcal E',\mathcal E'}(f)\,\Mat_{\mathcal E',\mathcal E}(\Id_E)$}
+\step{$\displaystyle PA'P^{-1}=\Mat_{\mathcal E,\mathcal E}\big(\Id_E\circ f\circ\Id_E\big)\why{matrix of a composition, twice}$}
+\step{$\displaystyle PA'P^{-1}=\Mat_{\mathcal E,\mathcal E}(f)$}
+\step{$\displaystyle PA'P^{-1}=A$}
+\end{method}
+\begin{reflex}
+Same endomorphism, two bases \ensuremath{\rightarrow} $A=PA'P^{-1}$, with $P=\Mat_{\mathcal E}(\mathcal E')$.
+\end{reflex}
+\end{concept}
+\begin{concept}[1.58]{Transition matrix}{p2 col2}
+\begin{definition}
+\dline{P_{\mathcal E\to\mathcal E'}=\Mat_{\mathcal E}(\mathcal E')\qquad X=PX'\qquad A=PA'P^{-1}}
+\end{definition}
+\begin{reflex}
+Transition matrix $\mathcal E\to\mathcal E'$ \ensuremath{\rightarrow} columns are the vectors of $\mathcal E'$ in $\mathcal E$.
+\end{reflex}
+\end{concept}
+
+\end{document}

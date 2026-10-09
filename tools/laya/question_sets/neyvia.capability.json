@@ -1,0 +1,24 @@
+{
+  "id": "neyvia.capability",
+  "version": 1,
+  "owner": "laya-train",
+  "representation": "Real native receipt result evidence, with outcome labels kept outside state",
+  "adoption": "shadow",
+  "questions": {
+    "routine_outcome": {
+      "type": "noul",
+      "view": ["tool", "observed"],
+      "instructions": "Does this completed tool step have evidence of success? Inspect the observed result, including errors, truncation, and result status. An empty or partial observation is insufficient. The host's outcome label is not supplied.",
+      "criteria": {"false": "The observed step failed or its result does not establish success.", "true": "The observed result establishes that the step succeeded."},
+      "transfer_features": {
+        "error_present": {"path": ["observed", "error"], "op": "nonempty"},
+        "result_status": {"path": ["observed", "status"], "op": "exact"},
+        "result_truncated": {"path": ["observed", "truncated"], "op": "exact"},
+        "result_fields": {"path": ["observed", "fields"], "op": "exact"}
+      },
+      "learning": "instant",
+      "stakes": {"default": "reversible_cheap"},
+      "thresholds": {"answer": 0.95}
+    }
+  }
+}

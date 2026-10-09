@@ -1,0 +1,268 @@
+{
+  "manuals": [
+    {
+      "manual": "agents",
+      "chapterId": "proofs_a_native_sessions",
+      "chapter": {
+        "title": "Native connected sessions: durable actions and bounded provider journeys",
+        "state": {},
+        "actions": {},
+        "checks": {},
+        "procedures": {},
+        "judge": {},
+        "guidance": [
+          "Every real native picker, composer, live event, stop, goal and read action passes its host observer before the client receives the result.",
+          "The startup self-check uses actual backend dispatch, orchestration, SQLite persistence, broker registry/event ledger and chat-run control with a finite provider on explicit loopback port48468. It opens no saved account or credential files.",
+          "Owned child processes establish cancellation receipts and retry after actual not_running; a missing confirmation receipt must remain interrupted with an explicit warning."
+        ],
+        "pitfalls": [
+          {
+            "failure": "A model stream may replace an earlier response or emit private reasoning.",
+            "recovery": "Keep the same answer identity/slot, clear its prior draft for a new response identity and ignore non-public reasoning sources."
+          },
+          {
+            "failure": "A stop request can arrive before the backend registers its turn.",
+            "recovery": "Retain the unacknowledged stop and retry until the actual owner registers and acknowledges it."
+          }
+        ],
+        "frontier": [
+          "Real provider accounts, installed CLIs, backend constructor/login initialization, completion push delivery and rendered UI are outside the finite provider boundary.",
+          "Unconfirmed cancellation deliberately withholds the transport termination receipt even though its confined child is reaped; the adapter must report uncertainty rather than claim confirmed stopping."
+        ]
+      },
+      "contracts": [
+        {
+          "id": "sessions.neyvia.payload",
+          "phase": "post",
+          "claim": "Attachment base64, decoded size, MIME/name and composer message/permissions/route/IDs exactly project admitted inputs.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._attachments",
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+            "grant_agent.proofs_a_sessions.check_native_attachments",
+            "grant_agent.proofs_a_sessions.check_native_payload"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.options",
+          "phase": "post",
+          "claim": "Picker runtime order excludes security-only profiles; catalogue labels/groups/efforts and permission rows preserve their source, default is unique and follows the stored route or configured Native model.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter.options",
+            "grant_agent.proofs_a_native_sessions.check_options"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.route",
+          "phase": "post",
+          "claim": "Explicit composite selections preserve runtime/provider/model; bare/default selections inherit the durable conversation route and effort defaults remain explicit.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._route",
+            "grant_agent.proofs_a_native_sessions.check_route"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.permission",
+          "phase": "post",
+          "claim": "A successful turn permission is the requested or read-only default mode and is supported by the selected runtime.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._permission_mode",
+            "grant_agent.proofs_a_native_sessions.check_permission"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.payload",
+          "phase": "post",
+          "claim": "Classic composer fields are exact; workspace context follows selected/metadata/registry precedence, history is the newest eight meaningful dialogue rows in chronological order, and turn identities differ.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._payload",
+            "grant_agent.proofs_a_native_sessions.check_payload"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.refusal",
+          "phase": "pre",
+          "claim": "Invalid mode, unsupported permission, invalid image, missing session and orchestration refusals emit no conversation or turn event; routing/attachment validation occurs before create/restore.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+            "grant_agent.proofs_a_native_sessions.turn_contract",
+            "grant_agent.proofs_a_native_sessions.before_conversation_mutation",
+            "grant_agent.proofs_a_native_sessions.admitted_attachments",
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._create"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.lifecycle",
+          "phase": "invariant",
+          "claim": "All emitted turn events share the returned session, an admitted turn announces its user and ends with that session summary, and every exit releases live ownership.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+            "grant_agent.proofs_a_native_sessions.turn_contract"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.create",
+          "phase": "post",
+          "claim": "A new chat is announced before its first item and records the selected workspace path in its durable metadata.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._create",
+            "grant_agent.proofs_a_native_sessions.turn_contract"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.restore",
+          "phase": "post",
+          "claim": "An admitted send to an existing archived conversation restores that durable conversation before returning.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter.start_turn",
+            "grant_agent.proofs_a_native_sessions.turn_contract"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.live",
+          "phase": "invariant",
+          "claim": "Each incoming stream event preserves item/session identity and stable slots; answer deltas append exactly, new response identities clear drafts, private reasoning changes no public row and stream errors produce bounded notices.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia_items.LiveTurn.apply",
+            "grant_agent.proofs_a_native_sessions.live_contract"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.outcome",
+          "phase": "post",
+          "claim": "Terminal adapter events exactly project backend cancelled/stop_unconfirmed/failed outcomes and bounded errors; completed turns emit no redundant run-state event and transport exceptions become broker refusals.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._finish",
+            "grant_agent.proofs_a_native_sessions.finish_contract"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.cancel",
+          "phase": "post",
+          "claim": "Each actual stop attempt records its retry timestamp; acknowledgement matches the real dispatcher status, so unregistered runs remain eligible for retry.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._cancel",
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._follow",
+            "grant_agent.proofs_a_native_sessions.check_cancel_result",
+            "grant_agent.proofs_a_native_sessions.check_cancel"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.goal",
+          "phase": "post",
+          "claim": "Native goal get/set/clear exactly reflects the durable boolean preference; supplied free text is not returned or stored by the goal action.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter.goal",
+            "grant_agent.proofs_a_native_sessions.check_goal",
+            "grant_agent.proofs_a_native_sessions.goal_contract"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.unsupported",
+          "phase": "pre",
+          "claim": "Question answers and goal mode on hybrid/orchestration sessions are refused with readable not_supported HTTP409 errors.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter.goal",
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter.answer",
+            "grant_agent.proofs_a_native_sessions.unsupported_contract"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.foreign",
+          "phase": "post",
+          "claim": "Foreign live runs are assigned at most once to a durable awaiting user turn within five minutes and never duplicate an adapter-owned run.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._foreign_runs",
+            "grant_agent.proofs_a_native_sessions.check_foreign"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.context",
+          "phase": "post",
+          "claim": "Context usage is the final recorded provider usage of the newest eligible assistant stream; absent usage never invents a token count.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.NeyviaAdapter._last_context_usage",
+            "grant_agent.proofs_a_native_sessions.check_context"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        },
+        {
+          "id": "native.registry",
+          "phase": "post",
+          "claim": "The native adapter registry factory preserves the backend identity used for every real command and store action.",
+          "checkedAt": [
+            "grant_agent.connected_sessions.neyvia.create_adapter",
+            "grant_agent.proofs_a_native_sessions.check_factory"
+          ],
+          "impact": [
+            "native connected chat turns, transcript and workspace receipts",
+            "owned runtime cancellation and durable conversations"
+          ]
+        }
+      ]
+    }
+  ]
+}

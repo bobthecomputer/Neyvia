@@ -1,0 +1,36 @@
+{
+  "schema": "neyvia.performance-budgets.v1",
+  "description": "Release gate budgets tightened after the 2026-07-24 G4 production split. These are measured regression guardrails, not competitive-performance claims.",
+  "seedMeasurement": {
+    "source": "2026-07-24 G4 local Vite production-build receipt",
+    "mainCssBytesApprox": 453720,
+    "fluxioShellChunkBytesApprox": 453090,
+    "fluxioReferenceShellChunkBytesApprox": 479770,
+    "referencePolishCssLazyBytesApprox": 311460,
+    "note": "Reference polish, Office, Marketplace, and Personal Mesh are now lazy assets. The gate measures every next build directly."
+  },
+  "maxEvidenceAgeHours": 168,
+  "evidenceLimits": {
+    "minStartupSamples": 3,
+    "maxSamplesPerMetric": 20,
+    "maxCaptureDurationSeconds": 1800,
+    "maxHttpRequestsPerSample": 64,
+    "maxResponseBytes": 5000000,
+    "requestTimeoutSeconds": 10,
+    "startupTimeoutSeconds": 30,
+    "pollIntervalMs": 100
+  },
+  "build": {
+    "initialJavascriptBytes": 450000,
+    "initialCssBytes": 500000,
+    "lazyChunkMaxBytes": 500000
+  },
+  "runtime": {
+    "bootstrapPayloadBytes": 250000,
+    "startupP95Ms": 5000,
+    "memoryP95MiB": 700,
+    "cpuP95Percent": 85,
+    "networkInitialBytes": 1500000,
+    "batteryDrainPercentPerHour": 12
+  }
+}

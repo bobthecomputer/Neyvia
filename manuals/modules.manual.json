@@ -1,0 +1,690 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "modules",
+  "kind": "environment",
+  "proofs": {
+    "area": "path-policy-outcomes, python-sdk-journey",
+    "manifests": [
+      "config/proofs/path-policy-outcomes.json",
+      "config/proofs/python-sdk-journey.json"
+    ],
+    "contracts": [
+      {
+        "id": "p22.path-policy-outcomes",
+        "phase": "post",
+        "claim": "A real Git diff leaves deleted paths exempt, requires file-level evidence for surviving files with removed lines and binary changes, preserves changed-line locations for Unicode and spaced paths across bounded large pathspec batches, and classifies generated output, third-party trees and CI workflow configuration by policy.",
+        "checkedAt": [
+          "grant_agent.contract_diff.changed_lines",
+          "grant_agent.contract_diff._line_inventories",
+          "grant_agent.contract_coverage.classify",
+          "grant_agent.contract_coverage.model",
+          "grant_agent.contract_measurements.admission",
+          "grant_agent.proofs_path_policy_outcomes.path_policy_classification"
+        ],
+        "impact": [
+          "Path policy and measured changed-line admission"
+        ]
+      },
+      {
+        "id": "p22.python-sdk-http-boundary",
+        "phase": "post",
+        "claim": "The Python SDK maps an HTTP 400 service refusal to NeyviaError with the original status, code, message, and request command.",
+        "checkedAt": [
+          "src/neyvia_sdk/client.py",
+          "grant_agent.proofs_python_sdk_journey.self_check"
+        ],
+        "impact": [
+          "Python SDK HTTP 400 refusal mapping"
+        ]
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.marketplace.get": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.marketplace.install": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "source": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.marketplace.list": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.marketplace.read": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.marketplace.remove": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.marketplace.set": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "enabled"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.marketplace.update": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "boolean"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.modules.get": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.modules.list": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": []
+    },
+    "neyvia.modules.source": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.modules.validate": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Reusable repository modules, public APIs and optional mods",
+      "state": {
+        "catalog": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.modules.list"
+        },
+        "module": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.modules.get"
+        }
+      },
+      "actions": {
+        "modules.list": {
+          "effect": "Read and search Neyvia's generated module map, with saved enabled state.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.modules.list",
+          "tool": "neyvia.modules.list"
+        },
+        "modules.get": {
+          "effect": "Read a module's source ownership, manuals, actions, dependencies and contracts.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.modules.get",
+          "tool": "neyvia.modules.get"
+        },
+        "modules.source": {
+          "effect": "Read an exact owned module source file; never opens an unrelated workspace path.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.modules.source",
+          "tool": "neyvia.modules.source"
+        },
+        "modules.validate": {
+          "effect": "Check every scoped file is owned, the map is current and manual actions exist.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.modules.validate",
+          "tool": "neyvia.modules.validate"
+        },
+        "marketplace.list": {
+          "effect": "Read installed developer-source apps and mods with manuals, contracts and saved lifecycle state.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.marketplace.list",
+          "tool": "neyvia.marketplace.list"
+        },
+        "marketplace.get": {
+          "effect": "Read one installed source app or mod's current immutable version and lifecycle state.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.marketplace.get",
+          "tool": "neyvia.marketplace.get"
+        },
+        "marketplace.install": {
+          "effect": "Install a trusted local folder or GitHub git URL into an immutable private snapshot; no dependency installs.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.marketplace.install",
+          "tool": "neyvia.marketplace.install"
+        },
+        "marketplace.set": {
+          "effect": "Enable or disable an installed source app or mod, protecting active dependencies.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.marketplace.set",
+          "tool": "neyvia.marketplace.set"
+        },
+        "marketplace.update": {
+          "effect": "Snapshot the installed item's original folder or git source; preserve prior versions and enabled state.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.marketplace.update",
+          "tool": "neyvia.marketplace.update"
+        },
+        "marketplace.read": {
+          "effect": "Read an installed item's executable manual and declared contracts without running its code.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.marketplace.read",
+          "tool": "neyvia.marketplace.read"
+        },
+        "marketplace.remove": {
+          "effect": "Remove a disabled source app or mod that nothing depends on; its snapshots move aside, recoverable.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.marketplace.remove",
+          "tool": "neyvia.marketplace.remove"
+        }
+      },
+      "checks": {
+        "map-current": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.modules.validate"
+        },
+        "enabled-state": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "module.enabled",
+            "value": {
+              "$input": "enabled"
+            }
+          },
+          "tool": "neyvia.modules.get"
+        },
+        "enable-source": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "item.state",
+            "value": "active"
+          },
+          "tool": "neyvia.marketplace.get"
+        },
+        "disable-source": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "item.state",
+            "value": "disabled"
+          },
+          "tool": "neyvia.marketplace.get"
+        },
+        "installed-off": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "item.state",
+            "value": "disabled"
+          },
+          "tool": "neyvia.marketplace.get"
+        },
+        "private-sources-closed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "publicSources",
+            "value": {
+              "privateExcluded": true,
+              "privateReadRefused": true
+            }
+          },
+          "tool": "neyvia.modules.validate"
+        }
+      },
+      "procedures": {
+        "verify-map": {
+          "goal": "Every scoped source file has an owner, every action exists and generated data is current",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "modules.validate",
+              "args": {},
+              "check": "map-current",
+              "save": "map"
+            },
+            {
+              "action": "modules.validate",
+              "args": {},
+              "check": "private-sources-closed",
+              "save": "public"
+            }
+          ]
+        },
+        "set-optional": {
+          "goal": "Change optional module availability and observe the persisted result",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "marketplace.set",
+              "args": {
+                "enabled": {
+                  "$input": "enabled"
+                },
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "check": "enabled-state",
+              "save": "changed"
+            }
+          ]
+        },
+        "enable-source": {
+          "goal": "Persist and observe source item state active",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "steps": [
+            {
+              "action": "marketplace.set",
+              "args": {
+                "enabled": true,
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "check": "enable-source",
+              "save": "changed"
+            }
+          ]
+        },
+        "disable-source": {
+          "goal": "Persist and observe source item state disabled",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "steps": [
+            {
+              "action": "marketplace.set",
+              "args": {
+                "enabled": false,
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "check": "disable-source",
+              "save": "changed"
+            }
+          ]
+        },
+        "install-off": {
+          "goal": "A new source app or mod installs turned off; the owner turns it on after reviewing it",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "marketplace.install",
+              "args": {
+                "source": {
+                  "$input": "source"
+                }
+              },
+              "check": "installed-off",
+              "save": "installed"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Module map drifted or manual names a missing action",
+          "recovery": "Fix ownership/action registration; compile CL, regenerate the module map and rerun modules.verify-map()."
+        },
+        {
+          "failure": "Optional module is disabled or required by an enabled dependant",
+          "recovery": "Enable required dependencies first; disable dependants before their dependency. Core switches are refused."
+        }
+      ],
+      "frontier": [
+        "Trusted repository-local mods only; no downloading or executing untrusted packages. Changing a mod action schema requires restarting the owned backend to rebuild its tool catalog.",
+        "Source inspection is read-only; edit the named file in your editor. External connector runtime readiness is described by game-dev.cl, not inferred from registry presence."
+      ],
+      "guidance": [
+        "MODULES.md indexes source-derived modules. modules/<id>/README.md lists each purpose, public API, files, CL manual, contracts and dependencies.",
+        "Core modules stay enabled. Source apps and mods use one workspace-local marketplace lifecycle; every mod action and hosted app SDK call uses its saved gate.",
+        "Run modules.verify-map() after source changes. Rebuild config/neyvia.modules.json with system Python scripts/generate_module_map.py; review before commit.",
+        "The registry maps existing implementation units; a generated purpose or import dependency is a static description, not a claim of independently replaceable ABI.",
+        "Read neyvia chapter modding-neyvia and docs/BUILDING_APPS_AND_MODS.md. Reuse neyvia-sdk for sign-in/providers, memory, LAYA verification, CL and app hosting rather than copying architecture.",
+        "Marketplace > Apps & mods is the store over these actions: cards with state, a details view (plain actions, what it asks for, promises, versions, source, manual), an enable switch, Update, Remove with an in-place confirm, and Add from source. Its rendered proof is the install, enable, open, disable and remove journey that scripts/mod_render.py drives through Obscura on the owned backend."
+      ]
+    }
+  }
+}

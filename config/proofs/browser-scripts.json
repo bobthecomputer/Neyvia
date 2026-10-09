@@ -1,0 +1,37 @@
+{
+  "area": "browser-scripts",
+  "module": "grant_agent.proofs_browser_scripts",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "browser-script.input-binding",
+      "phase": "post",
+      "claim": "A learned browser procedure binds caller inputs into concrete actions and goal predicates while preserving all fixed semantic targets",
+      "checkedAt": ["grant_agent.browser_scripts.bind", "grant_agent.proofs_browser_scripts.input_binding"],
+      "impact": ["Compiled browser procedure inputs and replay actions"]
+    },
+    {
+      "id": "browser-script.goal-observation",
+      "phase": "post",
+      "claim": "Browser procedure goals pass only when the fresh observed JSON values satisfy every exact or contains predicate",
+      "checkedAt": ["grant_agent.browser_scripts.goal", "grant_agent.proofs_browser_scripts.goal_observation"],
+      "impact": ["Browser procedure completion and replay admission"]
+    },
+    {
+      "id": "browser-script.query-binding",
+      "phase": "post",
+      "claim": "A proved URL query value maps back to its semantic caller input and parameter name without retaining the successful value",
+      "checkedAt": ["grant_agent.browser_scripts.observed_input_bindings", "grant_agent.proofs_browser_scripts.query_binding"],
+      "impact": ["Reusable browser procedure query inputs"]
+    },
+    {
+      "id": "browser-script.invalid-name",
+      "phase": "post",
+      "claim": "A path-like browser procedure name fails with invalid_script before any browser observation is attempted",
+      "checkedAt": ["grant_agent.browser_scripts.execute", "grant_agent.proofs_browser_scripts.invalid_name"],
+      "impact": ["Browser procedure path isolation and input validation"]
+    }
+  ],
+  "coverage": [],
+  "networkContracts": []
+}

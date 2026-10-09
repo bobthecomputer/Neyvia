@@ -1,0 +1,138 @@
+/* Dictation: mic button, live strip (waveform + words so far), notes. */
+
+.nx .nx-mic {
+  display: grid; place-items: center; width: var(--nx-mic-size, 32px); height: var(--nx-mic-size, 32px); border-radius: 50%;
+  color: var(--nx-text-2); background: transparent; touch-action: none; user-select: none; -webkit-user-select: none;
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease), transform var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-mic:hover:not(:disabled) { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-mic:active:not(:disabled) { transform: scale(0.94); }
+.nx .nx-mic:disabled { color: var(--nx-faint); }
+.nx .nx-mic.is-live {
+  color: var(--nx-on-error); background: var(--nx-red);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--nx-red) 55%, transparent);
+  animation: nx-mic-pulse var(--nx-pulse) var(--nx-ease) infinite;
+}
+.nx .nx-mic.is-busy { color: var(--nx-text); background: var(--nx-hover); }
+@keyframes nx-mic-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--nx-red) 50%, transparent); }
+  70% { box-shadow: 0 0 0 var(--nx-halo-pulse) color-mix(in srgb, var(--nx-red) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--nx-red) 0%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) { .nx .nx-mic.is-live { animation: none; } }
+
+.nx .nx-dictation-strip {
+  min-width: 0; overflow: hidden;  /* a grid child: never widen the composer */
+  display: flex; align-items: center; gap: var(--nx-space-10); min-height: 34px; padding: var(--nx-space-5) var(--nx-space-6) var(--nx-space-5) var(--nx-space-10); border-radius: var(--nx-r);
+  background: color-mix(in srgb, var(--nx-red) 7%, var(--nx-raised, var(--nx-panel)));
+  box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-red) 24%, transparent);
+  animation: nx-dictation-in var(--nx-snappy) var(--nx-spring-snappy, var(--nx-ease));
+}
+.nx .nx-dictation-strip.is-finishing { background: var(--nx-hover); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-dictation-strip canvas { flex: none; width: 96px; height: 24px; color: var(--nx-red); }
+.nx .nx-dictation-strip.is-finishing canvas { color: var(--nx-muted); }
+/* The engine is starting: amber (running), the waveform still shows the voice being kept, a slow sweep shows progress. */
+.nx .nx-dictation-strip.is-cold {
+  position: relative;
+  background: color-mix(in srgb, var(--nx-amber) 9%, var(--nx-raised, var(--nx-panel)));
+  box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-amber) 30%, transparent);
+}
+.nx .nx-dictation-strip.is-cold canvas { color: var(--nx-amber); }
+.nx .nx-dictation-strip.is-cold::after {
+  content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 30%; border-radius: var(--nx-r-xxs);
+  background: color-mix(in srgb, var(--nx-amber) 70%, transparent);
+  animation: nx-dictation-sweep var(--nx-pulse) var(--nx-ease) infinite alternate;
+}
+.nx .nx-dictation-strip.is-cold .nx-dictation-text { -webkit-line-clamp: 3; }
+@keyframes nx-dictation-sweep { from { transform: translateX(0); } to { transform: translateX(233%); } }
+@media (prefers-reduced-motion: reduce) { .nx .nx-dictation-strip.is-cold::after { animation: none; width: 100%; opacity: .5; } }
+.nx .nx-dictation-text {
+  flex: 1 1 auto; min-width: 0; font-size: var(--nx-fs); line-height: 1.4; color: var(--nx-text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.nx .nx-dictation-text.is-hint { color: var(--nx-muted); }
+.nx .nx-dictation-cancel { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--nx-r-xs); color: var(--nx-muted); }
+.nx .nx-dictation-cancel:hover { background: var(--nx-hover); color: var(--nx-text); }
+@keyframes nx-dictation-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+.nx .nx-dictation-note {
+  min-width: 0; display: flex; align-items: flex-start; gap: var(--nx-space-8); padding: var(--nx-space-7) var(--nx-space-8) var(--nx-space-7) var(--nx-space-10); border-radius: var(--nx-r); font-size: var(--nx-fs-sm);
+  line-height: 1.45; color: var(--nx-text-2); background: var(--nx-hover);
+}
+.nx .nx-dictation-note > svg { flex: none; margin-top: var(--nx-space-2); color: var(--nx-muted); }
+.nx .nx-dictation-note > span { flex: 1 1 auto; }
+.nx .nx-dictation-note.is-warn { background: var(--nx-caution-soft); }
+.nx .nx-dictation-note.is-error { background: color-mix(in srgb, var(--nx-red) 10%, var(--nx-panel)); }
+.nx .nx-dictation-note button:not(.nx-btn) { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: var(--nx-r-xs); color: var(--nx-muted); }
+.nx .nx-dictation-note button:not(.nx-btn):hover { background: var(--nx-hover); color: var(--nx-text); }
+
+.nx .nx-notes-dictation:empty { display: none; }
+.nx .nx-notes-dictation { flex: none; padding: var(--nx-space-6) var(--nx-space-10) 0; }
+
+/* Prompt dictation: words in the box while talking (overlay with the box's own font and wrapping). */
+.nx textarea.nx-dict-masked { color: transparent !important; -webkit-text-fill-color: transparent; }
+.nx textarea.nx-dict-masked::placeholder { color: transparent; -webkit-text-fill-color: transparent; }
+.nx textarea.nx-dict-masked.is-talking { caret-color: transparent; }
+.nx .nx-dict-ghost {
+  position: absolute; z-index: 1; margin: 0; overflow: hidden; pointer-events: none; box-sizing: border-box;
+  border-style: solid; border-color: transparent; background: transparent;
+  white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; color: var(--nx-text);
+}
+.nx .nx-ghost-stable { color: var(--nx-text); transition: color var(--nx-fast) var(--nx-ease); }
+.nx .nx-ghost-provisional { color: var(--nx-muted); }
+.nx .nx-dict-ghost .nx-ghost-provisional { animation: nx-ghost-in var(--nx-fast) var(--nx-ease); }
+.nx .nx-ghost-end { display: inline-block; width: 0; }
+/* A late change behind the settled words: a brief underline shimmer, the caret stays where it is. */
+.nx .nx-ghost-revised {
+  border-radius: var(--nx-r-xxs); background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--nx-accent-hi) 34%, transparent), transparent);
+  background-size: 200% 100%; background-repeat: no-repeat;
+  text-decoration: underline 2px color-mix(in srgb, var(--nx-accent-hi) 70%, transparent); text-underline-offset: 3px;
+  animation: nx-ghost-shimmer var(--nx-settle) var(--nx-ease) 3;
+}
+@keyframes nx-ghost-in { from { opacity: 0.25; } to { opacity: 1; } }
+@keyframes nx-ghost-shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .nx .nx-ghost-revised { animation: none; background: color-mix(in srgb, var(--nx-accent-hi) 18%, transparent); }
+  .nx .nx-dict-ghost .nx-ghost-provisional { animation: none; }
+}
+
+.nx .nx-dictation-chips { flex: none; display: inline-flex; gap: var(--nx-space-4); }
+.nx .nx-dictation-chip {
+  display: inline-flex; align-items: center; height: 20px; padding: 0 var(--nx-space-7); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs);
+  color: var(--nx-text-2); background: var(--nx-hover); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); white-space: nowrap;
+}
+.nx .nx-dictation-chip.is-done { color: var(--nx-accent-hi); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 40%, transparent); }
+
+.nx .nx-dictation-note.is-after { align-items: center; padding: var(--nx-space-4) var(--nx-space-6) var(--nx-space-4) var(--nx-space-10); }
+.nx .nx-dictation-note.is-after > svg, .nx .nx-dictation-note.is-after > .nx-spinner { margin-top: 0; }
+.nx .nx-dictation-after { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-4) var(--nx-space-8); }
+.nx .nx-dictation-fix { font-size: var(--nx-fs-sm); color: var(--nx-muted); white-space: nowrap; }
+.nx .nx-dictation-fix strong { color: var(--nx-text); font-weight: 600; }
+.nx .nx-dictation-lang { font-size: var(--nx-fs-sm); color: var(--nx-text-2); padding: 0 var(--nx-space-6); border-radius: var(--nx-r-xs); background: var(--nx-panel); }
+.nx .nx-dictation-note .nx-btn { flex: none; height: 24px; white-space: nowrap; }
+.nx .nx-dictation-after > span { flex: none; }
+.nx .nx-dictation-after > .nx-dictation-msg { flex: 1 1 14em; min-width: 0; }  /* a long note wraps instead of running under the buttons */
+
+.nx .nx-dictation-note.is-sending { position: relative; overflow: hidden; align-items: center; padding: var(--nx-space-4) var(--nx-space-6) var(--nx-space-4) var(--nx-space-10); }
+.nx .nx-dictation-note.is-sending > svg { margin-top: 0; color: var(--nx-accent-hi); }
+.nx .nx-dictation-note.is-sending > span { flex: 1 1 auto; color: var(--nx-text); }
+.nx .nx-send-progress {
+  position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--nx-accent-hi); transform-origin: left;
+  animation: nx-send-progress var(--nx-send-ms, var(--nx-progress-duration)) linear forwards;
+}
+@keyframes nx-send-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .nx .nx-send-progress { animation: none; transform: scaleX(1); opacity: 0.5; } }
+
+.nx .nx-names { display: grid; gap: var(--nx-space-8); padding: var(--nx-space-12); }
+.nx .nx-names > p { margin: 0; color: var(--nx-muted); font-size: var(--nx-fs-sm); }
+.nx .nx-names-list { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; display: grid; gap: var(--nx-space-2); }
+.nx .nx-names-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: var(--nx-space-8); padding: var(--nx-space-4) var(--nx-space-6); border-radius: var(--nx-r-xs); font-size: var(--nx-fs-sm); }
+.nx .nx-names-list li:hover { background: var(--nx-hover); }
+.nx .nx-names-list li.is-muted { display: flex; color: var(--nx-muted); }
+.nx .nx-names-to { color: var(--nx-text); font-weight: 600; }
+.nx .nx-names-from { color: var(--nx-muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-names-list button { display: grid; place-items: center; width: 20px; height: 20px; border-radius: var(--nx-r-xs); color: var(--nx-muted); }
+.nx .nx-names-list button:hover { color: var(--nx-text); background: var(--nx-hover); }
+.nx .nx-names-add { display: grid; grid-template-columns: 1fr 1fr auto; gap: var(--nx-space-6); }
+.nx .nx-names-add .nx-input { min-width: 0; }
+.nx .nx-names-error { margin: 0; color: var(--nx-red); font-size: var(--nx-fs-sm); }

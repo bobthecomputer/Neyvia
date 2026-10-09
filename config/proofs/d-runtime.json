@@ -1,0 +1,3548 @@
+{
+  "area": "d-runtime",
+  "manual": "runtime-provider",
+  "module": "grant_agent.proofs_d_runtime",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "d.runtime.handback.identity",
+      "phase": "invariant",
+      "claim": "Runtime output retains its invocation/runtime origin, exact content and counts; content hashes make repeat handback idempotent while new resumed output remains carryable. Empty output has no invented completion.",
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "parent transcript",
+        "runtime provenance",
+        "resumed output"
+      ]
+    },
+    {
+      "id": "d.runtime.handback.transcript",
+      "phase": "invariant",
+      "claim": "Handed-back transcript messages retain content/text and origin; user/operator messages are authored by You, other messages by their originating runtime.",
+      "checkedAt": [
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "parent transcript authorship"
+      ]
+    },
+    {
+      "id": "d.runtime.wrapper.spec",
+      "phase": "invariant",
+      "claim": "Only supported wrappers with nonempty commands produce specs; exact command, cwd, timeout and sorted environment key names survive without serializing environment values.",
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_spec",
+        "grant_agent.runtime_wrapper.runtime_wrapper_payload",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "external runtime wrapper launch plans"
+      ]
+    },
+    {
+      "id": "d.runtime.wrapper.state",
+      "phase": "invariant",
+      "claim": "Wrapper observations retain their runtime/cwd, observed processes, masked environment status, positive TTL and nonnegative heartbeat age; actual file tails stay bounded.",
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_state",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "runtime observation",
+        "bounded logs"
+      ]
+    },
+    {
+      "id": "d.runtime.wrapper.event",
+      "phase": "invariant",
+      "claim": "Phase events retain the wrapper's runtime/cwd/log path and the supplied mission/run/phase/status/message association.",
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_phase_event",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "mission phase event provenance"
+      ]
+    },
+    {
+      "id": "d.runtime.wrapper.receipt",
+      "phase": "invariant",
+      "claim": "Execution receipts project the exact wrapper command, changed files, bounded observed logs, process tree, masked environment, heartbeat age and TTL.",
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_execution_receipt",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "runtime execution receipts"
+      ]
+    },
+    {
+      "id": "d.runtime.wrapper.replay",
+      "phase": "invariant",
+      "claim": "File-backed replay admits only real dictionary rows, skips missing/malformed inputs, respects the event bound and derives latest status from observed receipt/event rows.",
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.replay_runtime_wrapper",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "runtime replay",
+        "honest completion status"
+      ]
+    },
+    {
+      "id": "d.runtime.profile.resolve",
+      "phase": "invariant",
+      "claim": "Profile selection resolves an explicit existing name first, first matching workspace rule second and registered default last, preserving the selected profile's agent policy.",
+      "checkedAt": [
+        "grant_agent.profiles.ProfileRegistry.resolve",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "personalization",
+        "agent risk policy"
+      ]
+    },
+    {
+      "id": "d.runtime.openai.tools",
+      "phase": "invariant",
+      "claim": "Skill tools retain name, description, schema and strictness; enabled code execution retains auto memory/file configuration or selected container identity.",
+      "checkedAt": [
+        "grant_agent.openai_adapter.tools_from_skills",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "OpenAI request tool schemas"
+      ]
+    },
+    {
+      "id": "d.runtime.openai.request",
+      "phase": "invariant",
+      "claim": "Wire serialization preserves model, user input, tools, storage policy and requested continuation/instructions/tool-choice; unset optional fields are omitted.",
+      "checkedAt": [
+        "grant_agent.openai_adapter.OpenAIRequestPlan.as_dict",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "OpenAI route and request payload"
+      ]
+    },
+    {
+      "id": "d.runtime.lineage.source",
+      "phase": "invariant",
+      "claim": "A lineage timeline consists only of real source JSONL dictionaries, in lineage/source order, tagged with the originating session; missing/malformed rows do not invent events.",
+      "checkedAt": [
+        "grant_agent.replay.build_lineage_timeline",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "session lineage replay"
+      ]
+    },
+    {
+      "id": "d.runtime.platform.roots",
+      "phase": "invariant",
+      "claim": "Explicit workspace and configured environment roots, project name and Windows mirror survive PlatformConfig construction; this projection performs no NAS activity.",
+      "checkedAt": [
+        "grant_agent.platform_config.PlatformConfig.from_env",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "platform path correspondence"
+      ]
+    },
+    {
+      "id": "d.runtime.platform.candidates",
+      "phase": "invariant",
+      "claim": "Path candidates are unique; a configured remote project path includes its corresponding local workspace and configured mirror path.",
+      "checkedAt": [
+        "grant_agent.platform_config.PlatformConfig.path_candidates",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "portable saved paths"
+      ]
+    },
+    {
+      "id": "d.runtime.platform.coerce",
+      "phase": "invariant",
+      "claim": "Explicit POSIX coercion maps an embedded Windows drive path to its /mnt drive mount and preserves the remaining path, including through the supervisor's pure helper.",
+      "checkedAt": [
+        "grant_agent.platform_config.PlatformConfig.coerce_path",
+        "grant_agent.runtime_supervisor._coerce_platform_path",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "portable session paths"
+      ]
+    },
+    {
+      "id": "d.runtime.cache.compatibility",
+      "phase": "invariant",
+      "claim": "Cache compatibility separates implemented features, configured peers and hash-admitted available sidecar transport; declared transport versions and public discovery policy are projected honestly.",
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.compatibility_snapshot",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "P2P readiness claims"
+      ]
+    },
+    {
+      "id": "d.runtime.cache.bootstrap",
+      "phase": "invariant",
+      "claim": "Bootstrap observes exact local object/byte/pin counts and transport readiness without allocating an index or claiming a missing transport is ready.",
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.bootstrap",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "local cache readiness"
+      ]
+    },
+    {
+      "id": "d.runtime.cache.plan",
+      "phase": "invariant",
+      "claim": "Import plans are workspace-scoped, BLAKE3/hash bound, preserve current source metadata and kind/pin intent, and state that local import needs no network or publication.",
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.plan_import",
+        "grant_agent.p2p_cache.P2PCacheService._workspace_file",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "local CAS import approval"
+      ]
+    },
+    {
+      "id": "d.runtime.cache.import",
+      "phase": "invariant",
+      "claim": "An unapproved local import performs no admission; approved receipts retain plan/content/source identity and pin/kind, honestly distinguish copy from deduplication and claim only locally verified bytes. Source or plan drift fails closed.",
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.import_object",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "local CAS integrity and approval"
+      ]
+    },
+    {
+      "id": "d.runtime.cache.read",
+      "phase": "invariant",
+      "claim": "Local context reads are bounded, retain digest/offset and match actual admitted bytes and truncation; invalid hash/range or changed admitted content fails closed before context is returned.",
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.read_text",
+        "grant_agent.p2p_cache.P2PCacheService._verified_object",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "model context integrity"
+      ]
+    },
+    {
+      "id": "d.runtime.version.order",
+      "phase": "invariant",
+      "claim": "Runtime semantic/date versions compare numeric token tuples; v prefixes do not change version identity.",
+      "checkedAt": [
+        "grant_agent.runtime_updates.compare_version_tokens",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "runtime update eligibility"
+      ]
+    },
+    {
+      "id": "d.runtime.go-env.merge",
+      "phase": "invariant",
+      "claim": "The pure Go environment merge retains unrelated provider entries, emits exactly one safely quoted current OPENCODE_API_KEY export and rejects an empty credential value.",
+      "checkedAt": [
+        "scripts/repair_nas_opencode_go_auth.py:merge_provider_env",
+        "scripts/repair_nas_opencode_go_auth.py:check_provider_env_merge",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "impact": [
+        "provider environment text transformation"
+      ]
+    },
+    {
+      "id": "d.runtime.go-env.redact",
+      "phase": "invariant",
+      "claim": "The pure receipt redactor removes the supplied secret and returns at most 8000 characters; proof fixtures use in-memory scratch strings only.",
+      "checkedAt": [
+        "scripts/repair_nas_opencode_go_auth.py:_redact",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "impact": [
+        "repair receipt secrecy"
+      ]
+    },
+    {
+      "id": "d.runtime.package.export",
+      "phase": "invariant",
+      "claim": "Public service classes stay lazy until requested, then retain their backwards-compatible public class identity; package import alone does not load the autonomous engine.",
+      "checkedAt": [
+        "grant_agent.__init__.__getattr__",
+        "grant_agent.proofs_d_runtime.check_package_export",
+        "grant_agent.proofs_d_runtime.self_check:fresh interpreter"
+      ],
+      "impact": [
+        "package startup cost",
+        "public import API"
+      ]
+    },
+    {
+      "id": "d.runtime.lane.aliases",
+      "phase": "invariant",
+      "claim": "The four required context/planner/executor/verifier lanes keep their role order and the selected runtime alias normalizes to the owning runtime without launch or route substitution.",
+      "checkedAt": [
+        "grant_agent.runtime_lane_cycle.normalize_lane_routes",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "runtime lane route plans"
+      ]
+    },
+    {
+      "id": "d.runtime.nas-setup.users",
+      "phase": "invariant",
+      "claim": "Repeated flags and comma lists produce exactly the first-seen nonempty usernames once, preserving order.",
+      "checkedAt": [
+        "scripts/nas_setup.py:collect_add_users",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "impact": [
+        "local setup argument parsing"
+      ]
+    },
+    {
+      "id": "d.runtime.nas-setup.hosts",
+      "phase": "invariant",
+      "claim": "Normalized host identities are unique and partition exactly into DNS names and valid IP addresses; a trailing DNS dot does not duplicate a host.",
+      "checkedAt": [
+        "scripts/setup_nas_https.py:split_hosts",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "impact": [
+        "TLS host argument planning"
+      ]
+    },
+    {
+      "id": "d.runtime.nas-setup.tls-command",
+      "phase": "invariant",
+      "claim": "The TLS backend command plan retains its explicit port, public URL and certificate/key paths; verification never launches that command or reads those files.",
+      "checkedAt": [
+        "scripts/setup_nas_https.py:backend_start_command",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "impact": [
+        "TLS backend command plans"
+      ]
+    },
+    {
+      "id": "d.runtime.nas-setup.node-plan",
+      "phase": "invariant",
+      "claim": "Supported CPU names resolve to packaged Node architecture and the planned HTTPS archive URL preserves version/architecture; unsupported CPU or empty version stops before download.",
+      "checkedAt": [
+        "scripts/install_nas_runtime_stack.py:node_platform_arch",
+        "scripts/install_nas_runtime_stack.py:node_dist_url",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "impact": [
+        "packaged runtime install plans"
+      ]
+    },
+    {
+      "id": "d.runtime.bridge.bytes",
+      "phase": "invariant",
+      "claim": "Bridge copy completion matches actual destination SHA-256 and source size; deduplication reuses all bytes and partial resume transfers exactly the remainder.",
+      "checkedAt": [
+        "grant_agent.nas_bridge.NasBridge._copy_resumable",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "attachment byte integrity",
+        "local protocol resume"
+      ]
+    },
+    {
+      "id": "d.runtime.bridge.envelope",
+      "phase": "invariant",
+      "claim": "Each sent message's inbox/outbox envelopes exactly match its returned message and attachment metadata; transfer/reuse totals derive only from attachment receipts.",
+      "checkedAt": [
+        "grant_agent.nas_bridge.NasBridge.send_message",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "message/attachment envelopes"
+      ]
+    },
+    {
+      "id": "d.runtime.bridge.receive",
+      "phase": "invariant",
+      "claim": "Received materialized attachments stay under the selected output root, match actual SHA-256 and retain file names; optional acknowledgements retain message identity and inbox count stays bounded.",
+      "checkedAt": [
+        "grant_agent.nas_bridge.NasBridge.receive_messages",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "verified local receive",
+        "message acknowledgements"
+      ]
+    },
+    {
+      "id": "d.runtime.transfer.file",
+      "phase": "invariant",
+      "claim": "Completed file copies match destination size and SHA-256, preserve exact remaining-byte resume accounting; unchanged-metadata skips do no transfer/hash work.",
+      "checkedAt": [
+        "grant_agent.nas_transfer._copy_file_resumable",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "file transfer integrity",
+        "resume and metadata skip"
+      ]
+    },
+    {
+      "id": "d.runtime.transfer.directory",
+      "phase": "invariant",
+      "claim": "Directory transfer receipts account for filtered/changed/skipped files and hash-check every actually transferred destination; explicit include-all is retained and unchanged metadata does not fabricate verification work.",
+      "checkedAt": [
+        "grant_agent.nas_transfer._copy_directory",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "directory filtering and collision preservation"
+      ]
+    },
+    {
+      "id": "d.runtime.transfer.receipt",
+      "phase": "invariant",
+      "claim": "A completed transfer returns the identical JSON receipt durably persisted at its selected sender and mirror protocol roots; destination escape, unavailable explicit root and invalid batch sources stop before successful receipt/copy.",
+      "checkedAt": [
+        "grant_agent.nas_transfer.NasTransfer._write_receipt",
+        "grant_agent.nas_transfer.NasTransfer.send",
+        "grant_agent.nas_transfer.NasTransfer.send_manifest",
+        "grant_agent.proofs_d_runtime.check"
+      ],
+      "impact": [
+        "recoverable transfer receipts",
+        "destination/preflight boundaries"
+      ]
+    },
+    {
+      "id": "d.runtime.auth-queue.state",
+      "phase": "invariant",
+      "claim": "Durable queue schema, ordered unique provider identities, canonical lifecycle and public flow metadata remain valid on every load; malformed/future state fails closed without overwrite.",
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.auth-queue.persisted",
+      "phase": "invariant",
+      "claim": "Successful queue writes reread the exact payload through the existing anchored provider-state directory; no credential file is part of this proof.",
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.auth-queue.transition",
+      "phase": "invariant",
+      "claim": "Queue mutations preserve durable queue/provider operation identities, settle supplied presence observations, expose lost evidence as blocked, and keep cancelled/skipped operations terminal.",
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.auth-queue.flow",
+      "phase": "invariant",
+      "claim": "Only public flow receipt fields persist; sessionless observers preserve the owning session and conflicting sessions cannot overwrite its durable evidence.",
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.auth-queue.projection",
+      "phase": "invariant",
+      "claim": "Public queue views retain lifecycle and policy, hide opaque startup ownership, declare no stored secret material and keep Anthropic on its official provider route.",
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.auth-queue.startup",
+      "phase": "invariant",
+      "claim": "Existing workspace locks and canonical bounded durable leases reserve one startup owner; waiting pollers receive no executable action, stale owners cannot publish, and completion leaves the next startup unclaimed until a real poller.",
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.circuit.admission",
+      "phase": "invariant",
+      "claim": "Inside the existing SQLite lease transaction, closed routes admit work, open cooldowns deny, and half-open routes reserve exactly one live canary keyed by host/runtime/provider. Direct lease creation rechecks the same admission rule.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.circuit.transition",
+      "phase": "invariant",
+      "claim": "Observed result metadata opens only its route, respects transient thresholds and preserves stronger auth/credit cooldown against late results; successful owned canaries close/reset and failed/inconclusive canaries reopen durably.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.circuit.classification",
+      "phase": "invariant",
+      "claim": "Provider result classification keeps route identity and only bounded category evidence, separates auth/credit/rate/overload/transport, and explicit process success wins over authentication words in output.",
+      "checkedAt": [
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.circuit.reset",
+      "phase": "invariant",
+      "claim": "Manual circuit reset redacts bounded actor/reason evidence and asks for one future half-open canary rather than bypassing observed failure.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.circuit.reporting",
+      "phase": "invariant",
+      "claim": "Provider result publication requires the current active lease, matching job and reporting host; mismatched reporting does not update a provider circuit.",
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    },
+    {
+      "id": "d.runtime.circuit.worker",
+      "phase": "invariant",
+      "claim": "Workers record provider failure before durable job completion and doctor exposes every open/half-open route. Explicit trusted local capability observations/environment keep scratch runs within their owned root; they do not prove provider authentication or permit external workspace mappings.",
+      "checkedAt": [
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities"
+      ],
+      "impact": [
+        "durable local provider coordination",
+        "provider authority and scheduling"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_nas_bridge.py",
+      "case": "NasBridgeTests.test_message_attachments_are_deduplicated_and_received_with_checksum_proof",
+      "contracts": [
+        "d.runtime.bridge.bytes",
+        "d.runtime.bridge.envelope",
+        "d.runtime.bridge.receive"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_bridge.NasBridge._copy_resumable",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.nas_bridge.NasBridge.send_message",
+        "grant_agent.nas_bridge.NasBridge.receive_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_bridge.py::NasBridgeTests.test_message_attachments_are_deduplicated_and_received_with_checksum_proof"
+    },
+    {
+      "test": "tests/test_nas_bridge.py",
+      "case": "NasBridgeTests.test_interrupted_blob_copy_resumes_from_partial_bytes",
+      "contracts": [
+        "d.runtime.bridge.bytes",
+        "d.runtime.bridge.envelope",
+        "d.runtime.bridge.receive"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_bridge.NasBridge._copy_resumable",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.nas_bridge.NasBridge.send_message",
+        "grant_agent.nas_bridge.NasBridge.receive_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_bridge.py::NasBridgeTests.test_interrupted_blob_copy_resumes_from_partial_bytes"
+    },
+    {
+      "test": "tests/test_nas_opencode_go_auth_repair.py",
+      "case": "test_merge_provider_env_adds_opencode_go_without_rewriting_other_entries",
+      "contracts": [
+        "d.runtime.go-env.merge",
+        "d.runtime.go-env.redact"
+      ],
+      "checkedAt": [
+        "scripts/repair_nas_opencode_go_auth.py:merge_provider_env",
+        "scripts/repair_nas_opencode_go_auth.py:check_provider_env_merge",
+        "grant_agent.proofs_d_runtime.self_check",
+        "scripts/repair_nas_opencode_go_auth.py:_redact",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_opencode_go_auth_repair.py::test_merge_provider_env_adds_opencode_go_without_rewriting_other_entries"
+    },
+    {
+      "test": "tests/test_nas_opencode_go_auth_repair.py",
+      "case": "test_merge_provider_env_replaces_duplicate_stale_entries",
+      "contracts": [
+        "d.runtime.go-env.merge",
+        "d.runtime.go-env.redact"
+      ],
+      "checkedAt": [
+        "scripts/repair_nas_opencode_go_auth.py:merge_provider_env",
+        "scripts/repair_nas_opencode_go_auth.py:check_provider_env_merge",
+        "grant_agent.proofs_d_runtime.self_check",
+        "scripts/repair_nas_opencode_go_auth.py:_redact",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_opencode_go_auth_repair.py::test_merge_provider_env_replaces_duplicate_stale_entries"
+    },
+    {
+      "test": "tests/test_nas_opencode_go_auth_repair.py",
+      "case": "test_redaction_never_preserves_secret_in_receipt_tail",
+      "contracts": [
+        "d.runtime.go-env.merge",
+        "d.runtime.go-env.redact"
+      ],
+      "checkedAt": [
+        "scripts/repair_nas_opencode_go_auth.py:merge_provider_env",
+        "scripts/repair_nas_opencode_go_auth.py:check_provider_env_merge",
+        "grant_agent.proofs_d_runtime.self_check",
+        "scripts/repair_nas_opencode_go_auth.py:_redact",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_opencode_go_auth_repair.py::test_redaction_never_preserves_secret_in_receipt_tail"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "case": "NasSetupTests.test_collect_add_users_supports_repeated_flag",
+      "contracts": [
+        "d.runtime.nas-setup.users"
+      ],
+      "checkedAt": [
+        "scripts/nas_setup.py:collect_add_users",
+        "grant_agent.proofs_d_runtime.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_setup.py::NasSetupTests.test_collect_add_users_supports_repeated_flag"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "case": "NasSetupTests.test_collect_add_users_supports_comma_list_and_dedupes",
+      "contracts": [
+        "d.runtime.nas-setup.users"
+      ],
+      "checkedAt": [
+        "scripts/nas_setup.py:collect_add_users",
+        "grant_agent.proofs_d_runtime.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_setup.py::NasSetupTests.test_collect_add_users_supports_comma_list_and_dedupes"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "case": "NasSetupTests.test_collect_add_users_ignores_empty_fragments",
+      "contracts": [
+        "d.runtime.nas-setup.users"
+      ],
+      "checkedAt": [
+        "scripts/nas_setup.py:collect_add_users",
+        "grant_agent.proofs_d_runtime.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_setup.py::NasSetupTests.test_collect_add_users_ignores_empty_fragments"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "case": "NasSetupTests.test_https_setup_splits_dns_and_ip_hosts",
+      "contracts": [
+        "d.runtime.nas-setup.hosts"
+      ],
+      "checkedAt": [
+        "scripts/setup_nas_https.py:split_hosts",
+        "grant_agent.proofs_d_runtime.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_setup.py::NasSetupTests.test_https_setup_splits_dns_and_ip_hosts"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "case": "NasSetupTests.test_https_setup_backend_command_includes_tls_files",
+      "contracts": [
+        "d.runtime.nas-setup.tls-command"
+      ],
+      "checkedAt": [
+        "scripts/setup_nas_https.py:backend_start_command",
+        "grant_agent.proofs_d_runtime.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_setup.py::NasSetupTests.test_https_setup_backend_command_includes_tls_files"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "case": "NasSetupTests.test_runtime_installer_maps_linux_arch_and_node_url",
+      "contracts": [
+        "d.runtime.nas-setup.node-plan"
+      ],
+      "checkedAt": [
+        "scripts/install_nas_runtime_stack.py:node_platform_arch",
+        "scripts/install_nas_runtime_stack.py:node_dist_url",
+        "grant_agent.proofs_d_runtime.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_setup.py::NasSetupTests.test_runtime_installer_maps_linux_arch_and_node_url"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_file_send_is_verified_and_receipted_in_one_call",
+      "contracts": [
+        "d.runtime.transfer.file",
+        "d.runtime.transfer.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_transfer._copy_file_resumable",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.nas_transfer.NasTransfer._write_receipt",
+        "grant_agent.nas_transfer.NasTransfer.send",
+        "grant_agent.nas_transfer.NasTransfer.send_manifest",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_file_send_is_verified_and_receipted_in_one_call"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_folder_send_updates_collisions_without_deleting_unrelated_files",
+      "contracts": [
+        "d.runtime.transfer.directory",
+        "d.runtime.transfer.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_transfer._copy_directory",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.nas_transfer.NasTransfer._write_receipt",
+        "grant_agent.nas_transfer.NasTransfer.send",
+        "grant_agent.nas_transfer.NasTransfer.send_manifest",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_folder_send_updates_collisions_without_deleting_unrelated_files"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_include_all_deliberately_copies_normally_excluded_paths",
+      "contracts": [
+        "d.runtime.transfer.directory"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_transfer._copy_directory",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_include_all_deliberately_copies_normally_excluded_paths"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_unchanged_folder_files_are_skipped_without_hashing",
+      "contracts": [
+        "d.runtime.transfer.directory"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_transfer._copy_directory",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_unchanged_folder_files_are_skipped_without_hashing"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_partial_file_copy_resumes_and_is_sha256_verified",
+      "contracts": [
+        "d.runtime.transfer.file"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_transfer._copy_file_resumable",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_partial_file_copy_resumes_and_is_sha256_verified"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_manifest_preflights_every_source_before_copying",
+      "contracts": [
+        "d.runtime.transfer.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_transfer.NasTransfer._write_receipt",
+        "grant_agent.nas_transfer.NasTransfer.send",
+        "grant_agent.nas_transfer.NasTransfer.send_manifest",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_manifest_preflights_every_source_before_copying"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_destination_cannot_escape_nas_root",
+      "contracts": [
+        "d.runtime.transfer.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_transfer.NasTransfer._write_receipt",
+        "grant_agent.nas_transfer.NasTransfer.send",
+        "grant_agent.nas_transfer.NasTransfer.send_manifest",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_destination_cannot_escape_nas_root"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_unavailable_explicit_nas_root_fails_before_discovery_fallback",
+      "contracts": [
+        "d.runtime.transfer.receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.nas_transfer.NasTransfer._write_receipt",
+        "grant_agent.nas_transfer.NasTransfer.send",
+        "grant_agent.nas_transfer.NasTransfer.send_manifest",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_unavailable_explicit_nas_root_fails_before_discovery_fallback"
+    },
+    {
+      "test": "tests/test_openai_adapter.py",
+      "case": "OpenAIAdapterTests.test_build_request_contains_tools",
+      "contracts": [
+        "d.runtime.openai.tools",
+        "d.runtime.openai.request"
+      ],
+      "checkedAt": [
+        "grant_agent.openai_adapter.tools_from_skills",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.openai_adapter.OpenAIRequestPlan.as_dict",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_openai_adapter.py::OpenAIAdapterTests.test_build_request_contains_tools"
+    },
+    {
+      "test": "tests/test_openai_adapter.py",
+      "case": "OpenAIAdapterTests.test_build_request_can_include_code_execution_tool",
+      "contracts": [
+        "d.runtime.openai.tools",
+        "d.runtime.openai.request"
+      ],
+      "checkedAt": [
+        "grant_agent.openai_adapter.tools_from_skills",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.openai_adapter.OpenAIRequestPlan.as_dict",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_openai_adapter.py::OpenAIAdapterTests.test_build_request_can_include_code_execution_tool"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "case": "test_compatibility_is_honest_about_local_and_remote_state",
+      "contracts": [
+        "d.runtime.cache.compatibility",
+        "d.runtime.cache.bootstrap"
+      ],
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.compatibility_snapshot",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.p2p_cache.P2PCacheService.bootstrap",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_p2p_cache.py::test_compatibility_is_honest_about_local_and_remote_state"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "case": "test_import_deduplicates_and_reads_bounded_local_context",
+      "contracts": [
+        "d.runtime.cache.plan",
+        "d.runtime.cache.import",
+        "d.runtime.cache.read"
+      ],
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.plan_import",
+        "grant_agent.p2p_cache.P2PCacheService._workspace_file",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.p2p_cache.P2PCacheService.import_object",
+        "grant_agent.p2p_cache.P2PCacheService.read_text",
+        "grant_agent.p2p_cache.P2PCacheService._verified_object",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_p2p_cache.py::test_import_deduplicates_and_reads_bounded_local_context"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "case": "test_import_requires_approval_and_rejects_changed_source",
+      "contracts": [
+        "d.runtime.cache.import"
+      ],
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.import_object",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_p2p_cache.py::test_import_requires_approval_and_rejects_changed_source"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "case": "test_plan_is_hash_bound_and_workspace_scoped",
+      "contracts": [
+        "d.runtime.cache.plan",
+        "d.runtime.cache.import"
+      ],
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.plan_import",
+        "grant_agent.p2p_cache.P2PCacheService._workspace_file",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.p2p_cache.P2PCacheService.import_object",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_p2p_cache.py::test_plan_is_hash_bound_and_workspace_scoped"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "case": "test_changed_cache_object_is_reverified_and_fails_closed",
+      "contracts": [
+        "d.runtime.cache.read"
+      ],
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.read_text",
+        "grant_agent.p2p_cache.P2PCacheService._verified_object",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_p2p_cache.py::test_changed_cache_object_is_reverified_and_fails_closed"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "case": "test_read_rejects_unbounded_or_invalid_requests",
+      "contracts": [
+        "d.runtime.cache.read"
+      ],
+      "checkedAt": [
+        "grant_agent.p2p_cache.P2PCacheService.read_text",
+        "grant_agent.p2p_cache.P2PCacheService._verified_object",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_p2p_cache.py::test_read_rejects_unbounded_or_invalid_requests"
+    },
+    {
+      "test": "tests/test_package_init.py",
+      "case": "test_package_exports_are_lazy_and_backwards_compatible",
+      "contracts": [
+        "d.runtime.package.export"
+      ],
+      "checkedAt": [
+        "grant_agent.__init__.__getattr__",
+        "grant_agent.proofs_d_runtime.check_package_export",
+        "grant_agent.proofs_d_runtime.self_check:fresh interpreter",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_package_init.py::test_package_exports_are_lazy_and_backwards_compatible"
+    },
+    {
+      "test": "tests/test_platform_config.py",
+      "case": "PlatformConfigTests.test_env_overrides_define_nas_project_roots",
+      "contracts": [
+        "d.runtime.platform.roots",
+        "d.runtime.platform.candidates",
+        "d.runtime.platform.coerce"
+      ],
+      "checkedAt": [
+        "grant_agent.platform_config.PlatformConfig.from_env",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.platform_config.PlatformConfig.path_candidates",
+        "grant_agent.platform_config.PlatformConfig.coerce_path",
+        "grant_agent.runtime_supervisor._coerce_platform_path",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_platform_config.py::PlatformConfigTests.test_env_overrides_define_nas_project_roots"
+    },
+    {
+      "test": "tests/test_platform_config.py",
+      "case": "PlatformConfigTests.test_path_candidates_include_workspace_relative_remote_project_path",
+      "contracts": [
+        "d.runtime.platform.roots",
+        "d.runtime.platform.candidates",
+        "d.runtime.platform.coerce"
+      ],
+      "checkedAt": [
+        "grant_agent.platform_config.PlatformConfig.from_env",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.platform_config.PlatformConfig.path_candidates",
+        "grant_agent.platform_config.PlatformConfig.coerce_path",
+        "grant_agent.runtime_supervisor._coerce_platform_path",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_platform_config.py::PlatformConfigTests.test_path_candidates_include_workspace_relative_remote_project_path"
+    },
+    {
+      "test": "tests/test_platform_config.py",
+      "case": "PlatformConfigTests.test_coerce_path_recovers_embedded_windows_path_for_posix",
+      "contracts": [
+        "d.runtime.platform.roots",
+        "d.runtime.platform.candidates",
+        "d.runtime.platform.coerce"
+      ],
+      "checkedAt": [
+        "grant_agent.platform_config.PlatformConfig.from_env",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.platform_config.PlatformConfig.path_candidates",
+        "grant_agent.platform_config.PlatformConfig.coerce_path",
+        "grant_agent.runtime_supervisor._coerce_platform_path",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_platform_config.py::PlatformConfigTests.test_coerce_path_recovers_embedded_windows_path_for_posix"
+    },
+    {
+      "test": "tests/test_profiles.py",
+      "case": "ProfileTests.test_load_default_profile",
+      "contracts": [
+        "d.runtime.profile.resolve"
+      ],
+      "checkedAt": [
+        "grant_agent.profiles.ProfileRegistry.resolve",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_profiles.py::ProfileTests.test_load_default_profile"
+    },
+    {
+      "test": "tests/test_profiles.py",
+      "case": "ProfileTests.test_resolve_named_profile",
+      "contracts": [
+        "d.runtime.profile.resolve"
+      ],
+      "checkedAt": [
+        "grant_agent.profiles.ProfileRegistry.resolve",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_profiles.py::ProfileTests.test_resolve_named_profile"
+    },
+    {
+      "test": "tests/test_replay.py",
+      "case": "ReplayTests.test_build_lineage_timeline",
+      "contracts": [
+        "d.runtime.lineage.source"
+      ],
+      "checkedAt": [
+        "grant_agent.replay.build_lineage_timeline",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_replay.py::ReplayTests.test_build_lineage_timeline"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_output_carries_across_with_its_origin",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_output_carries_across_with_its_origin"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_a_handed_back_message_keeps_the_runtime_as_its_author",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_a_handed_back_message_keeps_the_runtime_as_its_author"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_runtime_text_payloads_are_not_dropped_during_handback",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_runtime_text_payloads_are_not_dropped_during_handback"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_operator_input_keeps_its_role_during_handback",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_operator_input_keeps_its_role_during_handback"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_a_runtime_that_returned_nothing_hands_back_nothing",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_a_runtime_that_returned_nothing_hands_back_nothing"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_handing_back_twice_does_not_duplicate",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_handing_back_twice_does_not_duplicate"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_nothing_new_is_distinct_from_having_produced_nothing",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_nothing_new_is_distinct_from_having_produced_nothing"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_new_output_after_a_handback_still_carries",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_new_output_after_a_handback_still_carries"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_the_summary_counts_only_what_is_there",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_the_summary_counts_only_what_is_there"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_an_invocation_without_identity_is_refused",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_an_invocation_without_identity_is_refused"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "case": "test_a_non_record_is_refused",
+      "contracts": [
+        "d.runtime.handback.identity",
+        "d.runtime.handback.transcript"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_handback.build_handback",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_handback.handback_messages",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_handback.py::test_a_non_record_is_refused"
+    },
+    {
+      "test": "tests/test_runtime_lane_cycle.py",
+      "case": "RuntimeLaneCycleTests.test_normalize_routes_keeps_runtime_aliases",
+      "contracts": [
+        "d.runtime.lane.aliases"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_lane_cycle.normalize_lane_routes",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_lane_cycle.py::RuntimeLaneCycleTests.test_normalize_routes_keeps_runtime_aliases"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_coerce_platform_path_converts_windows_drive_path_for_wsl",
+      "contracts": [
+        "d.runtime.platform.coerce"
+      ],
+      "checkedAt": [
+        "grant_agent.platform_config.PlatformConfig.coerce_path",
+        "grant_agent.runtime_supervisor._coerce_platform_path",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_coerce_platform_path_converts_windows_drive_path_for_wsl"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_coerce_platform_path_recovers_embedded_windows_drive_path",
+      "contracts": [
+        "d.runtime.platform.coerce"
+      ],
+      "checkedAt": [
+        "grant_agent.platform_config.PlatformConfig.coerce_path",
+        "grant_agent.runtime_supervisor._coerce_platform_path",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_coerce_platform_path_recovers_embedded_windows_drive_path"
+    },
+    {
+      "test": "tests/test_runtime_updates.py",
+      "case": "RuntimeUpdatesTests.test_compare_version_tokens_handles_semver_and_date_versions",
+      "contracts": [
+        "d.runtime.version.order"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_updates.compare_version_tokens",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_updates.py::RuntimeUpdatesTests.test_compare_version_tokens_handles_semver_and_date_versions"
+    },
+    {
+      "test": "tests/test_runtime_wrapper.py",
+      "case": "test_runtime_wrapper_spec_supports_declared_external_runtimes",
+      "contracts": [
+        "d.runtime.wrapper.spec",
+        "d.runtime.wrapper.state",
+        "d.runtime.wrapper.event",
+        "d.runtime.wrapper.receipt",
+        "d.runtime.wrapper.replay"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_spec",
+        "grant_agent.runtime_wrapper.runtime_wrapper_payload",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_state",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_phase_event",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_execution_receipt",
+        "grant_agent.runtime_wrapper.replay_runtime_wrapper",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_wrapper.py::test_runtime_wrapper_spec_supports_declared_external_runtimes"
+    },
+    {
+      "test": "tests/test_runtime_wrapper.py",
+      "case": "test_runtime_wrapper_rejects_unknown_runtime_or_empty_command",
+      "contracts": [
+        "d.runtime.wrapper.spec",
+        "d.runtime.wrapper.state",
+        "d.runtime.wrapper.event",
+        "d.runtime.wrapper.receipt",
+        "d.runtime.wrapper.replay"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_spec",
+        "grant_agent.runtime_wrapper.runtime_wrapper_payload",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_state",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_phase_event",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_execution_receipt",
+        "grant_agent.runtime_wrapper.replay_runtime_wrapper",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_wrapper.py::test_runtime_wrapper_rejects_unknown_runtime_or_empty_command"
+    },
+    {
+      "test": "tests/test_runtime_wrapper.py",
+      "case": "test_runtime_wrapper_state_tracks_process_and_bounded_tails",
+      "contracts": [
+        "d.runtime.wrapper.spec",
+        "d.runtime.wrapper.state",
+        "d.runtime.wrapper.event",
+        "d.runtime.wrapper.receipt",
+        "d.runtime.wrapper.replay"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_spec",
+        "grant_agent.runtime_wrapper.runtime_wrapper_payload",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_state",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_phase_event",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_execution_receipt",
+        "grant_agent.runtime_wrapper.replay_runtime_wrapper",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_wrapper.py::test_runtime_wrapper_state_tracks_process_and_bounded_tails"
+    },
+    {
+      "test": "tests/test_runtime_wrapper.py",
+      "case": "test_runtime_wrapper_emits_phase_event_and_execution_receipt",
+      "contracts": [
+        "d.runtime.wrapper.spec",
+        "d.runtime.wrapper.state",
+        "d.runtime.wrapper.event",
+        "d.runtime.wrapper.receipt",
+        "d.runtime.wrapper.replay"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_spec",
+        "grant_agent.runtime_wrapper.runtime_wrapper_payload",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_state",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_phase_event",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_execution_receipt",
+        "grant_agent.runtime_wrapper.replay_runtime_wrapper",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_wrapper.py::test_runtime_wrapper_emits_phase_event_and_execution_receipt"
+    },
+    {
+      "test": "tests/test_runtime_wrapper.py",
+      "case": "test_runtime_wrapper_replay_loads_events_and_receipts_without_fake_rows",
+      "contracts": [
+        "d.runtime.wrapper.spec",
+        "d.runtime.wrapper.state",
+        "d.runtime.wrapper.event",
+        "d.runtime.wrapper.receipt",
+        "d.runtime.wrapper.replay"
+      ],
+      "checkedAt": [
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_spec",
+        "grant_agent.runtime_wrapper.runtime_wrapper_payload",
+        "grant_agent.proofs_d_runtime.check",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_state",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_phase_event",
+        "grant_agent.runtime_wrapper.build_runtime_wrapper_execution_receipt",
+        "grant_agent.runtime_wrapper.replay_runtime_wrapper",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_runtime_wrapper.py::test_runtime_wrapper_replay_loads_events_and_receipts_without_fake_rows"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_queue_connects_existing_provider_and_activates_next",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_queue_connects_existing_provider_and_activates_next"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_detected_connection_advances_without_another_start",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_detected_connection_advances_without_another_start"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_connected_provider_is_revalidated_and_becomes_actionable_when_evidence_is_lost",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_connected_provider_is_revalidated_and_becomes_actionable_when_evidence_is_lost"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_duplicate_start_is_rejected_without_replacing_active_queue",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_duplicate_start_is_rejected_without_replacing_active_queue"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_independent_queue_instances_cannot_both_start_same_workspace",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_independent_queue_instances_cannot_both_start_same_workspace"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_independent_instances_serialize_when_os_lock_is_process_reentrant",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_independent_instances_serialize_when_os_lock_is_process_reentrant"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_flow_start_is_reserved_before_backend_launches_external_session",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_flow_start_is_reserved_before_backend_launches_external_session"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_conflicting_flow_session_cannot_overwrite_first_receipt",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_conflicting_flow_session_cannot_overwrite_first_receipt"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_corrupt_state_fails_closed_without_manufacturing_clean_queue",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_corrupt_state_fails_closed_without_manufacturing_clean_queue"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_future_schema_fails_closed_without_overwrite",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_future_schema_fails_closed_without_overwrite"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_malformed_item_fails_closed_without_overwrite",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_malformed_item_fails_closed_without_overwrite"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_flow_receipt_never_persists_tokens_or_helper_secret",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_flow_receipt_never_persists_tokens_or_helper_secret"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_blocked_provider_can_record_reauthentication_flow",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_blocked_provider_can_record_reauthentication_flow"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_late_completion_cannot_resurrect_cancelled_queue",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_late_completion_cannot_resurrect_cancelled_queue"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_anthropic_policy_never_offers_codex_proxy_binding",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_anthropic_policy_never_offers_codex_proxy_binding"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_cancel_is_durable_and_terminal",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_cancel_is_durable_and_terminal"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_sessionless_backend_update_preserves_owning_provider_session",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_sessionless_backend_update_preserves_owning_provider_session"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_side_effect_completion_leaves_next_flow_unclaimed_until_real_poller",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_side_effect_completion_leaves_next_flow_unclaimed_until_real_poller"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_noncanonical_item_values_fail_closed_without_overwrite",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_noncanonical_item_values_fail_closed_without_overwrite"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_malformed_startup_claim_fields_fail_closed_without_overwrite",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_malformed_startup_claim_fields_fail_closed_without_overwrite"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_superseded_startup_owner_cannot_publish_late_result",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_superseded_startup_owner_cannot_publish_late_result"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_noncanonical_claim_timestamp_fails_closed_without_overwrite",
+      "contracts": [
+        "d.runtime.auth-queue.state",
+        "d.runtime.auth-queue.persisted",
+        "d.runtime.auth-queue.transition",
+        "d.runtime.auth-queue.flow",
+        "d.runtime.auth-queue.projection",
+        "d.runtime.auth-queue.startup"
+      ],
+      "checkedAt": [
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._load_from_directory",
+        "grant_agent.proofs_d_runtime_auth.check_queue_payload",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._save",
+        "grant_agent.proofs_d_runtime_auth.check_queue_save",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._mutation",
+        "grant_agent.proofs_d_runtime_auth.check_queue_transition",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue.record_flow",
+        "grant_agent.provider_auth_queue.ProviderAuthQueue._present",
+        "grant_agent.proofs_d_runtime_auth.check_queue_present",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_noncanonical_claim_timestamp_fails_closed_without_overwrite"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_auth_open_blocks_host_but_other_host_remains_eligible",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_auth_open_blocks_host_but_other_host_remains_eligible"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_reset_and_concurrent_claims_admit_one_probe",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_reset_and_concurrent_claims_admit_one_probe"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_successful_probe_closes_and_auth_probe_reopens",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_successful_probe_closes_and_auth_probe_reopens"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_rate_limit_and_overload_are_not_auth_failures",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_rate_limit_and_overload_are_not_auth_failures"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_credit_exhaustion_opens_only_the_affected_provider_route",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_credit_exhaustion_opens_only_the_affected_provider_route"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_late_inflight_transient_failure_does_not_weaken_auth_cooldown",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_late_inflight_transient_failure_does_not_weaken_auth_cooldown"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_successful_output_with_auth_text_is_not_auth_failure",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_successful_output_with_auth_text_is_not_auth_failure"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_direct_assignment_rechecks_circuit_inside_lease_transaction",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_direct_assignment_rechecks_circuit_inside_lease_transaction"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_provider_result_rejects_mismatched_reporting_host",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_provider_result_rejects_mismatched_reporting_host"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_worker_opens_circuit_before_failed_job_completion",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_worker_opens_circuit_before_failed_job_completion"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_inconclusive_probe_and_open_state_survive_registry_restart",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_inconclusive_probe_and_open_state_survive_registry_restart"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_manual_reset_redacts_token_like_evidence",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_manual_reset_redacts_token_like_evidence"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "case": "ProviderCircuitTests.test_worker_doctor_warns_when_provider_circuit_is_open",
+      "contracts": [
+        "d.runtime.circuit.admission",
+        "d.runtime.circuit.transition",
+        "d.runtime.circuit.classification",
+        "d.runtime.circuit.reset",
+        "d.runtime.circuit.reporting",
+        "d.runtime.circuit.worker"
+      ],
+      "checkedAt": [
+        "grant_agent.cluster.ClusterRegistry._provider_circuit_admission_db",
+        "grant_agent.proofs_d_runtime_auth.circuit_admission",
+        "grant_agent.cluster.ClusterRegistry.record_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_result",
+        "grant_agent.cluster.classify_provider_result",
+        "grant_agent.proofs_d_runtime_auth.check_classification",
+        "grant_agent.cluster.ClusterRegistry.reset_provider_circuit",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reset",
+        "grant_agent.proofs_d_runtime_auth.check_circuit_reporting",
+        "grant_agent.worker.run_local_worker_once",
+        "grant_agent.worker.build_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.check_worker_circuit_before_completion",
+        "grant_agent.proofs_d_runtime_auth.check_worker_doctor",
+        "grant_agent.proofs_d_runtime_auth.observed_worker_capabilities",
+        "grant_agent.proofs_d_runtime_auth.self_check",
+        "grant_agent.proofs_d_runtime.self_check"
+      ],
+      "case_id": "tests/test_provider_circuit.py::ProviderCircuitTests.test_worker_doctor_warns_when_provider_circuit_is_open"
+    }
+  ],
+  "frontier": [
+    {
+      "test": "tests/test_nas_runtime_release_contract.py",
+      "case": "test_watchdog_cli_accepts_launcher_fake_running_threshold",
+      "reason": "Retained: launcher/watchdog/concurrency/cached detection and candidate staging source contracts need production launcher wiring and isolated process lifecycle proofs; no public runtime/service changes authorized.",
+      "case_id": "tests/test_nas_runtime_release_contract.py::test_watchdog_cli_accepts_launcher_fake_running_threshold"
+    },
+    {
+      "test": "tests/test_nas_runtime_release_contract.py",
+      "case": "test_worker_capabilities_report_requested_concurrency",
+      "reason": "Retained: launcher/watchdog/concurrency/cached detection and candidate staging source contracts need production launcher wiring and isolated process lifecycle proofs; no public runtime/service changes authorized.",
+      "case_id": "tests/test_nas_runtime_release_contract.py::test_worker_capabilities_report_requested_concurrency"
+    },
+    {
+      "test": "tests/test_nas_runtime_release_contract.py",
+      "case": "test_worker_capabilities_default_to_unlimited_concurrency",
+      "reason": "Retained: launcher/watchdog/concurrency/cached detection and candidate staging source contracts need production launcher wiring and isolated process lifecycle proofs; no public runtime/service changes authorized.",
+      "case_id": "tests/test_nas_runtime_release_contract.py::test_worker_capabilities_default_to_unlimited_concurrency"
+    },
+    {
+      "test": "tests/test_nas_runtime_release_contract.py",
+      "case": "test_runtime_detection_is_cached_between_idle_worker_polls",
+      "reason": "Retained: launcher/watchdog/concurrency/cached detection and candidate staging source contracts need production launcher wiring and isolated process lifecycle proofs; no public runtime/service changes authorized.",
+      "case_id": "tests/test_nas_runtime_release_contract.py::test_runtime_detection_is_cached_between_idle_worker_polls"
+    },
+    {
+      "test": "tests/test_nas_runtime_release_contract.py",
+      "case": "test_transactional_launcher_and_worker_share_startup_contract",
+      "reason": "Retained: launcher/watchdog/concurrency/cached detection and candidate staging source contracts need production launcher wiring and isolated process lifecycle proofs; no public runtime/service changes authorized.",
+      "case_id": "tests/test_nas_runtime_release_contract.py::test_transactional_launcher_and_worker_share_startup_contract"
+    },
+    {
+      "test": "tests/test_nas_runtime_release_contract.py",
+      "case": "test_gateway_launcher_paths_cannot_use_an_implicit_release_environment",
+      "reason": "Retained: launcher/watchdog/concurrency/cached detection and candidate staging source contracts need production launcher wiring and isolated process lifecycle proofs; no public runtime/service changes authorized.",
+      "case_id": "tests/test_nas_runtime_release_contract.py::test_gateway_launcher_paths_cannot_use_an_implicit_release_environment"
+    },
+    {
+      "test": "tests/test_nas_runtime_release_contract.py",
+      "case": "test_candidate_staging_keeps_repaired_launcher_from_verified_source",
+      "reason": "Retained: launcher/watchdog/concurrency/cached detection and candidate staging source contracts need production launcher wiring and isolated process lifecycle proofs; no public runtime/service changes authorized.",
+      "case_id": "tests/test_nas_runtime_release_contract.py::test_candidate_staging_keeps_repaired_launcher_from_verified_source"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "case": "NasSetupTests.test_runtime_doctor_uses_packaged_bin_dirs",
+      "reason": "Retained: packaged-bin existence search and existing Node tree unpack/reuse still need actual file/tree procedures; parser/command planning coverage does not prove installer behavior.",
+      "case_id": "tests/test_nas_setup.py::NasSetupTests.test_runtime_doctor_uses_packaged_bin_dirs"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "case": "NasSetupTests.test_runtime_installer_reuses_existing_node_tree",
+      "reason": "Retained: packaged-bin existence search and existing Node tree unpack/reuse still need actual file/tree procedures; parser/command planning coverage does not prove installer behavior.",
+      "case_id": "tests/test_nas_setup.py::NasSetupTests.test_runtime_installer_reuses_existing_node_tree"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_folder_send_excludes_generated_and_control_data_by_default",
+      "reason": "Retained: exact full generated/secret exclusion invariant, immutable candidate success, native tool/CLI wiring, real Windows robocopy options and non-override mount identity proof still need complete semantic host contracts and local procedures.",
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_folder_send_excludes_generated_and_control_data_by_default"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_manifest_transfers_multiple_files_with_one_combined_receipt",
+      "reason": "Retained: exact full generated/secret exclusion invariant, immutable candidate success, native tool/CLI wiring, real Windows robocopy options and non-override mount identity proof still need complete semantic host contracts and local procedures.",
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_manifest_transfers_multiple_files_with_one_combined_receipt"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_robocopy_keeps_restartable_mode_without_forced_identical_files",
+      "reason": "Retained: exact full generated/secret exclusion invariant, immutable candidate success, native tool/CLI wiring, real Windows robocopy options and non-override mount identity proof still need complete semantic host contracts and local procedures.",
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_robocopy_keeps_restartable_mode_without_forced_identical_files"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_local_projects_folder_is_never_accepted_as_a_nas_root",
+      "reason": "Retained: exact full generated/secret exclusion invariant, immutable candidate success, native tool/CLI wiring, real Windows robocopy options and non-override mount identity proof still need complete semantic host contracts and local procedures.",
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_local_projects_folder_is_never_accepted_as_a_nas_root"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_native_tool_accepts_directories_and_returns_final_receipt",
+      "reason": "Retained: exact full generated/secret exclusion invariant, immutable candidate success, native tool/CLI wiring, real Windows robocopy options and non-override mount identity proof still need complete semantic host contracts and local procedures.",
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_native_tool_accepts_directories_and_returns_final_receipt"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "case": "NasTransferTests.test_cli_returns_failure_without_polling",
+      "reason": "Retained: exact full generated/secret exclusion invariant, immutable candidate success, native tool/CLI wiring, real Windows robocopy options and non-override mount identity proof still need complete semantic host contracts and local procedures.",
+      "case_id": "tests/test_nas_transfer.py::NasTransferTests.test_cli_returns_failure_without_polling"
+    },
+    {
+      "test": "tests/test_opencode_windows_prompt.py",
+      "case": "test_npm_shim_preserves_multiline_prompt_without_shell_expansion",
+      "reason": "Retained: Windows npm launcher quoting, real provider-env propagation, selected-route command construction and non-destructive child liveness require their owner checks and real confined process journey.",
+      "case_id": "tests/test_opencode_windows_prompt.py::test_npm_shim_preserves_multiline_prompt_without_shell_expansion"
+    },
+    {
+      "test": "tests/test_opencode_windows_prompt.py",
+      "case": "test_opencode_default_effort_does_not_send_an_unrequested_variant",
+      "reason": "Retained: Windows npm launcher quoting, real provider-env propagation, selected-route command construction and non-destructive child liveness require their owner checks and real confined process journey.",
+      "case_id": "tests/test_opencode_windows_prompt.py::test_opencode_default_effort_does_not_send_an_unrequested_variant"
+    },
+    {
+      "test": "tests/test_opencode_windows_prompt.py",
+      "case": "test_go_auth_reaches_both_opencode_and_hermes",
+      "reason": "Retained: Windows npm launcher quoting, real provider-env propagation, selected-route command construction and non-destructive child liveness require their owner checks and real confined process journey.",
+      "case_id": "tests/test_opencode_windows_prompt.py::test_go_auth_reaches_both_opencode_and_hermes"
+    },
+    {
+      "test": "tests/test_opencode_windows_prompt.py",
+      "case": "test_opencode_preserves_model_specific_variant",
+      "reason": "Retained: Windows npm launcher quoting, real provider-env propagation, selected-route command construction and non-destructive child liveness require their owner checks and real confined process journey.",
+      "case_id": "tests/test_opencode_windows_prompt.py::test_opencode_preserves_model_specific_variant"
+    },
+    {
+      "test": "tests/test_opencode_windows_prompt.py",
+      "case": "test_native_chat_uses_bundled_runtime_and_selected_route",
+      "reason": "Retained: Windows npm launcher quoting, real provider-env propagation, selected-route command construction and non-destructive child liveness require their owner checks and real confined process journey.",
+      "case_id": "tests/test_opencode_windows_prompt.py::test_native_chat_uses_bundled_runtime_and_selected_route"
+    },
+    {
+      "test": "tests/test_opencode_windows_prompt.py",
+      "case": "test_windows_worker_preserves_paths_quotes_and_unicode",
+      "reason": "Retained: Windows npm launcher quoting, real provider-env propagation, selected-route command construction and non-destructive child liveness require their owner checks and real confined process journey.",
+      "case_id": "tests/test_opencode_windows_prompt.py::test_windows_worker_preserves_paths_quotes_and_unicode"
+    },
+    {
+      "test": "tests/test_opencode_windows_prompt.py",
+      "case": "test_health_checks_do_not_kill_the_process_they_inspect",
+      "reason": "Retained: Windows npm launcher quoting, real provider-env propagation, selected-route command construction and non-destructive child liveness require their owner checks and real confined process journey.",
+      "case_id": "tests/test_opencode_windows_prompt.py::test_health_checks_do_not_kill_the_process_they_inspect"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "case": "test_remote_fetch_is_hash_bound_allowlisted_and_admitted_atomically",
+      "reason": "Retained: real sidecar admission and changed remote offer/plan validation still need transport entry contracts and exact confined procedures; local CAS proof does not prove a remote transfer.",
+      "case_id": "tests/test_p2p_cache.py::test_remote_fetch_is_hash_bound_allowlisted_and_admitted_atomically"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "case": "test_remote_fetch_rejects_changed_offer_and_plan_tampering",
+      "reason": "Retained: real sidecar admission and changed remote offer/plan validation still need transport entry contracts and exact confined procedures; local CAS proof does not prove a remote transfer.",
+      "case_id": "tests/test_p2p_cache.py::test_remote_fetch_rejects_changed_offer_and_plan_tampering"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_candidates_are_approved_scored_and_deterministic",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_candidates_are_approved_scored_and_deterministic"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_schedule_rejects_reordered_rehashed_score_and_health_drift",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_schedule_rejects_reordered_rehashed_score_and_health_drift"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_missing_sidecar_blocks_before_any_network_attempt",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_missing_sidecar_blocks_before_any_network_attempt"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_scheduled_fetch_fails_over_once_and_records_real_success",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_scheduled_fetch_fails_over_once_and_records_real_success"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_retry_budget_exhaustion_is_bounded_and_does_not_claim_transfer",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_retry_budget_exhaustion_is_bounded_and_does_not_claim_transfer"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_scheduled_fetch_rejects_endpoint_transport_and_quota_drift",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_scheduled_fetch_rejects_endpoint_transport_and_quota_drift"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_subprocess_timeout_is_normalized_and_fails_over",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_subprocess_timeout_is_normalized_and_fails_over"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_persistent_session_timeout_evicts_before_delayed_response",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_persistent_session_timeout_evicts_before_delayed_response"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_peer_eligibility_is_rechecked_before_each_attempt",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_peer_eligibility_is_rechecked_before_each_attempt"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_attempt_budget_is_rechecked_between_network_attempts",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_attempt_budget_is_rechecked_between_network_attempts"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_replication_is_bounded_policy_intent_not_fake_execution",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_replication_is_bounded_policy_intent_not_fake_execution"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_is_bounded_approval_gated_and_never_evicts_pinned",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_is_bounded_approval_gated_and_never_evicts_pinned"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_rejects_object_drift_before_deletion",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_rejects_object_drift_before_deletion"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_rejects_forged_expired_and_replayed_approval",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_rejects_forged_expired_and_replayed_approval"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_requires_external_approval_authority_key",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_requires_external_approval_authority_key"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_default_unprovisioned_authority_is_disabled",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_default_unprovisioned_authority_is_disabled"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_ed25519_ledger_is_external_and_index_has_no_mint_or_ledger",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_ed25519_ledger_is_external_and_index_has_no_mint_or_ledger"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_rejects_malformed_or_huge_plan_before_lock_or_ledger",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_rejects_malformed_or_huge_plan_before_lock_or_ledger"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_object_lock_registry_cleans_up_after_exception",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_object_lock_registry_cleans_up_after_exception"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_rejects_invalid_configured_limits",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_rejects_invalid_configured_limits"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_zero_gc_limit_disables_planning_and_stale_execution",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_zero_gc_limit_disables_planning_and_stale_execution"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_approval_is_plan_bound_and_limits_are_rechecked",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_approval_is_plan_bound_and_limits_are_rechecked"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_rechecks_access_and_pin_state_inside_transaction",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_rechecks_access_and_pin_state_inside_transaction"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_import_and_gc_share_object_serialization_and_atomic_recheck",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_import_and_gc_share_object_serialization_and_atomic_recheck"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_quarantine_failure_restores_files_and_index",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_quarantine_failure_restores_files_and_index"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_rejects_journal_root_reparse_without_traversal",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_rejects_journal_root_reparse_without_traversal"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_rejects_quarantine_ancestor_reparse_before_traversal",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_rejects_quarantine_ancestor_reparse_before_traversal"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_rejects_quarantine_final_reparse_without_unlinking_target",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_rejects_quarantine_final_reparse_without_unlinking_target"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_gc_recovery_rejects_journal_final_reparse",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_gc_recovery_rejects_journal_final_reparse"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_startup_recovery_restores_precommit_quarantine",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_startup_recovery_restores_precommit_quarantine"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_startup_recovery_cleans_postcommit_quarantine",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_startup_recovery_cleans_postcommit_quarantine"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_concurrent_gc_execution_has_only_one_committed_winner",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_concurrent_gc_execution_has_only_one_committed_winner"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "case": "test_first_use_index_migration_is_serialized",
+      "reason": "Retained: scheduling drift/retry/sidecar sessions and Ed25519 GC ledger/locks/quarantine/reparse recovery require transactional host contracts and real local adverse/concurrency procedures; no dead-code conclusion is supported.",
+      "case_id": "tests/test_p2p_cache_scheduler.py::test_first_use_index_migration_is_serialized"
+    },
+    {
+      "test": "tests/test_p2p_provider.py",
+      "case": "test_publication_plan_is_approval_gated_and_opaque",
+      "reason": "Retained: provider service publication/reload rollback require hash-bound service lifecycle contracts and a real owned sidecar process; mocked activation is not publication proof.",
+      "case_id": "tests/test_p2p_provider.py::test_publication_plan_is_approval_gated_and_opaque"
+    },
+    {
+      "test": "tests/test_p2p_provider.py",
+      "case": "test_activation_and_stop_are_sanitized_and_receipted",
+      "reason": "Retained: provider service publication/reload rollback require hash-bound service lifecycle contracts and a real owned sidecar process; mocked activation is not publication proof.",
+      "case_id": "tests/test_p2p_provider.py::test_activation_and_stop_are_sanitized_and_receipted"
+    },
+    {
+      "test": "tests/test_p2p_provider.py",
+      "case": "test_tampered_plan_and_changed_object_fail_closed",
+      "reason": "Retained: provider service publication/reload rollback require hash-bound service lifecycle contracts and a real owned sidecar process; mocked activation is not publication proof.",
+      "case_id": "tests/test_p2p_provider.py::test_tampered_plan_and_changed_object_fail_closed"
+    },
+    {
+      "test": "tests/test_p2p_provider.py",
+      "case": "test_failed_reload_restores_previous_manifest_and_service",
+      "reason": "Retained: provider service publication/reload rollback require hash-bound service lifecycle contracts and a real owned sidecar process; mocked activation is not publication proof.",
+      "case_id": "tests/test_p2p_provider.py::test_failed_reload_restores_previous_manifest_and_service"
+    },
+    {
+      "test": "tests/test_provider_auth_broker.py",
+      "case": "ProviderAuthBrokerTests.test_codex_oauth_has_one_refresh_owner_and_nonsecret_state",
+      "reason": "Retained: one-refresh-owner broker behavior requires synthetic credential-store fixture writes/reads and inline owner checks; no existing credential files were read.",
+      "case_id": "tests/test_provider_auth_broker.py::ProviderAuthBrokerTests.test_codex_oauth_has_one_refresh_owner_and_nonsecret_state"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_dangling_queue_symlink_fails_closed",
+      "reason": "Retained: real dangling file-symlink proof requires Windows privilege; creation returned WinError 1314.",
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_dangling_queue_symlink_fails_closed"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_backend_starts_only_active_flow_without_persisting_relay_secrets",
+      "reason": "Retained: backend provider-flow dispatch/authentication integration requires its actual provider helper; local queue callbacks prove scheduling only.",
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_backend_starts_only_active_flow_without_persisting_relay_secrets"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_second_backend_does_not_start_duplicate_external_auth_flow",
+      "reason": "Retained: backend provider-flow dispatch/authentication integration requires its actual provider helper; local queue callbacks prove scheduling only.",
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_second_backend_does_not_start_duplicate_external_auth_flow"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "case": "ProviderAuthQueueTests.test_backend_detection_advances_and_starts_the_next_provider",
+      "reason": "Retained: backend provider-flow dispatch/authentication integration requires its actual provider helper; local queue callbacks prove scheduling only.",
+      "case_id": "tests/test_provider_auth_queue.py::ProviderAuthQueueTests.test_backend_detection_advances_and_starts_the_next_provider"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_cross_process_openrouter_presence_uses_fresh_durable_secret_store",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_cross_process_openrouter_presence_uses_fresh_durable_secret_store"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_backend_start_failure_clears_claim_for_immediate_retry",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_backend_start_failure_clears_claim_for_immediate_retry"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_openrouter_start_reloads_cross_process_current_secret_store",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_openrouter_start_reloads_cross_process_current_secret_store"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_secret_publication_is_serialized_with_final_openrouter_launch",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_secret_publication_is_serialized_with_final_openrouter_launch"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_non_string_openrouter_secret_fails_closed_before_launch",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_non_string_openrouter_secret_fails_closed_before_launch"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_concurrent_provider_secret_updates_merge_and_clear_explicitly",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_concurrent_provider_secret_updates_merge_and_clear_explicitly"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_legacy_provider_secret_shapes_remain_readable_and_migrate",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_legacy_provider_secret_shapes_remain_readable_and_migrate"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_unsupported_legacy_secret_fields_fail_closed_without_overwrite",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_unsupported_legacy_secret_fields_fail_closed_without_overwrite"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_symlinked_agent_control_root_is_refused_before_provider_state_io",
+      "reason": "Retained: anchored parent replacement/reparse behavior needs a real host filesystem attack journey and any included credential-store operation remains outside authorized proof.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_symlinked_agent_control_root_is_refused_before_provider_state_io"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_non_directory_agent_control_root_is_refused_before_provider_state_io",
+      "reason": "Retained: anchored parent replacement/reparse behavior needs a real host filesystem attack journey and any included credential-store operation remains outside authorized proof.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_non_directory_agent_control_root_is_refused_before_provider_state_io"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_current_schema_unknown_fields_and_metadata_fail_closed",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_current_schema_unknown_fields_and_metadata_fail_closed"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_null_legacy_secret_values_fail_closed_without_migration",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_null_legacy_secret_values_fail_closed_without_migration"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_queue_write_remains_on_anchored_directory_after_parent_swap",
+      "reason": "Retained: anchored parent replacement/reparse behavior needs a real host filesystem attack journey and any included credential-store operation remains outside authorized proof.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_queue_write_remains_on_anchored_directory_after_parent_swap"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_secret_write_remains_on_anchor_after_parent_swap",
+      "reason": "Retained: anchored parent replacement/reparse behavior needs a real host filesystem attack journey and any included credential-store operation remains outside authorized proof.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_secret_write_remains_on_anchor_after_parent_swap"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_cross_process_anthropic_presence_reloads_shared_store",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_cross_process_anthropic_presence_reloads_shared_store"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_same_backend_secret_cache_follows_serialized_durable_order",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_same_backend_secret_cache_follows_serialized_durable_order"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_explicit_null_legacy_timestamp_fails_closed_without_migration",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_explicit_null_legacy_timestamp_fails_closed_without_migration"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_adopted_openrouter_key_is_tracked_and_removed_after_durable_clear",
+      "reason": "Retained: case requires actual credential-store read/write/cache/publication or backend provider-launch integration; no credential file access or actual provider authentication authorized.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_adopted_openrouter_key_is_tracked_and_removed_after_durable_clear"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_windows_control_root_junction_is_refused",
+      "reason": "Retained: anchored parent replacement/reparse behavior needs a real host filesystem attack journey and any included credential-store operation remains outside authorized proof.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_windows_control_root_junction_is_refused"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "case": "ProviderAuthQueueReviewRegressionTests.test_windows_guard_leaf_junction_is_refused_without_touching_target",
+      "reason": "Retained: anchored parent replacement/reparse behavior needs a real host filesystem attack journey and any included credential-store operation remains outside authorized proof.",
+      "case_id": "tests/test_provider_auth_queue_review_regressions.py::ProviderAuthQueueReviewRegressionTests.test_windows_guard_leaf_junction_is_refused_without_touching_target"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_records_real_bounded_http_and_process_evidence",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_records_real_bounded_http_and_process_evidence"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_rejects_sample_count_outside_configured_bounds",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_rejects_sample_count_outside_configured_bounds"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_rejects_capture_that_exceeds_duration_limit",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_rejects_capture_that_exceeds_duration_limit"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_redacts_paths_urls_and_secret_assignments",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_redacts_paths_urls_and_secret_assignments"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_rejects_non_loopback_endpoints_by_default",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_rejects_non_loopback_endpoints_by_default"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_requires_all_endpoints_to_share_exact_loopback_origin",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_requires_all_endpoints_to_share_exact_loopback_origin"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_request_timeout_is_clamped_to_capture_deadline",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_request_timeout_is_clamped_to_capture_deadline"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_preflight_existing_listener_marks_startup_unproven_without_stopping_it",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_preflight_existing_listener_marks_startup_unproven_without_stopping_it"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_cross_origin_redirect_is_rejected",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_cross_origin_redirect_is_rejected"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_windows_cleanup_has_no_pid_based_taskkill_fallback",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_windows_cleanup_has_no_pid_based_taskkill_fallback"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_windows_missing_job_handle_surfaces_cleanup_uncertainty",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_windows_missing_job_handle_surfaces_cleanup_uncertainty"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "case": "RuntimePerformanceRecorderTests.test_cli_failure_uses_stable_code_without_local_path",
+      "reason": "Retained: bounded HTTP/process capture, same-origin redirect refusal and Windows job-owned cleanup need a real owned loopback capture procedure and inline recorder checks, not a mocked process result.",
+      "case_id": "tests/test_record_runtime_performance.py::RuntimePerformanceRecorderTests.test_cli_failure_uses_stable_code_without_local_path"
+    },
+    {
+      "test": "tests/test_recovered_release_contracts.py",
+      "case": "test_operator_marketplace_browse_reports_local_catalog_and_real_gaps",
+      "reason": "Retained: marketplace/mesh enrollment/nearby-send capability honesty contracts belong at their actual owner actions; these historical source/UI assertions cannot be labeled dead without an impact map.",
+      "case_id": "tests/test_recovered_release_contracts.py::test_operator_marketplace_browse_reports_local_catalog_and_real_gaps"
+    },
+    {
+      "test": "tests/test_recovered_release_contracts.py",
+      "case": "test_mesh_enrollment_and_trust_snapshot_is_sanitized_and_route_aware",
+      "reason": "Retained: marketplace/mesh enrollment/nearby-send capability honesty contracts belong at their actual owner actions; these historical source/UI assertions cannot be labeled dead without an impact map.",
+      "case_id": "tests/test_recovered_release_contracts.py::test_mesh_enrollment_and_trust_snapshot_is_sanitized_and_route_aware"
+    },
+    {
+      "test": "tests/test_recovered_release_contracts.py",
+      "case": "test_nearby_send_manifest_does_not_claim_deferred_features_ready",
+      "reason": "Retained: marketplace/mesh enrollment/nearby-send capability honesty contracts belong at their actual owner actions; these historical source/UI assertions cannot be labeled dead without an impact map.",
+      "case_id": "tests/test_recovered_release_contracts.py::test_nearby_send_manifest_does_not_claim_deferred_features_ready"
+    },
+    {
+      "test": "tests/test_release_acceptance.py",
+      "case": "ReleaseAcceptanceTests.test_cli_release_readiness_returns_snapshot",
+      "reason": "Retained: readiness/Telegram destination/runtime installation and delegated approval/restart restoration need real acceptance action contracts; model/runtime or public release execution is not represented by the local serializer proof.",
+      "case_id": "tests/test_release_acceptance.py::ReleaseAcceptanceTests.test_cli_release_readiness_returns_snapshot"
+    },
+    {
+      "test": "tests/test_release_acceptance.py",
+      "case": "ReleaseAcceptanceTests.test_cli_mission_start_uses_saved_telegram_destination_when_flag_is_empty",
+      "reason": "Retained: readiness/Telegram destination/runtime installation and delegated approval/restart restoration need real acceptance action contracts; model/runtime or public release execution is not represented by the local serializer proof.",
+      "case_id": "tests/test_release_acceptance.py::ReleaseAcceptanceTests.test_cli_mission_start_uses_saved_telegram_destination_when_flag_is_empty"
+    },
+    {
+      "test": "tests/test_release_acceptance.py",
+      "case": "ReleaseAcceptanceTests.test_cli_acceptance_runtime_stack_action_installs_missing_runtimes",
+      "reason": "Retained: readiness/Telegram destination/runtime installation and delegated approval/restart restoration need real acceptance action contracts; model/runtime or public release execution is not represented by the local serializer proof.",
+      "case_id": "tests/test_release_acceptance.py::ReleaseAcceptanceTests.test_cli_acceptance_runtime_stack_action_installs_missing_runtimes"
+    },
+    {
+      "test": "tests/test_release_acceptance.py",
+      "case": "ReleaseAcceptanceTests.test_cli_acceptance_repairs_setup_runs_openclaw_then_hermes_and_restores_state",
+      "reason": "Retained: readiness/Telegram destination/runtime installation and delegated approval/restart restoration need real acceptance action contracts; model/runtime or public release execution is not represented by the local serializer proof.",
+      "case_id": "tests/test_release_acceptance.py::ReleaseAcceptanceTests.test_cli_acceptance_repairs_setup_runs_openclaw_then_hermes_and_restores_state"
+    },
+    {
+      "test": "tests/test_release_acceptance.py",
+      "case": "ReleaseAcceptanceTests.test_cli_acceptance_records_replan_after_rejected_delegated_approval",
+      "reason": "Retained: readiness/Telegram destination/runtime installation and delegated approval/restart restoration need real acceptance action contracts; model/runtime or public release execution is not represented by the local serializer proof.",
+      "case_id": "tests/test_release_acceptance.py::ReleaseAcceptanceTests.test_cli_acceptance_records_replan_after_rejected_delegated_approval"
+    },
+    {
+      "test": "tests/test_release_acceptance.py",
+      "case": "ReleaseAcceptanceTests.test_cli_acceptance_preserves_delegated_runtime_activity_and_budget_truth_across_restart",
+      "reason": "Retained: readiness/Telegram destination/runtime installation and delegated approval/restart restoration need real acceptance action contracts; model/runtime or public release execution is not represented by the local serializer proof.",
+      "case_id": "tests/test_release_acceptance.py::ReleaseAcceptanceTests.test_cli_acceptance_preserves_delegated_runtime_activity_and_budget_truth_across_restart"
+    },
+    {
+      "test": "tests/test_runtime_auto_update.py",
+      "case": "RuntimeAutoUpdateTests.test_updates_stale_runtime_and_writes_truth_receipt",
+      "reason": "Retained: updater preflight/dry-run/update-result truth requires owner contracts plus a confined actual update/doctor fixture; no global update or install is authorized.",
+      "case_id": "tests/test_runtime_auto_update.py::RuntimeAutoUpdateTests.test_updates_stale_runtime_and_writes_truth_receipt"
+    },
+    {
+      "test": "tests/test_runtime_auto_update.py",
+      "case": "RuntimeAutoUpdateTests.test_dry_run_plans_without_running_or_writing_receipt",
+      "reason": "Retained: updater preflight/dry-run/update-result truth requires owner contracts plus a confined actual update/doctor fixture; no global update or install is authorized.",
+      "case_id": "tests/test_runtime_auto_update.py::RuntimeAutoUpdateTests.test_dry_run_plans_without_running_or_writing_receipt"
+    },
+    {
+      "test": "tests/test_runtime_auto_update.py",
+      "case": "RuntimeAutoUpdateTests.test_missing_requested_runtime_fails_preflight",
+      "reason": "Retained: updater preflight/dry-run/update-result truth requires owner contracts plus a confined actual update/doctor fixture; no global update or install is authorized.",
+      "case_id": "tests/test_runtime_auto_update.py::RuntimeAutoUpdateTests.test_missing_requested_runtime_fails_preflight"
+    },
+    {
+      "test": "tests/test_runtime_auto_update.py",
+      "case": "RuntimeAutoUpdateTests.test_update_command_success_fails_when_after_status_is_still_stale",
+      "reason": "Retained: updater preflight/dry-run/update-result truth requires owner contracts plus a confined actual update/doctor fixture; no global update or install is authorized.",
+      "case_id": "tests/test_runtime_auto_update.py::RuntimeAutoUpdateTests.test_update_command_success_fails_when_after_status_is_still_stale"
+    },
+    {
+      "test": "tests/test_runtime_budget_contract.py",
+      "case": "RuntimeBudgetContractTests.test_omitted_budget_is_unlimited_and_not_forwarded_to_engine",
+      "reason": "Retained: mission budget create/resume and legacy marker migration require actual store/engine boundary checks and local state journeys; wrapper TTL is a separate invariant.",
+      "case_id": "tests/test_runtime_budget_contract.py::RuntimeBudgetContractTests.test_omitted_budget_is_unlimited_and_not_forwarded_to_engine"
+    },
+    {
+      "test": "tests/test_runtime_budget_contract.py",
+      "case": "RuntimeBudgetContractTests.test_explicit_budget_remains_enforced",
+      "reason": "Retained: mission budget create/resume and legacy marker migration require actual store/engine boundary checks and local state journeys; wrapper TTL is a separate invariant.",
+      "case_id": "tests/test_runtime_budget_contract.py::RuntimeBudgetContractTests.test_explicit_budget_remains_enforced"
+    },
+    {
+      "test": "tests/test_runtime_budget_contract.py",
+      "case": "RuntimeBudgetContractTests.test_resume_clears_legacy_implicit_budget_without_inventing_hours",
+      "reason": "Retained: mission budget create/resume and legacy marker migration require actual store/engine boundary checks and local state journeys; wrapper TTL is a separate invariant.",
+      "case_id": "tests/test_runtime_budget_contract.py::RuntimeBudgetContractTests.test_resume_clears_legacy_implicit_budget_without_inventing_hours"
+    },
+    {
+      "test": "tests/test_runtime_budget_contract.py",
+      "case": "RuntimeBudgetContractTests.test_control_store_uses_configured_authority_root",
+      "reason": "Retained: mission budget create/resume and legacy marker migration require actual store/engine boundary checks and local state journeys; wrapper TTL is a separate invariant.",
+      "case_id": "tests/test_runtime_budget_contract.py::RuntimeBudgetContractTests.test_control_store_uses_configured_authority_root"
+    },
+    {
+      "test": "tests/test_runtime_lane_cycle.py",
+      "case": "RuntimeLaneCycleTests.test_cycle_reads_context_then_runs_three_separate_routes",
+      "reason": "Retained: full planner/executor/verifier cycle and missing-reply stop need real lane runner execution; alias projection alone does not establish a working runtime cycle.",
+      "case_id": "tests/test_runtime_lane_cycle.py::RuntimeLaneCycleTests.test_cycle_reads_context_then_runs_three_separate_routes"
+    },
+    {
+      "test": "tests/test_runtime_lane_cycle.py",
+      "case": "RuntimeLaneCycleTests.test_missing_lane_reply_fails_and_stops_cycle",
+      "reason": "Retained: full planner/executor/verifier cycle and missing-reply stop need real lane runner execution; alias projection alone does not establish a working runtime cycle.",
+      "case_id": "tests/test_runtime_lane_cycle.py::RuntimeLaneCycleTests.test_missing_lane_reply_fails_and_stops_cycle"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_falls_back_to_control_dir_when_saved_path_is_stale",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_falls_back_to_control_dir_when_saved_path_is_stale"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_recovers_configured_nas_project_path",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_recovers_configured_nas_project_path"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_ignores_additive_session_json_fields",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_ignores_additive_session_json_fields"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_replaces_stale_running_detail_on_failed_session",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_replaces_stale_running_detail_on_failed_session"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_marks_missing_embedded_session_copy_failed",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_marks_missing_embedded_session_copy_failed"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_recovers_completed_log_without_terminal_event",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_recovers_completed_log_without_terminal_event"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_marks_recorded_dead_process_failed_even_with_healthy_heartbeat",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_marks_recorded_dead_process_failed_even_with_healthy_heartbeat"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_runtime_worker_parses_wsl_bash_lc_without_cmd_shell",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_runtime_worker_parses_wsl_bash_lc_without_cmd_shell"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_supervisor_launches_and_completes_delegated_session",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_supervisor_launches_and_completes_delegated_session"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_supervisor_handles_structured_approval_callbacks",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_supervisor_handles_structured_approval_callbacks"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_keeps_tail_for_large_event_logs",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_keeps_tail_for_large_event_logs"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_preserves_mission_acknowledgement_for_terminal_session",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_preserves_mission_acknowledgement_for_terminal_session"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_supervisor_fails_logged_out_hermes_provider_before_worker_launch",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_supervisor_fails_logged_out_hermes_provider_before_worker_launch"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_worker_fails_delegated_session_that_never_emits_output",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_worker_fails_delegated_session_that_never_emits_output"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "case": "RuntimeSupervisorTests.test_refresh_session_fails_stale_dead_runtime_without_exit_code",
+      "reason": "Retained: persisted session recovery/process death/approval/heartbeat/event tails and delegated worker behavior need actual isolated lifecycle proofs; only pure path coercion is migrated.",
+      "case_id": "tests/test_runtime_supervisor.py::RuntimeSupervisorTests.test_refresh_session_fails_stale_dead_runtime_without_exit_code"
+    },
+    {
+      "test": "tests/test_runtime_updates.py",
+      "case": "RuntimeUpdatesTests.test_latest_openclaw_release_reads_npm_latest_version",
+      "reason": "Retained: upstream release parsing/cache behavior needs declared owner contracts and a confined response-source procedure; no current public registry answer is claimed.",
+      "case_id": "tests/test_runtime_updates.py::RuntimeUpdatesTests.test_latest_openclaw_release_reads_npm_latest_version"
+    },
+    {
+      "test": "tests/test_runtime_updates.py",
+      "case": "RuntimeUpdatesTests.test_latest_hermes_release_reads_release_files_from_github_contents",
+      "reason": "Retained: upstream release parsing/cache behavior needs declared owner contracts and a confined response-source procedure; no current public registry answer is claimed.",
+      "case_id": "tests/test_runtime_updates.py::RuntimeUpdatesTests.test_latest_hermes_release_reads_release_files_from_github_contents"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_native_astra_launch_preserves_model_and_reasoning",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_native_astra_launch_preserves_model_and_reasoning"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_native_go_mission_uses_the_selected_gateway",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_native_go_mission_uses_the_selected_gateway"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_cli_accepts_registered_runtimes_for_missions_and_workspaces",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_cli_accepts_registered_runtimes_for_missions_and_workspaces"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_current_go_catalog_routes_keep_the_exact_gateway_model",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_current_go_catalog_routes_keep_the_exact_gateway_model"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_openclaw_adapter_detects_runtime",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_openclaw_adapter_detects_runtime"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_runtime_env_uses_managed_home_when_system_home_is_missing",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_runtime_env_uses_managed_home_when_system_home_is_missing"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_runtime_env_prefers_managed_home_when_it_contains_runtime_auth",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_runtime_env_prefers_managed_home_when_it_contains_runtime_auth"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_runtime_env_parses_shell_export_provider_keys",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_runtime_env_parses_shell_export_provider_keys"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_opencode_adapter_reports_stale_native_runtime",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_opencode_adapter_reports_stale_native_runtime"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_hermes_adapter_reports_missing_runtime",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_hermes_adapter_reports_missing_runtime"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_hermes_adapter_detects_runtime_inside_wsl",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_hermes_adapter_detects_runtime_inside_wsl"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_hermes_adapter_prefers_release_version_over_stale_commit_warning",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_hermes_adapter_prefers_release_version_over_stale_commit_warning"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_cursor_adapter_registered_in_adapter_map",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_cursor_adapter_registered_in_adapter_map"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_cursor_adapter_reports_missing_cli",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_cursor_adapter_reports_missing_cli"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_cursor_launch_uses_print_mode_and_route_model",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_cursor_launch_uses_print_mode_and_route_model"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_openclaw_launch_uses_session_id_and_json_output",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_openclaw_launch_uses_session_id_and_json_output"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_openclaw_rewrites_codex_auth_route_to_current_openai_model_id",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_openclaw_rewrites_codex_auth_route_to_current_openai_model_id"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_openclaw_launch_can_use_local_agent_mode_for_web_backend_env_auth",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_openclaw_launch_can_use_local_agent_mode_for_web_backend_env_auth"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_hermes_launch_uses_wsl_bash_lc_when_hermes_only_in_wsl",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_hermes_launch_uses_wsl_bash_lc_when_hermes_only_in_wsl"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_hermes_provider_only_route_uses_compatible_codex_model",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_hermes_provider_only_route_uses_compatible_codex_model"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_openclaw_launch_uses_planner_route_during_plan_phase",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_openclaw_launch_uses_planner_route_during_plan_phase"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_hermes_launch_uses_verifier_route_during_verify_phase",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_hermes_launch_uses_verifier_route_during_verify_phase"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_opencode_go_routes_use_current_go_model_ids",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_opencode_go_routes_use_current_go_model_ids"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_opencode_go_legacy_openrouter_aliases_normalize_to_go_ids",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_opencode_go_legacy_openrouter_aliases_normalize_to_go_ids"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_hermes_update_prefers_native_command_when_available",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_hermes_update_prefers_native_command_when_available"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "case": "RuntimeAdapterTests.test_hermes_update_includes_managed_venv_package_upgrade",
+      "reason": "Retained: runtime detection/auth-home/environment/WSL/model/provider launch/update routes require each adapter's real command/environment contract and confined process fixtures; no public runtime or existing credential store was inspected.",
+      "case_id": "tests/test_runtimes.py::RuntimeAdapterTests.test_hermes_update_includes_managed_venv_package_upgrade"
+    }
+  ],
+  "review": [
+    {
+      "test": "tests/test_nas_bridge.py",
+      "cases": 2,
+      "mapped": 2,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_nas_opencode_go_auth_repair.py",
+      "cases": 3,
+      "mapped": 3,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_nas_runtime_release_contract.py",
+      "cases": 7,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_nas_setup.py",
+      "cases": 8,
+      "mapped": 6,
+      "status": "partial"
+    },
+    {
+      "test": "tests/test_nas_transfer.py",
+      "cases": 14,
+      "mapped": 8,
+      "status": "partial"
+    },
+    {
+      "test": "tests/test_openai_adapter.py",
+      "cases": 2,
+      "mapped": 2,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_opencode_windows_prompt.py",
+      "cases": 7,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_p2p_cache.py",
+      "cases": 8,
+      "mapped": 6,
+      "status": "partial"
+    },
+    {
+      "test": "tests/test_p2p_cache_scheduler.py",
+      "cases": 33,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_p2p_provider.py",
+      "cases": 4,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_package_init.py",
+      "cases": 1,
+      "mapped": 1,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_platform_config.py",
+      "cases": 3,
+      "mapped": 3,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_profiles.py",
+      "cases": 2,
+      "mapped": 2,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_provider_auth_broker.py",
+      "cases": 1,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_provider_auth_queue.py",
+      "cases": 20,
+      "mapped": 16,
+      "status": "partial"
+    },
+    {
+      "test": "tests/test_provider_auth_queue_review_regressions.py",
+      "cases": 26,
+      "mapped": 6,
+      "status": "partial"
+    },
+    {
+      "test": "tests/test_provider_circuit.py",
+      "cases": 13,
+      "mapped": 13,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_record_runtime_performance.py",
+      "cases": 12,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_recovered_release_contracts.py",
+      "cases": 3,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_release_acceptance.py",
+      "cases": 6,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_replay.py",
+      "cases": 1,
+      "mapped": 1,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_runtime_auto_update.py",
+      "cases": 4,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_runtime_budget_contract.py",
+      "cases": 4,
+      "mapped": 0,
+      "status": "frontier"
+    },
+    {
+      "test": "tests/test_runtime_handback.py",
+      "cases": 11,
+      "mapped": 11,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_runtime_lane_cycle.py",
+      "cases": 3,
+      "mapped": 1,
+      "status": "partial"
+    },
+    {
+      "test": "tests/test_runtime_supervisor.py",
+      "cases": 17,
+      "mapped": 2,
+      "status": "partial"
+    },
+    {
+      "test": "tests/test_runtime_updates.py",
+      "cases": 3,
+      "mapped": 1,
+      "status": "partial"
+    },
+    {
+      "test": "tests/test_runtime_wrapper.py",
+      "cases": 5,
+      "mapped": 5,
+      "status": "covered"
+    },
+    {
+      "test": "tests/test_runtimes.py",
+      "cases": 26,
+      "mapped": 0,
+      "status": "frontier"
+    }
+  ]
+}

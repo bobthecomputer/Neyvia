@@ -1,0 +1,35 @@
+{
+  "schema": "neyvia.proofs.outcomes.v1",
+  "area": "onboarding-external-journey",
+  "module": "grant_agent.proofs_onboarding_external_journey",
+  "self_check": "self_check",
+  "manuals": ["slim-installer"],
+  "contracts": [
+    {
+      "id": "p22.onboarding.external-source-readiness",
+      "phase": "pre",
+      "claim": "The seven authored external onboarding manifests preserve their declared platform tags and honest fail-closed readiness through the production status path; traversal paths and unsigned remote payload manifests are refused without network access or installation.",
+      "checkedAt": [
+        "grant_agent.proofs_onboarding_external_journey.self_check",
+        "config/onboarding_packs.json:manifests",
+        "config/onboarding_packs/pack.documents-office/manifest.json:files.source.platform",
+        "config/onboarding_packs/pack.ocr-local/manifest.json:files.source.platform",
+        "config/onboarding_packs/pack.android-lab/manifest.json:files.source.platform",
+        "config/onboarding_packs/pack.developer-toolchains/manifest.json:files.source.platform",
+        "config/onboarding_packs/pack.models-gpu/manifest.json:files.source.platform",
+        "config/onboarding_packs/pack.media-creative/manifest.json:files.source.platform",
+        "config/onboarding_packs/pack.mesh-control-plane/manifest.json:files.source.platform",
+        "config/neyvia_install_profiles.json:packages",
+        "grant_agent.install_profiles.InstallProfileRegistry.catalog_snapshot",
+        "grant_agent.neyvia_onboarding.pack_status -> grant_agent.neyvia_onboarding.load_pack_manifest",
+        "grant_agent.neyvia_onboarding.parse_manifest -> _safe_relative/_verify_manifest_signature",
+        "grant_agent.proofs_d_onboarding.check_pack_status"
+      ],
+      "impact": [
+        "external onboarding pack readiness",
+        "declared platform/runtime metadata",
+        "manifest traversal and signature admission"
+      ]
+    }
+  ]
+}

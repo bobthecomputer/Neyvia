@@ -1,0 +1,32 @@
+# C1 adaptive computer use
+
+`neyvia.cua.adapt` reads one allowed window and quarantines an app-specific CL draft. `neyvia.cua.flow` accepts explicit selectors, actions and postconditions, resolves fresh controls, preserves the owner's focus/cursor and stops on takeover or failed checks. Successful use promotes the workspace draft. Three subsequent grounded traces permit the existing manual compiler to produce a replay script. Replay retains fresh checks and grants and makes no model calls.
+
+Native tools register `cua_adapt_command` and `cua_flow_command` through the existing backend/desktop dispatch tables. MCP exposes `adapt_app` and `run_flow`. The owned backend proof used explicit port 48701 with runtime auto-update, coordinator and watchdog disabled and `--skip-proof-self-check`. Do not run the default broad startup self-check for this isolated task.
+
+Run with the supplied system Python and `-B`:
+
+- `scripts/prove_c1.py`: build and run a disposable real WinForms app; exercise first use, promotion, grounded runs, compiled replay, missing/ambiguous selectors and takeover; verify UIA, app-written output and capture.
+- `scripts/prove_c1_http.py --port 48701`: real loopback authentication, tool discovery and no-grant refusal against an already running owned backend.
+- `scripts/prove_c1_contracts.py`: validate the live registry, authored manual and postcondition types without native dispatch.
+- `scripts/cl_compile_manuals.py --check`: check authored CL against generated artifacts.
+- `scripts/c1_native_benchmark.py --help`: installed-app cohort using newly owned windows and bounded cleanup.
+- `scripts/seal_c1.py`: archive successful raw traces and captures, retain failures, create `scripts/evidence/C1.json` and the efficiency ledger input.
+
+The compiled JSON host is now the default input-hook/status transport. `cua_fast.py` owns one persistent in-process Python MTA UIA client, a separate MSAA lane and a bounded PrintWindow lane. Window discovery is Win32-only and excludes hung targets. UIA calls have caller deadlines; a busy lane does not accumulate requests. Dispatched timeouts remain uncertain and are never retried on another route. `NativeWorker(fast=False)` is the retained diagnostic/legacy seam.
+
+Historical C1: the earlier native workflow passed 5/5, including compiled replay and preservation. Its two-step p50 was 1969 ms and first observation 3910 ms. Those numbers are not current atomic measurements. C1b retains a source-bound real WinForms proof: five edit/Apply runs, a checkbox mutation, protected/read-only/disabled/foreign-token refusals, app-written output and an inspected PrintWindow capture. See `scripts/evidence/C1b.json` for actual atomic numbers and source hashes.
+
+C1b remains historical and incomplete. Its 22 installed-app manifest is `scripts/evidence/C1-tasks.json`. The older cohort sent no actions; at that time the input desktop was `Screen-saver` and OpenAI's documented plugin timed out on three discovery attempts. Those findings do not require Paul to dismiss the screen saver now: C11f/C11g use private desktops and an inactive Bureau virtual desktop with a continuous two-desktop guard. Inspect current C11g receipts for the actual supported boundary. Active-desktop preservation and matched public-suite results remain unproven.
+
+Current checks: `scripts/prove_c1b_native.py` runs the native proof and returns nonzero on failure; `scripts/verify_c1b_apps.py` runs the frozen installed-app cohort; `scripts/seal_c1b.py` refuses stale native source hashes. The existing CUA tools/backend/desktop routes remain the public surface; `cycle` is only an internal atomic driver/benchmark operation. Foreground fallback needs the existing PC-owner session grant and reports restoration separately from zero focus stealing.
+
+`scripts/efficiency_log.py append --result scripts/evidence/C1-result-spec.json` appends the receipt-backed result. Do not reappend the same result ID. `verify` recalculates the complete ledger and its Markdown view. Archived evidence and source bytes use `.gitattributes` to preserve hashes on Windows checkout.
+
+## Frozen C1 provider comparison handoff
+
+`scripts/C1-comparison-run.json` is a prepared, 15-app task panel. It has the same fixtures, instructions, time budget and independent postconditions for Neyvia, Claude computer use and OpenAI computer use. Its status is `prepared_pending_provider_arms`; the provider arms have **not** run. The current 15-app learned zero-token cohort and always-on zero-disturbance proof are in `scripts/evidence/C11g.json`. Earlier failed trials remain in the archive and are excluded from accepted results. Run the offline preflight `python -B scripts/run_c1_comparison.py` before every arm; it checks the frozen task, fixture and budget hash without calling a model. Changing any task or fixture starts a new version, never an in-place arm-specific repair.
+
+The lead selects the actual Claude and OpenAI computer-use adapters and records provider, model/version and authorized billing source. Missing adapter access is `unsupported`, not a replacement model or a zero-cost result. Actual provider adapters and executable shared graders remain to be supplied; this file is a frozen run specification, not an executed comparison. Each arm gets a separate fresh copy of the same tokenized fixture on an owned private desktop or proven inactive Bureau, with rendered preview and input forwarded against its displayed frame. Guard diagnostics run through setup, actions and cleanup; the zero-disturbance check is a hard failure gate. Never open targets on Paul's input desktop, move his cursor, take foreground focus, or use a global input fallback. Use only ports 48701–48709 and never port 47881.
+
+For every task, run five paired repetitions, rotate arm order, and keep all failures in the denominator. Start the clock at fresh observation and stop after an independent readback of the requested effect. Record first-observation and startup time separately; log steps, retries, success, guard evidence, token classes, actual billed cost/currency and source/fixture hashes. A missing usage or cost field stays `null` with a reason. Publish raw per-attempt receipts before making success, latency or cost claims. The application-native Office/shell/Xournal routes and pixel/UIA routes must be labelled separately; identical task outcomes are the comparison, not an assumption of identical control methods.

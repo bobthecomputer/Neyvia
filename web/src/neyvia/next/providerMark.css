@@ -1,0 +1,85 @@
+/* Provider marks (ProviderMark.jsx).
+   Black brand marks (OpenAI, GitHub, Notion, Vercel...) draw in currentColor through
+   .ny-pmark--ink, which reads --ny-pmark-ink. The ink is set by the nearest theme scope, so a
+   dark panel inside a light page still gets near-white marks. Light scopes are data-theme="light",
+   the new shell's data-nx-theme="light" and "paper" and the legacy shell's light/warm appearances;
+   everything else is dark. */
+
+:root,
+[data-theme="dark"],
+[data-nx-theme="dark"],
+[data-neyvia-appearance]:not([data-neyvia-appearance="light"], [data-neyvia-appearance="warm"]) {
+  --ny-pmark-ink: var(--nx-text);
+  --ny-pmark-tile-bg: var(--nx-bg);
+  --ny-pmark-tile-line: var(--nx-line-strong);
+  --ny-pmark-tile-fg: var(--nx-raised);
+}
+
+[data-nx-theme="dark"] {
+  --ny-pmark-ink: var(--nx-text);
+  --ny-pmark-tile-bg: var(--nx-bg);
+  --ny-pmark-tile-line: var(--nx-line-strong);
+  --ny-pmark-tile-fg: var(--nx-raised);
+}
+
+[data-nx-theme="night"],
+[data-nx-theme="terminal"],
+[data-nx-theme="ember"] {
+  --ny-pmark-ink: var(--nx-text);
+  --ny-pmark-tile-bg: var(--nx-bg);
+  --ny-pmark-tile-line: var(--nx-line-strong);
+  --ny-pmark-tile-fg: var(--nx-raised);
+}
+
+[data-nx-theme="sunset"] {
+  --ny-pmark-ink: var(--nx-text);
+  --ny-pmark-tile-bg: var(--nx-bg);
+  --ny-pmark-tile-line: var(--nx-line-strong);
+  --ny-pmark-tile-fg: var(--nx-accent);
+}
+
+[data-theme="light"],
+[data-nx-theme="light"],
+[data-nx-theme="paper"],
+[data-neyvia-appearance="light"],
+[data-neyvia-appearance="warm"] {
+  --ny-pmark-ink: var(--nx-muted);
+  --ny-pmark-tile-bg: var(--nx-raised);
+  --ny-pmark-tile-line: var(--nx-line-strong);
+  --ny-pmark-tile-fg: var(--nx-raised);
+}
+
+.ny-pmark {
+  display: inline-block;
+  flex: none;
+  vertical-align: middle;
+}
+
+.ny-pmark--ink {
+  color: var(--ny-pmark-ink);
+}
+
+/* Letter fallback for unknown ids, in the app's neutral tokens (--nx-* in the new shell,
+   --ny-* in the legacy shell, own values elsewhere). */
+.ny-pmark__tile {
+  fill: var(--nx-raised, var(--ny-raised, var(--ny-pmark-tile-bg)));
+  stroke: var(--nx-line-strong, var(--ny-line-strong, var(--ny-pmark-tile-line)));
+  stroke-width: 1;
+}
+
+.ny-pmark__letter {
+  fill: var(--nx-text-2, var(--ny-text-soft, var(--ny-pmark-tile-fg)));
+  font-family: var(--nx-font, var(--ny-font, system-ui, "Segoe UI", sans-serif));
+  font-size: var(--nx-fs-sm);
+  font-weight: 650;
+}
+
+.ny-pmark--mono .ny-pmark__tile {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.ny-pmark--mono .ny-pmark__letter {
+  fill: currentColor;
+}

@@ -1,0 +1,310 @@
+{
+  "schema": "neyvia.c1.computer-use-comparison.v1",
+  "status": "prepared_pending_provider_arms",
+  "taskFreeze": {
+    "algorithm": "SHA-256 of UTF-8 JSON object {tasks,fixtures,repetitionsPerTask,timeBudgetSecondsPerAttempt} with sorted keys and compact separators",
+    "sha256": "ba0260f53a6bfdffd1d55bd77495e5aaa1a7b40e4a0e3f9cac3238116a595887",
+    "changeRule": "Any task, fixture, instruction, postcondition or budget change creates a new comparison version before any arm starts. Never change this version between arms."
+  },
+  "readiness": {
+    "required": "At least 15 different installed applications each have a real completed task and a learned zero-token replay with current source hashes and zero attributed disturbance.",
+    "evidence": "scripts/evidence/C11g.json",
+    "observedAtPreparation": "15 different installed applications now have current-source completed tasks and learned zero-token replays; accepted runs have zero attributed disturbance. Historical failed guard trials remain recorded separately. Neither provider arm has run.",
+    "providerAdapters": "Unconfigured; lead must select actual Claude computer-use and OpenAI computer-use adapters and record exact model/version and authorized cost source. No substitute model is implied.",
+    "cohortReceipts": {
+      "scripts/evidence/C11g-apps-ui.json": "d691187df287b11ec5196a8963b49e6d5ddc7f1c1a6298380101b09cd47e6665",
+      "scripts/evidence/C11g-apps-native.json": "45aca7362684df1f0acf9a73cf173eb1e578113860d1ced504602d6c0b755e4c"
+    }
+  },
+  "environment": {
+    "workspace": "C:/Users/user/Projects/nx-c1-cua",
+    "allowedTcpPortsInclusive": [
+      48701,
+      48709
+    ],
+    "python": "C:/Users/user/AppData/Local/Programs/Python/Python313/python.exe",
+    "desktopPolicy": "Each arm receives a newly owned disposable target on a private Windows desktop object or a proven inactive Bureau virtual desktop. No target may become visible on Paul's input desktop before admission. Never switch Paul's desktop, move his cursor or take his foreground focus.",
+    "bureauMoveLease": "One lease per HWND, at most 3 seconds total, no renewal; membership and Shell cloak must be verified before visible bounds or painting.",
+    "inputPolicy": "Only target-bound UIA/COM/native tools or coordinates and keys forwarded against the exact displayed right-pane frame identity; no global SendInput or input-desktop fallback.",
+    "diagnostics": "Zero-disturbance guard stays enabled for every attempt, including setup, failure and cleanup. Record owned visible windows on input desktop, foreground changes, cursor moves, external guard records, and guard sampling gaps. Any attributed disturbance fails the attempt.",
+    "forbidden": [
+      "C:/Users/user/Projects/Neyvia",
+      "C:/Users/user/Projects/Neyvia-next",
+      "port 47881",
+      "supervisor",
+      "Tailscale",
+      "credential files",
+      "NAS runbook",
+      "NAS sync",
+      "public service restart",
+      "push",
+      "merge",
+      "downloads over 200 MB"
+    ],
+    "cleanup": "Stop only owned task process jobs and release only desktops created by this run; preserve task receipts and disposable artifacts."
+  },
+  "protocol": {
+    "arms": [
+      "neyvia",
+      "claude_computer_use",
+      "openai_computer_use"
+    ],
+    "sequence": "For each task and repetition, create an equivalent fresh fixture, run each arm once from the same initial state with separate profiles and desktop jobs, evaluate with the same independent checker, then rotate arm order on the next repetition. Failed and refused attempts remain in the denominator.",
+    "repetitionsPerTask": 5,
+    "timeBudgetSecondsPerAttempt": 60,
+    "startup": "Measure separately from action time. Include first unseen window observation from launch to first actionable verified state.",
+    "timing": "Record wall-clock from fresh observation request through dispatched action and independent verified effect, including failed attempts and retries. Report per-arm p50, p95, first-observation p50/p95/max and full task elapsed time; targets are under 150 ms atomic p50 and under 500 ms first observation, never redefine the clock by excluding failed attempts.",
+    "usage": "Record total input, cached input, output and reasoning tokens when provider reports them; otherwise null with reason. Record actual billed cost and currency or null with reason. Zero-token replay means no model invocation during the entire learned task, including recovery.",
+    "success": "Every task postcondition passes by a fresh independent readback; evidence links to exact fixture, app executable, process birth, desktop membership, frame/action identity where used, source hashes and guard receipt. A model's own success text is not a postcondition.",
+    "refusal": "Record unavailable app, unsafe isolation, stale frame, ambiguous target, unresolved prompt or guard violation as failure/refusal with its actual reason. Do not silently change route or substitute an app.",
+    "report": "Publish raw per-attempt receipts and a paired comparison by task identity, with success, steps, latency, tokens, cost, refusals and disturbance. Mark provider/model unsupported where actual adapter access is unavailable."
+  },
+  "fixtures": {
+    "phrases": [
+      "C1 note 1",
+      "C1 note 2",
+      "C1 note 3",
+      "C1 note 4",
+      "C1 note 5"
+    ],
+    "token": "Fresh random 32-character hex token generated once per paired repetition and injected into three equivalent arm-local copies; include it in window titles and fixture files where supported.",
+    "localForm": "A task-local file:// HTML page with a labelled C1 note input, an Apply note button and an output element displaying the applied value; no network, account or remote page.",
+    "editorFile": "A task-local UTF-8 text file containing the token and all five fixture phrases on separate lines, opened in a new disposable editor profile with extensions disabled.",
+    "officeRoot": "Fresh task-local documents; no existing user document, template or account state.",
+    "image": "Fresh task-local 640x480 image carrying the token as visible text; no desktop capture.",
+    "shellRoot": "Fresh task-local directory containing only token-named text inputs and outputs.",
+    "renderedNote": "Owned local HTML document with zero-margin background, white 32px Arial heading containing the final phrase, and a background color from the first six hex digits of its SHA-256. Browser output must contain heading ink and match the background; pixel checks do not claim OCR."
+  },
+  "tasks": [
+    {
+      "id": "word-revise",
+      "app": "Microsoft Word",
+      "category": "office",
+      "fixture": "officeRoot",
+      "instruction": "Create a disposable memo; revise its text through the five fixture phrases; save and reopen the final version.",
+      "postcondition": {
+        "kind": "office_saved_reopened_text",
+        "artifact": "DOCX",
+        "equals": "phrases[4]",
+        "freshReadbackEachRevision": true
+      },
+      "neyviaRoute": "hidden Office COM procedure"
+    },
+    {
+      "id": "excel-edit",
+      "app": "Microsoft Excel",
+      "category": "office",
+      "fixture": "officeRoot",
+      "instruction": "Open a disposable budget sheet with B3 calculated as 37; revise A1 through the five fixture phrases; save and reopen the final version.",
+      "postcondition": {
+        "kind": "office_saved_reopened_cells",
+        "artifact": "XLSX",
+        "cells": {
+          "A1": "phrases[4]",
+          "B3": 37
+        },
+        "freshReadbackEachRevision": true
+      },
+      "neyviaRoute": "hidden Office COM procedure"
+    },
+    {
+      "id": "powerpoint-slides",
+      "app": "Microsoft PowerPoint",
+      "category": "office",
+      "fixture": "officeRoot",
+      "instruction": "Open a disposable three-slide deck; revise the first slide through the five fixture phrases; save and reopen the final version.",
+      "postcondition": {
+        "kind": "office_saved_reopened_text",
+        "artifact": "PPTX",
+        "slideCount": 3,
+        "firstSlideText": "phrases[4]",
+        "freshReadbackEachRevision": true
+      },
+      "neyviaRoute": "hidden Office COM procedure"
+    },
+    {
+      "id": "cmd-note",
+      "app": "Command Prompt",
+      "category": "shell",
+      "fixture": "shellRoot",
+      "instruction": "Revise a disposable text note through the five fixture phrases; copy the final note to a second file.",
+      "postcondition": {
+        "kind": "exact_two_file_contents",
+        "equals": "phrases[4]",
+        "files": 2,
+        "freshReadbackEachRevision": true
+      },
+      "neyviaRoute": "hidden native shell procedure"
+    },
+    {
+      "id": "powershell-note",
+      "app": "Windows PowerShell",
+      "category": "shell",
+      "fixture": "shellRoot",
+      "instruction": "Revise a disposable text note through the five fixture phrases; copy and reopen the final note.",
+      "postcondition": {
+        "kind": "exact_two_file_contents",
+        "equals": "phrases[4]",
+        "files": 2,
+        "freshReadbackEachRevision": true
+      },
+      "neyviaRoute": "hidden native shell procedure"
+    },
+    {
+      "id": "xournal-export",
+      "app": "Xournal++",
+      "category": "drawing",
+      "fixture": "officeRoot",
+      "instruction": "Revise a disposable one-page text note through the five fixture phrases and export the final version as PDF.",
+      "postcondition": {
+        "kind": "pdf_page_count_and_extracted_text",
+        "pages": 1,
+        "equals": "phrases[4]",
+        "freshReadbackEachRevision": true
+      },
+      "neyviaRoute": "private-desktop native PDF export procedure"
+    },
+    {
+      "id": "charmap-compose",
+      "app": "Character Map",
+      "category": "accessory",
+      "fixture": "phrases",
+      "instruction": "Enter each of the five fixture phrases into Characters to copy, verifying each fresh value.",
+      "postcondition": {
+        "kind": "fresh_control_value_sequence",
+        "equalsOrdered": "phrases"
+      },
+      "neyviaRoute": "private-desktop UIA learned flow"
+    },
+    {
+      "id": "vscode-find",
+      "app": "Visual Studio Code",
+      "category": "editor",
+      "fixture": "editorFile",
+      "instruction": "Search the opened disposable file for each of the five fixture phrases.",
+      "postcondition": {
+        "kind": "fresh_find_field_value_sequence",
+        "equalsOrdered": "phrases",
+        "sourceFileContainsAll": true
+      },
+      "neyviaRoute": "private-desktop learned browser/UIA flow"
+    },
+    {
+      "id": "chrome-form",
+      "app": "Google Chrome",
+      "category": "browser",
+      "fixture": "localForm",
+      "instruction": "Fill the local C1 note field with each of the five fixture phrases. Verify the field value afresh after each change.",
+      "postcondition": {
+        "kind": "fresh_form_field_value_sequence",
+        "equalsOrdered": "phrases"
+      },
+      "neyviaRoute": "private-desktop learned browser flow"
+    },
+    {
+      "id": "edge-form",
+      "app": "Microsoft Edge",
+      "category": "browser",
+      "fixture": "localForm",
+      "instruction": "Fill the local C1 note field with each of the five fixture phrases. Verify the field value afresh after each change.",
+      "postcondition": {
+        "kind": "fresh_form_field_value_sequence",
+        "equalsOrdered": "phrases"
+      },
+      "neyviaRoute": "private-desktop learned browser flow"
+    },
+    {
+      "id": "cursor-find",
+      "app": "Cursor",
+      "category": "editor",
+      "fixture": "editorFile",
+      "instruction": "Search the opened disposable file for each of the five fixture phrases without using an AI account.",
+      "postcondition": {
+        "kind": "fresh_find_field_value_sequence",
+        "equalsOrdered": "phrases",
+        "sourceFileContainsAll": true
+      },
+      "neyviaRoute": "private-desktop editor flow"
+    },
+    {
+      "id": "antigravity-find",
+      "app": "Antigravity",
+      "category": "editor",
+      "fixture": "editorFile",
+      "instruction": "Search the opened disposable file for each of the five fixture phrases without using an AI account.",
+      "postcondition": {
+        "kind": "fresh_find_field_value_sequence",
+        "equalsOrdered": "phrases",
+        "sourceFileContainsAll": true
+      },
+      "neyviaRoute": "private-desktop editor flow"
+    },
+    {
+      "id": "firefox-render",
+      "app": "Mozilla Firefox",
+      "category": "browser",
+      "fixture": "renderedNote",
+      "instruction": "Revise a local HTML note through the five fixture phrases, render the final note with its prescribed theme color, and save the browser-produced PNG.",
+      "postcondition": {
+        "kind": "browser_produced_png",
+        "text": "phrases[4]",
+        "backgroundColor": "first six hex digits of SHA-256 of final phrase",
+        "minimumSize": [
+          800,
+          600
+        ],
+        "headingPresent": true
+      },
+      "neyviaRoute": "real installed browser headless screenshot procedure"
+    },
+    {
+      "id": "zen-render",
+      "app": "Zen Browser",
+      "category": "browser",
+      "fixture": "renderedNote",
+      "instruction": "Revise a local HTML note through the five fixture phrases, render the final note with its prescribed theme color, and save the browser-produced PNG.",
+      "postcondition": {
+        "kind": "browser_produced_png",
+        "text": "phrases[4]",
+        "backgroundColor": "first six hex digits of SHA-256 of final phrase",
+        "minimumSize": [
+          800,
+          600
+        ],
+        "headingPresent": true
+      },
+      "neyviaRoute": "real installed browser headless screenshot procedure"
+    },
+    {
+      "id": "git-note",
+      "app": "Git",
+      "category": "developer",
+      "fixture": "shellRoot",
+      "instruction": "Revise a disposable repository note through the five fixture phrases, commit the final revision locally with task-local author settings, and verify its committed content and clean working tree.",
+      "postcondition": {
+        "kind": "git_committed_note",
+        "firstLineEquals": "phrases[4]",
+        "cleanWorkingTree": true,
+        "remoteOperations": false
+      },
+      "neyviaRoute": "installed Git CLI procedure in disposable repository"
+    }
+  ],
+  "runs": {
+    "neyvia": {
+      "status": "pending",
+      "model": "record_exact_model_or_zero_token_replay",
+      "attemptReceipt": null
+    },
+    "claude_computer_use": {
+      "status": "pending_provider_adapter",
+      "model": null,
+      "attemptReceipt": null
+    },
+    "openai_computer_use": {
+      "status": "pending_provider_adapter",
+      "model": null,
+      "attemptReceipt": null
+    }
+  }
+}

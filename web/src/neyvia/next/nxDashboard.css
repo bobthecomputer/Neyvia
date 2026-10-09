@@ -1,0 +1,111 @@
+/* Agents dashboard (NxAgentDashboard.jsx), shown in the strip's Agents popover. */
+
+.nx .nx-dash { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-8); padding: var(--nx-space-10); font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx .nx-dash-head { display: flex; align-items: center; gap: var(--nx-space-8); padding: 0 var(--nx-space-2); }
+.nx .nx-dash-head > strong { color: var(--nx-text); font-size: var(--nx-fs); font-weight: 600; }
+.nx .nx-dash-sum { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-dash-refresh { display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--nx-r-xs); color: var(--nx-faint); }
+.nx .nx-dash-refresh:hover { color: var(--nx-text); background: var(--nx-hover); }
+
+/* plan limits: one block per app, a bar per window */
+.nx .nx-dash-limits { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-8); padding: var(--nx-space-9) var(--nx-space-10); border-radius: var(--nx-r); background: var(--nx-panel); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-dash-limits.is-loading { display: flex; align-items: center; gap: var(--nx-space-8); color: var(--nx-faint); }
+.nx .nx-dash-limit-app { display: grid; gap: var(--nx-space-4); }
+.nx .nx-dash-limits-head { display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-8); font-size: var(--nx-fs-xs); }
+.nx .nx-dash-limits-head strong { color: var(--nx-text-2); font-weight: 600; }
+.nx .nx-dash-limits-refresh { display: inline-flex; align-items: center; gap: var(--nx-space-5); padding: var(--nx-space-4) var(--nx-space-6); border-radius: var(--nx-r-xs); color: var(--nx-text-2); }
+.nx .nx-dash-limits-refresh:hover { background: var(--nx-hover); }
+.nx .nx-dash-limits-refresh:disabled { opacity: 0.6; cursor: wait; }
+.nx .nx-dash-limit-checked { padding-left: var(--nx-space-18); color: var(--nx-faint); font-size: var(--nx-fs-xs); }
+.nx .nx-dash-limit.is-idle .nx-dash-bar > i { background: var(--nx-faint); }
+.nx .nx-dash-limit-name { display: inline-flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-text-2); }
+.nx .nx-dash-limit-none { font-size: var(--nx-fs-xs); color: var(--nx-faint); padding-left: var(--nx-space-18); }
+.nx .nx-dash-limit {
+  display: grid; grid-template-columns: 76px minmax(60px, 1fr) 38px auto; align-items: center; column-gap: var(--nx-space-8);
+  padding-left: var(--nx-space-18); font-size: var(--nx-fs-xs);
+}
+.nx .nx-dash-limit-label { color: var(--nx-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx .nx-dash-limit-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--nx-text-2); font-weight: 600; }
+.nx .nx-dash-limit-reset { color: var(--nx-faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.nx .nx-dash-bar { position: relative; height: 6px; border-radius: var(--nx-r-pill); background: var(--nx-active); overflow: hidden; }
+.nx .nx-dash-bar > i { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: var(--nx-green); transition: width var(--nx-settle) var(--nx-spring-settle); }
+.nx .nx-dash-limit.is-caution .nx-dash-bar > i { background: var(--nx-state-caution); }
+.nx .nx-dash-limit.is-caution .nx-dash-limit-value { color: var(--nx-text); font-weight: 600; }
+.nx .nx-dash-limit.is-red .nx-dash-bar > i { background: var(--nx-red); }
+.nx .nx-dash-limit.is-red .nx-dash-limit-value { color: var(--nx-red); }
+
+/* running chats, with their helpers nested under them */
+.nx .nx-dash-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-2); margin: 0; padding: 0; list-style: none; }
+.nx .nx-dash-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.nx .nx-dash-chat { display: flex; align-items: flex-start; gap: var(--nx-space-9); width: 100%; padding: var(--nx-space-7) var(--nx-space-6); border-radius: var(--nx-r-sm); text-align: left; }
+.nx .nx-dash-chat:hover { background: var(--nx-hover); }
+.nx .nx-dash-watch {
+  justify-self: start; display: inline-flex; align-items: center; gap: var(--nx-space-5); margin: calc(-1 * var(--nx-space-2)) 0 var(--nx-space-4) var(--nx-space-32); padding: var(--nx-space-3) var(--nx-space-9);
+  border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs); color: var(--nx-text-2); background: var(--nx-hover);
+}
+.nx .nx-dash-watch:hover { background: var(--nx-active); color: var(--nx-text); }
+.nx .nx-dash-chat > .nx-provider-mark, .nx .nx-dash-chat > :first-child { margin-top: var(--nx-space-1); flex: none; }
+.nx .nx-dash-main { flex: 1 1 auto; min-width: 0; display: grid; gap: var(--nx-space-1); }
+.nx .nx-dash-title { color: var(--nx-text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-dash-now { display: flex; align-items: center; gap: var(--nx-space-5); min-width: 0; color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.nx .nx-dash-now > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-dash-now > svg { flex: none; color: var(--nx-accent-text); }
+.nx .nx-dash-side { flex: none; display: grid; justify-items: end; gap: var(--nx-space-1); }
+.nx .nx-dash-state { display: inline-flex; align-items: center; gap: var(--nx-space-6); color: var(--nx-text-2); font-variant-numeric: tabular-nums; font-size: var(--nx-fs-xs); }
+.nx .nx-dash-meta { color: var(--nx-faint); font-size: var(--nx-fs-xs); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-dash-time { flex: none; color: var(--nx-faint); font-size: var(--nx-fs-xs); font-variant-numeric: tabular-nums; }
+
+.nx .nx-dash-subs { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-1); margin: calc(-1 * var(--nx-space-2)) 0 var(--nx-space-4); padding: 0 0 0 var(--nx-space-16); list-style: none; }
+.nx .nx-dash-sub { display: flex; align-items: center; gap: var(--nx-space-7); padding: var(--nx-space-4) var(--nx-space-6); border-radius: var(--nx-r-sm); font-size: var(--nx-fs-xs); }
+.nx .nx-dash-sub-hook { flex: none; color: var(--nx-faint); }
+.nx .nx-dash-sub-main { flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; gap: var(--nx-space-6); }
+.nx .nx-dash-sub-title { flex: none; max-width: 55%; color: var(--nx-text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-dash-sub.is-ok .nx-dash-sub-title, .nx .nx-dash-sub.is-error .nx-dash-sub-title { color: var(--nx-muted); }
+
+.nx .nx-dash-claimed { display: grid; gap: var(--nx-space-4); padding-top: var(--nx-space-6); border-top: 1px solid var(--nx-line); }
+.nx .nx-dash-claimed h3 { margin: 0 var(--nx-space-4); font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-text-2); text-transform: uppercase; letter-spacing: 0.04em; }
+.nx .nx-dash-claimed ul { display: grid; gap: var(--nx-space-1); margin: 0; padding: 0; list-style: none; }
+.nx .nx-dash-claimed li { display: flex; gap: var(--nx-space-8); padding: var(--nx-space-3) var(--nx-space-4); font-size: var(--nx-fs-xs); }
+.nx .nx-dash-claimed li strong { flex: none; color: var(--nx-text-2); font-weight: 600; }
+.nx .nx-dash-claimed li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-dash-claimed li.is-stale { opacity: 0.6; }
+.nx .nx-dash-claimed p { margin: 0 var(--nx-space-4); font-size: var(--nx-fs-xs); }
+
+.nx .nx-dash-empty, .nx .nx-dash-note { margin: var(--nx-space-2) var(--nx-space-4); line-height: 1.5; }
+.nx .nx-dash-note { font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-dash-error, .nx .nx-dash-claimed .is-error { margin: 0 var(--nx-space-4); color: var(--nx-red); font-size: var(--nx-fs-xs); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .nx .nx-dash-row { animation: nx-dash-in var(--nx-settle) var(--nx-spring-settle) both; }
+}
+@keyframes nx-dash-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+/* more than one page of running chats (plan 15 T9): read on demand, never cut silently */
+.nx .nx-dash-more { justify-self: start; display: inline-flex; align-items: center; gap: var(--nx-space-6); margin: 0 var(--nx-space-2); padding: var(--nx-space-4) var(--nx-space-10); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs); color: var(--nx-accent-text); background: var(--nx-hover); }
+.nx .nx-dash-more:hover:not(:disabled) { background: var(--nx-active); color: var(--nx-text); }
+
+/* Conductor goals whose worker is alive */
+.nx .nx-dash-goals { display: grid; gap: var(--nx-space-4); padding-top: var(--nx-space-6); box-shadow: inset 0 var(--nx-stroke) 0 var(--nx-line); }
+.nx .nx-dash-goals h3 { margin: 0 var(--nx-space-4); font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-text-2); }
+.nx .nx-dash-goals ul { display: grid; gap: var(--nx-space-1); margin: 0; padding: 0; list-style: none; }
+.nx .nx-dash-goals button { width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--nx-space-8); padding: var(--nx-space-5) var(--nx-space-6); border-radius: var(--nx-r-sm); text-align: left; font-size: var(--nx-fs-xs); color: var(--nx-text-2); }
+.nx .nx-dash-goals button:hover { background: var(--nx-hover); }
+.nx .nx-dash-goals button > svg { color: var(--nx-accent-text); }
+.nx .nx-dash-goal-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Claude Code rows: one meta line, then one action row (status chips left, quiet buttons right), 8 px rhythm */
+.nx .nx-dash-meta-line { display: flex; align-items: center; gap: 8px; }
+.nx .nx-dash-mod { display: grid; gap: 8px; padding: 0 var(--nx-space-6) 8px calc(var(--nx-space-6) + 16px + var(--nx-space-9)); }
+.nx .nx-dash-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.nx .nx-dash-chips { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.nx .nx-dash-btns { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
+.nx .nx-dash-chip { display: inline-flex; align-items: center; min-height: 24px; padding: 0 8px; border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs); color: var(--nx-text-2); background: var(--nx-hover); white-space: nowrap; }
+.nx .nx-dash-chip.is-link { cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.nx .nx-dash-chip.is-link:hover { background: var(--nx-active); color: var(--nx-text); }
+.nx .nx-dash-act { display: inline-flex; align-items: center; gap: 4px; min-height: 28px; padding: 0 12px; border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs); color: var(--nx-text-2); background: transparent; box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); white-space: nowrap; }
+.nx .nx-dash-act:hover:not(:disabled) { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-dash-act:disabled { opacity: 0.5; }
+.nx .nx-dash-act > span { white-space: nowrap; }
+.nx .nx-dash-msg { display: flex; align-items: center; gap: 8px; }
+.nx .nx-dash-msg input { flex: 1 1 auto; min-width: 0; min-height: 28px; padding: 0 8px; border-radius: var(--nx-r-sm); border: 1px solid var(--nx-line); background: var(--nx-panel); color: inherit; font: inherit; font-size: var(--nx-fs-xs); }
+.nx .nx-dash-receipt, .nx .nx-dash-mod > p { margin: 0; white-space: normal; }

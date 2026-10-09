@@ -1,0 +1,96 @@
+/* Missions (NxMissions): list on the left, the mission's task tree on the
+   right, read left to right in the order work can happen. */
+
+.nx .nx-ms { flex: 1 1 auto; min-height: 0; display: flex; background: var(--nx-panel); }
+.nx .nx-ms-list { flex: 0 0 260px; display: flex; flex-direction: column; gap: var(--nx-space-6); padding: var(--nx-space-12) var(--nx-space-10); border-right: 1px solid var(--nx-line); }
+.nx .nx-ms-list > .nx-btn { align-self: flex-start; margin-bottom: var(--nx-space-6); }
+.nx .nx-ms-card { display: grid; gap: var(--nx-space-6); padding: var(--nx-space-10); border-radius: var(--nx-r); text-align: left; box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); transition: background var(--nx-fast) var(--nx-ease); }
+.nx .nx-ms-card:hover { background: var(--nx-hover); }
+.nx .nx-ms-card.is-on { background: var(--nx-active); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 45%, transparent); }
+.nx .nx-ms-card-goal { font-weight: 500; color: var(--nx-text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.nx .nx-ms-card-meta { display: flex; align-items: center; justify-content: space-between; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ms-card-bar, .nx .nx-ms-progress { position: relative; height: 3px; border-radius: var(--nx-r-xxs); background: var(--nx-line-strong); overflow: hidden; }
+.nx .nx-ms-card-bar > span, .nx .nx-ms-progress > span { position: absolute; inset: 0; background: var(--nx-green); transform-origin: 0 50%; transition: transform var(--nx-drift) var(--nx-spring-drift); }
+.nx .nx-ms-empty { margin: var(--nx-space-8) var(--nx-space-4); color: var(--nx-muted); font-size: var(--nx-fs-sm); line-height: 1.5; }
+.nx .nx-ms-empty.is-big { margin: auto; display: grid; justify-items: center; gap: var(--nx-space-12); max-width: 360px; text-align: center; --ny-tree-ink: var(--nx-text-2); --ny-tree-leaf: var(--nx-green); --ny-tree-sun: var(--nx-amber); }
+
+.nx .nx-ms-phase { display: inline-flex; align-items: center; gap: var(--nx-space-5); padding: 0 var(--nx-space-8); border-radius: var(--nx-r-pill); line-height: 20px; font-size: var(--nx-fs-xs); color: var(--nx-text-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); white-space: nowrap; }
+.nx .nx-ms-phase.is-running { color: var(--nx-state-running-text); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-amber) 45%, transparent); }
+.nx .nx-ms-phase.is-blocked { color: var(--nx-state-error); }
+.nx .nx-ms-phase.is-finished { color: var(--nx-green); }
+.nx .nx-ms-phase.is-draft { color: var(--nx-muted); }
+
+.nx .nx-ms-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.nx .nx-ms-view { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--nx-space-10); padding: var(--nx-space-16) var(--nx-space-18) 0; }
+.nx .nx-ms-head { display: flex; align-items: flex-start; gap: var(--nx-space-10); flex-wrap: wrap; }
+.nx .nx-ms-head-main { flex: 1 1 280px; min-width: 0; display: grid; gap: var(--nx-space-3); }
+.nx .nx-ms-head h2 { font-family: var(--nx-display); font-size: var(--nx-fs-xl); font-weight: var(--nx-display-weight); line-height: 1.2; color: var(--nx-text); }
+.nx .nx-ms-meta { display: inline-flex; align-items: center; gap: var(--nx-space-5); font-size: var(--nx-fs-xs); color: var(--nx-muted); font-family: var(--nx-mono); overflow-wrap: anywhere; }
+.nx .nx-ms-approval { display: flex; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-10) var(--nx-space-10) var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-gold-soft); color: var(--nx-text); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-gold) 45%, transparent); }
+.nx .nx-ms-approval > .nx-icon { color: var(--nx-gold); flex: none; }
+.nx .nx-ms-approval p { flex: 1 1 auto; font-size: var(--nx-fs-sm); line-height: 1.45; }
+.nx .nx-ms-error { color: var(--nx-state-error); font-size: var(--nx-fs-sm); }
+.nx .nx-ms-counts { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+
+.nx .nx-ms-body { flex: 1 1 auto; min-height: 0; display: flex; gap: var(--nx-space-14); padding-bottom: var(--nx-space-14); }
+.nx .nx-ms-tree { flex: 1 1 auto; min-width: 0; display: flex; gap: var(--nx-space-14); align-items: flex-start; padding: var(--nx-space-2) var(--nx-space-2) var(--nx-space-8); }
+.nx .nx-ms-level { flex: 0 0 200px; display: grid; gap: var(--nx-space-8); }
+.nx .nx-ms-level-label { font-size: var(--nx-fs-xs); letter-spacing: 0.12em; text-transform: uppercase; color: var(--nx-faint); }
+.nx .nx-ms-task {
+  display: grid; gap: var(--nx-space-5); padding: var(--nx-space-10); border-radius: var(--nx-r); text-align: left; background: var(--nx-raised);
+  box-shadow: var(--nx-card-shadow); transition: box-shadow var(--nx-fast) var(--nx-ease), translate var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-ms-task:hover { translate: 0 -1px; }
+.nx .nx-ms-task.is-selected { box-shadow: 0 0 0 var(--nx-stroke-icon) var(--nx-accent-hi), var(--nx-card-shadow); }
+.nx .nx-ms-task.is-running { box-shadow: 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-amber) 50%, transparent), var(--nx-card-shadow); }
+.nx .nx-ms-task.is-done { opacity: 0.8; }
+.nx .nx-ms-task.is-blocked { box-shadow: 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-red) 50%, transparent), var(--nx-card-shadow); }
+.nx .nx-ms-task.is-needs_review { box-shadow: 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-gold) 50%, transparent), var(--nx-card-shadow); }
+.nx .nx-ms-task .ny-tree { --ny-tree-ink: var(--nx-text-2); --ny-tree-leaf: var(--nx-green); --ny-tree-sun: var(--nx-amber); }
+.nx .nx-ms-task-top { display: flex; align-items: center; gap: var(--nx-space-6); }
+.nx .nx-ms-task-route { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ms-task-title { font-weight: 500; color: var(--nx-text); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.nx .nx-ms-task-after { font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+
+.nx .nx-ms-detail { flex: 0 0 300px; display: flex; flex-direction: column; gap: var(--nx-space-10); padding: var(--nx-space-12); border-radius: var(--nx-r-lg); background: var(--nx-raised); box-shadow: var(--nx-card-shadow); overflow: auto; }
+.nx .nx-ms-detail > header { display: flex; align-items: center; gap: var(--nx-space-7); }
+.nx .nx-ms-detail > header strong { flex: 1 1 auto; font-weight: 600; color: var(--nx-text); }
+.nx .nx-ms-detail > header span { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ms-route { display: grid; gap: var(--nx-space-4); margin: 0; font-size: var(--nx-fs-sm); }
+.nx .nx-ms-route > div { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: var(--nx-space-8); }
+.nx .nx-ms-route dt { color: var(--nx-muted); }
+.nx .nx-ms-route dd { margin: 0; color: var(--nx-text-2); overflow-wrap: anywhere; }
+.nx .nx-ms-prompt { font-size: var(--nx-fs-sm); line-height: 1.5; color: var(--nx-text-2); white-space: pre-wrap; }
+.nx .nx-ms-checks { display: grid; gap: var(--nx-space-6); margin: 0; padding: 0; list-style: none; font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-ms-checks li { display: flex; gap: var(--nx-space-7); align-items: flex-start; }
+.nx .nx-ms-checks .nx-icon { margin-top: var(--nx-space-2); color: var(--nx-green); flex: none; }
+.nx .nx-ms-hint { font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+
+.nx .nx-ms-input { width: 100%; padding: var(--nx-space-7) var(--nx-space-10); border-radius: var(--nx-r); background: var(--nx-raised-2); color: var(--nx-text); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); font-size: var(--nx-fs); line-height: 1.45; resize: vertical; }
+.nx .nx-ms-input:focus-visible { box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-accent-hi); }
+.nx .nx-ms-input.is-mono { font-family: var(--nx-mono); font-size: var(--nx-fs-sm); }
+.nx .nx-ms-new { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--nx-space-12); padding: var(--nx-space-16) var(--nx-space-18) var(--nx-space-24); max-width: 820px; }
+.nx .nx-ms-new h2 { font-family: var(--nx-display); font-size: var(--nx-fs-title); font-weight: var(--nx-display-weight); }
+.nx .nx-ms-new h3 { font-size: var(--nx-fs-md); font-weight: 600; margin-top: var(--nx-space-6); }
+.nx .nx-ms-field { display: grid; gap: var(--nx-space-5); font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx .nx-ms-field.is-narrow { max-width: 240px; }
+.nx .nx-ms-plan { display: flex; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-accent-soft); color: var(--nx-text-2); font-size: var(--nx-fs-sm); }
+.nx .nx-ms-plan > .nx-icon { color: var(--nx-accent-hi); flex: none; }
+.nx .nx-ms-plan p { flex: 1 1 auto; }
+.nx .nx-ms-draft-task { display: grid; gap: var(--nx-space-8); margin: 0; padding: var(--nx-space-10) var(--nx-space-12) var(--nx-space-12); border: 0; border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: var(--nx-card-shadow); }
+.nx .nx-ms-draft-task legend { padding: 0; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ms-draft-task code { font-family: var(--nx-mono); color: var(--nx-faint); }
+.nx .nx-ms-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr) minmax(0, 1.2fr) auto; gap: var(--nx-space-6); align-items: center; }
+.nx .nx-ms-needs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-4) var(--nx-space-12); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-ms-needs > span { color: var(--nx-muted); }
+.nx .nx-ms-needs label { display: inline-flex; align-items: center; gap: var(--nx-space-5); }
+.nx .nx-ms-problems { margin: 0; padding-left: var(--nx-space-18); color: var(--nx-state-caution); font-size: var(--nx-fs-sm); }
+.nx .nx-ms-new-foot { display: flex; align-items: center; gap: var(--nx-space-8); }
+.nx .nx-ms-new-foot > span { font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+
+@container (max-width: 760px) { .nx .nx-ms-body { flex-direction: column; } .nx .nx-ms-detail { flex-basis: auto; } }
+.nx.is-phone .nx-ms { flex-direction: column; }
+.nx.is-phone .nx-ms-list { flex-basis: auto; max-height: 34vh; border-right: 0; border-bottom: 1px solid var(--nx-line); }
+.nx.is-phone .nx-ms-row { grid-template-columns: 1fr 1fr; }
+
+.nx .nx-ms-parallel { margin-left: auto; }

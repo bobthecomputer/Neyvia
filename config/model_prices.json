@@ -1,0 +1,711 @@
+{
+ "_provenance": {
+  "unit": "USD per million tokens, public API list price",
+  "estimate": true,
+  "checked": "2026-10-08",
+  "note": "API-equivalent value: what the same tokens would cost through API keys at public list prices (input, cache reads, cache writes and output priced separately). Plan traffic is never billed to you; only API-key rows are billed, at these prices. A model with null prices stays unpriced.",
+  "openrouter": "OpenRouter passes through underlying provider prices with no markup on inference (openrouter.ai/docs/faq). Fees apply on credit purchase: 5.5% (min $0.80) by card, 5% crypto; BYOK free up to $25,000/month list-price inference, then 5%.",
+  "notFound": [
+   "gpt-5.3-codex-spark",
+   "grok-code"
+  ],
+  "method": "Official vendor pricing pages and OpenRouter's public models API for ids the vendor does not list; peak-rate DeepSeek prices; base (shortest-context) tier, other tiers in each note."
+ },
+ "providers": {
+  "openai-codex": {
+   "billing": "plan",
+   "label": "Codex login"
+  },
+  "opencode-go": {
+   "billing": "plan",
+   "label": "OpenCode Go plan"
+  },
+  "claude-code": {
+   "billing": "plan",
+   "label": "Claude Code login"
+  },
+  "anthropic": {
+   "billing": "api",
+   "label": "Anthropic API key"
+  },
+  "openai": {
+   "billing": "api",
+   "label": "OpenAI API key"
+  },
+  "deepseek": {
+   "billing": "api",
+   "label": "DeepSeek API key"
+  },
+  "openrouter": {
+   "billing": "api",
+   "label": "OpenRouter API key"
+  },
+  "google": {
+   "billing": "api",
+   "label": "Google API key"
+  }
+ },
+ "opencodeBilling": {
+  "openai": "plan",
+  "opencode": "free",
+  "opencode-go": "plan",
+  "minimax-coding-plan": "plan",
+  "openrouter": "api",
+  "minimax": "api",
+  "anthropic": "api",
+  "deepseek": "api",
+  "google": "api"
+ },
+ "models": {
+  "claude-opus-5-5": {
+   "provider": "Anthropic",
+   "input": 4,
+   "cached": 0.2,
+   "cacheWrite": 5,
+   "output": 20,
+   "cacheWrite1h": 8.0,
+   "aliases": [
+    "claude-opus-5.5"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Opus 5.5. 1h cache write $8/MTok. Cache read is 0.05x. Fast mode $8/$40. Full 1M context at base price."
+  },
+  "claude-sonnet-5-5": {
+   "provider": "Anthropic",
+   "input": 2,
+   "cached": 0.1,
+   "cacheWrite": 2.5,
+   "output": 10,
+   "cacheWrite1h": 4.0,
+   "aliases": [
+    "claude-sonnet-5.5"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Sonnet 5.5. 1h cache write $4/MTok. Cache read is 0.05x."
+  },
+  "claude-haiku-5-5": {
+   "provider": "Anthropic",
+   "input": 0.1,
+   "cached": 0.01,
+   "cacheWrite": 0.125,
+   "output": 0.5,
+   "cacheWrite1h": 0.2,
+   "aliases": [
+    "claude-haiku-5.5"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Base tier is prompts up to 100K tokens. Over 100K: input 0.50, cache read 0.05, 5m write 0.625, output 2.50. 1h cache write $0.2/MTok."
+  },
+  "claude-fable-5-1": {
+   "provider": "Anthropic",
+   "input": 10,
+   "cached": 0.25,
+   "cacheWrite": 12.5,
+   "output": 50,
+   "cacheWrite1h": 20.0,
+   "aliases": [
+    "claude-fable-5.1",
+    "claude-fable-latest"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Fable 5.1. Cache read is 0.025x. 1h cache write $20/MTok."
+  },
+  "claude-fable-5": {
+   "provider": "Anthropic",
+   "input": 10,
+   "cached": 1,
+   "cacheWrite": 12.5,
+   "output": 50,
+   "cacheWrite1h": 20.0,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Fable 5. 1h cache write $20/MTok."
+  },
+  "claude-opus-5": {
+   "provider": "Anthropic",
+   "input": 5,
+   "cached": 0.5,
+   "cacheWrite": 6.25,
+   "output": 25,
+   "cacheWrite1h": 10.0,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Opus 5. 1h cache write $10/MTok. Fast mode $10/$50."
+  },
+  "claude-opus-4-8": {
+   "provider": "Anthropic",
+   "input": 5,
+   "cached": 0.5,
+   "cacheWrite": 6.25,
+   "output": 25,
+   "cacheWrite1h": 10.0,
+   "aliases": [
+    "claude-opus-4.8"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Opus 4.8. 1h cache write $10/MTok. Fast mode $10/$50."
+  },
+  "claude-opus-4-7": {
+   "provider": "Anthropic",
+   "input": 5,
+   "cached": 0.5,
+   "cacheWrite": 6.25,
+   "output": 25,
+   "cacheWrite1h": 10.0,
+   "aliases": [
+    "claude-opus-4.7"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Opus 4.7. 1h cache write $10/MTok."
+  },
+  "claude-opus-4-6": {
+   "provider": "Anthropic",
+   "input": 5,
+   "cached": 0.5,
+   "cacheWrite": 6.25,
+   "output": 25,
+   "cacheWrite1h": 10.0,
+   "aliases": [
+    "claude-opus-4.6"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Opus 4.6. 1h cache write $10/MTok."
+  },
+  "claude-sonnet-5": {
+   "provider": "Anthropic",
+   "input": 2,
+   "cached": 0.2,
+   "cacheWrite": 2.5,
+   "output": 10,
+   "cacheWrite1h": 4.0,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Sonnet 5. $2/$10 is now the permanent standard price (planned rise to $3/$15 on 2026-09-01 cancelled). 1h cache write $4/MTok."
+  },
+  "claude-sonnet-4-6": {
+   "provider": "Anthropic",
+   "input": 3,
+   "cached": 0.3,
+   "cacheWrite": 3.75,
+   "output": 15,
+   "cacheWrite1h": 6.0,
+   "aliases": [
+    "claude-sonnet-4.6"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Sonnet 4.6. 1h cache write $6/MTok."
+  },
+  "claude-haiku-4-5": {
+   "provider": "Anthropic",
+   "input": 1,
+   "cached": 0.1,
+   "cacheWrite": 1.25,
+   "output": 5,
+   "cacheWrite1h": 2.0,
+   "aliases": [
+    "claude-haiku-4-5-20251001",
+    "claude-haiku-4.5"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checked": "2026-10-08",
+   "note": "Page name: Claude Haiku 4.5. 1h cache write $2/MTok."
+  },
+  "gpt-6.1-sol": {
+   "provider": "OpenAI",
+   "input": 2,
+   "cached": 0.1,
+   "cacheWrite": null,
+   "output": 10,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Over 272K input: input 4.00, cached 0.20, output 15.00. OpenAI charges no separate cache write."
+  },
+  "gpt-6-sol": {
+   "provider": "OpenAI",
+   "input": 2,
+   "cached": 0.2,
+   "cacheWrite": null,
+   "output": 10,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Over 272K: input 4.00, cached 0.40, output 15.00."
+  },
+  "gpt-6-luna": {
+   "provider": "OpenAI",
+   "input": 0.1,
+   "cached": 0.01,
+   "cacheWrite": null,
+   "output": 0.5,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Over 272K: input 0.20, cached 0.02, output 0.75."
+  },
+  "gpt-6-astra": {
+   "provider": "OpenAI",
+   "input": 10,
+   "cached": 1,
+   "cacheWrite": null,
+   "output": 50,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Over 272K: input 20, cached 2, output 75."
+  },
+  "gpt-5.6-sol": {
+   "provider": "OpenAI",
+   "input": 4,
+   "cached": 0.4,
+   "cacheWrite": null,
+   "output": 20,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Over 272K: input 8, cached 0.80, output 30. Siblings: gpt-5.6-terra 2/0.20/12, gpt-5.6-luna 0.20/0.02/1.20."
+  },
+  "gpt-5.5": {
+   "provider": "OpenAI",
+   "input": 5,
+   "cached": 0.5,
+   "cacheWrite": null,
+   "output": 30,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Base tier is under 272K. Over 272K: input 10, cached 1, output 45."
+  },
+  "gpt-5.4": {
+   "provider": "OpenAI",
+   "input": 2.5,
+   "cached": 0.25,
+   "cacheWrite": null,
+   "output": 15,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Base tier is under 272K. Over 272K: input 5, cached 0.5, output 22.5."
+  },
+  "gpt-5.3-codex": {
+   "provider": "OpenAI",
+   "input": 1.75,
+   "cached": 0.175,
+   "cacheWrite": null,
+   "output": 14,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Listed under specialized models. Fast tier: 3.50/0.35/28.00."
+  },
+  "gpt-5.3-codex-spark": {
+   "provider": "OpenAI",
+   "input": null,
+   "cached": null,
+   "cacheWrite": null,
+   "output": null,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Not listed on the OpenAI pricing page (research-preview model); no official price found. OpenCode Zen lists GPT 5.3 Codex Spark at 1.75/0.175/14.00, but that is an unofficial reseller page and is not used here."
+  },
+  "gpt-5.2-codex": {
+   "provider": "OpenAI",
+   "input": 1.75,
+   "cached": 0.175,
+   "cacheWrite": null,
+   "output": 14,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://openrouter.ai/openai/gpt-5.2-codex",
+   "checked": "2026-10-08",
+   "note": "Not on OpenAI's current standard pricing table; price from OpenRouter API (pass-through, no markup). Equals gpt-5.2 list price."
+  },
+  "gpt-5.2": {
+   "provider": "OpenAI",
+   "input": 1.75,
+   "cached": 0.175,
+   "cacheWrite": null,
+   "output": 14,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": ""
+  },
+  "deepseek-v4.1-flash": {
+   "provider": "DeepSeek",
+   "input": 0.3,
+   "cached": 0.006,
+   "cacheWrite": null,
+   "output": 1.2,
+   "cacheWrite1h": null,
+   "aliases": [
+    "deepseek-flash"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing",
+   "checked": "2026-10-08",
+   "note": "Prices shown are PEAK rates (01:00-04:00 and 06:00-10:00 UTC Mon-Fri, excl. Chinese holidays); off-peak is half. input = cache-miss, cached = cache-hit. Off-peak: miss 0.15, hit 0.003, output 0.60. API id deepseek-flash maps to DeepSeek-V4.1-Flash."
+  },
+  "deepseek-v4-flash": {
+   "provider": "DeepSeek",
+   "input": 0.3,
+   "cached": 0.006,
+   "cacheWrite": null,
+   "output": 1.2,
+   "cacheWrite1h": null,
+   "aliases": [
+    "deepseek-flash"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing",
+   "checked": "2026-10-08",
+   "note": "Prices shown are PEAK rates (01:00-04:00 and 06:00-10:00 UTC Mon-Fri, excl. Chinese holidays); off-peak is half. input = cache-miss, cached = cache-hit. Legacy name deepseek-v4-flash: old model retired, requests served by DeepSeek-V4.1-Flash and billed at the Flash price."
+  },
+  "deepseek-v4-pro": {
+   "provider": "DeepSeek",
+   "input": 1.32,
+   "cached": 0.044,
+   "cacheWrite": null,
+   "output": 3.96,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing",
+   "checked": "2026-10-08",
+   "note": "Prices shown are PEAK rates (01:00-04:00 and 06:00-10:00 UTC Mon-Fri, excl. Chinese holidays); off-peak is half. input = cache-miss, cached = cache-hit. Off-peak: miss 0.66, hit 0.022, output 1.98. Maps to DeepSeek-V4-Pro-0813."
+  },
+  "kimi-k3": {
+   "provider": "Moonshot",
+   "input": 3.0,
+   "cached": 0.3,
+   "cacheWrite": 3.0,
+   "output": 15.0,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://platform.kimi.ai/docs/pricing/chat",
+   "checked": "2026-10-08",
+   "note": "Cache write billed separately: 3.00 for 5min TTL (default), 6.00 for 1h TTL. Context 1,048,576, no price tiers."
+  },
+  "kimi-k2.7-code": {
+   "provider": "Moonshot",
+   "input": 0.95,
+   "cached": 0.19,
+   "cacheWrite": null,
+   "output": 4.0,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://platform.kimi.ai/docs/pricing/chat",
+   "checked": "2026-10-08",
+   "note": "Variant kimi-k2.7-code-highspeed 1.90/0.38/8.00. Context 262,144, no price tiers."
+  },
+  "glm-5.2": {
+   "provider": "Z.ai",
+   "input": 1.4,
+   "cached": 0.26,
+   "cacheWrite": null,
+   "output": 4.4,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://docs.z.ai/guides/overview/pricing",
+   "checked": "2026-10-08",
+   "note": "Cached-input storage is limited-time free."
+  },
+  "glm-4.7": {
+   "provider": "Z.ai",
+   "input": 0.6,
+   "cached": 0.11,
+   "cacheWrite": null,
+   "output": 2.2,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://docs.z.ai/guides/overview/pricing",
+   "checked": "2026-10-08",
+   "note": "Cached-input storage limited-time free. GLM-4.7-Flash is free; GLM-4.7-FlashX 0.07/0.01/0.40."
+  },
+  "glm-5v-turbo": {
+   "provider": "Z.ai",
+   "input": 1.2,
+   "cached": 0.24,
+   "cacheWrite": null,
+   "output": 4.0,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://openrouter.ai/z-ai/glm-5v-turbo",
+   "checked": "2026-10-08",
+   "note": "Not listed on the docs.z.ai pricing page; price from OpenRouter API (pass-through)."
+  },
+  "glm-4.5v": {
+   "provider": "Z.ai",
+   "input": 0.6,
+   "cached": 0.11,
+   "cacheWrite": null,
+   "output": 1.8,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://docs.z.ai/guides/overview/pricing",
+   "checked": "2026-10-08",
+   "note": "Cached-input storage limited-time free."
+  },
+  "minimax-m3": {
+   "provider": "MiniMax",
+   "input": 0.3,
+   "cached": 0.06,
+   "cacheWrite": null,
+   "output": 1.2,
+   "cacheWrite1h": null,
+   "aliases": [
+    "MiniMax-M3"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
+   "checked": "2026-10-08",
+   "note": "Tier is input up to 512K. Over 512K: input 0.60, cache read 0.12, output 2.40. These are the permanent 50% discounted rates. Priority tier is 1.5x. No cache-write price listed."
+  },
+  "minimax-m2.7": {
+   "provider": "MiniMax",
+   "input": 0.3,
+   "cached": 0.06,
+   "cacheWrite": 0.375,
+   "output": 1.2,
+   "cacheWrite1h": null,
+   "aliases": [
+    "MiniMax-M2.7"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
+   "checked": "2026-10-08",
+   "note": ""
+  },
+  "minimax-m2.7-highspeed": {
+   "provider": "MiniMax",
+   "input": 0.6,
+   "cached": 0.06,
+   "cacheWrite": 0.375,
+   "output": 2.4,
+   "cacheWrite1h": null,
+   "aliases": [
+    "MiniMax-M2.7-highspeed"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
+   "checked": "2026-10-08",
+   "note": ""
+  },
+  "minimax-m2.5": {
+   "provider": "MiniMax",
+   "input": 0.3,
+   "cached": 0.03,
+   "cacheWrite": 0.375,
+   "output": 1.2,
+   "cacheWrite1h": null,
+   "aliases": [
+    "MiniMax-M2.5"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
+   "checked": "2026-10-08",
+   "note": "Legacy. Highspeed variant 0.60 in / 2.40 out."
+  },
+  "minimax-m2.1": {
+   "provider": "MiniMax",
+   "input": 0.3,
+   "cached": 0.03,
+   "cacheWrite": 0.375,
+   "output": 1.2,
+   "cacheWrite1h": null,
+   "aliases": [
+    "MiniMax-M2.1"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
+   "checked": "2026-10-08",
+   "note": "Legacy. Highspeed variant 0.60 in / 2.40 out."
+  },
+  "muse-spark-1.3": {
+   "provider": "Meta",
+   "input": 1.25,
+   "cached": 0.15,
+   "cacheWrite": null,
+   "output": 4.25,
+   "cacheWrite1h": null,
+   "aliases": [
+    "muse-spark-1.3-contributor"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://openrouter.ai/meta/muse-spark-1.3",
+   "checked": "2026-10-08",
+   "note": "No Meta pricing page found; price from OpenRouter API (meta/muse-spark-1.3), same as OpenCode Zen. A contributor variant is cheaper on OpenRouter (0.10/0.20) and free on Zen."
+  },
+  "big-pickle": {
+   "provider": "OpenCode Zen",
+   "input": 0,
+   "cached": 0,
+   "cacheWrite": null,
+   "output": 0,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://opencode.ai/docs/zen/",
+   "checked": "2026-10-08",
+   "note": "Free on OpenCode Zen (cached read also free)."
+  },
+  "hermes-3-llama-3.1-405b": {
+   "provider": "Nous Research",
+   "input": 1.0,
+   "cached": null,
+   "cacheWrite": null,
+   "output": 1.0,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://openrouter.ai/nousresearch/hermes-3-llama-3.1-405b",
+   "checked": "2026-10-08",
+   "note": "Price from OpenRouter API listing (no first-party API). No cache price."
+  },
+  "grok-code": {
+   "provider": "xAI",
+   "input": null,
+   "cached": null,
+   "cacheWrite": null,
+   "output": null,
+   "cacheWrite1h": null,
+   "aliases": [
+    "grok-code-fast",
+    "grok-code-fast-1"
+   ],
+   "currency": "USD",
+   "sourceUrl": "https://docs.x.ai/docs/models",
+   "checked": "2026-10-08",
+   "note": "grok-code-fast-1 is no longer on the xAI models page, so no price. Current xAI: Grok 4.7 2.00/0.50/6.00 (under 200K; 200K+ 4/1/12) and grok-build-0.1 1.00/0.20/2.00; not mapped because the equivalence is unconfirmed."
+  },
+  "gemini-3.1-pro-preview": {
+   "provider": "Google",
+   "input": 2.0,
+   "cached": 0.2,
+   "cacheWrite": null,
+   "output": 12.0,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Context up to 200K. Over 200K: 4.00/0.40/18.00. Cache storage $4.50/MTok/hour. Newest Pro on the page."
+  },
+  "gemini-3.8-flash": {
+   "provider": "Google",
+   "input": 0.75,
+   "cached": 0.075,
+   "cacheWrite": null,
+   "output": 3.75,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Newest Flash; 3.7 and 3.6 Flash same price. Rates valid through 2026-12-31, higher from 2027-01-01. Storage $1.00/MTok/hour. OpenCode Zen lists 1.50/7.50, differing from Google's page; Google used."
+  },
+  "gemini-3.5-flash": {
+   "provider": "Google",
+   "input": 1.5,
+   "cached": 0.15,
+   "cacheWrite": null,
+   "output": 9.0,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": ""
+  },
+  "gemini-3.5-flash-lite": {
+   "provider": "Google",
+   "input": 0.3,
+   "cached": 0.03,
+   "cacheWrite": null,
+   "output": 2.5,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Newest Flash-Lite. gemini-3.1-flash-lite 0.25/0.025/1.50; gemini-2.5-flash-lite 0.10/0.01/0.40."
+  },
+  "gemini-2.5-pro": {
+   "provider": "Google",
+   "input": 1.25,
+   "cached": 0.125,
+   "cacheWrite": null,
+   "output": 10.0,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Context up to 200K. Over 200K: 2.50/0.25/15.00."
+  },
+  "gemini-2.5-flash": {
+   "provider": "Google",
+   "input": 0.3,
+   "cached": 0.03,
+   "cacheWrite": null,
+   "output": 2.5,
+   "cacheWrite1h": null,
+   "aliases": [],
+   "currency": "USD",
+   "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+   "checked": "2026-10-08",
+   "note": "Text/image/video; audio input 1.00."
+  }
+ }
+}

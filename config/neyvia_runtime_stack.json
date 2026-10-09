@@ -1,0 +1,93 @@
+{
+  "schema": "neyvia.runtime-stack/v1",
+  "policy": {
+    "environmentIsolation": "managed-prefix",
+    "coreRuntimeOwns": [
+      "node",
+      "npm",
+      "npx",
+      "openclaw",
+      "hermes",
+      "codex",
+      "opencode",
+      "claude",
+      "kimi",
+      "grok",
+      "neyvia-agent"
+    ],
+    "proxyRuntimeOwns": [
+      "cli-proxy-api",
+      "proxy configuration",
+      "proxy OAuth material"
+    ],
+    "pathPrecedence": [
+      "core runtime",
+      "proxy runtime",
+      "system PATH"
+    ],
+    "credentialRule": "Keep OAuth and API credentials in the private runtime home. Never copy them into a release, development snapshot, log, or frontend payload.",
+    "subscriptionRelayRule": "Anthropic consumer-subscription relay through an Anthropic-compatible proxy is experimental, requires an explicit account-risk acknowledgment, and is never the default Claude route. OpenAI Codex OAuth remains an official provider-owned credential and may be bound to compatible Neyvia workers without exposing the token."
+  },
+  "platforms": {
+    "nas-linux": {
+      "coreRuntimeRoot": "/volume1/Saclay/projects/neyvia/runtime",
+      "legacyCoreRuntimeRoots": ["/volume1/Saclay/projects/syntelos/runtime"],
+      "proxyRuntimeRoot": "/volume1/Saclay/runtime",
+      "coreBinEnvironment": "NEYVIA_RUNTIME_BIN_DIR",
+      "legacyCoreBinEnvironments": ["SYNTELOS_RUNTIME_BIN_DIR"],
+      "proxyRootEnvironment": "NEYVIA_PROXY_RUNTIME_ROOT",
+      "legacyProxyRootEnvironments": ["SYNTELOS_PROXY_RUNTIME_ROOT"]
+    },
+    "windows-development": {
+      "coreRuntimeRoot": ".agent_control/runtime",
+      "proxyRuntimeRoot": ".agent_control/proxy-runtime",
+      "coreBinEnvironment": "NEYVIA_RUNTIME_BIN_DIR",
+      "legacyCoreBinEnvironments": ["SYNTELOS_RUNTIME_BIN_DIR"],
+      "proxyRootEnvironment": "NEYVIA_PROXY_RUNTIME_ROOT",
+      "legacyProxyRootEnvironments": ["SYNTELOS_PROXY_RUNTIME_ROOT"]
+    }
+  },
+  "requirements": {
+    "node": {
+      "pin": "22.23.1",
+      "openClawSupportedLines": [
+        "22.22.3+",
+        "24.15.0+",
+        "25.9.0+"
+      ]
+    },
+    "python": {
+      "minimum": "3.12.0",
+      "preferred": "3.12"
+    }
+  },
+  "acceptance": {
+    "runtimeCommands": [
+      "node",
+      "npm",
+      "openclaw",
+      "hermes",
+      "codex",
+      "opencode",
+      "claude",
+      "kimi",
+      "grok",
+      "neyvia-agent",
+      "cli-proxy-api"
+    ],
+    "truthfulStates": [
+      "ready",
+      "blocked-auth",
+      "blocked-balance",
+      "blocked-dependency",
+      "degraded",
+      "not-installed"
+    ],
+    "allGoodRequires": [
+      "compatible Node selected by the OpenClaw process",
+      "every declared agent-ready tool has an executable adapter",
+      "each enabled provider has a successful authenticated probe",
+      "CLIProxyAPI is loopback-only and returns at least one authenticated model"
+    ]
+  }
+}

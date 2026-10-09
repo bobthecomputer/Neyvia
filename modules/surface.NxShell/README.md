@@ -1,0 +1,11 @@
+# nxShell
+
+Styles nxShell with Neyvia's shared theme tokens.
+
+- **Public API:** No separately exported API; use the owning module..
+- **Manual:** [design.cl](../../manuals/cl/design.cl), [neyvia.cl](../../manuals/cl/neyvia.cl).
+- **Contracts:** `run modules.verify-map()`.
+- **Outcome contracts:** `p22.chips`.
+- **Dependencies:** None statically declared.
+- **Owner:** Neyvia / design.
+- **Files:** [web/src/neyvia/next/nxShell.css](../../web/src/neyvia/next/nxShell.css).

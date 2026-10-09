@@ -1,0 +1,83 @@
+/* Connections: one calm list. A row is a mark, a name with its state, one plain sentence and one button. */
+.nx .nx-cn { display: flex; flex-direction: column; gap: var(--nx-space-12); container-type: inline-size; }
+.nx .nx-cn-head { display: flex; align-items: center; gap: var(--nx-space-10); }
+.nx .nx-cn-head h3 { margin: 0; font: 600 var(--nx-fs-xl) var(--nx-display); color: var(--nx-text); }
+.nx .nx-cn-head p { margin: var(--nx-space-2) 0 0; font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx .nx-cn-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--nx-space-8); }
+
+.nx .nx-cn-card { border: 1px solid var(--nx-line); border-radius: var(--nx-r); background: var(--nx-panel); }
+.nx .nx-cn-card.is-open { background: var(--nx-raised); box-shadow: var(--nx-card-shadow); }
+.nx .nx-cn-line { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto auto; align-items: center; gap: var(--nx-space-12); padding: var(--nx-space-12) var(--nx-space-14); }
+.nx .nx-cn.is-compact .nx-cn-line { grid-template-columns: 36px minmax(0, 1fr) auto; }
+.nx .nx-cn-mark { width: 36px; height: 36px; border-radius: var(--nx-r-sm); display: grid; place-items: center; background: var(--nx-hover); color: var(--nx-text-2); }
+.nx .nx-cn-letter { font: 600 var(--nx-fs) var(--nx-display); text-transform: uppercase; }
+.nx .nx-cn-text { min-width: 0; }
+.nx .nx-cn-name { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-4) var(--nx-space-10); font-weight: 600; color: var(--nx-text); }
+.nx .nx-cn-state { display: inline-flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-sm); font-weight: 500; color: var(--nx-muted); }
+.nx .nx-cn-green { color: var(--nx-text-2); }
+.nx .nx-cn-why { margin: var(--nx-space-2) 0 0; font-size: var(--nx-fs-sm); color: var(--nx-muted); overflow-wrap: anywhere; }
+.nx .nx-cn-cmd { margin: var(--nx-space-4) 0 0; font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-cn-cmd code, .nx .nx-cn-mono { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); color: var(--nx-text-2); overflow-wrap: anywhere; }
+.nx .nx-cn-act { display: flex; justify-content: flex-end; }
+.nx .nx-cn-act .nx-btn { white-space: nowrap; }
+.nx .nx-cn-more { width: 28px; height: 28px; border-radius: var(--nx-r-sm); display: grid; place-items: center; color: var(--nx-faint); }
+.nx .nx-cn-more:hover { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-cn-err { display: flex; align-items: flex-start; gap: var(--nx-space-6); margin: var(--nx-space-6) 0 0; font-size: var(--nx-fs-sm); color: var(--nx-red); }
+
+.nx .nx-cn-detail { padding: 0 var(--nx-space-14) var(--nx-space-14) calc(var(--nx-space-14) + 36px + var(--nx-space-12)); display: flex; flex-direction: column; gap: var(--nx-space-10); }
+.nx .nx-cn-detail dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--nx-space-4) var(--nx-space-14); font-size: var(--nx-fs-sm); }
+.nx .nx-cn-detail dt { color: var(--nx-faint); }
+.nx .nx-cn-detail dd { margin: 0; color: var(--nx-text-2); }
+.nx .nx-cn-detail-actions { display: flex; flex-wrap: wrap; gap: var(--nx-space-8); }
+.nx .nx-cn-note { margin: 0; font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-cn-confirm { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-8); margin-top: var(--nx-space-10); color: var(--nx-text-2); font-size: var(--nx-fs-sm); }
+.nx .nx-cn-confirm > span { flex-basis: 100%; }
+
+.nx .nx-cn-steps { list-style: none; margin: 0; padding: 0 var(--nx-space-14) var(--nx-space-12) calc(var(--nx-space-14) + 36px + var(--nx-space-12)); display: flex; flex-direction: column; gap: var(--nx-space-4); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-cn-detail .nx-cn-steps { padding: 0; }
+.nx .nx-cn-steps li { display: flex; gap: var(--nx-space-6); align-items: flex-start; }
+.nx .nx-cn-steps .is-ok .nx-icon { color: var(--nx-green); }
+.nx .nx-cn-steps .is-bad .nx-icon { color: var(--nx-red); }
+
+.nx .nx-cn-keys { border: 1px solid var(--nx-line); border-radius: var(--nx-r); padding: var(--nx-space-12) var(--nx-space-14); background: var(--nx-panel); }
+.nx .nx-cn-keys-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--nx-space-8); }
+.nx .nx-cn-keys-head h4 { margin: 0; font-size: var(--nx-fs); color: var(--nx-text); }
+
+/* Phone and narrow panes: the button drops under the sentence. */
+@container (max-width: 560px) {
+  .nx .nx-cn-line { grid-template-columns: 36px minmax(0, 1fr) auto; row-gap: var(--nx-space-8); }
+  .nx .nx-cn-act { grid-column: 2 / -1; grid-row: 2; justify-content: flex-start; }
+  .nx .nx-cn.is-compact .nx-cn-line { grid-template-columns: 36px minmax(0, 1fr); }
+  .nx .nx-cn.is-compact .nx-cn-act { grid-column: 2; }
+  .nx .nx-cn-detail, .nx .nx-cn-steps { padding-left: var(--nx-space-14); }
+}
+.nx .nx-rt-head-detail { margin-top: var(--nx-space-24, 24px); }
+
+.nx .nx-cn-act .nx-btn { gap: var(--nx-space-6); }
+.nx .nx-cn-act .nx-btn .nx-icon { flex: none; }
+.nx .nx-cn-act .nx-btn { flex: none; padding-inline: var(--nx-space-12); white-space: nowrap; }
+.nx .nx-cn-state .nx-spinner, .nx .nx-cn-state svg { flex: none; }
+.nx .nx-cn-act .nx-btn { padding-inline: var(--nx-space-12) var(--nx-space-16); border: 1px solid var(--nx-line-strong); box-shadow: none; }
+.nx .nx-cn-act .nx-btn-primary { border-color: transparent; }
+.nx .nx-cn-act .nx-btn-ghost { border-color: transparent; }
+
+/* Runtimes in detail while the 20 second check runs: the rows' own shape, not a lone spinner. */
+.nx .nx-rt-skel { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--nx-space-8); }
+.nx .nx-rt-skel li { display: grid; grid-template-columns: 28px minmax(120px, 1.2fr) minmax(80px, 1fr) minmax(60px, 0.6fr); align-items: center; gap: var(--nx-space-16); padding: var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-rt-skel i, .nx .nx-rt-skel span { display: block; border-radius: var(--nx-r-sm); background: color-mix(in srgb, var(--nx-text) 8%, transparent); animation: nx-rt-skel 1.6s var(--nx-ease) infinite; }
+.nx .nx-rt-skel i { width: 24px; height: 24px; border-radius: var(--nx-r-pill); }
+.nx .nx-rt-skel span { height: 10px; }
+.nx .nx-rt-skel li:nth-child(even) span:first-of-type { width: 70%; }
+@keyframes nx-rt-skel { 50% { opacity: 0.55; } }
+.nx[data-nx-motion="reduce"] .nx-rt-skel :is(i, span) { animation: none; }
+@media (prefers-reduced-motion: reduce) { .nx .nx-rt-skel :is(i, span) { animation: none; } }
+.nx .nx-cn-state .nx-dot { width: 9px; height: 9px; }
+.nx .nx-cn-gold .nx-dot, .nx .nx-cn-red .nx-dot { box-shadow: none; }
+
+/* The readiness list never runs text into its neighbour: each claim wraps inside its own cell and clamps to two lines. */
+.nx .nx-rt-failures li { align-items: flex-start; min-width: 0; }
+.nx .nx-rt-failures li > .nx-dot { margin-top: var(--nx-space-6); }
+.nx .nx-rt-failures li > span:last-child { min-width: 0; overflow: hidden; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.nx .nx-rt-more { margin-top: var(--nx-space-8); padding: 0; font-size: var(--nx-fs-sm); color: var(--nx-accent-text); }
+.nx .nx-rt-more:hover { text-decoration: underline; }
+.nx .nx-rt-mark { flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: var(--nx-r-pill); background: var(--nx-raised-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }

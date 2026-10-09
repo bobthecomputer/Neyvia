@@ -1,0 +1,53 @@
+{
+  "id": "neyvia.cl-state",
+  "version": 1,
+  "owner": "T20",
+  "representation": "CL-State",
+  "adoption": "shadow",
+  "questions": {
+    "next_action": {
+      "type": "choice",
+      "view": ["goal", "options", "controls", "page", "current", "progress", "action_receipts"],
+      "instructions": "Given the goal and observed CL-State, choose the next useful operation. Inspect current candidates and task progress. Never assume an unobserved operation completed.",
+      "criteria": {
+        "search": "Search when the goal needs information absent from the observation.",
+        "click": "Click a visible relevant control when this advances the goal.",
+        "type": "Enter text into a visible appropriate input when this advances the goal.",
+        "inspect": "Inspect or refresh when evidence or element identity is insufficient.",
+        "done": "Finish only when observed evidence establishes the goal is satisfied.",
+        "escalate": "Ask the careful path when uncertainty, conflict, or permission prevents a reliable action."
+      },
+      "learning": "instant",
+      "adoption": "shadow",
+      "stakes": {"default": "reversible_costly"},
+      "thresholds": {"answer": 0.8}
+    },
+    "relevance": {
+      "type": "noul",
+      "view": ["goal", "query", "result", "current"],
+      "instructions": "Does the observed result directly help answer or complete the stated goal? A keyword overlap alone does not establish relevance.",
+      "criteria": {"false": "The result is unrelated, contradicted, or insufficient for the goal.", "true": "The result supplies useful supported information for the goal."},
+      "learning": "instant",
+      "adoption": "shadow",
+      "thresholds": {"answer": 0.8}
+    },
+    "page_done": {
+      "type": "noul",
+      "view": ["goal", "page", "current", "action_receipts"],
+      "instructions": "Has the user's goal on this page been completed, according to observed content and action receipts? Requested or pending actions are not completed actions.",
+      "criteria": {"false": "The goal is unmet or completion lacks evidence.", "true": "Observed evidence establishes completion."},
+      "learning": "instant",
+      "adoption": "shadow",
+      "thresholds": {"answer": 0.8}
+    },
+    "page_changed": {
+      "type": "noul",
+      "view": ["goal", "previous", "current"],
+      "instructions": "Compare previous and current observed page states. Did meaningful task content, available actions, or task progress change? Ignore incidental timestamps and decorative changes.",
+      "criteria": {"false": "No meaningful task change is established.", "true": "The observation establishes a meaningful task change."},
+      "learning": "instant",
+      "adoption": "shadow",
+      "thresholds": {"answer": 0.8}
+    }
+  }
+}

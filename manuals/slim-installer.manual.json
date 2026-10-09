@@ -1,0 +1,658 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "slim-installer",
+  "kind": "workflow",
+  "proofs": {
+    "area": "proofs-c-runtime, proofs-e-host, installer-extra",
+    "manifests": [
+      "config/proofs/proofs-c-runtime.json",
+      "config/proofs/proofs-e-host.json",
+      "config/proofs/proofs-e-release.json",
+      "config/proofs/installer-extra.json"
+    ],
+    "startup": {
+      "procedures": [
+        "catalog/recommended/private-cloud/cyclic dependency rejection",
+        "memory add/search/ingest/reopen",
+        "OpenClaw ranges and resolved PATH",
+        "hash-pinned48488 HTTP child start/reuse/stop plus foreign PID/tampering refusal",
+        "toolchain streamed bytes and tampering",
+        "real MCP stdio read/approved mutation/refusal/progressive/Neyvia host/close",
+        "loopback48487 observed declared release metadata / production candidate parser / digest refusal / durable cache hit"
+      ],
+      "runner": "grant_agent.proofs_c_runtime.self_check",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "scripts/package_onboarding_packs.py:build",
+          "scripts/package_onboarding_packs.py:import_closure",
+          "grant_agent.proofs_pack_generator.check_local_build",
+          "grant_agent.proofs_pack_generator.self_check"
+        ],
+        "claim": "The production local-pack generator builds all declared local-component packages in owned scratch; opened descriptors, manifests, file bytes and entrypoint source confirm package meaning, integrity, and portable paths; an out-of-scope source path is refused without writing outside scratch.",
+        "id": "p22.pack-generator.local-components",
+        "impact": [
+          "local add-on package contents",
+          "generated component and entrypoint semantics",
+          "portable manifest integrity",
+          "generator path containment"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.install_profiles.InstallProfileRegistry.catalog_snapshot",
+          "grant_agent.proofs_c_runtime.check_catalog",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Catalog preserves every package tier and delivery state with exact current core/optional totals.",
+        "id": "runtime.install.catalog",
+        "impact": [
+          "installation selection",
+          "core/optional inventory"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.install_profiles.InstallProfileRegistry.resolve",
+          "grant_agent.proofs_c_runtime.check_plan",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Plan resolves profile inheritance, optional exclusions and ordered dependency closure; unfinished packages block readiness and execution remains disabled.",
+        "id": "runtime.install.plan",
+        "impact": [
+          "installation plan",
+          "dependency readiness",
+          "execution gate"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.install_profiles.InstallProfileRegistry._validate",
+          "grant_agent.install_profiles.InstallProfileRegistry._cycle_errors",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Registry rejects package or profile dependency cycles before constructing a selectable registry.",
+        "id": "runtime.install.cycles",
+        "impact": [
+          "installation dependency graph"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.managed_local_service.ManagedServiceSpec.__post_init__",
+          "grant_agent.managed_local_service.ManagedServiceSpec.spec_hash",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Service declaration requires explicit loopback HTTP URLs, SHA256 pins, nonempty argv; environment content and inheritance participate in specification identity.",
+        "id": "runtime.service.spec",
+        "impact": [
+          "managed child identity",
+          "local service lifecycle"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.managed_local_service.ManagedLocalService.start",
+          "grant_agent.managed_local_service.ManagedLocalService._validate_installation",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Every start validates executable and required-file SHA256 hashes before process creation or reuse.",
+        "id": "runtime.service.installation",
+        "impact": [
+          "local process creation",
+          "model and executable bytes"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.managed_local_service.ManagedLocalService.status",
+          "grant_agent.managed_local_service.ManagedLocalService._stop_locked",
+          "grant_agent.proofs_c_runtime.check_service_status",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Running status requires live PID, matching executable and specification, and endpoint health/identity. Foreign or changed identity cannot be stopped.",
+        "id": "runtime.service.identity",
+        "impact": [
+          "persisted PID",
+          "foreign process safety"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.managed_local_service.ManagedLocalService.start",
+          "grant_agent.managed_local_service.ManagedLocalService._stop_locked",
+          "grant_agent.proofs_c_runtime.check_service_status",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "An installed exact healthy process is reused without spawning; an owned new process persists running identity and stops to a zero-PID state.",
+        "id": "runtime.service.lifecycle",
+        "impact": [
+          "managed lifecycle",
+          "service state receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.managed_node_runtime.node_supports_current_openclaw",
+          "grant_agent.proofs_c_runtime.check_node_version",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "OpenClaw supports Node22 from22.22.3, Node24 from24.15.0 and Node25 from25.9.0 or later; Node23 and None are excluded.",
+        "id": "runtime.node.versions",
+        "impact": [
+          "optional CLI compatibility"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.managed_node_runtime.prepend_openclaw_node_to_env",
+          "grant_agent.proofs_c_runtime.check_node_env",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Resolved Node directory leads PATH and NEYVIA_MANAGED_NODE_BIN; preserve original PATH suffix and other variables without mutating caller environment.",
+        "id": "runtime.node.environment",
+        "impact": [
+          "child CLI environment"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager.local_integrity",
+          "grant_agent.proofs_c_runtime.check_toolchain_integrity",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Pinned executable receipts reflect actual streamed SHA256 bytes; platform-managed entries stay distinct and aggregate invalidTools/healthy exactly match rows.",
+        "id": "runtime.toolchain.integrity",
+        "impact": [
+          "marketplace pinned security toolchain"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._check_tool",
+          "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._release_candidate",
+          "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._publish_discovery",
+          "grant_agent.proofs_c_runtime.check_toolchain_discovery",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Stable release discovery binds exact asset template, bounded positive size, official GitHub repository URL and SHA256 digest; absence of digest raises before a candidate is returned; summary and signed-release activation policy match all rows.",
+        "id": "runtime.toolchain.discovery",
+        "impact": [
+          "official release candidate selection",
+          "no unsigned install activation"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._publish_discovery",
+          "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager._fresh_cache",
+          "grant_agent.marketplace_toolchain.MarketplaceToolchainUpdateManager.check_latest",
+          "grant_agent.proofs_c_runtime.check_toolchain_discovery",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Published discovery persists exact returned metadata; a fresh schema-compatible cache returns the same rows with cache=hit before any official release fetch.",
+        "id": "runtime.toolchain.cache",
+        "impact": [
+          "release metadata cache",
+          "repeat discovery latency"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "scripts/package_onboarding_packs.py:import_closure"
+        ],
+        "claim": "Local add-on import closures include transitive module dependencies with unique portable sorted paths",
+        "id": "proofs-e-host.pack-closure",
+        "impact": [
+          "host state and observations"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_installer_journey.self_check",
+          "grant_agent.neyvia_onboarding.start_base_pack",
+          "grant_agent.neyvia_onboarding.run_download",
+          "grant_agent.neyvia_onboarding.pause_base_pack",
+          "grant_agent.neyvia_onboarding.base_pack_status",
+          "grant_agent.neyvia_onboarding.parse_manifest"
+        ],
+        "claim": "The first-run base-pack flow stages the generated local component bytes under the selected state root, reports and consumes pause while preserving resumable bytes, resumes to an exact durable receipt, and refuses an unsafe manifest path without changing staged bytes.",
+        "id": "p22.installer.local-pack-journey",
+        "impact": [
+          "first-run base-pack staging",
+          "download progress and pause",
+          "verified local pack bytes",
+          "manifest path refusal"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "scripts/prepare_slim_release.mjs:signerFromKey.sign -> checkSignedEnvelope"
+        ],
+        "claim": "Both Ed25519 signatures bind the observed manifest bytes, signing identity and trusted comment",
+        "id": "release.signed-envelope",
+        "impact": [
+          "slim-installer production observations"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "scripts/prepare_slim_release.mjs:prepareRelease/signer -> validateReleaseOutput/validateSigningKeyPath"
+        ],
+        "claim": "Release output remains a fresh directory inside the selected repository target; in-tree private key paths are rejected before reading",
+        "id": "release.staging-boundary",
+        "impact": [
+          "slim-installer production observations"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "scripts/check_installer_size.mjs:inspectInstallerBudget -> checkInstallerBudgetObservation"
+        ],
+        "claim": "Actual artifacts and staged files determine missing-artifact, size, shell-only and forbidden-content failures",
+        "id": "release.installer-budget",
+        "impact": [
+          "slim-installer production observations"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "scripts/prepare_slim_release.mjs:externalPackDeclarations -> checkExternalDeclarations"
+        ],
+        "claim": "Every current external registry pack retains pinned official source inputs, summed sizes and explicit activation blockers",
+        "id": "release.external-declarations",
+        "impact": [
+          "slim-installer production observations"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "vite.config.mjs:default config evaluator -> checkVitePhysicalPaths"
+        ],
+        "claim": "Every Vite config evaluation uses the selected checkout physical web root, source alias and build output path",
+        "id": "release.vite-physical-paths",
+        "impact": [
+          "Vite build and serving configuration paths"
+        ],
+        "phase": "post"
+      },
+      {
+        "id": "p22.onboarding.external-source-readiness",
+        "phase": "pre",
+        "claim": "The seven authored external onboarding manifests preserve their declared platform tags and honest fail-closed readiness through the production status path; traversal paths and unsigned remote payload manifests are refused without network access or installation.",
+        "checkedAt": [
+          "grant_agent.proofs_onboarding_external_journey.self_check",
+          "config/onboarding_packs.json:manifests",
+          "config/onboarding_packs/pack.documents-office/manifest.json:files.source.platform",
+          "config/onboarding_packs/pack.ocr-local/manifest.json:files.source.platform",
+          "config/onboarding_packs/pack.android-lab/manifest.json:files.source.platform",
+          "config/onboarding_packs/pack.developer-toolchains/manifest.json:files.source.platform",
+          "config/onboarding_packs/pack.models-gpu/manifest.json:files.source.platform",
+          "config/onboarding_packs/pack.media-creative/manifest.json:files.source.platform",
+          "config/onboarding_packs/pack.mesh-control-plane/manifest.json:files.source.platform",
+          "config/neyvia_install_profiles.json:packages",
+          "grant_agent.install_profiles.InstallProfileRegistry.catalog_snapshot",
+          "grant_agent.neyvia_onboarding.pack_status -> grant_agent.neyvia_onboarding.load_pack_manifest",
+          "grant_agent.neyvia_onboarding.parse_manifest -> _safe_relative/_verify_manifest_signature",
+          "grant_agent.proofs_d_onboarding.check_pack_status"
+        ],
+        "impact": [
+          "external onboarding pack readiness",
+          "declared platform/runtime metadata",
+          "manifest traversal and signature admission"
+        ]
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_installer_extra.self_check",
+          "grant_agent.neyvia_onboarding.snapshot",
+          "grant_agent.neyvia_onboarding.load_catalog",
+          "grant_agent.neyvia_onboarding.pack_status",
+          "grant_agent.neyvia_onboarding.save_state",
+          "grant_agent.proofs_d_onboarding.check_pack_status/check_catalog/check_saved",
+          "config/onboarding_packs/pack.ocr-local/manifest.json",
+          "config/onboarding_packs/pack.creator-sdk/manifest.json",
+          "web/src/neyvia/next/nxOnboardingModel.js:packView"
+        ],
+        "claim": "The first-run snapshot includes every validated app and pack, keeps an unsigned external source visibly failed but retryable, keeps an actual byte-verified local package available for staging, and reflects valid saved choices on a fresh read without changing delivery state.",
+        "id": "p22.onboarding.first-run-snapshot",
+        "impact": [
+          "onboarding snapshot",
+          "retryable add-on readiness",
+          "portable local package",
+          "saved setup choices"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "terminal.exec": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shell": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "powershell",
+            "python",
+            "bash",
+            "cmd"
+          ]
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120000
+        },
+        "maxOutputChars": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 50000
+        }
+      },
+      "required": [
+        "command"
+      ]
+    },
+    "workspace.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "startLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Signed base-pack release evidence",
+      "state": {
+        "receipt": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "workspace.read"
+        }
+      },
+      "actions": {
+        "workspace.read": {
+          "effect": "Return bounded decoded text and full-byte SHA-256; nextOffset paginates text",
+          "pre": "Nonblank existing text file resolves under root; no NUL in first 8192 bytes; offset >=0",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "content"
+            ]
+          },
+          "reversible": true,
+          "schema": "workspace.read",
+          "tool": "workspace.read"
+        },
+        "terminal.exec": {
+          "effect": "Run a local staging/build command and preserve its returned exit code; command can write worktree target artifacts",
+          "pre": "Explicit release scope; working directory is this worktree; private key is external; no download/system install/public service change",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "terminal.exec",
+          "tool": "terminal.exec"
+        }
+      },
+      "checks": {
+        "release-receipt": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": "neyvia.slim-release/v1"
+          },
+          "tool": "workspace.read"
+        }
+      },
+      "procedures": {
+        "inspect-release": {
+          "goal": "Inspect the signed pack build receipt before deciding whether it is production-ready",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "workspace.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "release-receipt",
+              "save": "receipt"
+            },
+            {
+              "judge": "release-authority"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "release-authority": {
+          "constraints": "runtimeProvenance.requirementsMatch must be true for production. build.executed must be true and installer hashes present to claim a built installer. External deliveryStatus needs-paul remains blocked even when signatures and official source hashes exist. Publishing requires separate explicit authorization.",
+          "options": [
+            "local-proof-only",
+            "release-candidate",
+            "needs-paul"
+          ],
+          "question": "Does this receipt satisfy the authorized delivery gate?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Runtime package version mismatch",
+          "recovery": "Use an approved matching portable runtime. Explicit allow-existing-versions and allow-local-proof are only local proof; receipt retains mismatches."
+        },
+        {
+          "failure": "Release output exists or add-on hashes changed",
+          "recovery": "Choose a fresh target directory and regenerate local manifests with package_onboarding_packs.py."
+        },
+        {
+          "failure": "Native first launch has no Python",
+          "recovery": "Use real desktop IPC onboarding_base_pack_status_command/start_command/pause_command; these are native commands, not registered backend tools."
+        }
+      ],
+      "frontier": [
+        "Production signing-key provisioning and HTTPS hosting need release-owner actions.",
+        "Seven external manifests pin twelve official source inputs; full dependency locks/extraction/activation remain listed as needsPaul.",
+        "Installed openai-agents 0.18.3 differs from repository >=0.19.4,<0.20."
+      ],
+      "guidance": [
+        "Stage: explicit system Python scripts/stage_portable_python.py --output src-tauri/target/<runtime>.",
+        "Prepare: node scripts/prepare_slim_release.mjs --python-runtime <runtime> --secret-key <external PEM> --version <version> --output src-tauri/target/<release> --base-url <HTTPS URL>. Add --build for real installer build.",
+        "Observer path should be a release-receipt.json inside selected workspace target; workspace.read can require paging for large receipts.",
+        "See docs/manuals/slim-installer.md for native IPC and source provenance."
+      ]
+    },
+    "proofs-c-runtime": {
+      "title": "PROOFS-c runtime contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A successful response or existing receipt alone does not prove a managed action.",
+          "recovery": "Run the proofs-c-runtime startup adapter in a fresh isolated root; it verifies bytes, persistence, real subprocesses and refusal paths."
+        }
+      ],
+      "frontier": [
+        "OCI authenticated evidence, trust removal, tampering, activation/rollback and interrupted-transaction recovery: retain all8 OCI cases until full real verifier journeys are migrated.",
+        "Upstream GitHub availability is not claimed: declared metadata is served on owned loopback48487, then production parser and persisted cache run; no package downloads."
+      ],
+      "guidance": [
+        "runtime.install.catalog: Catalog preserves every package tier and delivery state with exact current core/optional totals.",
+        "runtime.install.plan: Plan resolves profile inheritance, optional exclusions and ordered dependency closure; unfinished packages block readiness and execution remains disabled.",
+        "runtime.install.cycles: Registry rejects package or profile dependency cycles before constructing a selectable registry.",
+        "runtime.service.spec: Service declaration requires explicit loopback HTTP URLs, SHA256 pins, nonempty argv; environment content and inheritance participate in specification identity.",
+        "runtime.service.installation: Every start validates executable and required-file SHA256 hashes before process creation or reuse.",
+        "runtime.service.identity: Running status requires live PID, matching executable and specification, and endpoint health/identity. Foreign or changed identity cannot be stopped.",
+        "runtime.service.lifecycle: An installed exact healthy process is reused without spawning; an owned new process persists running identity and stops to a zero-PID state.",
+        "runtime.node.versions: OpenClaw supports Node22 from22.22.3, Node24 from24.15.0 and Node25 from25.9.0 or later; Node23 and None are excluded.",
+        "runtime.node.environment: Resolved Node directory leads PATH and NEYVIA_MANAGED_NODE_BIN; preserve original PATH suffix and other variables without mutating caller environment.",
+        "runtime.toolchain.integrity: Pinned executable receipts reflect actual streamed SHA256 bytes; platform-managed entries stay distinct and aggregate invalidTools/healthy exactly match rows.",
+        "runtime.toolchain.discovery: Stable release discovery binds exact asset template, bounded positive size, official GitHub repository URL and SHA256 digest; absence of digest raises before a candidate is returned; summary and signed-release activation policy match all rows.",
+        "runtime.toolchain.cache: Published discovery persists exact returned metadata; a fresh schema-compatible cache returns the same rows with cache=hit before any official release fetch."
+      ]
+    },
+    "proofs-e-host": {
+      "title": "Host behavior contracts and self-checks (PROOFS-e)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A recorded prior action is mistaken for a new observation",
+          "recovery": "Reconcile the target and inspect its durable receipt before a separately identified action"
+        }
+      ],
+      "frontier": [],
+      "guidance": [
+        "Local add-on import closures include transitive module dependencies with unique portable sorted paths",
+        "Self-check: neyvia verify --area proofs-e-host; real OS ownership, status-line process refresh, transitive pack and durable scratch file action."
+      ]
+    },
+    "proofs-e-release": {
+      "title": "Release and capability observations (PROOFS-e)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Metadata readiness or a scoped proof is mistaken for external execution or a published release",
+          "recovery": "Inspect the observed boundary and use the owning real activation or publication procedure"
+        }
+      ],
+      "frontier": [
+        "No installer build, installation, publication, download or private signing-key provisioning is claimed.",
+        "Enabled plugin metadata and native instruction linkage do not prove external MCP/plugin execution.",
+        "The impact index proves static command wiring; it does not execute backend or desktop commands."
+      ],
+      "guidance": [
+        "Both Ed25519 signatures bind the observed manifest bytes, signing identity and trusted comment",
+        "Release output remains a fresh directory inside the selected repository target; in-tree private key paths are rejected before reading",
+        "Actual artifacts and staged files determine missing-artifact, size, shell-only and forbidden-content failures",
+        "Every current external registry pack retains pinned official source inputs, summed sizes and explicit activation blockers",
+        "Self-check: neyvia verify --area proofs-e-release; scoped actual signing, scanner, metadata and static impact actions.",
+        "Every Vite config evaluation uses the selected checkout physical web root, source alias and build output path"
+      ]
+    }
+  }
+}

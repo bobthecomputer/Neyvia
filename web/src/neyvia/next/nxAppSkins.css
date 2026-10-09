@@ -1,0 +1,460 @@
+/* App skins (nxAppSkinModel.js): each app's window wears colours made from what the app is.
+   NxPlacement sets the skin's --nx-* values on the window; this sheet re-derives the tokens
+   nxTokens.css computes from them (a custom property resolves where it is declared, so the
+   shell's versions would still carry the theme), then adds what each kind of app needs beyond
+   colour: a desk under the PDF pages, a canvas under the studio, a viewport under the 3D scene.
+   The shell chrome around the windows keeps the theme. */
+
+.nx [data-nx-skin] {
+  --nx-state-ok: color-mix(in srgb, var(--nx-green) 70%, transparent);
+  --nx-state-caution: var(--nx-text-2);
+  --nx-caution-soft: color-mix(in srgb, var(--nx-text) 6%, transparent);
+  --nx-caution-line: color-mix(in srgb, var(--nx-text) 22%, transparent);
+  --nx-lift-1: 1px 2px 4px -1px var(--nx-shade);
+  --nx-lift-2: 5px 11px 30px -18px var(--nx-shade);
+  --nx-lift-3: 11px 24px 60px -22px var(--nx-shade);
+  --nx-edge: 0 0 40px -18px var(--nx-shade);
+  /* The theme's atmosphere (leaf light, stars, specks) stays in the shell; an app gets its own quiet light. */
+  --nx-ambient: radial-gradient(900px 420px at 70% -10%, color-mix(in srgb, var(--nx-accent) 7%, transparent), transparent 65%);
+  --nx-ambient-sun: none;
+  --nx-dapple: none;
+  color: var(--nx-text);
+  color-scheme: dark;
+  background: var(--nx-panel);
+}
+.nx [data-nx-skin-tone="light"] { color-scheme: light; }
+/* The window is one surface: the title bar is the app's own top edge, not a theme strip over it. */
+.nx [data-nx-skin] > .nx-stage { background: var(--nx-panel); }
+.nx [data-nx-skin] .nx-stage-head { background: var(--nx-sidebar); border-bottom-color: var(--nx-line); }
+.nx [data-nx-skin] .nx-stage-title strong { color: var(--nx-text); }
+.nx[data-nx-bg] [data-nx-skin] .nx-stage { -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* Light skins inside a dark theme's shell never happen (the tone follows the theme), but a bubble's
+   peek floats over the shell: give it the skin's own lift. */
+.nx .nx-surface[data-nx-skin].is-bubble { background: var(--nx-panel); box-shadow: var(--nx-shadow-pop); }
+
+/* ---------- code: Terminal, file and diff panes ---------- */
+.nx [data-nx-skin="code"] .nx-tp-tabs { background: var(--nx-sidebar); }
+.nx [data-nx-skin="code"] .nx-tp-tab.is-on { background: var(--nx-panel); box-shadow: inset 0 calc(-1 * var(--nx-stroke-strong)) 0 var(--nx-accent-hi); }
+.nx [data-nx-skin="code"] .nx-tp-screen,
+.nx [data-nx-skin="code"] .nx-fp-editor { background: var(--nx-panel); }
+.nx [data-nx-skin="code"] .nx-fp-gutter { background: var(--nx-bg); }
+.nx [data-nx-skin="code"] .nx-tp-hint { color: var(--nx-text-2); }
+
+/* ---------- reader: the PDF desk and its paper ---------- */
+.nx [data-nx-skin="reader"] .nx-pdf-bar { background: var(--nx-panel); }
+.nx [data-nx-skin="reader"] .nx-pdf-scroll {
+  background:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--nx-text) 3%, transparent), transparent 70%),
+    var(--nx-bg);
+}
+.nx [data-nx-skin="reader"][data-nx-skin-tone="light"] .nx-pdf-page {
+  box-shadow: var(--nx-paper-shadow-light);
+}
+.nx [data-nx-skin="reader"] .nx-pdf-marks-list { background: var(--nx-sidebar); }
+
+/* ---------- notebook: warm paper, the note set like a page ---------- */
+.nx [data-nx-skin="notebook"] .nx-notes-list { background: var(--nx-sidebar); }
+.nx [data-nx-skin="notebook"] .nx-notes-editor { background: var(--nx-raised); }
+.nx [data-nx-skin="notebook"] .nx-notes-text,
+.nx [data-nx-skin="notebook"] .nx-notes-preview { max-width: 74ch; margin-inline: auto; font-size: var(--nx-fs-prose); line-height: 1.75; }
+.nx [data-nx-skin="notebook"] .nx-notes-panes.is-split .nx-notes-text,
+.nx [data-nx-skin="notebook"] .nx-notes-panes.is-split .nx-notes-preview { max-width: none; }
+.nx [data-nx-skin="notebook"] .nx-notes-rowtitle { font-family: var(--nx-display); font-size: var(--nx-fs-md); font-weight: var(--nx-display-weight); }
+.nx [data-nx-skin="notebook"] .nx-notes-row.is-on { background: var(--nx-raised); box-shadow: var(--nx-card-shadow); }
+
+/* ---------- finder: Files ---------- */
+.nx [data-nx-skin="finder"] .nx-files-tree { background: var(--nx-sidebar); }
+.nx [data-nx-skin="finder"] .nx-files-row.is-on { background: var(--nx-accent-soft); }
+.nx [data-nx-skin="finder"] .nx-files-node.is-on { background: var(--nx-accent-soft); }
+.nx [data-nx-skin="finder"] .nx-files-look { background: var(--nx-raised); }
+
+/* ---------- web: Browser and App preview ---------- */
+
+.nx [data-nx-skin="web"] .nx-br-bar { background: var(--nx-sidebar); }
+
+/* ---------- studio: a design canvas with a quiet dot grid ---------- */
+.nx [data-nx-skin="studio"] .nx-ms-stage,
+.nx .nx-canvas-dots {
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--nx-text) 9%, transparent) 1px, transparent 1.4px) 0 0 / 18px 18px,
+    radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--nx-accent) 7%, transparent), transparent 62%),
+    var(--nx-bg);
+}
+
+/* ---------- graphite: the 3D viewport ---------- */
+.nx [data-nx-skin="graphite"] .nx-gd-tabs { background: var(--nx-sidebar); }
+.nx [data-nx-skin="graphite"] .nx-gd-frame { background: radial-gradient(120% 90% at 50% 20%, var(--nx-raised), var(--nx-bg) 70%); }
+.nx [data-nx-skin="graphite"][data-nx-skin-tone="light"] .nx-gd-frame { background: radial-gradient(120% 90% at 50% 20%, var(--nx-raised), var(--nx-raised) 75%); }
+
+/* ---------- darkroom: Image Studio on neutral grey ---------- */
+.nx [data-nx-skin="darkroom"] .nx-classic,
+.nx [data-nx-skin="darkroom"] .image-playground-shell { background: var(--nx-bg); color: var(--nx-text); --text: var(--nx-text); --muted: var(--nx-muted); }
+.nx [data-nx-skin="darkroom"] .image-glass-panel { background: var(--nx-raised); border-color: var(--nx-line); box-shadow: var(--nx-card-shadow); }
+
+/* ---------- scholar: CiteCraft and the Notebook ---------- */
+.nx [data-nx-skin="scholar"] .neyvia-native-studio {
+  --studio-border: var(--nx-line); --studio-muted: var(--nx-muted); --studio-panel: var(--nx-raised); --studio-accent: var(--nx-accent-text);
+  background: radial-gradient(70rem 26rem at 72% -8%, color-mix(in srgb, var(--nx-accent) 9%, transparent), transparent 70%), var(--nx-bg);
+  color: var(--nx-text);
+}
+.nx [data-nx-skin] .neyvia-native-studio button,
+.nx [data-nx-skin] .neyvia-studio-back { background: var(--nx-raised); border-color: var(--nx-line-strong); color: var(--nx-text); }
+.nx [data-nx-skin] .neyvia-native-studio button:hover { background: color-mix(in srgb, var(--nx-text) 8%, var(--nx-raised)); }
+
+/* ---------- classic screens in a skin: their literal colours follow the skin ---------- */
+.nx [data-nx-skin] .nx-tool-screen { --text: var(--nx-text); --muted: var(--nx-muted); background: var(--nx-bg); }
+
+/* ---------- loading: a quiet shimmering sketch of text instead of a spinner ---------- */
+.nx :is(.nx-stage-body, .nx-classic) > .nx-stage-loading > .nx-spinner { display: none; }
+.nx :is(.nx-stage-body, .nx-classic) > .nx-stage-loading::before {
+  --bar: color-mix(in srgb, var(--nx-text) 8%, transparent);
+  content: ""; display: block; width: min(440px, 74%); height: 86px; border-radius: var(--nx-r-xs);
+  background:
+    linear-gradient(100deg, transparent 38%, color-mix(in srgb, var(--nx-text) 7%, transparent) 50%, transparent 62%) 0 0 / 300% 100%,
+    linear-gradient(var(--bar), var(--bar)) 0 0 / 40% 14px no-repeat,
+    linear-gradient(var(--bar), var(--bar)) 0 32px / 100% 9px no-repeat,
+    linear-gradient(var(--bar), var(--bar)) 0 53px / 84% 9px no-repeat,
+    linear-gradient(var(--bar), var(--bar)) 0 74px / 58% 9px no-repeat;
+  animation: nx-sheen var(--nx-pulse) var(--nx-ease-loop) infinite;
+}
+@keyframes nx-sheen { from { background-position: 100% 0, 0 0, 0 32px, 0 53px, 0 74px; } to { background-position: 0 0, 0 0, 0 32px, 0 53px, 0 74px; } }
+.nx[data-nx-motion="reduce"] :is(.nx-stage-body, .nx-classic) > .nx-stage-loading::before { animation: none; }
+
+/* ---------- native studios (CiteCraft…) in a skin: their literal whites follow the skin ---------- */
+.nx [data-nx-skin] .neyvia-native-studio :is(input, textarea, select) { background: var(--nx-bg); color: var(--nx-text); border-color: var(--nx-line-strong); }
+.nx [data-nx-skin] .neyvia-native-studio select option { background: var(--nx-raised); color: var(--nx-text); }
+.nx [data-nx-skin] .neyvia-native-studio button.is-primary { background: var(--nx-accent); border-color: var(--nx-accent); color: var(--nx-on-accent); }
+.nx [data-nx-skin] .neyvia-native-studio button.is-primary:hover:not(:disabled) { background: var(--nx-accent-hover); border-color: var(--nx-accent-hover); }
+.nx [data-nx-skin] .neyvia-studio-stat-grid div { background: var(--nx-raised); border-color: var(--nx-line); box-shadow: var(--nx-card-shadow); }
+.nx [data-nx-skin] .neyvia-studio-stat-grid strong { color: var(--nx-text); }
+.nx [data-nx-skin] .neyvia-studio-stat-grid span { color: var(--nx-muted); }
+.nx [data-nx-skin] .neyvia-studio-file-button { background: var(--nx-raised); border-color: var(--nx-line-strong); color: var(--nx-text) !important; }
+.nx [data-nx-skin] .neyvia-studio-logo { background: var(--nx-raised); }
+.nx [data-nx-skin] .neyvia-studio-control-group output { color: var(--nx-text); }
+.nx [data-nx-skin] .neyvia-research-ledger > section { background: var(--nx-raised); border-color: var(--nx-line); box-shadow: var(--nx-card-shadow); }
+.nx [data-nx-skin] .neyvia-studio-header { background: var(--nx-sidebar); }
+.nx [data-nx-skin] .neyvia-studio-rail { background: var(--nx-panel); }
+
+/* Native studios read the window, not the screen: in the side panel or a bubble they stack the way
+   their own stylesheet stacks them on a narrow screen (neyviaNativeStudios.css @media 760px). */
+.nx .nx-tool-screen-studio { container: nxstudio / inline-size; }
+@container nxstudio (max-width: 760px) {
+  .nx .nx-tool-screen-studio .neyvia-studio-header { grid-template-columns: auto auto minmax(0, 1fr); padding: var(--nx-space-12); min-height: 0; }
+  .nx .nx-tool-screen-studio :is(.neyvia-studio-title p, .neyvia-studio-save-state) { display: none; }
+  .nx .nx-tool-screen-studio :is(.neyvia-lumaforge-grid, .neyvia-frameweave-grid, .neyvia-citecraft-grid, .neyvia-aegis-grid, .neyvia-cueledger-grid) { display: flex; flex-direction: column; }
+  .nx .nx-tool-screen-studio .neyvia-studio-rail { border-bottom: 1px solid var(--studio-border); border-right: 0; padding: var(--nx-space-14); }
+  .nx .nx-tool-screen-studio .neyvia-research-ledger { grid-template-columns: minmax(0, 1fr); padding: var(--nx-space-14); gap: var(--nx-space-14); overflow: visible; }
+  .nx .nx-tool-screen-studio .neyvia-studio-stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* Research reads like a journal: section and studio titles in the display serif. */
+.nx [data-nx-skin="scholar"] :is(.neyvia-studio-section-head h2, .neyvia-studio-title h1, .neyvia-studio-title strong) {
+  font-family: var(--nx-display); font-weight: var(--nx-display-weight); letter-spacing: var(--nx-display-tracking);
+}
+.nx [data-nx-skin="scholar"] .neyvia-studio-section-head span { color: var(--nx-accent-text); }
+
+/* Image Playground's classic palette names (imagePlaygroundScoped.css) read the darkroom skin. */
+.nx .nx-tool-screen-image-playground {
+  --text: var(--nx-text); --muted: var(--nx-muted); --line: var(--nx-line);
+  --control-text: var(--nx-text); --control-muted: var(--nx-muted); --control-line: var(--nx-line); --control-line-strong: var(--nx-line-strong);
+  --control-panel: var(--nx-raised); --control-panel-2: var(--nx-raised-2); --control-bg: var(--nx-bg);
+  --control-success: var(--nx-green); --control-warn: var(--nx-amber); --control-danger: var(--nx-red); --ny-text: var(--nx-text);
+}
+/* The playground's one primary action, solid in the skin's accent (its classic gold gradient is gone). */
+.nx .nx-tool-screen-image-playground.nx-tool-screen-image-playground .image-primary-button {
+  background: var(--nx-accent); border-color: var(--nx-accent); color: var(--nx-on-accent); box-shadow: var(--nx-lift-2);
+}
+.nx .nx-tool-screen-image-playground.nx-tool-screen-image-playground .image-primary-button:hover:not(:disabled) { background: var(--nx-accent-hover); border-color: var(--nx-accent-hover); }
+.nx .nx-tool-screen-image-playground.nx-tool-screen-image-playground .image-primary-button svg { color: currentColor; }
+
+/* ---------- Terminal: tabs like a terminal app, a quiet header (status, folder, shell), a prompt from the first frame ---------- */
+.nx [data-nx-skin="code"] .nx-tp-tabs { gap: var(--nx-space-2); min-height: 36px; padding: var(--nx-space-4) var(--nx-space-8) 0; border-bottom: 0; align-items: flex-end; }
+.nx [data-nx-skin="code"] .nx-tp-tab { border-radius: var(--nx-r-sm) var(--nx-r-sm) 0 0; padding-right: var(--nx-space-2); transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease); }
+.nx [data-nx-skin="code"] .nx-tp-tab.is-on { background: var(--nx-panel); box-shadow: none; color: var(--nx-text); }
+.nx [data-nx-skin="code"] .nx-tp-tab > button:first-child { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); }
+.nx .nx-tp-head {
+  flex: none; display: flex; align-items: center; gap: var(--nx-space-8); min-height: 32px; padding: 0 var(--nx-space-14); background: var(--nx-panel);
+  border-bottom: 1px solid var(--nx-line); font-size: var(--nx-fs-xs); color: var(--nx-muted);
+}
+.nx .nx-tp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--nx-faint); flex: none; transition: background var(--nx-med) var(--nx-ease); }
+.nx .nx-tp-dot.is-live { background: var(--nx-green); box-shadow: 0 0 0 var(--nx-ring) color-mix(in srgb, var(--nx-green) 18%, transparent); }
+.nx .nx-tp-dot.is-connecting, .nx .nx-tp-dot.is-reconnecting { background: var(--nx-state-running); animation: nx-tp-breathe var(--nx-pulse) var(--nx-ease-loop) infinite; }
+@keyframes nx-tp-breathe { 50% { opacity: 0.45; } }
+.nx .nx-tp-status { color: var(--nx-text-2); font-weight: 600; }
+.nx .nx-tp-path { list-style: none; margin: 0 0 0 var(--nx-space-4); padding: 0; display: flex; align-items: center; gap: var(--nx-space-2); min-width: 0; overflow: hidden; font-family: var(--nx-mono); }
+.nx .nx-tp-path li { display: inline-flex; align-items: center; gap: var(--nx-space-2); flex: none; white-space: nowrap; color: var(--nx-muted); }
+.nx .nx-tp-path li.is-here { flex: 0 1 auto; min-width: 0; color: var(--nx-text); }
+.nx .nx-tp-path li > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.nx .nx-tp-path .nx-icon { color: var(--nx-faint); }
+.nx .nx-tp-shell { flex: none; padding: var(--nx-space-1) var(--nx-space-8); border-radius: var(--nx-r-pill); font-family: var(--nx-mono); color: var(--nx-text-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx [data-nx-skin="code"] .nx-tp-screen {
+  padding: 0; background:
+    radial-gradient(90% 40% at 50% 0%, color-mix(in srgb, var(--nx-accent) 5%, transparent), transparent 70%),
+    var(--nx-panel);
+}
+.nx [data-nx-skin="code"] .nx-tp-host { inset: 12px 8px 8px 16px; }
+/* The prompt drawn until the shell's first bytes: it wraps like the shell's own line will, and it
+   is the only caret on screen (xterm's own cursor waits at column 0 underneath until then). */
+.nx .nx-tp-ghost {
+  position: absolute; top: 12px; left: 16px; right: 16px; display: block; pointer-events: none;
+  font: var(--nx-fs)/1.2 var(--nx-mono); color: var(--nx-text); white-space: pre-wrap; word-break: break-all; overflow: hidden; animation: nx-fade-in var(--nx-settle) var(--nx-ease) both;
+}
+.nx .nx-tp-ghost i { display: inline-block; vertical-align: text-bottom; width: 8px; height: 15px; background: var(--nx-accent-hi); animation: nx-tp-caret var(--nx-pulse) steps(1) infinite; }
+.nx .nx-tp-screen.is-waiting .xterm-rows { visibility: hidden; }
+@keyframes nx-tp-caret { 50% { opacity: 0; } }
+@keyframes nx-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.nx[data-nx-motion="reduce"] :is(.nx-tp-ghost i, .nx-tp-dot) { animation: none; }
+
+/* ---------- Notes: a notebook page with an example, starters, and recent notes to pick up ---------- */
+.nx .nx-notes-welcome { flex: 1 1 auto; min-height: 0; display: grid; place-items: center; padding: var(--nx-space-28) var(--nx-space-24); container-type: inline-size;
+  background: radial-gradient(80% 60% at 30% 20%, color-mix(in srgb, var(--nx-accent) 6%, transparent), transparent 70%), var(--nx-raised); }
+.nx .nx-notes-welcome-inner { display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 360px); gap: var(--nx-space-40); align-items: center; width: 100%; max-width: 760px; }
+.nx .nx-notes-sheet {
+  position: relative; margin: 0; padding: var(--nx-space-28) var(--nx-space-20) var(--nx-space-24) var(--nx-space-48); border-radius: var(--nx-r-xs) var(--nx-r-xs) var(--nx-r) var(--nx-r-xs);
+  background-color: var(--nx-raised-2);
+  background-image:
+    linear-gradient(90deg, transparent 33px, color-mix(in srgb, var(--nx-accent) 45%, transparent) 33px 34px, transparent 34px),
+    repeating-linear-gradient(180deg, transparent 0 25px, color-mix(in srgb, var(--nx-text) 8%, transparent) 25px 26px);
+  background-position: 0 0, 0 58px; background-size: 100% 100%, 100% calc(100% - 58px); background-repeat: no-repeat;
+  box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line), var(--nx-lift-3);
+  color: var(--nx-text); font-size: var(--nx-fs-prose); line-height: 26px;
+  transition: transform var(--nx-settle) var(--nx-spring-settle);
+  animation: nx-sheet-in var(--nx-settle) var(--nx-spring-settle) both;
+}
+/* The page under it, a little askew: the notebook has more pages. */
+.nx .nx-notes-sheet-wrap { position: relative; }
+.nx .nx-notes-sheet-under {
+  position: absolute; inset: 0; border-radius: var(--nx-r-xs) var(--nx-r-xs) var(--nx-r) var(--nx-r-xs); background-color: var(--nx-raised);
+  box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line), var(--nx-lift-2); transform: rotate(-3deg) translate(-6px, 6px);
+  transition: transform var(--nx-settle) var(--nx-spring-settle);
+}
+.nx .nx-notes-sheet-wrap:hover .nx-notes-sheet { transform: translateY(-2px); }
+.nx .nx-notes-sheet-wrap:hover .nx-notes-sheet-under { transform: rotate(-5deg) translate(-10px, 8px); }
+@keyframes nx-sheet-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.nx .nx-notes-sheet h3 { margin: 0 0 var(--nx-space-6); font: var(--nx-display-weight) var(--nx-fs-xl)/var(--nx-fs-hero) var(--nx-display); letter-spacing: var(--nx-display-tracking); color: var(--nx-text); }
+.nx .nx-notes-sheet ul { margin: 0; padding-left: var(--nx-space-18); }
+.nx .nx-notes-sheet li::marker { color: var(--nx-accent-text); }
+.nx .nx-notes-sheet li.is-done { color: var(--nx-muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--nx-accent) 60%, transparent); }
+.nx .nx-notes-sheet p { margin: 0; color: var(--nx-text-2); }
+.nx .nx-notes-sheet p span { color: var(--nx-accent-text); font-weight: 600; }
+.nx .nx-notes-sheet-tag {
+  position: absolute; top: 8px; right: 10px; padding: 0 var(--nx-space-8); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-2xs); line-height: 18px; font-weight: 600;
+  color: var(--nx-muted); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+}
+.nx .nx-notes-welcome-copy { display: grid; gap: var(--nx-space-12); min-width: 0; animation: nx-fade-in var(--nx-settle) var(--nx-ease) var(--nx-fast) both; }
+.nx .nx-notes-welcome-copy h2 { margin: 0; font: var(--nx-display-weight) var(--nx-fs-title)/1.15 var(--nx-display); letter-spacing: var(--nx-display-tracking); color: var(--nx-text); }
+.nx .nx-notes-welcome-copy > p { margin: 0; color: var(--nx-muted); line-height: 1.55; }
+.nx .nx-notes-welcome-copy code { font-family: var(--nx-mono); font-size: var(--nx-fs-prose); color: var(--nx-accent-text); }
+.nx .nx-notes-starters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--nx-space-8); }
+.nx .nx-notes-starters button {
+  display: flex; align-items: center; gap: var(--nx-space-8); min-height: 38px; padding: 0 var(--nx-space-12); border-radius: var(--nx-r); text-align: left; color: var(--nx-text-2);
+  background: var(--nx-panel); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line), var(--nx-lift-1);
+  transition: transform var(--nx-snappy) var(--nx-spring-snappy), box-shadow var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-notes-starters button:first-child { background: var(--nx-accent); color: var(--nx-on-accent); box-shadow: var(--nx-lift-1); }
+.nx .nx-notes-starters button:hover:not(:disabled) { transform: translateY(-1px); color: var(--nx-text); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-2); }
+.nx .nx-notes-starters button:first-child:hover:not(:disabled) { color: var(--nx-on-accent); background: var(--nx-accent-hover); }
+.nx .nx-notes-starters button:not(:first-child) .nx-icon { color: var(--nx-accent-text); }
+.nx .nx-notes-recent { list-style: none; margin: var(--nx-space-4) 0 0; padding: 0; display: grid; gap: var(--nx-space-6); }
+.nx .nx-notes-recent button { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--nx-space-2) var(--nx-space-10); padding: var(--nx-space-9) var(--nx-space-12); border-radius: var(--nx-r); text-align: left; background: var(--nx-panel); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-notes-recent button:hover { box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-1); }
+.nx .nx-notes-recent strong { font: var(--nx-display-weight) var(--nx-fs-prose)/1.3 var(--nx-display); color: var(--nx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-notes-recent span { grid-column: 1; font-size: var(--nx-fs-xs); color: var(--nx-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-notes-recent small { grid-row: 1; grid-column: 2; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-notes-welcome-hint { display: flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-sm); }
+.nx .nx-notes-welcome-folder { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); color: var(--nx-muted) !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-notes-listempty { margin-top: var(--nx-space-40); }
+@container (max-width: 640px) {
+  .nx .nx-notes-welcome-inner { grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-20); max-width: 380px; }
+  .nx .nx-notes-sheet { padding: var(--nx-space-20) var(--nx-space-16) var(--nx-space-18) var(--nx-space-40); }
+}
+.nx[data-nx-motion="reduce"] :is(.nx-notes-sheet, .nx-notes-welcome-copy) { animation: none; }
+
+/* ---------- Files: kind tiles, a folder header, a grid with thumbnails, an inviting empty folder ---------- */
+.nx [data-nx-skin="finder"] { --kind-folder: #6ea8f7; --kind-image: #f08fb0; --kind-pdf: #f0807a; --kind-notes: #e6a173; --kind-text: #7fcfe6; --kind-file: #a4abb6; }
+.nx [data-nx-skin="finder"][data-nx-skin-tone="light"] { --kind-folder: #1f6fd1; --kind-image: #b8326a; --kind-pdf: #b7372e; --kind-notes: #a5501f; --kind-text: #0a6d85; --kind-file: #5b616b; }
+.nx .nx-files-tile {
+  --kind: var(--kind-file, var(--nx-muted));
+  position: relative; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: var(--nx-r-xs); overflow: hidden; flex: none;
+  color: var(--kind); background: color-mix(in srgb, var(--kind) 15%, transparent);
+}
+.nx .nx-files-tile.is-folder { --kind: var(--kind-folder, var(--nx-accent-text)); }
+.nx .nx-files-tile.is-image { --kind: var(--kind-image, var(--nx-accent-text)); }
+.nx .nx-files-tile.is-pdf { --kind: var(--kind-pdf, var(--nx-red)); }
+.nx .nx-files-tile.is-notes { --kind: var(--kind-notes, var(--nx-accent-text)); }
+.nx .nx-files-tile.is-text { --kind: var(--kind-text, var(--nx-accent-text)); }
+.nx .nx-files-tile .nx-files-glyph { color: inherit; }
+.nx .nx-files-tile.is-big { width: 36px; height: 36px; border-radius: var(--nx-r); }
+.nx [data-nx-skin="finder"] .nx-files-row { grid-template-columns: 22px minmax(0, 1fr) 64px 64px; height: 34px; gap: var(--nx-space-10); }
+.nx .nx-files-head { flex: none; display: flex; align-items: center; gap: var(--nx-space-12); padding: var(--nx-space-14) var(--nx-space-16) var(--nx-space-6); }
+.nx .nx-files-head h2 { margin: 0; font-size: var(--nx-fs-lg); font-weight: 600; color: var(--nx-text); }
+.nx .nx-files-head p { margin: var(--nx-space-1) 0 0; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-files-list { animation: nx-fade-in var(--nx-med) var(--nx-ease) both; }
+.nx .nx-files-list.is-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); grid-auto-rows: max-content; align-content: start; gap: var(--nx-space-8); padding: var(--nx-space-8) var(--nx-space-12) var(--nx-space-24); }
+.nx .nx-files-list.is-grid .nx-files-row {
+  height: auto; display: grid; grid-template-columns: 1fr; justify-items: center; gap: var(--nx-space-6); padding: var(--nx-space-10) var(--nx-space-8) var(--nx-space-8); border-radius: var(--nx-r); text-align: center;
+  transition: background var(--nx-fast) var(--nx-ease), transform var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-files-list.is-grid .nx-files-row:hover { transform: translateY(-1px); }
+.nx .nx-files-list.is-grid .nx-files-tile { width: 100%; height: auto; aspect-ratio: 4 / 3; border-radius: var(--nx-r); }
+.nx .nx-files-list.is-grid .nx-files-name { width: 100%; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: var(--nx-fs-sm); line-height: 1.3; }
+.nx .nx-files-list.is-grid :is(.nx-files-time, .nx-files-size) { display: none; }
+.nx .nx-files-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity var(--nx-settle) var(--nx-ease); }
+.nx .nx-files-thumb.is-ready { opacity: 1; }
+.nx .nx-files-thumb.is-ready + .nx-files-glyph { opacity: 0; }
+.nx .nx-files-empty { margin: auto; padding: var(--nx-space-32) var(--nx-space-20); display: grid; justify-items: center; gap: var(--nx-space-8); max-width: 360px; text-align: center; animation: nx-fade-in var(--nx-settle) var(--nx-ease) both; }
+.nx .nx-files-empty strong { color: var(--nx-text); font-size: var(--nx-fs-md); }
+.nx .nx-files-empty p { margin: 0; color: var(--nx-muted); font-size: var(--nx-fs-sm); line-height: 1.5; }
+.nx .nx-files-empty-art {
+  display: grid; place-items: center; width: 96px; height: 72px; margin-bottom: var(--nx-space-6); border-radius: var(--nx-r-lg); color: var(--kind-folder, var(--nx-accent-text));
+  background: color-mix(in srgb, var(--kind-folder, var(--nx-accent)) 10%, transparent); box-shadow: inset 0 0 0 var(--nx-stroke-icon) color-mix(in srgb, var(--kind-folder, var(--nx-accent)) 35%, transparent);
+  outline: 1.5px dashed color-mix(in srgb, var(--nx-text) 16%, transparent); outline-offset: 8px;
+}
+.nx .nx-files-skeleton { display: grid; gap: var(--nx-space-8); padding: var(--nx-space-10) var(--nx-space-8); }
+.nx .nx-files-skeleton span {
+  height: 22px; border-radius: var(--nx-r-xs); background: linear-gradient(100deg, color-mix(in srgb, var(--nx-text) 5%, transparent) 40%, color-mix(in srgb, var(--nx-text) 11%, transparent) 50%, color-mix(in srgb, var(--nx-text) 5%, transparent) 60%) 0 0 / 300% 100%;
+  animation: nx-sheen var(--nx-pulse) var(--nx-ease-loop) infinite;
+}
+.nx .nx-files-skeleton span:nth-child(odd) { width: 72%; } .nx .nx-files-skeleton span:nth-child(even) { width: 54%; }
+.nx[data-nx-motion="reduce"] :is(.nx-files-list, .nx-files-empty, .nx-files-skeleton span) { animation: none; }
+
+/* ---------- PDF: a desk with a stack of paper waiting, recent documents, pages that rest on it ---------- */
+.nx [data-nx-skin="reader"] .nx-pdf-scroll {
+  background:
+    radial-gradient(120% 90% at 50% 10%, color-mix(in srgb, var(--nx-text) 4%, transparent), transparent 65%),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--nx-text) 1.6%, transparent) 0 1px, transparent 1px 5px),
+    radial-gradient(140% 110% at 50% 50%, transparent 55%, color-mix(in srgb, var(--nx-bg) 22%, transparent) 100%),
+    var(--nx-bg);
+}
+.nx [data-nx-skin="reader"][data-nx-skin-tone="light"] .nx-pdf-scroll {
+  background:
+    radial-gradient(120% 90% at 50% 10%, color-mix(in srgb, var(--nx-text) 50%, transparent), transparent 65%),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--nx-bg) 3%, transparent) 0 1px, transparent 1px 5px),
+    radial-gradient(140% 110% at 50% 50%, transparent 60%, color-mix(in srgb, var(--nx-bg) 12%, transparent) 100%),
+    var(--nx-bg);
+}
+.nx [data-nx-skin="reader"] .nx-pdf-page { animation: nx-page-in var(--nx-settle) var(--nx-spring-settle) both; }
+@keyframes nx-page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.nx .nx-pdf-welcome { display: grid; justify-items: center; gap: var(--nx-space-10); max-width: 400px; text-align: center; animation: nx-fade-in var(--nx-settle) var(--nx-ease) both; }
+.nx .nx-pdf-welcome > strong { font: var(--nx-display-weight) var(--nx-fs-title)/1.2 var(--nx-display); letter-spacing: var(--nx-display-tracking); color: var(--nx-text); }
+.nx .nx-pdf-welcome > p { margin: 0 0 var(--nx-space-4); color: var(--nx-muted); line-height: 1.55; }
+.nx .nx-pdf-stack { position: relative; width: 150px; height: 188px; margin-bottom: var(--nx-space-14); }
+.nx .nx-pdf-stack > i {
+  position: absolute; inset: 0; border-radius: var(--nx-r-xxs); background: var(--nx-raised);
+  box-shadow: var(--nx-lift-2);
+  transition: transform var(--nx-settle) var(--nx-spring-settle);
+}
+.nx .nx-pdf-stack > i:nth-child(1) { transform: rotate(-7deg) translate(-12px, 6px); background: var(--nx-raised); }
+.nx .nx-pdf-stack > i:nth-child(2) { transform: rotate(4deg) translate(10px, 2px); background: var(--nx-raised); }
+.nx .nx-pdf-stack > i:nth-child(3) { display: grid; align-content: start; gap: var(--nx-space-9); padding: var(--nx-space-20) var(--nx-space-18); }
+.nx .nx-pdf-welcome:hover .nx-pdf-stack > i:nth-child(1) { transform: rotate(-10deg) translate(-20px, 8px); }
+.nx .nx-pdf-welcome:hover .nx-pdf-stack > i:nth-child(2) { transform: rotate(7deg) translate(18px, 2px); }
+.nx .nx-pdf-stack b { display: block; height: 5px; border-radius: var(--nx-r-xxs); background: color-mix(in srgb, var(--nx-bg) 14%, transparent); }
+.nx .nx-pdf-stack b:first-child { height: 9px; width: 70%; background: color-mix(in srgb, var(--nx-bg) 28%, transparent); margin-bottom: var(--nx-space-6); }
+.nx .nx-pdf-stack b:nth-child(3) { width: 88%; } .nx .nx-pdf-stack b:nth-child(5) { width: 60%; }
+.nx .nx-pdf-recent { list-style: none; margin: var(--nx-space-12) 0 0; padding: 0; display: grid; gap: var(--nx-space-6); width: min(340px, 100%); text-align: left; }
+.nx .nx-pdf-recent button { width: 100%; display: flex; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-8) var(--nx-space-10); border-radius: var(--nx-r); background: var(--nx-panel); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-pdf-recent button:hover { box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-1); }
+.nx .nx-pdf-recent-page { width: 22px; height: 28px; flex: none; border-radius: var(--nx-r-xxs); background: var(--nx-raised); box-shadow: var(--nx-stroke) var(--nx-stroke) var(--nx-ring) var(--nx-scrim); }
+.nx .nx-pdf-recent span:last-child { display: grid; min-width: 0; }
+.nx .nx-pdf-recent strong { color: var(--nx-text); font-size: var(--nx-fs-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-pdf-recent small { color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.nx[data-nx-motion="reduce"] :is(.nx-pdf-welcome, .nx-pdf-page) { animation: none; }
+
+/* ---------- Research (CiteCraft): index cards for sources, numbered claims, journal type, an example to start from ---------- */
+.nx [data-nx-skin="scholar"] :is(.neyvia-research-list, .neyvia-claim-list) { gap: var(--nx-space-10); }
+.nx [data-nx-skin="scholar"] :is(.neyvia-research-list, .neyvia-claim-list) li {
+  padding: var(--nx-space-12) var(--nx-space-12) var(--nx-space-12) var(--nx-space-14); border: 0; border-radius: var(--nx-r); background: var(--nx-panel);
+  box-shadow: inset var(--nx-ring) 0 0 color-mix(in srgb, var(--nx-accent) 70%, transparent), 0 0 0 var(--nx-stroke) var(--nx-line), var(--nx-lift-1);
+  animation: nx-fade-in var(--nx-settle) var(--nx-ease) both;
+}
+.nx [data-nx-skin="scholar"] :is(.neyvia-research-list, .neyvia-claim-list) strong { font: var(--nx-display-weight) var(--nx-fs-prose)/1.35 var(--nx-display); color: var(--nx-text); }
+.nx [data-nx-skin="scholar"] :is(.neyvia-research-list, .neyvia-claim-list) small { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx [data-nx-skin="scholar"] .neyvia-research-list p { font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx [data-nx-skin="scholar"] .neyvia-research-list li > svg { color: var(--nx-accent-text); margin-top: var(--nx-space-2); }
+.nx [data-nx-skin="scholar"] .neyvia-claim-list li > span { font: var(--nx-display-weight) var(--nx-fs-xl)/1 var(--nx-display); color: var(--nx-accent-text); }
+.nx [data-nx-skin="scholar"] .neyvia-claim-list li[data-linked="false"] { box-shadow: inset var(--nx-ring) 0 0 var(--nx-state-needs), 0 0 0 var(--nx-stroke) var(--nx-line), var(--nx-lift-1); }
+.nx [data-nx-skin="scholar"] .neyvia-claim-list li[data-linked="false"] > span, .nx [data-nx-skin="scholar"] .neyvia-claim-list li[data-linked="false"] small { color: var(--nx-gold); }
+.nx [data-nx-skin="scholar"] .neyvia-research-example { opacity: 0.62; box-shadow: inset var(--nx-ring) 0 0 color-mix(in srgb, var(--nx-accent) 40%, transparent), 0 0 0 var(--nx-stroke) var(--nx-line) !important; background: transparent !important; }
+.nx [data-nx-skin="scholar"] .neyvia-research-example { outline: 1px dashed var(--nx-line-strong); outline-offset: -1px; }
+.nx [data-nx-skin="scholar"] .neyvia-studio-message { display: flex; align-items: center; flex-wrap: wrap; gap: var(--nx-space-10); font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx [data-nx-skin="scholar"] .neyvia-native-studio .neyvia-research-try { min-height: 30px; padding: var(--nx-space-4) var(--nx-space-12); border-radius: var(--nx-r-pill); background: var(--nx-accent); border-color: var(--nx-accent); color: var(--nx-on-accent); font-weight: 600; }
+.nx [data-nx-skin="scholar"] .neyvia-native-studio .neyvia-research-try:hover { background: var(--nx-accent-hover); }
+.nx [data-nx-skin="scholar"] .neyvia-studio-stat-grid strong { font: var(--nx-display-weight) var(--nx-fs-title)/1.1 var(--nx-display); }
+.nx [data-nx-skin="scholar"] .neyvia-studio-stat-grid span { font-size: var(--nx-fs-xs); }
+.nx [data-nx-skin="scholar"] .neyvia-research-ledger > section { padding: var(--nx-space-20); }
+.nx [data-nx-skin="scholar"] .neyvia-studio-rail label { font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+
+/* ---------- Image Studio: a quiet gallery wall, thumbnails that load gracefully, neutral actions ---------- */
+.nx .nx-tool-screen-image-playground .image-thumb {
+  position: relative; aspect-ratio: 16 / 10; border-radius: var(--nx-r-sm); overflow: hidden; background: var(--nx-bg);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+}
+.nx .nx-tool-screen-image-playground .image-thumb[data-state="loading"] {
+  background: linear-gradient(100deg, var(--nx-bg) 40%, color-mix(in srgb, var(--nx-text) 8%, var(--nx-bg)) 50%, var(--nx-bg) 60%) 0 0 / 300% 100%;
+  animation: nx-sheen var(--nx-pulse) var(--nx-ease-loop) infinite;
+}
+.nx .nx-tool-screen-image-playground .image-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0; opacity: 0; transition: opacity var(--nx-settle) var(--nx-ease), transform var(--nx-settle) var(--nx-spring-settle); }
+.nx .nx-tool-screen-image-playground .image-thumb[data-state="ready"] img { opacity: 1; }
+.nx .nx-tool-screen-image-playground .image-library-card:hover .image-thumb[data-state="ready"] img { transform: scale(1.03); }
+.nx .nx-tool-screen-image-playground .image-thumb-missing {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: var(--nx-space-8); color: var(--nx-muted);
+  background: radial-gradient(90% 80% at 50% 30%, color-mix(in srgb, var(--nx-text) 5%, transparent), transparent 70%);
+}
+.nx .nx-tool-screen-image-playground .image-thumb-missing small { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-tool-screen-image-playground .image-library-card {
+  background: var(--nx-raised); border-color: var(--nx-line); box-shadow: var(--nx-card-shadow);
+  transition: transform var(--nx-snappy) var(--nx-spring-snappy), box-shadow var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-tool-screen-image-playground .image-library-card:hover { transform: translateY(-2px); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-2); }
+.nx .nx-tool-screen-image-playground .image-library-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--nx-space-12); }
+.nx .nx-tool-screen-image-playground .image-playground-hero h1,
+.nx .nx-tool-screen-image-playground .image-simple-generator h1 { font-family: var(--nx-display); font-weight: var(--nx-display-weight); letter-spacing: var(--nx-display-tracking); font-size: var(--nx-fs-title); }
+.nx .nx-tool-screen-image-playground .image-library-head h2 { font-family: var(--nx-display); font-weight: var(--nx-display-weight); font-size: var(--nx-fs-xl); }
+.nx[data-nx-motion="reduce"] .nx-tool-screen-image-playground .image-thumb[data-state="loading"] { animation: none; }
+
+/* ---------- Browser start page: a calm page of its own (no theme glow), a greeting, places to start ---------- */
+.nx [data-nx-skin="web"] .nx-br-start {
+  background: radial-gradient(80% 50% at 50% 0%, color-mix(in srgb, var(--nx-accent) 8%, transparent), transparent 70%), var(--nx-bg);
+}
+.nx .nx-br-start-title { margin: 0 0 calc(-1 * var(--nx-space-6)); text-align: center; font: var(--nx-display-weight) var(--nx-fs-hero)/1.15 var(--nx-display); letter-spacing: var(--nx-display-tracking); color: var(--nx-text); animation: nx-fade-in var(--nx-settle) var(--nx-ease) both; }
+.nx .nx-br-start-tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: var(--nx-space-10); }
+.nx .nx-br-start-tiles button {
+  width: 100%; display: grid; justify-items: start; gap: var(--nx-space-8); padding: var(--nx-space-12); border-radius: var(--nx-r); text-align: left; background: var(--nx-raised);
+  box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line), var(--nx-lift-1); transition: transform var(--nx-snappy) var(--nx-spring-snappy), box-shadow var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-br-start-tiles button:hover { transform: translateY(-2px); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-2); }
+.nx .nx-br-start-tiles strong { color: var(--nx-text); font-size: var(--nx-fs); }
+.nx .nx-br-start-tiles small { color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.nx .nx-br-start-tiles + .nx-br-start-note { margin-top: var(--nx-space-12); }
+
+/* ---------- Apps agents are using: an idle screen that shows what the view is for ---------- */
+.nx .nx-pv-idle { margin: auto; padding: var(--nx-space-32) var(--nx-space-20); max-width: 460px; display: grid; justify-items: center; gap: var(--nx-space-10); text-align: center; animation: nx-fade-in var(--nx-settle) var(--nx-ease) both; }
+.nx .nx-pv-idle > strong { font: var(--nx-display-weight) var(--nx-fs-title)/1.2 var(--nx-display); letter-spacing: var(--nx-display-tracking); color: var(--nx-text); }
+.nx .nx-pv-idle > p { margin: 0; color: var(--nx-muted); line-height: 1.55; }
+.nx .nx-pv-idle-reason { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); padding: var(--nx-space-8) var(--nx-space-10); border-radius: var(--nx-r-sm); background: var(--nx-raised); color: var(--nx-text-2) !important; overflow-wrap: anywhere; }
+.nx .nx-pv-idle-actions { display: flex; gap: var(--nx-space-8); flex-wrap: wrap; justify-content: center; margin-top: var(--nx-space-4); }
+.nx .nx-pv-idle-art { position: relative; width: 220px; height: 140px; margin-bottom: var(--nx-space-10); }
+.nx .nx-pv-idle-win {
+  position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 8px) 1fr; grid-template-rows: 22px repeat(3, 14px); gap: var(--nx-space-10) var(--nx-space-5); align-content: start;
+  padding: 0 0 0 0; border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-3); overflow: hidden;
+}
+.nx .nx-pv-idle-win i { width: 8px; height: 8px; margin: var(--nx-space-7) 0 0 var(--nx-space-9); border-radius: 50%; background: var(--nx-line-strong); }
+.nx .nx-pv-idle-win b { grid-column: 1 / -1; height: 14px; margin: 0 var(--nx-space-16); border-radius: var(--nx-r-xs); background: color-mix(in srgb, var(--nx-text) 8%, transparent); }
+.nx .nx-pv-idle-win b:nth-of-type(2) { margin-right: var(--nx-space-64); }
+.nx .nx-pv-idle-win b.is-target { margin-right: var(--nx-preview-target-offset); background: color-mix(in srgb, var(--nx-accent) 22%, transparent); box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi); animation: nx-pv-target var(--nx-breathe) var(--nx-ease-loop) infinite; }
+@keyframes nx-pv-target { 50% { box-shadow: 0 0 0 var(--nx-halo) color-mix(in srgb, var(--nx-accent-hi) 50%, transparent); } }
+.nx .nx-pv-idle-cursor {
+  position: absolute; left: 112px; top: 104px; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 16px solid var(--nx-text);
+  transform: rotate(-28deg); filter: drop-shadow(1px 2px 2px var(--nx-scrim)); animation: nx-pv-cursor var(--nx-breathe) var(--nx-ease) infinite;
+}
+@keyframes nx-pv-cursor { 0%, 100% { translate: 14px 10px; } 50% { translate: 0 0; } }
+.nx[data-nx-motion="reduce"] :is(.nx-pv-idle-cursor, .nx-pv-idle-win b.is-target, .nx-pv-idle) { animation: none; }
+/* A note reads like a page: its headings in the display face. */
+.nx [data-nx-skin="notebook"] .nx-notes-preview :is(h1, h2, h3) { font-family: var(--nx-display); font-weight: var(--nx-display-weight); letter-spacing: var(--nx-display-tracking); color: var(--nx-text); }
+.nx [data-nx-skin="notebook"] .nx-notes-preview h1 { font-size: var(--nx-fs-title); line-height: 1.2; }
+/* Beside the chat the ledger has room for one column of cards, not two cramped ones. */
+@container nxstudio (max-width: 1100px) {
+  .nx .nx-tool-screen-studio .neyvia-research-ledger { grid-template-columns: minmax(0, 1fr); }
+}
+.nx [data-nx-skin="scholar"] .neyvia-research-list strong { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.nx .nx-tool-screen-image-playground.nx-tool-screen-image-playground .image-primary-button { white-space: nowrap; }

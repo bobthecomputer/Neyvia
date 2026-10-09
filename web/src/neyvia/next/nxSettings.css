@@ -1,0 +1,120 @@
+/* Settings page (NxSettings, NxSettingsParts): one page of cards on the
+   Accounts layout (nx-ac-*). Tokens only; the row/hint basics live in nxSidebar.css. */
+
+.nx .nx-set .nx-ac-inner { padding-top: var(--nx-space-12); scroll-padding-top: 56px; }
+.nx .nx-set .nx-set-card { scroll-margin-top: 52px; }
+
+/* Jump row: stays at the top of the page while it scrolls. */
+.nx .nx-set-nav {
+  position: sticky; top: 0; z-index: 2; display: flex; gap: var(--nx-space-4); overflow-x: auto; scrollbar-width: none;
+  margin: 0 calc(-1 * var(--nx-space-4)); padding: var(--nx-space-6) var(--nx-space-4); background: var(--nx-panel);
+}
+.nx .nx-set-nav::-webkit-scrollbar { display: none; }
+.nx .nx-set-nav button {
+  flex: none; height: 28px; padding: 0 var(--nx-space-11); border-radius: var(--nx-r-pill); white-space: nowrap;
+  font-size: var(--nx-fs-sm); font-weight: 500; color: var(--nx-text-2);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-set-nav button:hover { color: var(--nx-text); background: var(--nx-hover); }
+
+/* Rows: a label (with an optional hint) and its control; the control wraps under on narrow screens. */
+.nx .nx-set .nx-set-row > span:first-child { flex: 1 1 200px; min-width: 0; color: var(--nx-text); font-weight: 500; }
+.nx .nx-set .nx-set-row > span:first-child .nx-set-hint { font-weight: 400; }
+.nx .nx-set .nx-set-row .nx-seg { flex-wrap: wrap; max-width: 100%; }
+.nx .nx-set .nx-set-hint { color: var(--nx-muted); font-size: var(--nx-fs-xs); line-height: 1.45; }
+.nx .nx-set-explain {
+  padding: var(--nx-space-8) var(--nx-space-10); border-radius: var(--nx-r-sm); font-size: var(--nx-fs-sm); line-height: 1.45; color: var(--nx-text-2);
+  background: color-mix(in srgb, var(--nx-text) 4%, transparent);
+}
+
+.nx .nx-set-facts, .nx .nx-set-list, .nx .nx-set-programs, .nx .nx-set-result ul { margin: 0; padding: 0; list-style: none; }
+
+/* Per-project initiative. */
+.nx .nx-set-sub { display: grid; gap: var(--nx-space-8); padding-top: var(--nx-space-10); box-shadow: inset 0 var(--nx-stroke) 0 var(--nx-line); }
+.nx .nx-set-sub > strong { font-size: var(--nx-fs-sm); font-weight: 600; color: var(--nx-text); }
+.nx .nx-set-list { display: grid; gap: var(--nx-space-6); }
+.nx .nx-set-list li { display: flex; align-items: center; gap: var(--nx-space-8); flex-wrap: wrap; }
+.nx .nx-set-path { flex: 1 1 160px; min-width: 0; display: grid; gap: var(--nx-space-1); font-size: var(--nx-fs-sm); color: var(--nx-text); }
+.nx .nx-set-path small { font: var(--nx-fs-xs) var(--nx-mono); color: var(--nx-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-set-add { display: flex; gap: var(--nx-space-8); flex-wrap: wrap; align-items: center; }
+.nx .nx-set-select { flex: 1 1 220px; min-width: 0; display: flex; }
+.nx .nx-set-select .nx-input { width: 100%; min-width: 0; height: 30px; }
+
+/* Night Shift: the plan hold first, the rest as plain facts. */
+.nx .nx-set-hold {
+  display: flex; align-items: center; gap: var(--nx-space-12); padding: var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r);
+  background: color-mix(in srgb, var(--nx-text) 4%, transparent);
+}
+.nx .nx-set-hold-value {
+  flex: none; min-width: 58px; font: 500 var(--nx-fs-xl)/1 var(--nx-display); color: var(--nx-text); font-variant-numeric: tabular-nums;
+}
+.nx .nx-set-hold > span:last-child { display: grid; gap: var(--nx-space-2); min-width: 0; font-size: var(--nx-fs-sm); color: var(--nx-text); }
+.nx .nx-set-hold small { font-size: var(--nx-fs-xs); color: var(--nx-muted); line-height: 1.45; }
+.nx .nx-set-facts { display: flex; flex-wrap: wrap; gap: var(--nx-space-6); }
+.nx .nx-set-facts li {
+  display: inline-flex; align-items: center; height: 24px; padding: 0 var(--nx-space-9); border-radius: var(--nx-r-pill);
+  font-size: var(--nx-fs-xs); color: var(--nx-text-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+}
+.nx .nx-set-facts li.is-paused { color: var(--nx-state-caution); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-caution-line); }
+.nx .nx-set .nx-ns-budget { animation: none; box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); background: var(--nx-panel); }
+
+/* Local-only. */
+.nx .nx-set-switch {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-14); padding: var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r);
+  background: color-mix(in srgb, var(--nx-text) 4%, transparent); cursor: pointer;
+}
+.nx .nx-set-switch > span { display: grid; gap: var(--nx-space-2); min-width: 0; }
+.nx .nx-set-switch strong { font-size: var(--nx-fs-sm); font-weight: 600; color: var(--nx-text); }
+.nx .nx-set-switch small { font-size: var(--nx-fs-xs); color: var(--nx-muted); line-height: 1.45; }
+.nx .nx-set input[type="checkbox"][role="switch"] {
+  appearance: none; flex: none; position: relative; width: 36px; height: 20px; border-radius: var(--nx-r-pill); cursor: pointer;
+  background: var(--nx-line-strong); transition: background var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-set input[type="checkbox"][role="switch"]::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--nx-raised-2); box-shadow: var(--nx-lift-1); transition: transform var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-set input[type="checkbox"][role="switch"]:checked { background: var(--nx-accent); }
+.nx .nx-set input[type="checkbox"][role="switch"]:checked::after { transform: translateX(16px); background: var(--nx-on-accent); }
+.nx .nx-set input[type="checkbox"][role="switch"]:disabled { opacity: 0.55; cursor: default; }
+.nx .nx-set-card.is-local .nx-set-switch { background: var(--nx-accent-soft); }
+.nx .nx-set-card.is-local .nx-set-switch strong { color: var(--nx-accent-text); }
+
+.nx .nx-set-wait {
+  display: grid; gap: var(--nx-space-8); padding: var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r);
+  background: var(--nx-caution-soft); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-caution-line);
+  font-size: var(--nx-fs-sm); color: var(--nx-text); line-height: 1.45;
+}
+.nx .nx-set-programs { display: flex; flex-wrap: wrap; gap: var(--nx-space-6) var(--nx-space-14); }
+.nx .nx-set-programs li { display: inline-flex; align-items: center; gap: var(--nx-space-6); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+
+.nx .nx-set-check { display: grid; gap: var(--nx-space-10); padding-top: var(--nx-space-10); box-shadow: inset 0 var(--nx-stroke) 0 var(--nx-line); }
+.nx .nx-set-check .nx-set-row > span:first-child { display: grid; gap: var(--nx-space-2); }
+.nx .nx-set-result { display: grid; gap: var(--nx-space-8); }
+.nx .nx-set-result > strong { font-size: var(--nx-fs-sm); font-weight: 600; }
+.nx .nx-set-result > strong small { font-weight: 400; color: var(--nx-muted); }
+.nx .nx-set-result > strong.is-ok { color: var(--nx-state-ok); }
+.nx .nx-set-result > strong.is-bad { color: var(--nx-state-error); }
+.nx .nx-set-result ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--nx-space-4) var(--nx-space-14); }
+.nx .nx-set-result li { display: flex; align-items: center; gap: var(--nx-space-7); min-width: 0; font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-set-result li > span { flex: 1 1 auto; min-width: 0; }
+.nx .nx-set-result li em { font-style: normal; font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-set-result li.is-ok svg { color: var(--nx-state-ok); }
+.nx .nx-set-result li.is-bad, .nx .nx-set-result li.is-bad svg { color: var(--nx-state-error); }
+
+@media (max-width: 760px) {
+  .nx .nx-set .nx-ac-inner { padding: var(--nx-space-8) var(--nx-space-12) var(--nx-space-32); }
+  .nx .nx-set .nx-ac-card { padding: var(--nx-space-14); }
+  .nx .nx-set .nx-set-row .nx-seg { width: 100%; }
+}
+
+/* Settings > Voice: provider radios */
+.nx-set-providers { display: grid; gap: var(--nx-space-8); margin: var(--nx-space-4) 0 var(--nx-space-10); }
+.nx-set-provider { display: flex; gap: var(--nx-space-10); align-items: flex-start; padding: var(--nx-space-10) var(--nx-space-12); border: 1px solid var(--nx-line); border-radius: var(--nx-r); cursor: pointer; }
+.nx-set-provider.is-selected { border-color: var(--nx-accent); }
+.nx-set-provider.is-unavailable { opacity: .72; cursor: default; }
+.nx-set-provider input { margin-top: var(--nx-space-3); }
+.nx-set-provider small { display: block; opacity: .8; margin-top: var(--nx-space-2); }
+.nx-set-provider .nx-set-why { opacity: 1; color: var(--nx-state-caution); }
+.nx-set-badge { font-style: normal; font-size: var(--nx-fs-xs); margin-left: var(--nx-space-8); padding: var(--nx-space-1) var(--nx-space-7); border-radius: var(--nx-r-pill); border: 1px solid currentColor; opacity: .75; }

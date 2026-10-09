@@ -1,0 +1,35 @@
+{
+  "schema": "neyvia.proofs.outcomes.v1",
+  "area": "installer-extra",
+  "module": "grant_agent.proofs_installer_extra",
+  "self_check": "self_check",
+  "manuals": ["slim-installer"],
+  "contracts": [
+    {
+      "id": "p22.onboarding.first-run-snapshot",
+      "phase": "post",
+      "claim": "The production first-run snapshot projects the complete validated app/pack catalog and available statuses; an unsigned external pack remains visibly failed but retryable, an actual local portable package remains stageable with every source byte bound to its manifest, and valid saved choices appear in the next snapshot without changing delivery state.",
+      "checkedAt": [
+        "grant_agent.proofs_installer_extra.self_check",
+        "grant_agent.neyvia_onboarding.snapshot",
+        "grant_agent.neyvia_onboarding.load_catalog",
+        "grant_agent.neyvia_onboarding.pack_status",
+        "grant_agent.neyvia_onboarding.save_state",
+        "grant_agent.proofs_d_onboarding.check_catalog",
+        "grant_agent.proofs_d_onboarding.check_pack_status",
+        "grant_agent.proofs_d_onboarding.check_saved",
+        "config/onboarding_packs/pack.ocr-local/manifest.json",
+        "config/onboarding_packs/pack.creator-sdk/manifest.json",
+        "config/onboarding_packs/pack.creator-sdk/package.json",
+        "web/src/neyvia/next/nxOnboardingModel.js:packView",
+        "web/src/neyvia/next/NxOnboardingPacks.jsx:PacksSection"
+      ],
+      "impact": [
+        "first-run onboarding snapshot",
+        "retryable add-on readiness",
+        "local portable package inventory",
+        "durable setup choices"
+      ]
+    }
+  ]
+}

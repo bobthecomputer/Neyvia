@@ -1,0 +1,9 @@
+<!-- Generated from manuals/cl/coverage-ratchet.cl; edit that source, then run scripts/cl_compile_manuals.py and scripts/render_manuals.py. -->
+# coverage-ratchet
+
+## overview
+CL 1
+L coverage-ratchet v1 -- Monotonic release coverage and separate static web reachability
+-- @proof {"checkedAt":["grant_agent.contract_ratchet.evaluate","grant_agent.contract_ratchet.validate_baseline","grant_agent.contract_gate.baseline_bindings","grant_agent.proofs_ratchet.self_check"],"claim":"A committed source-bound coverage baseline admits existing debt only: new paths, restored retired debt, expanded baselines, failed or stale outcomes and missing runners refuse release; the original coverage reference cannot change.","id":"p22.coverage-ratchet.monotonic","impact":["Release admission and published coverage debt"],"phase":"post"}
+-- @proof {"checkedAt":["grant_agent.contract_web_reach.analyze","grant_agent.contract_web_reach.is_fresh","grant_agent.proofs_web_reach.self_check","scripts/p22_js_imports.cjs"],"claim":"Only passing source-bound UI journeys seed a static import graph: disconnected files earn no credit, failed or stale journeys fail closed, and edits or newly resolved imports invalidate reuse. This weaker evidence stays separate from execution coverage.","id":"p22.static-web-reach","impact":["Static web reachability from observed UI outcome entries"],"phase":"post"}
+-- @proof {"checkedAt":["grant_agent.contract_build_cache.save","grant_agent.contract_build_cache.load","grant_agent.contract_build_cache.source_paths","grant_agent.proofs_build_cache.self_check"],"claim":"A successful source-stable Vite receipt may be reused only while every declared source input and every emitted artifact remains exact; additions, deletions, edits, failed builds and altered receipts invalidate reuse.","id":"p22.build-cache.source-and-artifacts","impact":["Incremental release build admission"],"phase":"post"}

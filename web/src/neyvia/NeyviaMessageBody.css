@@ -1,0 +1,49 @@
+.neyvia-message-body { line-height: 1.68; overflow-wrap: anywhere; white-space: normal; min-width: 0; }
+.neyvia-message-body > :first-child { margin-top: 0; }
+.neyvia-message-body > :last-child { margin-bottom: 0; }
+/* Markdown already emits explicit <br> nodes. Preserving its source newlines
+   here adds a second break; plaintext styling must not enter rendered prose. */
+.neyvia-message-body p { white-space: normal; margin: var(--nx-space-11) 0; }
+.neyvia-message-body :is(ul,ol) { padding-inline-start: var(--nx-space-24); margin: var(--nx-space-12) 0; }
+.neyvia-message-body li { margin: var(--nx-space-6) 0; padding-inline-start: var(--nx-space-2); }
+.neyvia-message-body li::marker { color: var(--nx-faint); font-variant-numeric: tabular-nums; }
+.neyvia-message-body :is(h1,h2,h3,h4,h5,h6) { color: var(--nx-text); font-size: var(--nx-fs-lg); font-weight: 640; letter-spacing: -.01em; line-height: 1.35; margin: var(--nx-space-20) 0 var(--nx-space-8); }
+.neyvia-message-body h1 { font-size: var(--nx-fs-xl); }
+.neyvia-message-body h2 { font-size: var(--nx-fs-xl); }
+.neyvia-message-body strong { color: var(--nx-text); font-weight: 620; }
+.neyvia-message-body pre { overflow-x: auto; white-space: pre; padding: var(--nx-space-14) var(--nx-space-16); background: var(--nx-sidebar); border-radius: var(--nx-r); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.neyvia-message-body code { font-size: var(--nx-fs-md); font-family: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace; }
+.neyvia-message-body :not(pre) > code { background: var(--nx-hover); color: var(--nx-text); padding: var(--nx-space-2) var(--nx-space-6); border-radius: var(--nx-r-xs); }
+.neyvia-message-body blockquote { margin-inline: 0; padding-inline-start: var(--nx-space-16); color: var(--nx-muted); box-shadow: inset var(--nx-stroke-strong) 0 0 var(--nx-line-strong); }
+.neyvia-message-body a { color: var(--nx-accent-text); text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); text-underline-offset: 3px; }
+.neyvia-message-body a:hover { text-decoration-color: currentColor; }
+.neyvia-message-body hr { border: 0; height: 1px; background: var(--nx-line); margin: var(--nx-space-24) 0; }
+
+/* Live reply: each new word arrives lit in the route color, then settles. */
+.neyvia-message-body[data-revealing="true"] .nv-w {
+  animation: nv-word-in var(--nx-settle) cubic-bezier(.22, 1, .36, 1) both;
+}
+.neyvia-message-body .nv-caret {
+  display: inline-block;
+  width: .52em;
+  height: .52em;
+  margin-inline-start: var(--nx-space-4);
+  border-radius: 50%;
+  vertical-align: .06em;
+  background: radial-gradient(circle at 50% 45%, var(--nx-raised) 0 18%, var(--nx-accent-text) 42%, transparent 72%);
+  box-shadow: var(--nx-lift-1);
+  animation: nv-caret-pulse var(--nx-pulse) var(--nx-ease-loop) infinite;
+}
+@keyframes nv-word-in {
+  0% { opacity: 1; filter: blur(1px); color: var(--nx-accent-text); }
+  45% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; filter: blur(0); color: inherit; }
+}
+@keyframes nv-caret-pulse {
+  0%, 100% { opacity: .55; transform: scale(.82); }
+  50% { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .neyvia-message-body[data-revealing="true"] .nv-w { animation: none; }
+  .neyvia-message-body .nv-caret { animation: none; }
+}

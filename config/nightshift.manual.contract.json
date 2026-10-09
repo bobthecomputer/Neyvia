@@ -1,0 +1,409 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "nightshift",
+  "kind": "workflow",
+  "schemas": {
+    "neyvia.nightshift.tasks": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.nightshift.create": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "harness": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "effort": {
+          "type": "string"
+        },
+        "permissionMode": {
+          "type": "string"
+        },
+        "transport": {
+          "type": "string"
+        },
+        "needs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requiresGpu": {
+          "type": "boolean"
+        },
+        "limits": {
+          "type": "object"
+        },
+        "completionEvidence": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "prompt"
+      ]
+    },
+    "neyvia.nightshift.import": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "folders": {
+          "type": "object"
+        },
+        "defaults": {
+          "type": "object"
+        }
+      },
+      "required": []
+    },
+    "neyvia.nightshift.tick": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "evidence"
+      ]
+    },
+    "neyvia.nightshift.start": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "ids"
+      ]
+    },
+    "neyvia.nightshift.stop": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "neyvia.nightshift.block": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "reason"
+      ]
+    },
+    "neyvia.nightshift.resources": {
+      "type": "object",
+      "properties": {
+        "maxConcurrent": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "maxTaskSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "maxTaskTokens": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "maxNightSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "holdAtPlanPercent": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "paused": {
+          "type": "boolean"
+        },
+        "perHarness": {
+          "type": "object"
+        },
+        "perHarnessBudgets": {
+          "type": "object"
+        },
+        "gpuReservedFor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quietGpuHours": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": []
+    },
+    "neyvia.nightshift.summary": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.nightshift.begin": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Night Shift task tree, budgets and morning evidence",
+      "state": {
+        "board": {
+          "tool": "neyvia.nightshift.tasks",
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          }
+        },
+        "morning": {
+          "tool": "neyvia.nightshift.summary",
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          }
+        }
+      },
+      "actions": {
+        "nightshift.tasks": {
+          "tool": "neyvia.nightshift.tasks",
+          "schema": "neyvia.nightshift.tasks",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Read the saved task graph, evidence and launch reasons.",
+          "reversible": true
+        },
+        "nightshift.create": {
+          "tool": "neyvia.nightshift.create",
+          "schema": "neyvia.nightshift.create",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Store a dormant task; needs are task IDs. Nothing runs until explicitly started.",
+          "reversible": true
+        },
+        "nightshift.import": {
+          "tool": "neyvia.nightshift.import",
+          "schema": "neyvia.nightshift.import",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Import TASKS.md dormant; source checkboxes do not count as execution evidence.",
+          "reversible": true
+        },
+        "nightshift.tick": {
+          "tool": "neyvia.nightshift.tick",
+          "schema": "neyvia.nightshift.tick",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Complete a task with checked file, commit or its own completed run evidence; releases armed dependents.",
+          "reversible": false
+        },
+        "nightshift.start": {
+          "tool": "neyvia.nightshift.start",
+          "schema": "neyvia.nightshift.start",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Arm explicit task IDs under approved prompts/routes, prerequisites and saved resource policy.",
+          "reversible": false
+        },
+        "nightshift.stop": {
+          "tool": "neyvia.nightshift.stop",
+          "schema": "neyvia.nightshift.stop",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Stop an owned task; active repository lock stays until terminal harness state.",
+          "reversible": true
+        },
+        "nightshift.block": {
+          "tool": "neyvia.nightshift.block",
+          "schema": "neyvia.nightshift.block",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Block a non-active task with a reason; completed evidence is immutable.",
+          "reversible": true
+        },
+        "nightshift.resources": {
+          "tool": "neyvia.nightshift.resources",
+          "schema": "neyvia.nightshift.resources",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Read resource policy or request an owner-approved patch. Token limits use reported transport usage.",
+          "reversible": true
+        },
+        "nightshift.summary": {
+          "tool": "neyvia.nightshift.summary",
+          "schema": "neyvia.nightshift.summary",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Read morning evidence, blockers, waiting on Paul, measured time and token coverage.",
+          "reversible": true
+        },
+        "nightshift.begin": {
+          "tool": "neyvia.nightshift.begin",
+          "schema": "neyvia.nightshift.begin",
+          "returns": {
+            "type": "object"
+          },
+          "pre": "Owner-approved scope; explicit prompts, prerequisites and saved resource policy",
+          "effect": "Begin a fresh explicit night budget period only with no running tasks; preserves history.",
+          "reversible": false
+        }
+      },
+      "checks": {
+        "usage-known": {
+          "tool": "neyvia.nightshift.summary",
+          "args": {},
+          "expect": {
+            "path": "usage.complete",
+            "op": "eq",
+            "value": true
+          }
+        }
+      },
+      "procedures": {
+        "read-morning": {
+          "goal": "Observe real evidence and measured usage before reviewing completion",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "nightshift.summary",
+              "args": {},
+              "save": "morning",
+              "check": "usage-known"
+            },
+            {
+              "judge": "acceptance"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "acceptance": {
+          "question": "Do the evidence links satisfy the requested acceptance criteria?",
+          "options": [
+            "accept",
+            "inspect"
+          ],
+          "constraints": "A completed CLI run proves execution, not output quality. Inspect file hashes, commits and transcript; unknown usage blocks exact token-budget admission."
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Checked imported row treated as done",
+          "recovery": "Import is dormant; tick with fresh typed file, commit or this task's completed run evidence"
+        },
+        {
+          "failure": "Interrupted task resent after restart",
+          "recovery": "Inspect its saved run; explicit start creates a new accounted attempt"
+        },
+        {
+          "failure": "Resource hold mistaken for failure",
+          "recovery": "Read summary task reason; approved policy changes or explicit new night release armed work"
+        }
+      ],
+      "frontier": [
+        "CLI token caps are enforced at reported usage events and may overshoot between events",
+        "GPU policy covers declared requiresGpu tasks; external workloads are not observed"
+      ],
+      "guidance": [
+        "HTTP /api/nightshift and nightshift_<action>_command share SQLite state; desktop commands forward to the persistent authenticated backend",
+        "Bot start, budget changes and beginning a new night require fingerprint-bound owner approval; owner UI uses authenticated commands",
+        "Quiet times are HH:MM local or UTC; equal endpoints mean all day; ASR GPU reservation is the default"
+      ]
+    }
+  }
+}

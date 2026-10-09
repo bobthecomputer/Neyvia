@@ -1,0 +1,220 @@
+diff --git a/web/src/neyvia/next/NxPdfApp.jsx b/web/src/neyvia/next/NxPdfApp.jsx
+index 256fc36c1..90ad860c1 100644
+--- a/web/src/neyvia/next/NxPdfApp.jsx
++++ b/web/src/neyvia/next/NxPdfApp.jsx
+@@ -8,13 +8,24 @@ import { Button, Icon, local } from "./nxPrimitives.jsx";
+ import { backendBase } from "./nxApi.js";
+ import { os, useOs } from "./nxOsStore.js";
+ import { reportAppState } from "./nxBus.js";
+-import { clampPage, openDocument, pageTexts, rectsForText, searchTexts, selectionRects, stepZoom } from "./nxPdfModel.js";
++import { clampPage, displayName, openDocument, pageTexts, rectsForText, searchTexts, selectionRects, stepZoom } from "./nxPdfModel.js";
+ 
+ // The PDF app's user side. Both sides act on the same state: the model's
+ // pdf.* commands arrive through the bus inbox, and what Paul sees (file,
+ // visible page, zoom, search, selection, highlights) is reported back with
+ // reportAppState so the bot side knows where he is.
+ 
++/** What went wrong, in words: never a raw HTTP code or library message. */
++function plainPdfError(error) {
++  const text = String(error?.message || "");
++  if (/HTTP 40[13]/.test(text)) return "Neyvia isn't allowed to read that file.";
++  if (/HTTP 404/.test(text)) return "That file isn't there any more.";
++  if (/HTTP|fetch|network/i.test(text)) return "The file couldn't be read from this PC.";
++  if (/password/i.test(text)) return "This PDF is locked with a password.";
++  if (/Invalid PDF|structure|corrupt/i.test(text)) return "This file isn't a readable PDF.";
++  return "This PDF couldn't be opened.";
++}
++
+ const isUrl = value => /^https?:\/\//i.test(value);
+ const fileKey = source => (source?.file ? `${source.file.name}:${source.file.size}` : source?.value || "");
+ 
+@@ -62,21 +73,26 @@ export function NxPdfApp({ target }) {
+     if (!source) { setLoaded({ status: "idle" }); return undefined; }
+     let cancelled = false;
+     let opened = null;
+-    setLoaded({ status: "loading", name: source.file?.name || source.value.split(/[\\/]/).pop() });
++    setLoaded({ status: "loading", name: displayName(source) });
+     setSearch({ query: "", hits: [], active: 0, busy: false });
+     setQuery(""); setSelection(null); setPage(1); visible.current.clear();
+     setRenderedPages({});
++    // A document that never answers must not leave "Opening…" on screen forever.
++    let late = false;
++    const slow = setTimeout(() => { late = true; if (!cancelled) setLoaded({ status: "error", name: displayName(source), error: "It took too long to open. Try again, or choose another PDF." }); }, 45000);
+     toParams(source).then(openDocument).then(result => {
++      clearTimeout(slow);
+       opened = result.doc;
+-      if (cancelled) { void opened.destroy(); return; }
+-      const name = source.file?.name || decodeURIComponent(source.value.split(/[\\/]/).pop() || "document.pdf");
++      if (cancelled || late) { void opened.destroy(); return; }
++      const name = displayName(source);
+       setLoaded({ status: "ready", ...result, name });
+       // Remember PDFs opened from a path (not uploads) so the empty desk can offer them again.
+       if (!source.file) local.set("pdf.recent", [{ value: source.value, name, pages: result.doc?.numPages || 0, at: Date.now() }, ...local.get("pdf.recent", []).filter(row => row.value !== source.value)].slice(0, 5));
+     }).catch(error => {
+-      if (!cancelled) setLoaded({ status: "error", error: error?.message || "This PDF could not be opened." });
++      clearTimeout(slow);
++      if (!cancelled && !late) setLoaded({ status: "error", name: displayName(source), error: plainPdfError(error) });
+     });
+-    return () => { cancelled = true; void opened?.destroy(); };
++    return () => { cancelled = true; clearTimeout(slow); void opened?.destroy(); };
+   }, [source]);
+ 
+   useEffect(() => { setMarks(key ? local.get(`pdf.marks.${key}`, []) : []); }, [key]);
+@@ -269,12 +285,15 @@ export function NxPdfApp({ target }) {
+               onVisible={onVisible} pageRef={pageRef} onRendered={onRendered} />
+           )) : (
+             <div className="nx-pdf-empty">
+-              {loaded.status === "loading" ? <><span className="nx-pdf-ghost" aria-hidden="true" /><strong role="status">Opening {loaded.name}…</strong></> : loaded.status === "error" ? (
++              {loaded.status === "loading" ? <><span className="nx-pdf-ghost" aria-hidden="true"><i /><i /><i /><i /><i /></span><strong role="status">Opening {loaded.name}…</strong></> : loaded.status === "error" ? (
+                 <>
+                   <Icon as={FileText} size={26} />
+                   <strong>This PDF didn't open</strong>
+                   <p>{loaded.error}</p>
+-                  <Button variant="outline" size="sm" onClick={() => picker.current?.click()}>Choose another PDF</Button>
++                  <span className="nx-pdf-error-actions">
++                    {source && !source.file ? <Button variant="primary" size="sm" onClick={() => setSource({ ...source })}>Try again</Button> : null}
++                    <Button variant="outline" size="sm" onClick={() => picker.current?.click()}>Choose another PDF</Button>
++                  </span>
+                 </>
+               ) : (
+                 <div className="nx-pdf-welcome">
+diff --git a/web/src/neyvia/next/nxModelContracts.js b/web/src/neyvia/next/nxModelContracts.js
+index 8325bed2d..5f324feb8 100644
+--- a/web/src/neyvia/next/nxModelContracts.js
++++ b/web/src/neyvia/next/nxModelContracts.js
+@@ -81,10 +81,20 @@ export const ACCOUNT_CONTRACTS = Object.freeze({
+   deviceKind: { id: "accounts.device", claim: "Recognized phone/tablet/desktop app names select their icons; other devices use computer", check: ([device], result) => { const text = String(device || ""); return result === (/iPhone|Android/.test(text) ? "phone" : /iPad/.test(text) ? "tablet" : /desktop app/.test(text) ? "app" : "computer"); } },
+ });
+ const zoomSteps = [0.5, 0.67, 0.8, 1, 1.25, 1.5, 2, 3];
++function pdfNameClaim(source, result) {
++  if (source?.file?.name) return result === String(source.file.name);
++  if (typeof result !== "string" || !result || result === "raw" || /[?#\\/]/.test(result)) return false;
++  let text = String(source?.value ?? source ?? "");
++  try { text = decodeURIComponent(text); } catch { /* keep it raw */ }
++  try { text = decodeURIComponent(text); } catch { /* already decoded */ }
++  return result === "document.pdf" || ("/" + text.replaceAll("\\", "/")).split(/[/?&=#]/).includes(result);
++}
++
+ export const PDF_CONTRACTS = Object.freeze({
+   itemRect: { id: "pdf.text-geometry", claim: "Character highlights preserve PDF baseline, proportional x range and descender bounds", check: (args, result) => same(result, rectangle(...args)) },
+   searchTexts: { id: "pdf.search", claim: "Return every bounded nonoverlapping case-insensitive occurrence in page/run order with actual text geometry", check: (args, result) => same(result, searchClaim(...args)) },
+   stepZoom: { id: "pdf.zoom", claim: "Zoom moves to nearest supported step in the requested direction and clamps at endpoints", check: ([scale, direction], result) => { const allowed = zoomSteps.filter(step => direction > 0 ? step > scale + 0.01 : step < scale - 0.01); return result === (direction > 0 ? allowed[0] ?? 3 : allowed.at(-1) ?? 0.5); } },
++  displayName: { id: "pdf.display-name", claim: "A PDF is named by its file name, never an encoded route, query or internal path", check: ([source], result) => pdfNameClaim(source, result) },
+   clampPage: { id: "pdf.page", claim: "Page navigation rounds/coerces input and stays within 1..page count", check: ([page, count], result) => Object.is(result, Math.min(Math.max(1, Math.round(Number(page) || 1)), Math.max(1, count || 1))) },
+ });
+ 
+diff --git a/web/src/neyvia/next/nxPdf.css b/web/src/neyvia/next/nxPdf.css
+index 0736a0200..35e8349e5 100644
+--- a/web/src/neyvia/next/nxPdf.css
++++ b/web/src/neyvia/next/nxPdf.css
+@@ -88,23 +88,22 @@
+ @container (max-width: 760px) { .nx .nx-pdf-name { display: none; } }
+ .nx .nx-pdf { container-type: inline-size; }
+ 
+-/* Opening: a sheet of paper with shimmering lines where the first page will be, never a bare spinner. */
++/* Opening: a sheet of paper with a few soft text lines and one slow sheen where the first page
++   will be, never a bare spinner. Plain boxes, so every engine draws the same sheet. */
+ .nx .nx-pdf-ghost {
+-  --ink: var(--nx-scrim);
+-  display: block; width: min(300px, 70cqw); aspect-ratio: 210 / 297; border-radius: var(--nx-r-xxs);
+-  box-shadow: var(--nx-paper-shadow-light);
+-  background:
+-    linear-gradient(100deg, transparent 40%, var(--nx-paper-sheen) 50%, transparent 60%) 0 0 / 300% 100%,
+-    linear-gradient(var(--ink), var(--ink)) 12% 10% / 52% 9px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 18% / 76% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 22% / 70% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 26% / 74% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 30% / 46% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 38% / 76% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 42% / 72% 6px no-repeat,
+-    linear-gradient(var(--ink), var(--ink)) 12% 46% / 60% 6px no-repeat,
+-    var(--nx-paper);
++  position: relative; overflow: hidden; display: grid; align-content: start; gap: 9px; box-sizing: border-box;
++  width: min(300px, 70cqw); aspect-ratio: 210 / 297; padding: 11% 12%; border-radius: var(--nx-r-xxs);
++  box-shadow: var(--nx-paper-shadow-light); background: var(--nx-paper);
++}
++.nx .nx-pdf-ghost > i { display: block; height: 6px; border-radius: 3px; background: var(--nx-scrim); opacity: 0.5; }
++.nx .nx-pdf-ghost > i:first-child { height: 9px; width: 58%; margin-bottom: 6px; }
++.nx .nx-pdf-ghost > i:nth-child(2) { width: 92%; } .nx .nx-pdf-ghost > i:nth-child(3) { width: 84%; }
++.nx .nx-pdf-ghost > i:nth-child(4) { width: 88%; } .nx .nx-pdf-ghost > i:nth-child(5) { width: 54%; }
++.nx .nx-pdf-ghost::after {
++  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
++  background: linear-gradient(100deg, transparent 30%, var(--nx-paper-sheen) 50%, transparent 70%);
+   animation: nx-pdf-sheen var(--nx-pulse) var(--nx-ease-loop) infinite;
+ }
+-@keyframes nx-pdf-sheen { from { background-position: 100% 0, 12% 10%, 12% 18%, 12% 22%, 12% 26%, 12% 30%, 12% 38%, 12% 42%, 12% 46%; } to { background-position: 0 0, 12% 10%, 12% 18%, 12% 22%, 12% 26%, 12% 30%, 12% 38%, 12% 42%, 12% 46%; } }
+-.nx[data-nx-motion="reduce"] .nx-pdf-ghost { animation: none; }
++@keyframes nx-pdf-sheen { to { transform: translateX(100%); } }
++.nx[data-nx-motion="reduce"] .nx-pdf-ghost::after { animation: none; opacity: 0; }
++.nx .nx-pdf-error-actions { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: var(--nx-space-8); }
+diff --git a/web/src/neyvia/next/nxPdfModel.js b/web/src/neyvia/next/nxPdfModel.js
+index 93ca09684..382780d84 100644
+--- a/web/src/neyvia/next/nxPdfModel.js
++++ b/web/src/neyvia/next/nxPdfModel.js
+@@ -8,14 +8,51 @@ import { backendBase } from "./nxApi.js";
+ let pdfjsPromise = null;
+ export function loadPdfjs() {
+   if (!pdfjsPromise) {
+-    pdfjsPromise = import("./vendor/pdfjs/pdf.min.mjs").then(pdfjs => {
+-      pdfjs.GlobalWorkerOptions.workerSrc = new URL("./vendor/pdfjs/pdf.worker.min.mjs", import.meta.url).href;
++    pdfjsPromise = import("./vendor/pdfjs/pdf.min.mjs").then(async pdfjs => {
++      const workerSrc = new URL("./vendor/pdfjs/pdf.worker.min.mjs", import.meta.url).href;
++      pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
++      // An engine that loads module workers as classic scripts never answers pdf.js
++      // and the document stays "Opening" forever. There, parse on the main thread:
++      // pdf.js uses an already-loaded worker module instead of starting a worker.
++      if (!(await moduleWorkersWork()) && !globalThis.pdfjsWorker) globalThis.pdfjsWorker = await import(/* @vite-ignore */ workerSrc);
+       return pdfjs;
+     });
+   }
+   return pdfjsPromise;
+ }
+ 
++function moduleWorkersWork() {
++  return new Promise(resolve => {
++    let worker = null;
++    const done = ok => { clearTimeout(timer); try { worker?.terminate(); } catch { /* already gone */ } resolve(ok); };
++    const timer = setTimeout(() => done(false), 2500);
++    try {
++      // Kept as a plain asset (not bundled as a worker) so the probe really runs as a module.
++      const probe = new URL("./vendor/pdfjs/nx-module-probe.mjs", import.meta.url);
++      worker = new Worker(probe, { type: "module" });
++      worker.addEventListener("message", event => done(event.data === "nx-module-worker"));
++      worker.addEventListener("error", () => done(false));
++    } catch { done(false); }
++  });
++}
++
++/** The file name a person reads for a PDF source: an upload's name, a path's last part, or the
++ * `path` a file URL carries. Never an encoded route like raw?path=D%3A%5C… */
++function _displayName(source) {
++  if (source?.file?.name) return String(source.file.name);
++  const value = String(source?.value ?? source ?? "").trim();
++  const decode = text => { try { return decodeURIComponent(text); } catch { return text; } };
++  let path = value;
++  if (/^(https?:)?\/\//i.test(value) || value.startsWith("/api/")) {
++    try {
++      const url = new URL(value, "http://local.invalid");
++      path = url.searchParams.get("path") || url.searchParams.get("file") || decode(url.pathname);
++    } catch { path = value; }
++  }
++  const name = decode(path).split(/[\\/]/).filter(Boolean).pop() || "";
++  return /^[^?#]+$/.test(name) && name !== "raw" ? name : "document.pdf";
++}
++
+ export async function openDocument(source) {
+   const pdfjs = await loadPdfjs();
+   let data = source.data;
+@@ -151,3 +188,4 @@ export function itemRect(item, start = 0, length = item.str.length) { return che
+ export function searchTexts(pages, query, limit = 500) { return checkedModelAction(PDF_CONTRACTS, "searchTexts", [pages, query, limit], _searchTexts(pages, query, limit)); }
+ export function stepZoom(scale, direction) { return checkedModelAction(PDF_CONTRACTS, "stepZoom", [scale, direction], _stepZoom(scale, direction)); }
+ export const clampPage = (page, count) => checkedModelAction(PDF_CONTRACTS, "clampPage", [page, count], _clampPage(page, count));
++export const displayName = source => checkedModelAction(PDF_CONTRACTS, "displayName", [source], _displayName(source));
+diff --git a/web/src/neyvia/next/vendor/pdfjs/nx-module-probe.mjs b/web/src/neyvia/next/vendor/pdfjs/nx-module-probe.mjs
+new file mode 100644
+index 000000000..0510f0f00
+--- /dev/null
++++ b/web/src/neyvia/next/vendor/pdfjs/nx-module-probe.mjs
+@@ -0,0 +1,2 @@
++// Answers only when this engine runs workers as ES modules (pdf.js needs that).
++postMessage(typeof import.meta === "object" ? "nx-module-worker" : "classic");

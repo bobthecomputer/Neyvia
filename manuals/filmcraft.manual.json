@@ -1,0 +1,294 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "filmcraft",
+  "kind": "environment",
+  "schemas": {
+    "neyvia.mod.filmcraft.commands": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      "required": []
+    },
+    "neyvia.mod.filmcraft.export": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "out": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "format": {
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "project",
+        "out"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "out": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mod.filmcraft.frame": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "out": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "project",
+        "seconds",
+        "out"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "out": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mod.filmcraft.inspect": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "project": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mod.filmcraft.run": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "steps": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "params": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "saveAs": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "steps",
+        "saveAs"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "saveAs": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mod.filmcraft.verify": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Agent-usable FilmCraft (ArtCraft/storytold, MIT or Apache-2.0; a Premiere-style editor in Rust) through its headless CLI: commands, the sequence as a CL Scene, scripted edits, export and frames.",
+      "state": {},
+      "actions": {
+        "mod.filmcraft.commands": {
+          "effect": "List FilmCraft engine commands (id, label, params) matching a filter.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mod.filmcraft.commands",
+          "tool": "neyvia.mod.filmcraft.commands"
+        },
+        "mod.filmcraft.inspect": {
+          "effect": "Observe a project's active sequence as a CL Scene: tracks, clips, in/out, effects, transitions, markers.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mod.filmcraft.inspect",
+          "tool": "neyvia.mod.filmcraft.inspect"
+        },
+        "mod.filmcraft.run": {
+          "effect": "Run engine commands in order on a project (a new project when omitted) and save it.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mod.filmcraft.run",
+          "tool": "neyvia.mod.filmcraft.run"
+        },
+        "mod.filmcraft.export": {
+          "effect": "Export the active sequence and check the outcome contracts on the file.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mod.filmcraft.export",
+          "tool": "neyvia.mod.filmcraft.export"
+        },
+        "mod.filmcraft.frame": {
+          "effect": "Render one Program frame to PNG.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.mod.filmcraft.frame",
+          "tool": "neyvia.mod.filmcraft.frame"
+        },
+        "mod.filmcraft.verify": {
+          "effect": "Real round trip: import real Neyvia captures, place clips, export, then the outcome contracts.",
+          "pre": "Selected workspace; the mod is installed, enabled and its local tool is present",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "passed": {
+                "const": true
+              }
+            },
+            "required": [
+              "passed"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.mod.filmcraft.verify",
+          "tool": "neyvia.mod.filmcraft.verify"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "verify-filmcraft": {
+          "goal": "Run the real round trip and check its outcome contracts",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mod.filmcraft.verify",
+              "args": {},
+              "save": "verified"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "The local tool is missing",
+          "recovery": "Build or point the NEYVIA_* path at it; the action refuses rather than downloading anything."
+        },
+        {
+          "failure": "A render exists but is wrong",
+          "recovery": "Read the outcome block (duration, frames, black/frozen runs, clipping); never call a render good from its exit code."
+        }
+      ],
+      "frontier": [
+        "Built from source with the local Rust toolchain into D:/NeyviaRuns/video/track-video/target; set NEYVIA_FILMCRAFT_CLI to use another build.",
+        "Adapted, not forked: every action runs the unmodified upstream program. FilmCraft by the ArtCraft team, MIT OR Apache-2.0, https://github.com/storytold/filmcraft."
+      ],
+      "guidance": [
+        "Every FilmCraft menu item is an engine command with typed params; list them with mod.filmcraft.commands and run them with mod.filmcraft.run.",
+        "Times are integer ticks (254016000000 per second); most commands also accept seconds=.",
+        "Read the sequence back with mod.filmcraft.inspect after every edit; export and read the outcome contracts before claiming a render.",
+        "Installs switched off from Marketplace > Apps & mods; read this manual and the declared permissions, then enable it."
+      ]
+    }
+  }
+}

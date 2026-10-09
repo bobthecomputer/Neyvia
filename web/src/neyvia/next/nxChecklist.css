@@ -1,0 +1,78 @@
+/* The agent's checklist above the composer (NxChecklist.jsx). Motion only when the person allows it. */
+
+.nx .nx-checklist {
+  margin-bottom: var(--nx-space-8); border-radius: var(--nx-r); background: var(--nx-panel);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); overflow: hidden;
+}
+.nx .nx-checklist-head {
+  display: flex; align-items: center; gap: var(--nx-space-8); width: 100%; min-height: 36px; padding: 0 var(--nx-space-10) 0 var(--nx-space-10);
+  font-size: var(--nx-fs-sm); color: var(--nx-text-2); text-align: left;
+}
+.nx .nx-checklist-head:hover { background: var(--nx-hover); }
+.nx .nx-checklist-count { flex: none; display: inline-flex; align-items: baseline; gap: var(--nx-space-5); font-weight: 600; color: var(--nx-text); font-variant-numeric: tabular-nums; }
+.nx .nx-checklist-sep { flex: none; color: var(--nx-faint); }
+.nx .nx-checklist-now { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-checklist-now.is-current { color: var(--nx-accent-text); }
+.nx .nx-checklist-caret { flex: none; color: var(--nx-faint); transition: transform var(--nx-med) var(--nx-ease); }
+.nx .nx-checklist.is-open .nx-checklist-caret { transform: rotate(180deg); }
+
+.nx .nx-checklist-ring { flex: none; }
+.nx .nx-checklist-ring-track { fill: none; stroke: var(--nx-line-strong); stroke-width: 2; }
+.nx .nx-checklist-ring-fill {
+  fill: none; stroke: var(--nx-accent-hi); stroke-width: 2; stroke-linecap: round;
+  transition: stroke-dasharray var(--nx-settle) var(--nx-spring-settle);
+}
+.nx .nx-checklist.is-finished .nx-checklist-ring-fill { stroke: var(--nx-green); }
+
+.nx .nx-checklist-list {
+  display: grid; gap: var(--nx-space-1); max-height: min(40vh, 300px); margin: 0; padding: var(--nx-space-2) var(--nx-space-6) var(--nx-space-8); list-style: none;
+  border-top: 1px solid var(--nx-line);
+}
+.nx .nx-checklist-why { padding: var(--nx-space-6) var(--nx-space-6) var(--nx-space-4) var(--nx-space-28); font-size: var(--nx-fs-xs); line-height: 1.45; color: var(--nx-muted); }
+.nx .nx-checklist-item {
+  display: flex; align-items: flex-start; gap: var(--nx-space-10); padding: var(--nx-space-5) var(--nx-space-6); border-radius: var(--nx-r-sm);
+  font-size: var(--nx-fs-sm); line-height: 1.45; color: var(--nx-text-2);
+  transition: color var(--nx-settle) var(--nx-ease), opacity var(--nx-settle) var(--nx-ease);
+}
+.nx .nx-checklist-item.is-current { color: var(--nx-text); background: color-mix(in srgb, var(--nx-accent) 9%, transparent); }
+.nx .nx-checklist-item.is-done { color: var(--nx-muted); }
+/* Done steps are crossed out by <Strike> (details library): the line draws in when a step finishes. */
+.nx .nx-checklist-text { min-width: 0; overflow-wrap: anywhere; }
+
+.nx .nx-checklist-mark { flex: none; width: 16px; height: 16px; margin-top: var(--nx-space-1); }
+.nx span.nx-checklist-mark { border-radius: 50%; box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-line-strong); }
+.nx span.nx-checklist-mark.is-current {
+  box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-accent-hi);
+  background: radial-gradient(circle, var(--nx-accent-hi) 0 3px, transparent 3.5px);
+}
+.nx svg.nx-checklist-mark circle { transform-box: fill-box; transform-origin: center; fill: var(--nx-green-soft); stroke: color-mix(in srgb, var(--nx-green) 70%, transparent); stroke-width: 1.5; }
+.nx svg.nx-checklist-mark path { fill: none; stroke: var(--nx-green); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.nx .nx-visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: calc(-1 * var(--nx-space-1)); padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Items arrive one by one. */
+  .nx .nx-checklist-item { animation: nx-checklist-in var(--nx-settle) var(--nx-spring-settle) both; animation-delay: calc(var(--i, 0) * var(--nx-stagger)); }
+  /* The step being worked on breathes gently. */
+  .nx .nx-checklist.is-live span.nx-checklist-mark.is-current { animation: nx-checklist-pulse var(--nx-pulse) var(--nx-ease-loop) infinite; }
+  .nx .nx-checklist.is-live .nx-checklist-now.is-current { animation: nx-checklist-glow var(--nx-breathe) var(--nx-ease-loop) infinite; }
+  /* A finished step draws its check, then the row settles to muted. */
+  .nx svg.nx-checklist-mark path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: nx-checklist-draw var(--nx-settle) var(--nx-ease) var(--nx-fast) forwards; }
+  .nx svg.nx-checklist-mark circle { animation: nx-checklist-pop var(--nx-snappy) var(--nx-spring-snappy) both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx svg.nx-checklist-mark path { stroke-dasharray: none; stroke-dashoffset: 0; }
+}
+
+@keyframes nx-checklist-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes nx-checklist-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-accent-hi), 0 0 0 0 color-mix(in srgb, var(--nx-accent-hi) 35%, transparent); }
+  50% { box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-accent-hi), 0 0 0 var(--nx-halo) color-mix(in srgb, var(--nx-accent-hi) 0%, transparent); }
+}
+@keyframes nx-checklist-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.72; } }
+@keyframes nx-checklist-draw { to { stroke-dashoffset: 0; } }
+@keyframes nx-checklist-pop { from { transform: scale(0.6); } to { transform: scale(1); } }
+
+.nx.is-phone .nx-checklist-list { max-height: 34vh; }

@@ -1,0 +1,38 @@
+{
+  "area": "apple-outcomes",
+  "module": "grant_agent.proofs_apple_outcomes",
+  "self_check": "self_check",
+  "portRoles": [
+    48461,
+    48462
+  ],
+  "networkContracts": [
+    "mobile-studio.apple-preview-rendered"
+  ],
+  "contracts": [
+    {
+      "checkedAt": [
+        "apple_targets.verify -> apple_bundle.verify_bundle; edge_fixture_mobile.run_apple_artifacts"
+      ],
+      "claim": "Real retained iPhone/iPad/Mac bundles pass independent byte, archive, Mach-O and signature integrity checks; C7 copy mutations must fail without changing originals. No Apple-host trust claim.",
+      "id": "mobile-studio.apple-artifact-integrity",
+      "impact": [
+        "Apple bundles",
+        "archive integrity"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "edge_fixture_mobile.run_apple_preview -> scripts/apple/preview.py + preview.mjs"
+      ],
+      "claim": "C7 captures the real authenticated Scroll Study UI in iPhone/Mac/iPad frames, operates controls and records sandbox storage limits; no native Apple execution claim.",
+      "id": "mobile-studio.apple-preview-rendered",
+      "impact": [
+        "Mobile Studio",
+        "Scroll Study preview"
+      ],
+      "phase": "post"
+    }
+  ]
+}

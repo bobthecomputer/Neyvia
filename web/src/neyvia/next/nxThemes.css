@@ -1,0 +1,766 @@
+/* The themes of the control UI (the list lives in nxThemeRegistry.js; add a theme there
+   and below). Each sets colour and, where it is part of the place, type, radii, depth and
+   motion, through the tokens in nxTokens.css. Components use the names, never raw colours.
+
+   Forest  (dark)    Komorebi, sunlight through leaves: layered moss and undergrowth
+                     greens under a slowly moving canopy (NxKomorebi.jsx), leaf-green
+                     actions, the coin's warm light only where an agent works.
+   Morning (light)   first sun through the canopy on warm paper: moss-shaded
+                     sidebar, lit cards that cast forest shade, deep leaf greens.
+   Sunset  (sunset)  twilight: a cool violet sky over a warm horizon,
+                     sunset-orange actions, gold for what needs you.
+   Night Green (night) dark water: deep blue-green, sea-green actions,
+                     light from the surface above, glowing specks below.
+   Terminal (terminal) green phosphor on near-black, monospace, scanlines and glow; the
+                     last block of this file adds its optional Matrix rain (NxRain.jsx).
+   Paper   (paper)   ink on printed paper: flat, ruled, serif reading text, fountain-pen blue.
+   Ember   (ember)   coals under the sunset logo: brown-black, molten red-orange, lit from below.
+
+   In every theme the sun means something is happening: --nx-amber = running,
+   --nx-gold = needs you. Nothing else is painted with them (15 · T2): actions
+   are the theme's accent, warnings that ask nothing are caution (nxTokens).
+
+   Light: one low sun, top-left. --nx-ambient is the still leaf light any
+   surface may use; --nx-ambient-sun and --nx-dapple are the sunlight the
+   shell's ambient layer adds only while something runs (nxMotion.css).
+   --nx-shade is the colour every cast shadow (--nx-lift-*) uses.
+
+   Every text colour (--nx-muted, --nx-faint, and gold/red/green where they are
+   text) reads at 4.5:1 or better on every surface of its theme, hover rows
+   included (WCAG AA; checked by web/a11y/nx-a11y-audit.mjs). */
+
+:root,
+.nx,
+.nx[data-nx-theme="dark"] {
+  /* Forest, "Komorebi" (plan 29 FOREST): the floor of a forest at the end of
+     the day. Surfaces are layers of the same wood, each a step nearer the light:
+     undergrowth (sidebar) < forest floor (page) < moss (panel) < lit moss (card)
+     < sunlit leaf (selected). Lines are cool leaf-white so edges read crisp, the
+     leaf accent marks actions, and the brand coin's warm light (--nx-sunlit)
+     lands only on what an agent is working on. Every text colour keeps 4.5:1 on
+     every surface and hover state (checked by nxLookModel.test.js). */
+  --nx-bg: #0c1612;
+  --nx-sidebar: #08100c;
+  --nx-panel: #0f1b15;
+  --nx-raised: #14231b;
+  --nx-raised-2: #1a2c22;
+  --nx-hover: rgba(214, 240, 222, 0.05);
+  --nx-active: rgba(214, 240, 222, 0.09);
+  --nx-line: rgba(214, 240, 222, 0.08);
+  --nx-line-strong: rgba(214, 240, 222, 0.15);
+
+  --nx-text: #edf2ea;
+  --nx-text-2: #cbd7cd;
+  --nx-muted: #a5b6a9;
+  --nx-faint: #96a99b;
+
+  --nx-accent: #46b077;
+  --nx-on-accent: #03140b; /* text on an --nx-accent fill, 4.5:1 or better */
+  --nx-accent-hi: #63c98f;
+  --nx-accent-text: #95dfb3;
+  --nx-accent-soft: rgba(99, 201, 143, 0.14);
+  --nx-amber: #f4b847;
+  --nx-gold: #f39a3d;
+  --nx-gold-soft: rgba(243, 154, 61, 0.14);
+  --nx-green: #74d29c;
+  --nx-green-soft: rgba(116, 210, 156, 0.12);
+  --nx-red: #f48a7a;
+  --nx-red-soft: rgba(244, 138, 122, 0.12);
+  --nx-sun: linear-gradient(180deg, #ffc455 0%, #f58a2e 55%, #e3582a 100%);
+  --nx-sun-ink: #2a1406;
+
+  --nx-focus: 0 0 0 var(--nx-stroke-strong) var(--nx-bg), 0 0 0 var(--nx-halo) var(--nx-focus-ring);
+  --nx-focus-ring: #63c98f;
+  --nx-shade: rgba(0, 6, 3, 0.62);
+  --nx-shadow-pop: 0 0 0 1px var(--nx-line-strong), inset 0 1px 0 rgba(214, 240, 222, 0.05), 8px 18px 48px -12px rgba(0, 6, 3, 0.75), 1px 2px 6px rgba(0, 6, 3, 0.4);
+  --nx-card-shadow: 0 0 0 1px var(--nx-line), inset 0 1px 0 rgba(214, 240, 222, 0.04), 6px 14px 30px -20px rgba(0, 6, 3, 0.8);
+  --nx-selection: rgba(99, 201, 143, 0.3);
+  --nx-scrollbar: rgba(214, 240, 222, 0.16);
+  --nx-state-stale: #8a7560;
+  --nx-scrim: rgba(2, 8, 5, 0.6);
+  /* Leaf light, still: sky through the canopy top-right, moss light pooled on the
+     floor, undergrowth shade low on the left. The moving canopy (shade and light
+     patches) is NxKomorebi on top of this; the low sun top-left only while
+     something runs. */
+  --nx-ambient:
+    radial-gradient(1100px 520px at 82% -18%, rgba(110, 196, 146, 0.13), transparent 64%),
+    radial-gradient(1500px 560px at 46% 124%, rgba(48, 118, 78, 0.17), transparent 66%),
+    radial-gradient(800px 600px at -8% 70%, rgba(4, 10, 7, 0.5), transparent 70%);
+  --nx-ambient-sun: radial-gradient(900px 460px at 6% -16%, rgba(245, 138, 46, 0.09), transparent 64%);
+  /* Komorebi patches for a hero card or an empty canvas (the shell draws its own in NxKomorebi). */
+  --nx-dapple:
+    radial-gradient(18px 12px at 20% 16%, rgba(214, 236, 186, 0.09), transparent 72%),
+    radial-gradient(12px 8px at 29% 24%, rgba(214, 236, 186, 0.08), transparent 72%),
+    radial-gradient(26px 17px at 10% 30%, rgba(214, 236, 186, 0.06), transparent 72%),
+    radial-gradient(14px 9px at 38% 11%, rgba(214, 236, 186, 0.07), transparent 72%),
+    radial-gradient(10px 7px at 16% 40%, rgba(214, 236, 186, 0.07), transparent 72%);
+  color-scheme: dark;
+}
+
+/* Forest only (not on :root): the canopy's colours, the coin's working light and
+   the leaf motion. --nx-sunlit is the middle of the brand coin (--nx-sun); it is
+   used for light on active work only, never as decoration or text. */
+.nx[data-nx-theme="dark"] {
+  --nx-undergrowth: #050b08;
+  --nx-moss: #1c3a29;
+  --nx-canopy-shade: #020604;
+  --nx-fleck: #d6ecba;
+  --nx-sunlit: #f58a2e;
+  --nx-sun-patch: #ffb36b; /* the coin's light as it lands (NxKomorebi's warm patches): lighter, so it reads as light, not brown */
+  --nx-sunlit-soft: rgba(245, 138, 46, 0.19);
+  --nx-sunlit-rim: rgba(245, 150, 60, 0.62);
+  --nx-sunlit-glow: rgba(245, 138, 46, 0.52);
+  /* Motion: things settle like leaves. A soft ease-out with no overshoot, a
+     little more time than the default, a slower stagger. One-shot motion in
+     Forest lands between 180 and 420 ms (plan 29 FOREST). */
+  --nx-ease: cubic-bezier(0.2, 0.75, 0.25, 1);
+  --nx-spring-settle: linear(0, 0.05, 0.16, 0.3, 0.44, 0.57, 0.68, 0.77, 0.84, 0.895, 0.935, 0.962, 0.98, 0.991, 0.997, 1);
+  --nx-spring-snappy: linear(0, 0.08, 0.24, 0.42, 0.58, 0.71, 0.81, 0.88, 0.93, 0.965, 0.985, 0.995, 1);
+  --nx-stagger: 50ms;
+  --nx-sprout: 340ms;
+  --nx-part: 380ms;
+  --nx-sweep: 420ms;
+}
+
+/* Forest depth. The sidebar is the undergrowth at the forest's edge: a little
+   canopy light at the top, deepest shade below, moss catching light at the foot.
+   Cards are moss a step nearer the light, with a lit top edge; the composer is
+   the nearest surface, so it is the most lit. */
+.nx[data-nx-theme="dark"] .nx-side {
+  background:
+    radial-gradient(460px 280px at -10% 104%, color-mix(in srgb, var(--nx-moss) 55%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--nx-sidebar) 90%, var(--nx-moss)) 0%, var(--nx-sidebar) 34%, var(--nx-undergrowth) 100%);
+  box-shadow: inset calc(-1 * var(--nx-stroke)) 0 0 color-mix(in srgb, var(--nx-line) 70%, transparent);
+}
+.nx[data-nx-theme="dark"] .nx-widget {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--nx-raised) 94%, var(--nx-moss)) 0%, var(--nx-raised) 46%, color-mix(in srgb, var(--nx-raised) 88%, var(--nx-bg)) 100%);
+  box-shadow: var(--nx-card-shadow);
+}
+.nx[data-nx-theme="dark"] .nx-composer { background: linear-gradient(180deg, color-mix(in srgb, var(--nx-raised) 92%, var(--nx-moss)), var(--nx-raised)); }
+
+/* Warm light where work happens: whatever an agent is working on right now
+   catches the coin's light, as if the sun found a gap in the leaves above it.
+   Text colours stay the theme's (the tint under them is 10-13 %). */
+.nx[data-nx-theme="dark"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working) {
+  /* Strong enough to read from a metre away: a round pinhole of the low sun lands on the item (the light through the nearest gap),
+     a pool spreads from it, and a lit rim and edge hold it. Text keeps its colours: the tint under them stays under 20 %. */
+  background-image: radial-gradient(30px 24px at 0% 0%, rgba(255, 179, 107, 0.5), transparent 74%), radial-gradient(140% 100% at 0% 0%, var(--nx-sunlit-soft), transparent 62%);  /* the pinhole sits in the corner, never over text */
+  box-shadow: 0 0 0 var(--nx-stroke) var(--nx-sunlit-rim), inset 3px 0 0 color-mix(in srgb, var(--nx-sunlit) 85%, transparent), inset 0 var(--nx-stroke) 0 color-mix(in srgb, var(--nx-sunlit) 40%, transparent), 0 16px 46px -18px var(--nx-sunlit-glow), var(--nx-card-shadow);
+}
+.nx[data-nx-theme="dark"] .nx-leaf.is-running > .nx-leaf-head > .nx-row { background-image: radial-gradient(14px 12px at 8px 50%, rgba(255, 179, 107, 0.45), transparent 74%), linear-gradient(90deg, color-mix(in srgb, var(--nx-sunlit) 24%, transparent), transparent 78%); box-shadow: inset 3px 0 0 color-mix(in srgb, var(--nx-sunlit) 80%, transparent); }
+.nx[data-nx-theme="dark"] .nx-runstrip:not(.is-gold) {
+  background-image: radial-gradient(90% 160% at 0% 0%, color-mix(in srgb, var(--nx-sunlit) 24%, transparent), transparent 64%);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 3px 0 0 color-mix(in srgb, var(--nx-sunlit) 80%, transparent), inset 0 var(--nx-stroke) 0 color-mix(in srgb, var(--nx-sunlit) 45%, transparent);
+}
+.nx[data-nx-theme="dark"] .nx-checklist.is-live {
+  background-image: radial-gradient(100% 140% at 0% 0%, color-mix(in srgb, var(--nx-sunlit) 14%, transparent), transparent 60%);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 3px 0 0 color-mix(in srgb, var(--nx-sunlit) 70%, transparent), inset 0 var(--nx-stroke) 0 color-mix(in srgb, var(--nx-sunlit) 40%, transparent), 0 18px 44px -24px var(--nx-sunlit-glow);
+}
+/* Night Shift's morning summary: first light on the horizon of the card. */
+.nx[data-nx-theme="dark"] .nx-ns-morning {
+  background-image: radial-gradient(70% 90% at 12% 122%, color-mix(in srgb, var(--nx-sunlit) 17%, transparent), transparent 64%), linear-gradient(180deg, transparent 40%, color-mix(in srgb, var(--nx-moss) 22%, transparent));
+}
+/* Let the canopy light through: the chat column was an opaque sheet over the ambient layer. */
+.nx[data-nx-theme="dark"] .nx-work-chat { background: transparent; }
+
+.nx[data-nx-theme="light"] {
+  /* Morning: first sun through the canopy onto warm paper (plan 19 R3). The low
+     sun sits top-left, so whatever is closer to you is brighter, catches light on
+     its top edge and casts a soft shadow down and right. Shade is the forest's:
+     green-grey, never brown. Back to front: the sidebar is the forest edge (moss
+     paper), the page is paper, panels and cards are lit paper, a selected or
+     lifted control is the brightest thing. Warmth stays rare: amber/gold for
+     running and needs-you, the sun bloom only while something runs. */
+  --nx-bg: #f5f1e6;
+  --nx-sidebar: #ebe9da;
+  --nx-panel: #faf7f0;
+  --nx-raised: #fffdf9;
+  --nx-raised-2: #ffffff;
+  --nx-hover: rgba(42, 58, 34, 0.055);
+  --nx-active: rgba(42, 58, 34, 0.09);
+  --nx-line: rgba(42, 54, 32, 0.11);
+  --nx-line-strong: rgba(42, 54, 32, 0.2);
+
+  --nx-text: #17221a;
+  --nx-text-2: #323f30;
+  --nx-muted: #465143;
+  --nx-faint: #555d4f;
+
+  --nx-accent: #3a774b;
+  --nx-on-accent: #ffffff; /* text on an --nx-accent fill, 4.5:1 or better */
+  --nx-accent-hi: #3f8454;
+  --nx-accent-text: #245a35;
+  --nx-accent-soft: rgba(58, 119, 75, 0.11);
+  /* The sun stays bright where it is a mark (tree sun, spinner, dots); as text
+     it is the deeper ochre below, which reads at 4.5:1 on every Morning surface. */
+  --nx-amber: #d4930f;
+  --nx-state-running-text: #7a4f08;
+  --nx-gold: #8f480b;
+  --nx-gold-soft: rgba(232, 137, 43, 0.15);
+  --nx-green: #226640;
+  --nx-green-soft: rgba(47, 138, 85, 0.1);
+  --nx-red: #a1372d;
+  --nx-red-soft: rgba(196, 69, 58, 0.1);
+
+  --nx-focus: 0 0 0 var(--nx-stroke-strong) var(--nx-bg), 0 0 0 var(--nx-halo) var(--nx-focus-ring);
+  --nx-focus-ring: #2f7d4f;
+  /* Forest shade: every cast shadow (--nx-lift-*) uses it. */
+  --nx-shade: rgba(30, 50, 28, 0.2);
+  /* Lit paper: a ring, sunlight on the top edge, a short contact shadow and a
+     soft cast shadow down-right (x = 0.45 y, like --nx-lift-*). */
+  --nx-card-shadow: 0 0 0 1px var(--nx-line), inset 0 1px 0 rgba(255, 255, 255, 0.9), 1px 2px 3px -1px rgba(30, 50, 28, 0.1), 7px 15px 30px -18px rgba(30, 50, 28, 0.26);
+  --nx-shadow-pop: 0 0 0 1px var(--nx-line-strong), inset 0 1px 0 rgba(255, 255, 255, 0.9), 9px 20px 48px -14px rgba(26, 44, 26, 0.3), 1px 2px 6px rgba(26, 44, 26, 0.08);
+  --nx-selection: rgba(58, 119, 75, 0.22);
+  --nx-scrollbar: rgba(42, 54, 32, 0.22);
+  --nx-state-stale: #7d6a52;
+  /* Overlays dim the page like a cloud over the trees: cool green-grey, not khaki. */
+  --nx-scrim: rgba(26, 40, 28, 0.22);
+  /* Still: leaf light pooled bottom-right and a little canopy shade along the top. */
+  --nx-ambient:
+    radial-gradient(1100px 620px at 104% 110%, rgba(58, 119, 75, 0.13), transparent 62%),
+    radial-gradient(1400px 260px at 60% -10%, rgba(42, 74, 40, 0.05), transparent 70%);
+  /* Running: the low morning sun warms the top-left. */
+  --nx-ambient-sun:
+    radial-gradient(1000px 560px at -4% -14%, rgba(255, 190, 80, 0.2), transparent 60%),
+    radial-gradient(520px 300px at 6% -6%, rgba(255, 214, 140, 0.16), transparent 70%);
+  /* Komorebi by day: small warm sun flecks where the leaves part. (Leaf-shade
+     blobs were tried and band into grey rings on paper, so the shade stays out.) */
+  --nx-dapple:
+    radial-gradient(34px 22px at 22% 18%, rgba(255, 200, 100, 0.24), transparent 72%),
+    radial-gradient(22px 15px at 13% 27%, rgba(255, 206, 110, 0.2), transparent 72%),
+    radial-gradient(28px 18px at 34% 12%, rgba(255, 214, 130, 0.18), transparent 72%),
+    radial-gradient(18px 12px at 29% 30%, rgba(255, 206, 110, 0.16), transparent 72%),
+    radial-gradient(40px 26px at 8% 12%, rgba(255, 210, 120, 0.16), transparent 72%);
+  color-scheme: light;
+}
+
+/* Morning depth (plan 19 R3). In the dark themes a nested surface is lighter, so
+   it reads as closer; on paper there is little room above white, so Morning lifts
+   with light and shadow instead: the sidebar is the shaded forest edge, the page
+   paper, cards lit paper with a cast shadow, and a selected row or control rises
+   into the light rather than sinking into a darker stone. */
+.nx[data-nx-theme="light"] .nx-side {
+  background:
+    radial-gradient(360px 220px at -8% -6%, color-mix(in srgb, var(--nx-accent) 22%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--nx-raised) 0%, var(--nx-sidebar) 40%, var(--nx-raised) 100%);
+  box-shadow: inset calc(-1 * var(--nx-stroke)) 0 0 color-mix(in srgb, var(--nx-line) 55%, transparent);
+}
+.nx[data-nx-theme="light"] .nx-row.is-active,
+.nx[data-nx-theme="light"] .nx-kid-row.is-active,
+.nx[data-nx-theme="light"] .nx-rail-chat.is-active,
+.nx[data-nx-theme="light"] .nx-onb-rail-step.is-on {
+  background: var(--nx-raised-2);
+  box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line), var(--nx-lift-1);
+}
+.nx[data-nx-theme="light"] .nx-seg { background: color-mix(in srgb, var(--nx-text) 6%, transparent); }
+.nx[data-nx-theme="light"] .nx-widget { background: var(--nx-panel); }
+.nx[data-nx-theme="light"] .nx-continue-card {
+  background: linear-gradient(160deg, var(--nx-raised) 30%, color-mix(in srgb, var(--nx-accent) 6%, var(--nx-raised)));
+  box-shadow: var(--nx-card-shadow);
+}
+.nx[data-nx-theme="light"] .nx-continue-card:hover {
+  box-shadow: 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 45%, transparent), inset 0 var(--nx-stroke) 0 var(--nx-line-strong), var(--nx-lift-2);
+}
+.nx[data-nx-theme="light"] .nx-composer { background: var(--nx-raised-2); }
+/* Cards you pick (launcher tiles, setup choices, Canopy cards) are lit paper that
+   rises on hover, not a grey stone sunk into the page; their icon wells are leaf. */
+.nx[data-nx-theme="light"] .nx-launcher-body { background: var(--nx-panel); }
+.nx[data-nx-theme="light"] .nx-tile,
+.nx[data-nx-theme="light"] .nx-onb-pick,
+.nx[data-nx-theme="light"] .nx-canopy-card { background: var(--nx-raised-2); box-shadow: var(--nx-card-shadow); }
+.nx[data-nx-theme="light"] .nx-tile:hover:not(:disabled),
+.nx[data-nx-theme="light"] .nx-tile:focus-visible,
+.nx[data-nx-theme="light"] .nx-onb-pick:hover {
+  background: var(--nx-raised-2);
+  box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), inset 0 var(--nx-stroke) 0 var(--nx-line-strong), var(--nx-lift-2);
+}
+.nx[data-nx-theme="light"] .nx-tile-icon { color: var(--nx-accent-text); background: var(--nx-accent-soft); }
+/* Let the ambient layer through: the chat column is otherwise an opaque sheet of
+   --nx-bg over it (.nx-main already paints the same colour underneath). */
+.nx[data-nx-theme="light"] .nx-work-chat { background: transparent; }
+
+.nx[data-nx-theme="sunset"] {
+  /* Twilight: a cool violet sky over a warm horizon. The surfaces are the sky
+     (indigo-violet), so the sun colours stay rare and bright: orange for the
+     one primary action, gold for what needs you. */
+  --nx-bg: #141020;
+  --nx-sidebar: #110d1b;
+  --nx-panel: #181325;
+  --nx-raised: #201a30;
+  --nx-raised-2: #29213b;
+  --nx-hover: rgba(236, 222, 255, 0.05);
+  --nx-active: rgba(236, 222, 255, 0.09);
+  --nx-line: rgba(236, 222, 255, 0.08);
+  --nx-line-strong: rgba(236, 222, 255, 0.15);
+
+  --nx-text: #fbf1ea;
+  --nx-text-2: #e2d4d8;
+  --nx-muted: #a99cb4;
+  --nx-faint: #a59cb1;
+
+  --nx-accent: #ff7a3d;
+  --nx-on-accent: #2a1406; /* text on an --nx-accent fill, 4.5:1 or better */
+  --nx-accent-hi: #ff9a5e;
+  --nx-accent-text: #ffb488;
+  --nx-accent-soft: rgba(255, 122, 61, 0.14);
+  --nx-amber: #ffc857;
+  --nx-gold: #ffcf66;
+  --nx-gold-soft: rgba(255, 207, 102, 0.12);
+  --nx-green: #8fd8ae;
+  --nx-green-soft: rgba(143, 216, 174, 0.12);
+  --nx-red: #ff8088;
+  --nx-red-soft: rgba(255, 128, 136, 0.13);
+  --nx-sun: linear-gradient(180deg, #ffd56a 0%, #ff8a3d 52%, #ec4b4b 100%);
+  --nx-sun-ink: #2a0d08;
+  --nx-on-accent: #2a0d08; /* dark ink on the orange accent (white would be under 3:1) */
+
+  --nx-focus: 0 0 0 var(--nx-stroke-strong) var(--nx-bg), 0 0 0 var(--nx-halo) var(--nx-focus-ring);
+  --nx-focus-ring: #ff9a5e;
+  --nx-shade: rgba(4, 2, 12, 0.66);
+  --nx-shadow-pop: 0 0 0 1px var(--nx-line-strong), 8px 18px 48px -12px rgba(4, 2, 12, 0.8), 1px 2px 6px rgba(4, 2, 12, 0.45);
+  --nx-card-shadow: 0 0 0 1px var(--nx-line), 6px 14px 30px -20px rgba(4, 2, 12, 0.9);
+  --nx-selection: rgba(255, 122, 61, 0.3);
+  --nx-scrollbar: rgba(236, 222, 255, 0.16);
+  --nx-state-stale: #9a8a9e;
+  --nx-scrim: rgba(6, 4, 14, 0.62);
+  /* Deep violet overhead; the horizon itself is NxThemeAmbient's band (one orange, its height follows the real time). */
+  --nx-ambient: linear-gradient(180deg, rgba(58, 38, 112, 0.42) 0%, rgba(20, 16, 32, 0) 52%);
+  --nx-ambient-sun:
+    radial-gradient(900px 420px at 8% -14%, rgba(255, 200, 87, 0.1), transparent 64%),
+    radial-gradient(900px 380px at 85% 108%, rgba(255, 200, 87, 0.12), transparent 65%);
+  /* The first stars instead of leaf light; they stay out while idle (no sun in them). */
+  --nx-dapple-still: 1;
+  --nx-dapple:
+    radial-gradient(2px 2px at 18% 12%, rgba(255, 244, 230, 0.55), transparent 100%),
+    radial-gradient(1.5px 1.5px at 72% 8%, rgba(255, 244, 230, 0.45), transparent 100%),
+    radial-gradient(2px 2px at 86% 22%, rgba(255, 244, 230, 0.4), transparent 100%),
+    radial-gradient(1.5px 1.5px at 41% 18%, rgba(255, 244, 230, 0.35), transparent 100%),
+    radial-gradient(1.5px 1.5px at 60% 28%, rgba(255, 244, 230, 0.3), transparent 100%);
+  color-scheme: dark;
+}
+
+/* Sunset cards are plain raised sky (no blur, no glass); the sidebar holds the dusk gradient. */
+.nx[data-nx-theme="sunset"] .nx-widget { background: var(--nx-raised); }
+.nx[data-nx-theme="sunset"] .nx-side { background: linear-gradient(180deg, var(--nx-bg) 0%, var(--nx-sidebar) 50%, var(--nx-bg) 100%); }
+
+.nx[data-nx-theme="night"] {
+  /* Night Green: dark water. Deep blue-green surfaces like a lake at night,
+     sea-green actions, light falling from the surface above and a few glowing
+     specks in the depths. Amber and gold still mean running / needs you. */
+  --nx-bg: #05141a;
+  --nx-sidebar: #041017;
+  --nx-panel: #081b22;
+  --nx-raised: #0c242c;
+  --nx-raised-2: #122f38;
+  --nx-hover: rgba(190, 240, 250, 0.05);
+  --nx-active: rgba(190, 240, 250, 0.09);
+  --nx-line: rgba(190, 240, 250, 0.08);
+  --nx-line-strong: rgba(190, 240, 250, 0.15);
+
+  --nx-text: #e2f1ef;
+  --nx-text-2: #b5cfcd;
+  --nx-muted: #93aeb1;
+  --nx-faint: #9bb0b4;
+
+  --nx-accent: #1aa98a;
+  --nx-on-accent: #02201a; /* text on an --nx-accent fill, 4.5:1 or better */
+  --nx-accent-hi: #36d0a8;
+  --nx-accent-text: #8aead2;
+  --nx-accent-soft: rgba(54, 208, 168, 0.14);
+  --nx-amber: #f0c552;
+  --nx-gold: #f7a94b;
+  --nx-gold-soft: rgba(247, 169, 75, 0.13);
+  --nx-green: #5fdcab;
+  --nx-green-soft: rgba(95, 220, 171, 0.12);
+  --nx-red: #ff8c80;
+  --nx-red-soft: rgba(255, 125, 112, 0.13);
+  --nx-sun: linear-gradient(180deg, #ffc455 0%, #f58a2e 55%, #e3582a 100%);
+  --nx-sun-ink: #2a1406;
+
+  --nx-focus: 0 0 0 var(--nx-stroke-strong) var(--nx-bg), 0 0 0 var(--nx-halo) var(--nx-focus-ring);
+  --nx-focus-ring: #36d0a8;
+  --nx-shade: rgba(0, 4, 8, 0.66);
+  --nx-shadow-pop: 0 0 0 1px var(--nx-line-strong), 8px 18px 48px -12px rgba(0, 4, 8, 0.8), 1px 2px 6px rgba(0, 4, 8, 0.45);
+  --nx-card-shadow: 0 0 0 1px var(--nx-line), 6px 14px 30px -20px rgba(0, 4, 8, 0.9);
+  --nx-selection: rgba(54, 208, 168, 0.28);
+  --nx-scrollbar: rgba(190, 240, 250, 0.15);
+  --nx-state-stale: #6f8b90;
+  --nx-scrim: rgba(1, 6, 9, 0.62);
+  /* Light through the water from above, blue on one side and green on the other; green weed light below. */
+  --nx-ambient:
+    radial-gradient(1100px 380px at 30% -14%, rgba(48, 150, 210, 0.16), transparent 65%),
+    radial-gradient(900px 360px at 78% -12%, rgba(40, 200, 160, 0.12), transparent 62%),
+    radial-gradient(900px 420px at 8% 114%, rgba(26, 169, 138, 0.1), transparent 62%);
+  --nx-ambient-sun: radial-gradient(900px 420px at 8% -14%, rgba(240, 197, 82, 0.07), transparent 64%);
+  /* Glowing specks in the depths; they stay lit while idle (no sun in them). */
+  --nx-dapple-still: 1;
+  --nx-dapple:
+    radial-gradient(3px 3px at 22% 72%, rgba(120, 240, 220, 0.5), transparent 100%),
+    radial-gradient(2.5px 2.5px at 64% 82%, rgba(120, 220, 250, 0.42), transparent 100%),
+    radial-gradient(3px 3px at 81% 64%, rgba(120, 240, 220, 0.38), transparent 100%),
+    radial-gradient(2px 2px at 41% 88%, rgba(120, 220, 250, 0.34), transparent 100%),
+    radial-gradient(2.5px 2.5px at 12% 90%, rgba(120, 240, 220, 0.3), transparent 100%);
+  color-scheme: dark;
+}
+
+.nx[data-nx-theme="night"] .nx-side { background: linear-gradient(180deg, var(--nx-bg) 0%, var(--nx-sidebar) 52%, var(--nx-bg) 100%); }
+.nx[data-nx-theme="night"] .nx-widget { background: var(--nx-raised); }
+
+/* ======================================================================
+   Terminal, Paper, Ember (plan 29 section 5).
+   Each is designed as a place, not a recolour: its own type, radii, borders,
+   depth, glow and motion, all set through the same tokens components already
+   use. Sun colours keep their meaning everywhere: amber = running, gold =
+   needs you.
+   ====================================================================== */
+
+.nx[data-nx-theme="terminal"] {
+  /* Terminal: a green-phosphor screen. Colours follow cool-retro-term's
+     Monochrome Green and IBM 3278 profiles (#0ccc68 / #3cff7a on black), lifted
+     just enough that body text reads at 4.5:1 or better through the scanlines.
+     The UI is monospace, square, ruled with visible green lines instead of
+     shadows, and lit by glow rather than depth. */
+  --nx-bg: #040906;
+  --nx-sidebar: #020503;
+  --nx-panel: #07100a;
+  --nx-raised: #0b170e;
+  --nx-raised-2: #102013;
+  --nx-hover: rgba(120, 255, 170, 0.07);
+  --nx-active: rgba(120, 255, 170, 0.12);
+  --nx-line: rgba(95, 255, 150, 0.17);
+  --nx-line-strong: rgba(95, 255, 150, 0.34);
+
+  --nx-text: #c8f7d6;
+  --nx-text-2: #9fe0b4;
+  --nx-muted: #78c28f;
+  --nx-faint: #6bb384;
+
+  --nx-accent: #34e07a;
+  --nx-on-accent: #021509;
+  --nx-accent-hi: #5cf59a;
+  --nx-accent-text: #6bf5a2;
+  --nx-accent-soft: rgba(60, 255, 130, 0.13);
+  --nx-amber: #ffb52e;
+  --nx-gold: #ff9442;
+  --nx-gold-soft: rgba(255, 148, 66, 0.15);
+  --nx-green: #52f08d;
+  --nx-green-soft: rgba(82, 240, 141, 0.13);
+  --nx-red: #ff7367;
+  --nx-red-soft: rgba(255, 115, 103, 0.14);
+  --nx-sun: linear-gradient(180deg, #ffd166 0%, #ff9a2e 100%);
+  --nx-sun-ink: #1d0f00;
+
+  --nx-focus: 0 0 0 var(--nx-stroke) var(--nx-bg), 0 0 0 var(--nx-ring) var(--nx-focus-ring);
+  --nx-focus-ring: #6bf5a2;
+  --nx-shade: rgba(0, 0, 0, 0.7);
+  --nx-glow: 0 0 7px rgba(70, 255, 140, 0.45);
+  --nx-glow-box: 0 0 18px -4px rgba(52, 224, 122, 0.4);
+  --nx-shadow-pop: 0 0 0 1px var(--nx-line-strong), 0 0 26px -6px rgba(52, 224, 122, 0.3), 0 18px 40px -12px rgba(0, 0, 0, 0.85);
+  --nx-card-shadow: 0 0 0 1px var(--nx-line);
+  --nx-selection: rgba(52, 224, 122, 0.4);
+  --nx-scrollbar: rgba(95, 255, 150, 0.28);
+  --nx-state-stale: #5e8a6c;
+  --nx-scrim: rgba(0, 4, 2, 0.7);
+  --nx-lift-1: 0 0 0 transparent;
+  --nx-lift-2: 0 0 0 transparent;
+  --nx-lift-3: 0 18px 40px -12px rgba(0, 0, 0, 0.85);
+
+  /* A faint glow high on the screen where the tube is brightest, and a dark vignette. */
+  --nx-ambient:
+    radial-gradient(900px 420px at 50% -8%, rgba(52, 224, 122, 0.075), transparent 66%),
+    radial-gradient(130% 120% at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.5) 100%);
+  --nx-ambient-sun: radial-gradient(700px 300px at 8% -10%, rgba(255, 181, 46, 0.07), transparent 64%);
+  --nx-dapple: none;
+
+  /* Type: Geist Mono everywhere at whole pixels (a monospace grid stays crisp; the capture engine drew
+     12.5px mono as lowercase), titles in the same face. */
+  --nx-font: "Geist Mono", "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, monospace;
+  --nx-display: "Geist Mono", "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, monospace;
+  --nx-display-weight: 600;
+  --nx-display-tracking: 0.01em;
+  --nx-fs-xs: calc(11px * var(--nx-ts));
+  --nx-fs-sm: calc(12px * var(--nx-ts));
+  --nx-fs: calc(13px * var(--nx-ts));
+  --nx-fs-md: calc(13px * var(--nx-ts));
+  --nx-fs-prose: calc(14px * var(--nx-ts));
+  --nx-fs-title: calc(21px * var(--nx-ts));
+  --nx-fs-hero: calc(27px * var(--nx-ts));
+  /* Square: a terminal has no rounded corners, only a 2px nick on controls. */
+  --nx-r-xs: 0px;
+  --nx-r-sm: 0px;
+  --nx-r: 2px;
+  --nx-r-lg: 2px;
+  --nx-r-xl: 3px;
+  --nx-r-2xl: 4px;
+  /* Motion: things step into place like cells being redrawn. */
+  --nx-ease: steps(5, end);
+  --nx-stagger: 30ms;
+  --nx-spring-snappy: steps(4, end);
+  --nx-spring-settle: steps(6, end);
+  --nx-spring-drift: steps(8, end);
+  color-scheme: dark;
+}
+
+.nx[data-nx-theme="paper"] {
+  /* Paper: ink on a printed page. Neutral off-white (the E-Ink profile's #f2f2ec,
+     a touch warmer), blue-black ink, a fountain-pen blue for actions. Flat: edges are
+     printed rules, not shadows; corners are nearly square; titles are set in a serif.
+     Warm browns stay out so it never reads as Morning. */
+  --nx-bg: #f4f3ee;
+  --nx-sidebar: #e9e8e1;
+  --nx-panel: #faf9f5;
+  --nx-raised: #fffefb;
+  --nx-raised-2: #ffffff;
+  --nx-hover: rgba(21, 23, 28, 0.05);
+  --nx-active: rgba(21, 23, 28, 0.09);
+  --nx-line: rgba(21, 23, 28, 0.15);
+  --nx-line-strong: rgba(21, 23, 28, 0.3);
+
+  --nx-text: #15171c;
+  --nx-text-2: #2d3038;
+  --nx-muted: #4b4f58;
+  --nx-faint: #575b64;
+
+  --nx-accent: #23408e;
+  --nx-on-accent: #ffffff;
+  --nx-accent-hi: #2f4fa8;
+  --nx-accent-text: #1b3478;
+  --nx-accent-soft: rgba(35, 64, 142, 0.09);
+  --nx-amber: #c98a0a;
+  --nx-state-running-text: #744c05;
+  --nx-gold: #8a4a0c;
+  --nx-gold-soft: rgba(201, 120, 20, 0.14);
+  --nx-green: #1b6140;
+  --nx-green-soft: rgba(31, 107, 69, 0.1);
+  --nx-red: #a3322a;
+  --nx-red-soft: rgba(163, 50, 42, 0.1);
+
+  --nx-focus: 0 0 0 var(--nx-stroke-strong) var(--nx-bg), 0 0 0 var(--nx-halo) var(--nx-focus-ring);
+  --nx-focus-ring: #23408e;
+  --nx-shade: rgba(21, 23, 28, 0.16);
+  --nx-shadow-pop: 0 0 0 1px var(--nx-line-strong), 0 10px 28px -10px rgba(21, 23, 28, 0.28);
+  --nx-card-shadow: 0 0 0 1px var(--nx-line);
+  --nx-selection: rgba(35, 64, 142, 0.2);
+  --nx-scrollbar: rgba(21, 23, 28, 0.26);
+  --nx-state-stale: #75706a;
+  --nx-scrim: rgba(21, 23, 28, 0.28);
+  --nx-lift-1: 0 1px 0 var(--nx-shade);
+  --nx-lift-2: 0 2px 0 var(--nx-shade);
+  --nx-lift-3: 0 12px 28px -12px var(--nx-shade);
+  --nx-edge: 0 0 0 transparent;
+  /* No light moves across paper: nothing ambient at all. */
+  --nx-ambient: none;
+  --nx-ambient-sun: none;
+  --nx-dapple: none;
+
+  --nx-display: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --nx-display-weight: 500;
+  --nx-display-tracking: -0.005em;
+  --nx-r-xs: 2px;
+  --nx-r-sm: 3px;
+  --nx-r: 4px;
+  --nx-r-lg: 5px;
+  --nx-r-xl: 6px;
+  --nx-r-2xl: 8px;
+  /* Motion: a page turning, not a bounce. Plain ease-out, no overshoot, no stagger. */
+  --nx-ease: cubic-bezier(0.3, 0, 0.2, 1);
+  --nx-stagger: 0ms;
+  --nx-spring-snappy: cubic-bezier(0.3, 0, 0.2, 1);
+  --nx-spring-settle: cubic-bezier(0.3, 0, 0.2, 1);
+  --nx-spring-drift: cubic-bezier(0.3, 0, 0.2, 1);
+  color-scheme: light;
+}
+
+.nx[data-nx-theme="ember"] {
+  /* Ember: coals under the sunset logo. Brown-black surfaces (never grey, never
+     violet), cream text, a molten red-orange for actions so it stays apart from
+     Sunset's bright orange and Forest's green. Round, warm, softly lit from below. */
+  --nx-bg: #15100d;
+  --nx-sidebar: #0f0b09;
+  --nx-panel: #1a1411;
+  --nx-raised: #221a16;
+  --nx-raised-2: #2c221c;
+  --nx-hover: rgba(255, 226, 200, 0.055);
+  --nx-active: rgba(255, 226, 200, 0.1);
+  --nx-line: rgba(255, 214, 180, 0.13);
+  --nx-line-strong: rgba(255, 205, 160, 0.27);
+
+  --nx-text: #f6ece3;
+  --nx-text-2: #dccbbd;
+  --nx-muted: #bfad9f;
+  --nx-faint: #b3a193;
+
+  --nx-accent: #e8573d;
+  --nx-on-accent: #1f0804;
+  --nx-accent-hi: #f26d52;
+  --nx-accent-text: #ff9a80;
+  --nx-accent-soft: rgba(232, 87, 61, 0.16);
+  --nx-amber: #ffbd4a;
+  --nx-gold: #ffa23a;
+  --nx-gold-soft: rgba(255, 162, 58, 0.14);
+  --nx-green: #96d6a0;
+  --nx-green-soft: rgba(150, 214, 160, 0.12);
+  --nx-red: #ff7d98;
+  --nx-red-soft: rgba(255, 125, 152, 0.13);
+  --nx-sun: linear-gradient(180deg, #ffcb5c 0%, #f5832e 55%, #de4a2a 100%);
+  --nx-sun-ink: #2a1004;
+
+  --nx-focus: 0 0 0 var(--nx-stroke-strong) var(--nx-bg), 0 0 0 var(--nx-halo) var(--nx-focus-ring);
+  --nx-focus-ring: #ff9a80;
+  --nx-shade: rgba(8, 3, 1, 0.68);
+  --nx-glow-box: 0 0 26px -6px rgba(232, 87, 61, 0.55);
+  --nx-shadow-pop: 0 0 0 1px var(--nx-line-strong), inset 0 1px 0 rgba(255, 226, 200, 0.07), 8px 18px 48px -12px rgba(8, 3, 1, 0.85), 0 0 60px -30px rgba(232, 87, 61, 0.5);
+  --nx-card-shadow: 0 0 0 1px var(--nx-line-strong), inset 0 1px 0 rgba(255, 226, 200, 0.07), 6px 14px 30px -20px rgba(8, 3, 1, 0.9);
+  --nx-selection: rgba(232, 87, 61, 0.34);
+  --nx-scrollbar: rgba(255, 214, 180, 0.17);
+  --nx-state-stale: #8f7a68;
+  --nx-scrim: rgba(10, 4, 2, 0.64);
+  /* Heat rising from the floor of the screen, a dim ember bloom at the top corner. */
+  --nx-ambient:
+    radial-gradient(1300px 480px at 50% 122%, rgba(232, 87, 61, 0.26), rgba(150, 50, 30, 0.1) 46%, transparent 72%),
+    radial-gradient(800px 340px at 92% -12%, rgba(255, 150, 60, 0.07), transparent 66%);
+  --nx-ambient-sun: radial-gradient(900px 420px at 8% -14%, rgba(255, 189, 74, 0.09), transparent 64%);
+  /* Sparks hanging in the heat; they drift slowly while something runs. */
+  --nx-dapple-still: 1;
+  --nx-dapple:
+    radial-gradient(2px 2px at 14% 84%, rgba(255, 190, 110, 0.6), transparent 100%),
+    radial-gradient(1.5px 1.5px at 31% 70%, rgba(255, 160, 90, 0.5), transparent 100%),
+    radial-gradient(2px 2px at 47% 90%, rgba(255, 190, 110, 0.5), transparent 100%),
+    radial-gradient(1.5px 1.5px at 66% 76%, rgba(255, 150, 80, 0.5), transparent 100%),
+    radial-gradient(2px 2px at 83% 86%, rgba(255, 190, 110, 0.55), transparent 100%),
+    radial-gradient(1.5px 1.5px at 92% 66%, rgba(255, 160, 90, 0.4), transparent 100%);
+
+  --nx-display: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --nx-display-weight: 500;
+  --nx-display-tracking: -0.01em;
+  --nx-r-xs: 6px;
+  --nx-r-sm: 8px;
+  --nx-r: 12px;
+  --nx-r-lg: 16px;
+  --nx-r-xl: 22px;
+  --nx-r-2xl: 30px;
+  /* Motion: slow to ignite, slow to settle. */
+  --nx-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --nx-stagger: 60ms;
+  color-scheme: dark;
+}
+
+/* ---------- Theme picker (Settings > Look) ---------- */
+.nx .nx-set-row.nx-set-row-stack { flex-direction: column; align-items: stretch; gap: var(--nx-space-10); }
+.nx .nx-set .nx-set-row.nx-set-row-stack > span:first-child { flex: none; }
+.nx .nx-themepick { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: var(--nx-space-10); }
+.nx .nx-themepick-card {
+  display: grid; gap: var(--nx-space-4); align-content: start; text-align: left; padding: var(--nx-space-8);
+  border-radius: var(--nx-r); background: var(--nx-panel); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line);
+  transition: box-shadow var(--nx-fast) var(--nx-ease), background var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-themepick-card:hover { box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong); background: var(--nx-raised); }
+.nx .nx-themepick-card.is-on { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi); }
+.nx .nx-themepick-art {
+  position: relative; display: block; height: 56px; overflow: hidden; border-radius: calc(var(--nx-r) - 3px);
+  box-shadow: inset 0 0 0 var(--nx-stroke) rgba(128, 128, 128, 0.28);
+}
+.nx .nx-themepick-art i { position: absolute; display: block; font-style: normal; }
+.nx .nx-themepick-side { left: 0; top: 0; bottom: 0; width: 24%; }
+.nx .nx-themepick-card-art { left: 32%; top: 10px; right: 10px; height: 24px; border-radius: 3px; padding: 6px 6px 0; }
+.nx .nx-themepick-card-art b { display: block; height: 3px; margin-bottom: 4px; border-radius: 2px; width: 82%; opacity: 0.8; }
+.nx .nx-themepick-dot { right: 10px; bottom: 8px; width: 28px; height: 8px; border-radius: 3px; }
+.nx .nx-themepick-name { font-weight: 600; color: var(--nx-text); font-size: var(--nx-fs); }
+.nx .nx-themepick-blurb { color: var(--nx-muted); font-size: var(--nx-fs-sm); line-height: 1.35; }
+
+/* ======================================================================
+   TERMINAL: structure. The tokens above set the palette, type and radii; here
+   is what makes it a screen: scanlines and a tube glow, ruled panels, glowing
+   headings, inverse-video selection, and a block cursor.
+   ====================================================================== */
+.nx.nx-root[data-nx-theme="terminal"]::after {
+  content: ""; position: absolute; inset: 0; z-index: 9000; pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.11) 0, rgba(0, 0, 0, 0.11) 1px, transparent 1px, transparent 3px),
+    radial-gradient(120% 100% at 50% 40%, transparent 62%, rgba(0, 0, 0, 0.3) 100%);
+}
+.nx[data-nx-theme="terminal"] ::selection { background: var(--nx-accent); color: var(--nx-on-accent); text-shadow: none; }
+.nx[data-nx-theme="terminal"] { caret-color: var(--nx-accent-hi); caret-shape: block; }
+.nx[data-nx-theme="terminal"] .nx-composer textarea,
+.nx[data-nx-theme="terminal"] .nx-input { caret-color: var(--nx-accent-hi); caret-shape: block; }
+/* Glow where the phosphor is brightest: titles, the open row, primary actions and accent text. */
+.nx[data-nx-theme="terminal"] :is(h1, h2, h3, .nx-stage-title strong, .nx-row.is-active .nx-row-title, .nx-btn-primary, .nx a, .nx-working-label, .nx-seg button.is-on) { text-shadow: var(--nx-glow); }
+.nx[data-nx-theme="terminal"] :is(h1, h2, h3, .nx-stage-title strong) { text-transform: none; letter-spacing: 0.01em; }
+/* Section labels are prompts: small, capital, spaced. */
+.nx[data-nx-theme="terminal"] :is(.nx-side-section-head, .nx-widget-head, .nx-toolgroup-head) { text-transform: uppercase; letter-spacing: 0.09em; font-size: var(--nx-fs-xs); }
+/* Ruled panels instead of floating cards. */
+.nx[data-nx-theme="terminal"] .nx-side { background: var(--nx-sidebar); box-shadow: inset calc(-1 * var(--nx-stroke)) 0 0 var(--nx-line-strong); }
+.nx[data-nx-theme="terminal"] :is(.nx-widget, .nx-composer, .nx-tile, .nx-ac-card, .nx-canopy-card, .nx-continue-card, .nx-themepick-card) {
+  background: var(--nx-panel); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+}
+.nx[data-nx-theme="terminal"] .nx-composer:focus-within { box-shadow: 0 0 0 var(--nx-stroke) var(--nx-accent-hi), var(--nx-glow-box); }
+.nx[data-nx-theme="terminal"] .nx-composer textarea { padding-left: var(--nx-space-12); }
+/* A block cursor after the prompt while the box is empty and not focused (the field's own caret takes over when it is). */
+.nx[data-nx-theme="terminal"] .nx-composer:has(textarea:placeholder-shown:not(:focus))::after {
+  content: ""; position: absolute; left: var(--nx-space-14); top: calc(var(--nx-space-12) + 3px); width: 7px; height: 14px;
+  background: var(--nx-accent-hi); box-shadow: var(--nx-glow); animation: nx-caret 1.06s steps(1, end) infinite;
+}
+@keyframes nx-caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .nx[data-nx-theme="terminal"] .nx-composer::after { animation: none !important; opacity: 1 !important; } }
+.nx[data-nx-motion="reduce"][data-nx-theme="terminal"] .nx-composer::after { animation: none !important; opacity: 1 !important; }
+.nx[data-nx-theme="terminal"] .nx-composer::before { content: ">"; position: absolute; left: var(--nx-space-5); top: var(--nx-space-12); color: var(--nx-accent-text); font-weight: 700; text-shadow: var(--nx-glow); }
+.nx[data-nx-theme="terminal"] .nx-bubble { background: transparent; box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx[data-nx-theme="terminal"] .nx-msg-user .nx-user-text::before { content: "> "; color: var(--nx-accent-text); }
+.nx[data-nx-theme="terminal"] .nx-row.is-active,
+.nx[data-nx-theme="terminal"] .nx-kid-row.is-active,
+.nx[data-nx-theme="terminal"] .nx-rail-chat.is-active { background: var(--nx-active); box-shadow: inset 3px 0 0 var(--nx-accent-hi); }
+/* Controls: square, ruled, and the primary action lights up. */
+.nx[data-nx-theme="terminal"] .nx-btn-primary { box-shadow: 0 0 0 var(--nx-stroke) var(--nx-accent-hi), var(--nx-glow-box); }
+.nx[data-nx-theme="terminal"] .nx-btn-primary:hover:not(:disabled) { box-shadow: 0 0 0 var(--nx-stroke) var(--nx-accent-hi), 0 0 24px -2px rgba(52, 224, 122, 0.6); }
+.nx[data-nx-theme="terminal"] .nx-btn:active:not(:disabled),
+.nx[data-nx-theme="terminal"] .nx-iconbtn:active:not(:disabled),
+.nx[data-nx-theme="terminal"] .nx-chip:active:not(:disabled) { transform: none; }
+.nx[data-nx-theme="terminal"] .nx-themepick-card.is-on { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi), var(--nx-glow-box); }
+.nx[data-nx-theme="terminal"] .nx-work-chat { background: transparent; }
+.nx[data-nx-theme="terminal"] * { scrollbar-color: var(--nx-scrollbar) transparent; }
+/* The rain canvas fills the ambient layer; NxRain draws only in the side bands. */
+.nx .nx-rain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.6; }
+
+/* ======================================================================
+   PAPER: structure. Flat and printed: hairline rules, no cast shadows, serif
+   reading text, underlined links, small-caps labels.
+   ====================================================================== */
+.nx[data-nx-theme="paper"] .nx-side { background: var(--nx-sidebar); box-shadow: inset calc(-1 * var(--nx-stroke)) 0 0 var(--nx-line-strong); }
+.nx[data-nx-theme="paper"] :is(.nx-widget, .nx-tile, .nx-ac-card, .nx-canopy-card, .nx-continue-card, .nx-themepick-card) { background: var(--nx-raised-2); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx[data-nx-theme="paper"] .nx-composer { background: var(--nx-raised-2); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), 0 2px 0 var(--nx-line); }
+.nx[data-nx-theme="paper"] .nx-composer:focus-within { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-accent), 0 2px 0 var(--nx-line); }
+.nx[data-nx-theme="paper"] :is(.nx-tile, .nx-continue-card, .nx-canopy-card):hover:not(:disabled) { background: var(--nx-raised); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), 0 2px 0 var(--nx-line); }
+.nx[data-nx-theme="paper"] .nx-work-chat { background: transparent; }
+.nx[data-nx-theme="paper"] .nx-row.is-active,
+.nx[data-nx-theme="paper"] .nx-kid-row.is-active,
+.nx[data-nx-theme="paper"] .nx-rail-chat.is-active { background: var(--nx-raised-2); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx[data-nx-theme="paper"] .nx-bubble { background: var(--nx-raised-2); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line); }
+/* The reading text of an answer is set like a book page. */
+.nx[data-nx-theme="paper"] .nx-msg-assistant { font-family: var(--nx-display); font-weight: 400; font-size: calc(16px * var(--nx-ts)); line-height: 1.7; letter-spacing: 0; }
+.nx[data-nx-theme="paper"] .nx-msg-assistant :is(pre, code, table, .nx-pre) { font-family: var(--nx-mono); }
+.nx[data-nx-theme="paper"] :is(h1, h2, h3, .nx-stage-title strong) { font-family: var(--nx-display); font-weight: 500; letter-spacing: var(--nx-display-tracking); }
+.nx[data-nx-theme="paper"] :is(.nx-side-section-head, .nx-widget-head, .nx-toolgroup-head) { font-variant-caps: all-small-caps; letter-spacing: 0.07em; font-size: calc(var(--nx-fs) * 1.04); }
+.nx[data-nx-theme="paper"] .nx a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); }
+.nx[data-nx-theme="paper"] .nx-btn-primary { box-shadow: 0 1px 0 rgba(21, 23, 28, 0.35); }
+.nx[data-nx-theme="paper"] .nx-btn:active:not(:disabled) { transform: translateY(1px); }
+.nx[data-nx-theme="paper"] .nx-themepick-card.is-on { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-accent); }
+
+/* ======================================================================
+   EMBER: structure. Warm, round and lit from below: coal-dark panels with a
+   lit top edge, a molten primary action that glows, a sidebar that picks up
+   heat toward its foot.
+   ====================================================================== */
+.nx[data-nx-theme="ember"] .nx-side { background: linear-gradient(180deg, var(--nx-sidebar) 0%, color-mix(in srgb, var(--nx-sidebar) 90%, var(--nx-accent) 10%) 100%); }
+.nx[data-nx-theme="ember"] .nx-widget { background: linear-gradient(180deg, color-mix(in srgb, var(--nx-raised) 96%, var(--nx-text)) 0%, var(--nx-raised) 100%); box-shadow: var(--nx-card-shadow); }
+.nx[data-nx-theme="ember"] .nx-composer { background: var(--nx-raised-2); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), inset 0 1px 0 rgba(255, 226, 200, 0.08), var(--nx-lift-2); }
+.nx[data-nx-theme="ember"] .nx-composer:focus-within { box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 70%, var(--nx-line-strong)), var(--nx-glow-box), var(--nx-lift-2); }
+.nx[data-nx-theme="ember"] .nx-work-chat { background: transparent; }
+.nx[data-nx-theme="ember"] .nx-btn-primary { background-color: var(--nx-accent); background-image: linear-gradient(180deg, var(--nx-accent-hi), var(--nx-accent)); box-shadow: inset 0 1px 0 rgba(255, 226, 200, 0.25), var(--nx-glow-box); }
+.nx[data-nx-theme="ember"] .nx-btn-primary:hover:not(:disabled) { background-color: var(--nx-accent-hi); background-image: none; }
+.nx[data-nx-theme="ember"] .nx-row.is-active,
+.nx[data-nx-theme="ember"] .nx-kid-row.is-active,
+.nx[data-nx-theme="ember"] .nx-rail-chat.is-active { background: linear-gradient(90deg, var(--nx-accent-soft), transparent 88%); box-shadow: inset 2px 0 0 var(--nx-accent-hi); }
+.nx[data-nx-theme="ember"] :is(h1, h2, h3, .nx-stage-title strong) { font-family: var(--nx-display); font-weight: 500; letter-spacing: var(--nx-display-tracking); }
+.nx[data-nx-theme="ember"] :is(.nx-tile, .nx-continue-card, .nx-canopy-card, .nx-ac-card) { box-shadow: var(--nx-card-shadow); }
+.nx[data-nx-theme="ember"] :is(.nx-tile, .nx-continue-card, .nx-canopy-card):hover:not(:disabled) { box-shadow: 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 50%, transparent), 0 0 30px -14px var(--nx-accent); }
+.nx[data-nx-theme="ember"] .nx-themepick-card.is-on { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi), var(--nx-glow-box); }

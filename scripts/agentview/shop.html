@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Leaf &amp; Co checkout (staging)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #f4f1ea; color: #1c2b23; }
+  header { background: #163a2a; color: #fff; padding: 18px 32px; display: flex; align-items: baseline; gap: 16px; }
+  header strong { font-size: 22px; letter-spacing: 0.01em; }
+  header span { color: #a9d6bb; font-size: 13px; }
+  main { max-width: 760px; margin: 28px auto; display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; padding: 0 24px; }
+  section { background: #fff; border-radius: 12px; padding: 22px 24px; box-shadow: 0 6px 20px -12px rgba(0,0,0,0.25); }
+  h1 { font-size: 18px; margin: 0 0 16px; }
+  label { display: block; font-size: 13px; color: #55645b; margin: 12px 0 4px; }
+  input[type=text], input[type=number] { width: 100%; padding: 9px 11px; border: 1px solid #cfd8d2; border-radius: 8px; font: inherit; font-size: 15px; }
+  .check { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 14px; color: #1c2b23; }
+  button { margin-top: 18px; width: 100%; padding: 11px; border: 0; border-radius: 8px; background: #26784e; color: #fff; font: inherit; font-size: 15px; font-weight: 600; }
+  .item { display: flex; gap: 12px; align-items: center; }
+  .swatch { width: 54px; height: 54px; border-radius: 10px; background: linear-gradient(135deg, #63c98f, #1f6b45); }
+  .row { display: flex; justify-content: space-between; font-size: 14px; margin-top: 10px; color: #55645b; }
+  .total { display: flex; justify-content: space-between; font-size: 20px; font-weight: 700; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e3e8e4; }
+  #status { margin-top: 12px; font-size: 13px; color: #26784e; min-height: 18px; }
+</style>
+</head>
+<body>
+<header><strong>Leaf &amp; Co</strong><span>checkout · staging build 12</span></header>
+<main>
+  <section>
+    <h1>Your details</h1>
+    <label for="name">Full name</label>
+    <input id="name" type="text" aria-label="Full name" autocomplete="off">
+    <label for="qty">Quantity</label>
+    <input id="qty" type="number" aria-label="Quantity" value="1" min="1">
+    <label class="check"><input id="gift" type="checkbox" aria-label="Gift wrap (+4.00)"> Gift wrap (+4.00)</label>
+    <button id="update" type="button">Update total</button>
+    <div id="status"></div>
+  </section>
+  <section>
+    <h1>Order</h1>
+    <div class="item"><div class="swatch"></div><div><strong>Monstera, 40 cm pot</strong><div class="row" style="margin:2px 0 0">19.90 each</div></div></div>
+    <div class="row"><span>Plants</span><span id="plants">19.90</span></div>
+    <div class="row"><span>Gift wrap</span><span id="wrap">0.00</span></div>
+    <div class="row"><span>Delivery</span><span>5.00</span></div>
+    <div class="total"><span>Total</span><span id="total">24.90</span></div>
+  </section>
+</main>
+<script>
+  document.getElementById("update").addEventListener("click", () => {
+    const qty = Math.max(1, Number(document.getElementById("qty").value) || 1);
+    const wrap = document.getElementById("gift").checked ? 4 : 0;
+    const plants = qty * 19.9;
+    document.getElementById("plants").textContent = plants.toFixed(2);
+    document.getElementById("wrap").textContent = wrap.toFixed(2);
+    document.getElementById("total").textContent = (plants + wrap + 5).toFixed(2);
+    const name = document.getElementById("name").value.trim();
+    document.getElementById("status").textContent = "Updated" + (name ? " for " + name : "") + ": " + qty + " plant" + (qty > 1 ? "s" : "") + (wrap ? ", gift wrapped" : "");
+  });
+</script>
+</body>
+</html>

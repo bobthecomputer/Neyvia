@@ -1,0 +1,290 @@
+/* Setup and tour (first run, re-entered from the More menu). Colours are the
+   theme's names only, so Forest, Morning, Sunset and Night Green all work. */
+.nx.has-onboarding > :not(.nx-onb-scrim) { display: none; }
+
+.nx .nx-onb-scrim {
+  position: absolute; inset: 0; z-index: 80; display: grid; place-items: center; padding: var(--nx-space-24) var(--nx-space-16);
+  background: var(--nx-scrim); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  animation: nx-launch-fade var(--nx-snappy) var(--nx-ease) both; isolation: isolate;
+}
+.nx .nx-onb {
+  display: grid; grid-template-columns: 184px minmax(0, 1fr); width: min(920px, 100%); height: min(660px, 100%);
+  border-radius: var(--nx-r-lg); background: var(--nx-panel); box-shadow: var(--nx-shadow-pop); overflow: hidden;
+  animation: nx-pop var(--nx-settle) var(--nx-spring-settle) both; outline: none; position: relative; isolation: isolate;
+}
+.nx .nx-onb.is-tour-only { grid-template-columns: minmax(0, 1fr); width: min(1080px, 100%); height: auto; max-height: 100%; }
+.nx .nx-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.nx .nx-onb-rail {
+  display: flex; flex-direction: column; gap: var(--nx-space-2); padding: var(--nx-space-18) var(--nx-space-12); background: var(--nx-sidebar);
+  border-right: 1px solid var(--nx-line); background-image: var(--nx-ambient);
+}
+.nx .nx-onb-brand { display: flex; align-items: center; gap: var(--nx-space-8); margin: 0 var(--nx-space-6) var(--nx-space-18); font-weight: 600; font-size: var(--nx-fs-md); }
+.nx .nx-onb-rail-step {
+  display: flex; align-self: stretch; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-8) var(--nx-space-8); border-radius: var(--nx-r-sm); color: var(--nx-muted);
+  transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-onb-rail-step:hover { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-onb-rail-step.is-on { background: var(--nx-active); color: var(--nx-text); font-weight: 600; }
+.nx .nx-onb-rail-dot {
+  display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; font-size: var(--nx-fs-xs); font-weight: 600;
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+}
+.nx .nx-onb-rail-step.is-on .nx-onb-rail-dot { background: var(--nx-accent); color: var(--nx-on-accent); box-shadow: none; }
+.nx .nx-onb-rail-step.is-done .nx-onb-rail-dot { background: var(--nx-accent-soft); color: var(--nx-accent-text); box-shadow: none; }
+
+.nx .nx-onb-body { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.nx .nx-onb-scroll { flex: 1 1 auto; min-height: 0; padding: var(--nx-space-28) var(--nx-space-32) var(--nx-space-20); animation: nx-slide-in var(--nx-settle) var(--nx-spring-settle) both; }
+.nx .nx-onb-foot { flex: none; display: flex; align-items: center; gap: var(--nx-space-8); padding: var(--nx-space-12) var(--nx-space-20); border-top: 1px solid var(--nx-line); }
+.nx .nx-onb-step { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-16); max-width: 640px; margin: 0 auto; }
+.nx .nx-onb-step h2 { font: 500 var(--nx-fs-title)/1.15 var(--nx-display); letter-spacing: -0.01em; }
+.nx .nx-onb-step-head { display: grid; gap: var(--nx-space-6); justify-items: start; }
+.nx .nx-onb-step-head p, .nx .nx-onb-hero p { color: var(--nx-muted); font-size: var(--nx-fs-md); }
+.nx .nx-onb-sub { display: flex; align-items: center; gap: var(--nx-space-10); margin-top: var(--nx-space-4); font-size: var(--nx-fs-sm); font-weight: 600; color: var(--nx-text-2); }
+.nx .nx-onb-fine { font-size: var(--nx-fs-xs); color: var(--nx-faint); line-height: 1.5; }
+.nx .nx-onb-note { font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx .nx-onb-error { display: flex; gap: var(--nx-space-8); align-items: center; color: var(--nx-red); font-size: var(--nx-fs-sm); }
+.nx .nx-onb-loading { display: flex; gap: var(--nx-space-10); align-items: center; justify-content: center; padding: var(--nx-space-48) 0; color: var(--nx-muted); }
+
+.nx .nx-onb-hero { display: grid; gap: var(--nx-space-10); justify-items: center; text-align: center; padding: var(--nx-space-18) 0 var(--nx-space-8); }
+.nx .nx-onb-hero h2 { font-size: var(--nx-fs-hero); }
+
+.nx .nx-onb-card { display: grid; gap: var(--nx-space-12); padding: var(--nx-space-16); border-radius: var(--nx-r-lg); background: var(--nx-raised); box-shadow: var(--nx-card-shadow); }
+.nx .nx-onb-card-head { display: flex; align-items: center; gap: var(--nx-space-12); }
+.nx .nx-onb-card-head > div { display: grid; gap: var(--nx-space-2); min-width: 0; }
+.nx .nx-onb-card-head small { color: var(--nx-muted); font-size: var(--nx-fs-sm); }
+.nx .nx-onb-card-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--nx-r); background: var(--nx-accent-soft); color: var(--nx-accent-text); flex: none; }
+.nx .nx-onb-card.is-running .nx-onb-card-icon, .nx .nx-onb-card.is-starting .nx-onb-card-icon, .nx .nx-onb-card.is-verifying .nx-onb-card-icon { background: color-mix(in srgb, var(--nx-amber) 16%, transparent); color: var(--nx-amber); }
+.nx .nx-onb-card.is-failed .nx-onb-card-icon { background: var(--nx-red-soft); color: var(--nx-red); }
+.nx .nx-onb-meter { height: 6px; border-radius: var(--nx-r-pill); background: var(--nx-raised-2); overflow: hidden; }
+.nx .nx-onb-meter i { display: block; height: 100%; border-radius: inherit; background: var(--nx-state-running); transition: width var(--nx-drift) var(--nx-spring-drift); }
+.nx .nx-onb-card.is-done .nx-onb-meter i { background: var(--nx-accent); }
+
+.nx .nx-onb-list { display: grid; gap: var(--nx-space-6); }
+.nx .nx-onb-runtime { border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-onb-runtime.is-open { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-onb-runtime-head { display: flex; align-items: center; gap: var(--nx-space-12); width: 100%; padding: var(--nx-space-10) var(--nx-space-12); border-radius: inherit; }
+.nx button.nx-onb-runtime-head:hover:not(:disabled) { background: var(--nx-hover); }
+.nx .nx-onb-runtime-name { display: grid; gap: var(--nx-space-1); flex: 1 1 auto; min-width: 0; }
+.nx .nx-onb-runtime-name small { color: var(--nx-muted); font-size: var(--nx-fs-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx .nx-onb-check { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--nx-accent-soft); color: var(--nx-accent-text); flex: none; }
+.nx .nx-onb-add { font-size: var(--nx-fs-sm); font-weight: 600; color: var(--nx-accent-text); }
+.nx .nx-onb-runtime-body { display: grid; gap: var(--nx-space-10); padding: 0 var(--nx-space-14) var(--nx-space-14) var(--nx-space-40); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-onb-runtime-body ol { margin: 0; padding-left: var(--nx-space-18); display: grid; gap: var(--nx-space-3); }
+.nx .nx-onb-runtime-body a { display: inline-flex; align-items: center; gap: var(--nx-space-6); font-weight: 500; }
+.nx .nx-onb-command { display: flex; align-items: center; gap: var(--nx-space-8); padding: var(--nx-space-4) var(--nx-space-4) var(--nx-space-4) var(--nx-space-10); border-radius: var(--nx-r-sm); background: var(--nx-raised-2); }
+.nx .nx-onb-command code { flex: 1 1 auto; min-width: 0; overflow-x: auto; font: 500 var(--nx-fs-sm) var(--nx-mono); white-space: nowrap; }
+.nx .nx-onb-more summary { cursor: pointer; color: var(--nx-muted); font-size: var(--nx-fs-sm); padding: var(--nx-space-4) 0 var(--nx-space-8); }
+
+
+
+/* ---- add-on packs ---- */
+.nx .nx-onb-packs { display: grid; gap: var(--nx-space-8); min-width: 0; padding-top: var(--nx-space-10); border-top: 1px solid var(--nx-line); }
+.nx .nx-onb-count { padding: var(--nx-space-1) var(--nx-space-8); border-radius: var(--nx-r-pill); background: var(--nx-accent-soft); color: var(--nx-accent-text); font-size: var(--nx-fs-xs); font-weight: 600; }
+.nx .nx-onb-packlist { display: grid; gap: var(--nx-space-6); min-width: 0; }
+.nx .nx-onb-pack { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-8); min-width: 0; padding: var(--nx-space-9) var(--nx-space-10); border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-onb-pack.is-open { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-onb-pack.is-installed { box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 45%, transparent); }
+.nx .nx-onb-pack-head { display: flex; align-items: center; gap: var(--nx-space-10); min-width: 0; }
+.nx .nx-onb-pack-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--nx-r-sm); flex: none; background: var(--nx-raised-2); color: var(--nx-muted); }
+.nx .nx-onb-pack.is-installed .nx-onb-pack-icon { background: var(--nx-accent-soft); color: var(--nx-accent-text); }
+.nx .nx-onb-pack.is-installing .nx-onb-pack-icon, .nx .nx-onb-pack.is-queued .nx-onb-pack-icon { background: color-mix(in srgb, var(--nx-amber) 16%, transparent); color: var(--nx-amber); }
+.nx .nx-onb-pack.is-failed .nx-onb-pack-icon { background: var(--nx-red-soft); color: var(--nx-red); }
+.nx .nx-onb-pack.is-unavailable .nx-onb-pack-name b { color: var(--nx-text-2); }
+.nx .nx-onb-pack-name { display: grid; gap: var(--nx-space-1); flex: 1 1 auto; min-width: 0; }
+.nx .nx-onb-pack-name b { color: var(--nx-text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx .nx-onb-pack-name small { color: var(--nx-muted); font-size: var(--nx-fs-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx .nx-onb-pack-name small.is-error { color: var(--nx-red); white-space: normal; }
+.nx .nx-onb-pack-pct { font: 600 var(--nx-fs-xs) var(--nx-mono); color: var(--nx-state-running-text); flex: none; }
+.nx .nx-onb-pack .nx-onb-meter { height: 4px; }
+.nx .nx-onb-pack-more { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-8); min-width: 0; padding: var(--nx-space-2) var(--nx-space-2) var(--nx-space-2) var(--nx-space-40); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-onb-pack-more p { margin: 0; }
+.nx .nx-onb-pack-more ul { margin: 0; padding-left: var(--nx-space-18); display: grid; gap: var(--nx-space-3); color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.nx .nx-onb-pack-more dl { display: grid; gap: var(--nx-space-3); margin: 0; font-size: var(--nx-fs-xs); }
+.nx .nx-onb-pack-more dl div { display: flex; gap: var(--nx-space-8); }
+.nx .nx-onb-pack-more dt { flex: none; width: 70px; color: var(--nx-faint); }
+.nx .nx-onb-pack-more dd { margin: 0; min-width: 0; color: var(--nx-text-2); overflow-wrap: anywhere; }
+.nx .nx-onb-pack-more .nx-onb-command code { font-size: var(--nx-fs-xs); }
+
+/* ---- the tour ---- */
+.nx .nx-tour { display: grid; gap: var(--nx-space-12); outline: none; }
+.nx .nx-onb.is-tour-only .nx-onb-scroll { padding: var(--nx-space-18); }
+.nx .nx-onb.is-tour-only .nx-onb-step { max-width: none; }
+.nx .nx-tour-screen { position: relative; width: 100%; border-radius: var(--nx-r-lg); overflow: hidden; background: var(--nx-bg); box-shadow: var(--nx-card-shadow); }
+.nx .nx-tour-canvas { position: absolute; top: 0; left: 0; transform-origin: 0 0; overflow: hidden; contain: layout paint; isolation: isolate; background: var(--nx-bg); pointer-events: none; user-select: none; }
+.nx .nx-tour-end { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--nx-bg) 55%, transparent); }
+.nx .nx-tour-caption { display: grid; gap: var(--nx-space-3); min-height: 64px; }
+.nx .nx-tour-caption small { font-size: var(--nx-fs-xs); color: var(--nx-faint); font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; }
+.nx .nx-tour-caption h3 { font: 500 var(--nx-fs-xl)/1.2 var(--nx-display); }
+.nx .nx-tour-caption p { color: var(--nx-muted); font-size: var(--nx-fs-md); }
+.nx .nx-tour-controls { display: flex; align-items: center; gap: var(--nx-space-6); }
+.nx .nx-tour-track { display: flex; flex: 1 1 auto; gap: var(--nx-space-3); min-width: 0; height: 22px; align-items: center; }
+.nx .nx-tour-seg { flex: 1 1 0; height: 22px; display: flex; align-items: center; padding: 0; }
+.nx .nx-tour-seg::before { content: ""; }
+.nx .nx-tour-seg { position: relative; }
+.nx .nx-tour-seg i { position: absolute; left: 0; top: 9px; height: 4px; border-radius: var(--nx-r-xxs); background: var(--nx-accent-hi); }
+.nx .nx-tour-seg { background: linear-gradient(var(--nx-raised-2), var(--nx-raised-2)) 0 9px / 100% 4px no-repeat; border-radius: var(--nx-r-xxs); }
+.nx .nx-tour-seg:hover { background-color: transparent; filter: brightness(1.15); }
+.nx .nx-tour-time { font-size: var(--nx-fs-xs); color: var(--nx-faint); font-variant-numeric: tabular-nums; min-width: 30px; text-align: right; }
+
+/* The tour's canvas (1120x640, scaled): Neyvia's own screens with example data (NxTourScenes.jsx). */
+.nx .nx-tour-loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--nx-muted); }
+.nx .nx-tour-os { position: absolute; inset: 0; display: flex; overflow: hidden; background: var(--nx-bg); color: var(--nx-text); }
+.nx .nx-tour-os > .nx-main { min-width: 0; }
+.nx .nx-tour-side { width: 268px; }
+.nx .nx-tour-panel { width: 340px; flex: none; overflow: hidden; border-left: 1px solid var(--nx-line); background: var(--nx-panel); padding-top: var(--nx-space-6); }
+.nx .nx-tour-app { flex: 1 1 auto; min-width: 0; border-right: 1px solid var(--nx-line); background: var(--nx-panel); }
+.nx .nx-tour-app + .nx-main { flex: 0 0 420px; }
+.nx .nx-tour-keys { position: absolute; left: 50%; top: 42%; z-index: 70; transform: translateX(-50%); display: flex; gap: var(--nx-space-8); padding: var(--nx-space-14) var(--nx-space-18); border-radius: var(--nx-r-lg); background: var(--nx-raised); box-shadow: var(--nx-shadow-pop); }
+.nx .nx-tour-stage { position: absolute; inset: 0; display: flex; padding: var(--nx-space-28); background: var(--nx-bg); color: var(--nx-text); }
+.nx .nx-tour-stage.is-center { justify-content: center; align-items: center; }
+.nx .nx-tour-card { width: 600px; max-height: 100%; overflow: hidden; padding: var(--nx-space-24) var(--nx-space-28); border-radius: var(--nx-r-lg); background: var(--nx-panel); box-shadow: var(--nx-card-shadow); }
+.nx .nx-tour-note { border-radius: var(--nx-r-lg); background: var(--nx-panel); box-shadow: var(--nx-card-shadow); overflow: hidden; }
+.nx .nx-tour-note .nx-notes-panes { flex: 1 1 auto; min-height: 0; }
+.nx .nx-tour-phone { gap: var(--nx-space-48); }
+.nx .nx-tour-phone-label { display: grid; gap: var(--nx-space-6); max-width: 280px; }
+.nx .nx-tour-phone-label b { font: 500 var(--nx-fs-title)/1.15 var(--nx-display); }
+.nx .nx-tour-phone-label span { color: var(--nx-text-2); font-size: var(--nx-fs-md); }
+.nx .nx-tour-phone-label small { color: var(--nx-faint); font-size: var(--nx-fs-sm); }
+.nx .nx-tour-phone-side { width: 100%; flex: 1 1 auto; border-right: 0; }
+.nx .nx-tour-phone-chat { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.nx .nx-tour-phone-chat .nx-thread { padding: var(--nx-space-14) var(--nx-space-12); }
+
+@media (max-width: 760px) {
+  .nx .nx-onb-scrim { padding: 0; }
+  .nx .nx-onb { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); height: 100%; border-radius: 0; }
+  .nx .nx-onb-rail { flex-direction: row; align-items: center; gap: var(--nx-space-4); padding: calc(var(--nx-space-10) + var(--nx-safe-top)) var(--nx-space-12) var(--nx-space-10); border-right: 0; border-bottom: 1px solid var(--nx-line); overflow-x: auto; }
+  .nx .nx-onb-brand { display: none; }
+  .nx .nx-onb-rail-step { flex: none; padding: var(--nx-space-6) var(--nx-space-8); font-size: var(--nx-fs-sm); }
+  .nx .nx-onb-scroll { padding: var(--nx-space-20) var(--nx-space-16) var(--nx-space-16); }
+  .nx .nx-onb-foot { padding: var(--nx-space-10) var(--nx-space-16) calc(var(--nx-space-10) + var(--nx-safe-bottom)); }
+  .nx .nx-onb-step h2 { font-size: var(--nx-fs-title); }
+  .nx .nx-onb-runtime-body { padding-left: var(--nx-space-14); }
+}
+/* Feature scenes use shipped screens; the tour canvas remains inert. */
+.nx-tour-feature { height: 100%; min-height: 0; padding: 16px; overflow: hidden; background: var(--nx-bg); color: var(--nx-text); }
+.nx-tour-feature > .nx-stage { height: 100%; }
+.nx-tour-feature > header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nx-tour-feature > p { color: var(--nx-muted); }
+.nx-tour-placement-preview { height: 500px; transition: width 240ms, height 240ms; }
+.is-placement-side .nx-tour-placement-preview { width: 440px; margin-left: auto; }
+.is-placement-bubble .nx-tour-placement-preview { width: 360px; height: 360px; margin-left: auto; }
+
+
+/* ---- 29-ONB: the new flow (welcome, what is different, downloads, connect, done) ---- */
+.nx .nx-onb-step.is-wide { max-width: 700px; }
+.nx .nx-onb-agenda { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--nx-space-8); margin: 0; padding: 0; list-style: none; counter-reset: agenda; }
+.nx .nx-onb-agenda li { counter-increment: agenda; display: grid; gap: var(--nx-space-2); padding: var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-onb-agenda li::before { content: counter(agenda); display: grid; place-items: center; width: 22px; height: 22px; margin-bottom: var(--nx-space-4); border-radius: 50%; background: var(--nx-accent-soft); color: var(--nx-accent-text); font-size: var(--nx-fs-xs); font-weight: 600; }
+.nx .nx-onb-agenda b { font-weight: 600; }
+.nx .nx-onb-agenda small { color: var(--nx-muted); font-size: var(--nx-fs-xs); line-height: 1.4; }
+
+.nx .nx-onb-tag { display: inline-flex; align-items: center; padding: var(--nx-space-1) var(--nx-space-8); border-radius: var(--nx-r-pill); background: var(--nx-raised-2); color: var(--nx-text-2); font-size: var(--nx-fs-xs); font-weight: 600; letter-spacing: 0.01em; }
+.nx .nx-onb-tag.is-on { background: var(--nx-accent-soft); color: var(--nx-accent-text); }
+.nx .nx-tour-unlock .nx-link { white-space: nowrap; }
+.nx .nx-tour-unlock { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-10); margin: var(--nx-space-4) 0 0; }
+
+.nx .nx-onb-group { display: grid; gap: var(--nx-space-10); min-width: 0; }
+.nx .nx-onb-group + .nx-onb-group { padding-top: var(--nx-space-14); border-top: 1px solid var(--nx-line); }
+.nx .nx-onb-group > .nx-onb-sub { margin-top: 0; }
+.nx .nx-onb-group > .nx-onb-sub .nx-onb-tag { margin-left: var(--nx-space-2); font-weight: 500; }
+
+.nx .nx-onb-corelist { display: grid; gap: var(--nx-space-6); }
+.nx .nx-onb-core { position: relative; display: flex; align-items: center; gap: var(--nx-space-10); min-width: 0; padding: var(--nx-space-9) var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-onb-core-icon { display: grid; place-items: center; width: 26px; height: 26px; flex: none; border-radius: var(--nx-r-sm); background: var(--nx-accent-soft); color: var(--nx-accent-text); }
+.nx .nx-onb-core.is-failed .nx-onb-core-icon { background: var(--nx-red-soft); color: var(--nx-red); }
+.nx .nx-onb-core.is-running .nx-onb-core-icon, .nx .nx-onb-core.is-starting .nx-onb-core-icon, .nx .nx-onb-core.is-verifying .nx-onb-core-icon { background: color-mix(in srgb, var(--nx-amber) 16%, transparent); color: var(--nx-amber); }
+.nx .nx-onb-core-name { display: grid; gap: var(--nx-space-1); flex: 1 1 auto; min-width: 0; }
+.nx .nx-onb-core-name b { font-weight: 600; }
+.nx .nx-onb-core-name small { color: var(--nx-muted); font-size: var(--nx-fs-xs); line-height: 1.4; }
+.nx .nx-onb-core-state { flex: none; font: 500 var(--nx-fs-xs) var(--nx-mono); color: var(--nx-faint); }
+.nx .nx-onb-core .nx-onb-meter { position: absolute; left: var(--nx-space-12); right: var(--nx-space-12); bottom: 0; height: 3px; }
+
+.nx .nx-onb-mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--nx-space-10); align-items: start; }
+.nx .nx-onb-mod { display: grid; gap: var(--nx-space-10); align-content: start; min-width: 0; padding: var(--nx-space-14); border-radius: var(--nx-r-lg); background: var(--nx-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); transition: box-shadow var(--nx-fast) var(--nx-ease), background var(--nx-fast) var(--nx-ease); }
+.nx .nx-onb-mod.is-on { box-shadow: inset 0 0 0 var(--nx-stroke-icon) color-mix(in srgb, var(--nx-accent-hi) 70%, transparent); }
+.nx .nx-onb-mod.is-unavailable { background: color-mix(in srgb, var(--nx-raised) 70%, transparent); }
+.nx .nx-onb-mod > header { display: flex; align-items: center; gap: var(--nx-space-10); min-width: 0; }
+.nx .nx-onb-mod-mark { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: var(--nx-r); background: var(--nx-raised-2); }
+.nx .nx-onb-mod-title { display: grid; gap: var(--nx-space-1); flex: 1 1 auto; min-width: 0; }
+.nx .nx-onb-mod-title b { font-weight: 600; line-height: 1.25; }
+.nx .nx-onb-mod-title small { display: inline-flex; align-items: center; gap: var(--nx-space-4); color: var(--nx-muted); font-size: var(--nx-fs-xs); line-height: 1.4; }
+.nx .nx-onb-mod-title small.is-good { color: var(--nx-accent-text); }
+.nx .nx-onb-mod-title small.is-warn { color: var(--nx-amber); }
+.nx .nx-onb-mod-title small.is-bad { color: var(--nx-red); }
+.nx .nx-onb-mod > p { margin: 0; color: var(--nx-text-2); font-size: var(--nx-fs-sm); line-height: 1.5; }
+.nx .nx-onb-mod > footer { display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-8); }
+.nx .nx-onb-mod > footer small { flex: 1 1 auto; color: var(--nx-faint); font-size: var(--nx-fs-xs); line-height: 1.45; }
+.nx .nx-onb-unlocks { display: grid; gap: var(--nx-space-3); margin: 0; padding: 0; list-style: none; font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-onb-unlocks li { display: flex; gap: var(--nx-space-6); align-items: flex-start; }
+.nx .nx-onb-unlocks svg { flex: none; margin-top: 4px; color: var(--nx-accent-text); }
+.nx .nx-onb-adopt { display: grid; gap: var(--nx-space-6); padding: var(--nx-space-10); border-radius: var(--nx-r); background: var(--nx-raised-2); font-size: var(--nx-fs-sm); }
+.nx .nx-onb-adopt p { margin: 0; color: var(--nx-text-2); }
+
+.nx .nx-onb-switch { position: relative; flex: none; display: inline-block; width: 38px; height: 22px; cursor: pointer; }
+.nx .nx-onb-switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: inherit; }
+.nx .nx-onb-switch span { position: absolute; inset: 0; border-radius: var(--nx-r-pill); background: var(--nx-raised-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); transition: background var(--nx-fast) var(--nx-ease); }
+.nx .nx-onb-switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--nx-text-2); transition: transform var(--nx-snappy) var(--nx-spring-snappy), background var(--nx-fast) var(--nx-ease); }
+.nx .nx-onb-switch.is-on span { background: var(--nx-accent); box-shadow: none; }
+.nx .nx-onb-switch.is-on span::after { transform: translateX(16px); background: var(--nx-on-accent); }
+.nx .nx-onb-switch input:focus-visible + span { outline: 2px solid var(--nx-accent-hi); outline-offset: 2px; }
+.nx .nx-onb-switch.is-disabled { cursor: default; opacity: 0.5; }
+
+.nx .nx-onb-chips { display: flex; flex-wrap: wrap; gap: var(--nx-space-6); }
+.nx .nx-onb-chip { flex: none; white-space: nowrap; display: inline-flex; align-items: center; gap: var(--nx-space-4); padding: var(--nx-space-5) var(--nx-space-10); border-radius: var(--nx-r-pill); background: var(--nx-raised); color: var(--nx-text-2); font-size: var(--nx-fs-sm); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); transition: background var(--nx-fast) var(--nx-ease), box-shadow var(--nx-fast) var(--nx-ease); }
+.nx .nx-onb-chip:hover { background: var(--nx-hover); }
+.nx .nx-onb-chip.is-on { background: var(--nx-accent-soft); color: var(--nx-accent-text); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent-hi) 60%, transparent); }
+.nx .nx-onb-packs { padding-top: 0; border-top: 0; }
+.nx .nx-onb-pack-unlocks { color: var(--nx-faint); }
+.nx .nx-onb-parts ul { display: grid; gap: var(--nx-space-6); margin: 0; padding: 0; list-style: none; }
+.nx .nx-onb-parts li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--nx-space-1) var(--nx-space-10); font-size: var(--nx-fs-sm); }
+.nx .nx-onb-parts li small { grid-column: 1; color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.nx .nx-onb-parts li em { grid-row: 1; grid-column: 2; font: 500 var(--nx-fs-xs) var(--nx-mono); font-style: normal; color: var(--nx-faint); }
+
+.nx .nx-onb-slot { display: grid; gap: var(--nx-space-10); }
+.nx .nx-onb-summary { display: grid; gap: var(--nx-space-6); margin: 0; padding: 0; list-style: none; }
+.nx .nx-onb-summary li { display: grid; grid-template-columns: 22px 150px minmax(0, 1fr) auto; align-items: center; gap: var(--nx-space-10); padding: var(--nx-space-10) var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-onb-summary li > span:not(.nx-onb-check) { color: var(--nx-muted); font-size: var(--nx-fs-sm); }
+.nx .nx-onb-summary li:not(.is-ok) .nx-onb-check { background: transparent; border: 1.5px solid var(--nx-line-strong); }
+.nx .nx-onb-first { display: grid; gap: var(--nx-space-8); }
+.nx .nx-onb-first ul { margin: 0; padding-left: var(--nx-space-18); display: grid; gap: var(--nx-space-4); color: var(--nx-text-2); font-size: var(--nx-fs-md); }
+.nx .nx-onb-first kbd { padding: 0 var(--nx-space-5); border-radius: var(--nx-r-xxs); background: var(--nx-raised-2); font: 500 var(--nx-fs-xs) var(--nx-mono); }
+
+@media (max-width: 760px) {
+  .nx .nx-onb-agenda { grid-template-columns: 1fr; }
+  .nx .nx-onb-mods { grid-template-columns: 1fr; }
+  .nx .nx-onb-summary li { grid-template-columns: 22px minmax(0, 1fr) auto; }
+  .nx .nx-onb-summary li > span:not(.nx-onb-check) { grid-column: 2 / 4; grid-row: 2; }
+}
+
+/* Narrow screens: the tour canvas is 640 wide and the chat scenes drop their sidebar. */
+.nx .nx-tour-canvas.is-narrow[data-chapter="basics"] .nx-tour-side,
+.nx .nx-tour-canvas.is-narrow[data-chapter="manuals"] .nx-tour-side,
+.nx .nx-tour-canvas.is-narrow[data-chapter="claudemod"] .nx-tour-side,
+.nx .nx-tour-canvas.is-narrow[data-chapter="codexskills"] .nx-tour-side { display: none; }
+/* The wide setup dialog (the tour step) gives the scenes more room. */
+.nx .nx-onb.is-wide { width: min(1100px, 100%); height: min(780px, 100%); }
+.nx .nx-onb.is-wide .nx-onb-step.is-wide { max-width: 880px; }
+@media (max-width: 760px) { .nx .nx-onb.is-wide { width: 100%; height: 100%; } }
+.nx .nx-onb.is-wide .nx-tour-screen { max-width: 760px; margin-inline: auto; }
+.nx .nx-onb.is-wide .nx-onb-step-head p { display: none; }
+.nx .nx-tour-caption { min-height: 0; }
+.nx .nx-onb-rail-step { text-align: left; white-space: nowrap; }
+.nx .nx-onb-more + .nx-onb-more { margin-top: var(--nx-space-2); }
+.nx .nx-onb-first .nx-onb-fine { display: flex; align-items: center; gap: var(--nx-space-6); }
+@media (max-width: 760px) {
+  /* Five steps do not fit a phone: the current one keeps its name, the others are numbered dots. */
+  .nx .nx-onb-rail-step:not(.is-on) { font-size: 0; gap: 0; }
+  .nx .nx-onb-rail-step:not(.is-on) .nx-onb-rail-dot { font-size: var(--nx-fs-xs); }
+}
+/* Edges as real borders: an inset shadow can vanish on a light surface, and these marks must stay visible. */
+.nx .nx-onb-switch span { box-shadow: none; border: 1.5px solid var(--nx-line-strong); }
+.nx .nx-onb-switch.is-on span { border-color: transparent; }
+.nx .nx-onb-switch span::after { top: 1.5px; left: 1.5px; }
+.nx .nx-onb-switch.is-on span::after { transform: translateX(16px); }
+.nx .nx-onb-chip { box-shadow: none; border: 1px solid var(--nx-line-strong); }
+.nx .nx-onb-chip.is-on { border-color: var(--nx-accent-hi); }
+.nx .nx-onb-tag { border: 1px solid var(--nx-line); }
+.nx .nx-onb-mod, .nx .nx-onb-core, .nx .nx-onb-agenda li, .nx .nx-onb-summary li { box-shadow: none; border: 1px solid var(--nx-line); }
+.nx .nx-onb-mod.is-on { border-color: var(--nx-accent-hi); }
+.nx .nx-onb-rail-dot { flex: none; box-sizing: border-box; width: 20px; height: 20px; min-width: 20px; line-height: 1; }

@@ -1,0 +1,677 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "local-rendering",
+  "kind": "workflow",
+  "schemas": {
+    "neyvia.folder.open": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notes.open": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notify": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "info",
+            "success",
+            "warning",
+            "error"
+          ]
+        }
+      },
+      "required": []
+    },
+    "neyvia.onboarding.open": {
+      "type": "object",
+      "properties": {
+        "step": {
+          "type": "string",
+          "enum": [
+            "welcome",
+            "runtimes",
+            "interests",
+            "tour"
+          ]
+        }
+      },
+      "required": []
+    },
+    "neyvia.view.arrange": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "sidebar",
+              "main",
+              "panel",
+              "canopy"
+            ]
+          }
+        },
+        "dock": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "canopy": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ]
+        },
+        "sidebarHidden": {
+          "type": "boolean"
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "enum": [
+                  "continue",
+                  "needs",
+                  "running",
+                  "nightshift",
+                  "projects",
+                  "usage"
+                ]
+              },
+              "size": {
+                "type": "string",
+                "enum": [
+                  "s",
+                  "m",
+                  "l"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        }
+      },
+      "required": []
+    },
+    "neyvia.view.float": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "floating": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.view.scene": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "save": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.view.state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.voice.command": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "language": {
+          "type": "string"
+        },
+        "context": {
+          "type": "object"
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "final": {
+          "type": "boolean"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "text": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "mounted": {
+      "title": "Current mounted shell",
+      "state": {
+        "shell": {
+          "args": {},
+          "inputs": {
+            "type": "object"
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.view.state"
+        }
+      },
+      "actions": {
+        "folder-open": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.folder.open",
+          "tool": "neyvia.folder.open"
+        },
+        "notes-open": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.open",
+          "tool": "neyvia.notes.open"
+        },
+        "notify": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.notify",
+          "tool": "neyvia.notify"
+        },
+        "onboarding-open": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.onboarding.open",
+          "tool": "neyvia.onboarding.open"
+        },
+        "view-arrange": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.view.arrange",
+          "tool": "neyvia.view.arrange"
+        },
+        "view-float": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.view.float",
+          "tool": "neyvia.view.float"
+        },
+        "view-scene": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.view.scene",
+          "tool": "neyvia.view.scene"
+        },
+        "view-state": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.view.state",
+          "tool": "neyvia.view.state"
+        },
+        "voice-command": {
+          "effect": "Fresh real mounted DOM, exact delivered event, runtime and requested state; notes conserve body bytes",
+          "pre": "The current mounted owner shell or an explicit note in its selected folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.voice.command",
+          "tool": "neyvia.voice.command"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "folder-open": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "steps": [
+            {
+              "action": "folder-open",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        },
+        "notes-open": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "steps": [
+            {
+              "action": "notes-open",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        },
+        "notify": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string",
+                "enum": [
+                  "info",
+                  "success",
+                  "warning",
+                  "error"
+                ]
+              }
+            },
+            "required": [
+              "message",
+              "level"
+            ]
+          },
+          "steps": [
+            {
+              "action": "notify",
+              "args": {
+                "level": {
+                  "$input": "level"
+                },
+                "message": {
+                  "$input": "message"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        },
+        "onboarding-open": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "step": {
+                "type": "string",
+                "enum": [
+                  "welcome",
+                  "runtimes",
+                  "interests",
+                  "tour"
+                ]
+              }
+            },
+            "required": [
+              "step"
+            ]
+          },
+          "steps": [
+            {
+              "action": "onboarding-open",
+              "args": {
+                "step": {
+                  "$input": "step"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        },
+        "view-arrange": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "sidebar",
+                    "main",
+                    "panel",
+                    "canopy"
+                  ]
+                }
+              },
+              "dock": {
+                "type": "string",
+                "enum": [
+                  "left",
+                  "right"
+                ]
+              },
+              "sidebarHidden": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "order",
+              "dock",
+              "sidebarHidden"
+            ]
+          },
+          "steps": [
+            {
+              "action": "view-arrange",
+              "args": {
+                "dock": {
+                  "$input": "dock"
+                },
+                "order": {
+                  "$input": "order"
+                },
+                "sidebarHidden": {
+                  "$input": "sidebarHidden"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        },
+        "view-float": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "floating": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "floating"
+            ]
+          },
+          "steps": [
+            {
+              "action": "view-float",
+              "args": {
+                "floating": {
+                  "$input": "floating"
+                },
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        },
+        "view-scene": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          "steps": [
+            {
+              "action": "view-scene",
+              "args": {
+                "name": {
+                  "$input": "name"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        },
+        "view-state": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "view-state",
+              "args": {},
+              "save": "rendered"
+            }
+          ]
+        },
+        "voice-command": {
+          "goal": "Observe or enact the requested real mounted shell effect; queued ACKs never satisfy completion",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "requestId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "voice-command",
+              "args": {
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "text": {
+                  "$input": "text"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        },
+        "view-scene-save": {
+          "goal": "Save the exact current observed layout, density and theme",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "save": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "save"
+            ]
+          },
+          "steps": [
+            {
+              "action": "view-scene",
+              "args": {
+                "save": {
+                  "$input": "save"
+                }
+              },
+              "save": "rendered"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "The command was queued but the app never mounted",
+          "recovery": "Read view.state; require a fresh owner runtime, actual visible DOM and subject matching. Close/unmount or stale heartbeat invalidates done."
+        }
+      ],
+      "frontier": [
+        "Spoken commands beyond locally witnessed Notes opening and returning to chat need their own typed mounted effects.",
+        "App SDK preview and verification need a running owned app and source-bound mounted frame."
+      ],
+      "guidance": [
+        "view.state reads renderer:shell from the same authenticated app-state route; it never claims a UI effect from acknowledgement alone.",
+        "PDF uses real MuPDF RGBA when Canvas2D transforms are absent, retaining PDF.js text/search; observed source and entire pixel hashes are required for CL completion."
+      ]
+    }
+  }
+}

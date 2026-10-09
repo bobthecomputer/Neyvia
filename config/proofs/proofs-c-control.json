@@ -1,0 +1,2443 @@
+{
+  "area": "proofs-c-control",
+  "module": "grant_agent.proofs_c_control",
+  "self_check": "self_check",
+  "manuals": [
+    "conductor"
+  ],
+  "contracts": [
+    {
+      "id": "proofs-c.control.workspaces",
+      "phase": "invariant",
+      "claim": "Empty or malformed stores create and persist the primary workspace. Existing release roots reanchor within their release family; unrelated project roots remain unchanged. The returned projection equals durable state.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore.load_workspaces -> proofs_c_control.checked(workspaces)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.delete",
+      "phase": "invariant",
+      "claim": "Workspace removal preserves unrelated workspaces, missions and history, removes only the selected workspace mission projection/history, and returns the exact removal count. The last workspace and unknown IDs are rejected by the action.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore.delete_workspace -> proofs_c_control.checked(delete)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.queue",
+      "phase": "invariant",
+      "claim": "Each workspace has exactly one eligible active slot, contiguous queued positions and actual blocker identities. Completed, blocked and exhausted owners release their queue position; newly promoted queued work receives its front-of-queue receipt.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._rebalance_workspace_queue_in_place -> proofs_c_control.checked(queue)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.events",
+      "phase": "invariant",
+      "claim": "Event reads return only the requested durable tail in newest-first order, skip malformed rows and obey zero/negative bounds.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore.recent_events -> proofs_c_control.checked(events)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.cache",
+      "phase": "invariant",
+      "claim": "Unchanged file metadata reuses the same cached parse object; new small parses enter the cache and durable writes invalidate stale cached values.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._load_json -> proofs_c_control.checked(cache)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.mode",
+      "phase": "invariant",
+      "claim": "Desktop Focus/Autopilot/Deep Run/Research modes select fast/autopilot/deep_run/swarms engines, with autopilot for unknown vocabulary.",
+      "checkedAt": [
+        "mission_control.mission_mode_to_engine_mode -> proofs_c_control.checked(mode)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.title",
+      "phase": "invariant",
+      "claim": "Mission titles remove prompt filler, preserve significant words in order, omit secondary stopwords, capitalize the opening token, bound length to six tokens and use New Mission for empty input.",
+      "checkedAt": [
+        "mission_control._mission_title -> proofs_c_control.checked(title)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.scope",
+      "phase": "invariant",
+      "claim": "File scopes are bounded, deduplicated normalized paths. Explicit artifact destinations and fusion workspaces are retained, while separately labelled source projects and validation prose do not become edit targets.",
+      "checkedAt": [
+        "mission_control.infer_planned_file_scope -> proofs_c_control.checked(scope)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.budget",
+      "phase": "invariant",
+      "claim": "Runtime budget values are nonnegative; an explicit persisted deadline determines maximum duration, elapsed and remaining time over the nominal duration, while recorded running continuation windows retain their established precedence.",
+      "checkedAt": [
+        "mission_control.mission_time_budget_window -> proofs_c_control.checked(budget)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.verification",
+      "phase": "invariant",
+      "claim": "Failed verification labels structured checks by checkId/id/label/title/message/detail/status priority and reports at most two, rather than rendering mapping representations as user-facing failure names.",
+      "checkedAt": [
+        "mission_control._verification_summary_for_mission -> proofs_c_control.checked(verification)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.images",
+      "phase": "invariant",
+      "claim": "Image artifact summaries match retained items, direct files retain their stem identity, and previews bind to existing sufficiently sized artifact files.",
+      "checkedAt": [
+        "mission_control._build_generated_image_artifacts_snapshot -> proofs_c_control.checked(images)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.attachment",
+      "phase": "invariant",
+      "claim": "Verifier screenshots/reports are confined to the supplied workspace, copied byte faithfully and stored beside a durable manifest with exact schema/count/size. External paths are rejected and cannot publish an attachment manifest.",
+      "checkedAt": [
+        "mission_control.attach_verifier_proof_bundle -> proofs_c_control.checked(attachment)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.evidence",
+      "phase": "invariant",
+      "claim": "An existing embedded Windows runtime evidence path is recovered to that actual file rather than retaining the malformed prefix.",
+      "checkedAt": [
+        "mission_control._recover_evidence_path -> proofs_c_control.checked(evidence)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "control-room state",
+        "mission lifecycle",
+        "operator evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.goal-audit",
+      "phase": "invariant",
+      "claim": "Recorded first-view proof can satisfy interface evidence. Completed/real-output evidence and clean advancing cadence determine output/red-team requirements. Weighted counts, completion percentage and top blocker agree with actual requirement rows; missing mission output remains partial.",
+      "checkedAt": [
+        "mission_control._goal_completion_audit_summary -> proofs_c_control.checked(goal-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.loss-audit",
+      "phase": "invariant",
+      "claim": "Quiet completed queues with an explicit healthy queue receipt are not a missing-live-work gap. Clean advancing red-team cadence stays visible as zero-loss maintenance; unhealthy cadence retains a positive product gap. Loss averages match recorded category scores.",
+      "checkedAt": [
+        "mission_control._system_loss_breakdown -> proofs_c_control.checked(loss-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.storage-triage",
+      "phase": "invariant",
+      "claim": "An unmeasured connect/timeout failure produces a warning rather than a measured full-disk block. Triage executes no destructive action; this projection consumes recorded pressure input without probing NAS.",
+      "checkedAt": [
+        "mission_control._storage_triage_summary -> proofs_c_control.checked(storage-triage)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.preview",
+      "phase": "invariant",
+      "claim": "A mission preview uses its actual artifact manifest, explicit entrypoint or bare index.html; absent files provide no fabricated preview.",
+      "checkedAt": [
+        "mission_control.mission_artifact_manifest_preview_url -> proofs_c_control.checked(preview)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.proof-digest",
+      "phase": "invariant",
+      "claim": "A current live-view URL takes precedence over a persisted artifact manifest. Without a live-view URL, the mission artifact binds into the proof digest with its correct source label. URL binding alone is not serving/browser proof.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_proof_digest_payload -> proofs_c_control.checked(proof-digest)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.progress",
+      "phase": "invariant",
+      "claim": "Mission progress uses recorded actions/runtime lanes, treats failed work as bounded proof repair, queued work as four-percent queued state, and exhausted work as non-completion attention. Fresh/extended active windows preserve an activity floor and renewed denominator; planned artifact counts match measured local entries.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.mission-counts",
+      "phase": "invariant",
+      "claim": "Pure mission lifecycle counters distinguish active, blocked, queued and runtime-budget attention from persisted mission facts. Startup checks do not prove full summary aggregate wiring; its two original cases remain retained.",
+      "checkedAt": [
+        "mission_control._control_mission_counts_projection -> proofs_c_control.checked(mission-counts)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.workspace-queue",
+      "phase": "invariant",
+      "claim": "Every shell collector uses the same actual active/queued workspace ownership projection. Eligible queue owners exclude released, exhausted and reconcile-pending missions; queue IDs and counts match recorded rows.",
+      "checkedAt": [
+        "mission_control._control_workspace_queue_projection -> proofs_c_control.checked(workspace-queue)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.route-trust",
+      "phase": "invariant",
+      "claim": "Only useful operator-scored feedback reduces missing route-value samples. Low-value closeouts require prioritized artifact/browser/proof/value repair, with explicit model policy. Declared sample objectives outrank unrelated workspace route defaults.",
+      "checkedAt": [
+        "mission_control._build_route_trust_coverage_summary -> proofs_c_control.checked(route-trust)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.release-quality",
+      "phase": "invariant",
+      "claim": "Release quality uses bounded completed-or-continuing and resume-completed-or-continuing components while preserving terminal completion statistics. This calculation does not collect release/supervisor state.",
+      "checkedAt": [
+        "mission_control._release_quality_score -> proofs_c_control.checked(release-quality)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.notifications",
+      "phase": "invariant",
+      "claim": "Notification rows refer only to current mission IDs and are bounded. Completed concrete runtime output yields a source-labelled slice, while running output can hydrate from the mission’s local runtime ledger; no provider discovery is needed.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._build_notification_feed -> proofs_c_control.checked(notifications)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.overnight",
+      "phase": "invariant",
+      "claim": "Mission-only overnight projection separates actionable repair from safely held overlap queues, preserving owner identity, repair/held counts and split-scope guidance. Delivery/channel collection remains outside the scratch projector.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._overnight_progress_projection -> proofs_c_control.checked(overnight)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.git-actions",
+      "phase": "invariant",
+      "claim": "Tracked branches expose fast-forward-only pull and scoped commit suggestions. Approval-gated pull remains gated and action order is inspect, pull, commit, push. Projection never executes git pull/push.",
+      "checkedAt": [
+        "mission_control._build_git_actions -> proofs_c_control.checked(git-actions)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.validation-actions",
+      "phase": "invariant",
+      "claim": "The workspace exposes one real validation action on validate.workspace, including the frontend build command detected from local package.json. Projection does not execute that declared command.",
+      "checkedAt": [
+        "mission_control._build_validation_actions -> proofs_c_control.checked(validation-actions)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.replace-lock",
+      "phase": "invariant",
+      "claim": "Successful atomic writes equal the submitted JSON. The Windows startup procedure holds a real read lease denying delete-sharing, releases it while the production retry loop runs, verifies exact durable content, preserves an unrelated keeper and leaves no staging file.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._write_json_if_changed -> proofs_c_control.checked(replace-lock)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.harness-summary",
+      "phase": "invariant",
+      "claim": "Harness summary counts only mission-index sessions and explicitly defers unrelated runtime history. Terminal completion, live continuity and resumed completion/continuity rates retain distinct denominators.",
+      "checkedAt": [
+        "mission_control.build_summary_harness_lab_snapshot -> proofs_c_control.checked(harness-summary)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    },
+    {
+      "id": "proofs-c.control.mission-loop",
+      "phase": "invariant",
+      "claim": "Mission-loop projection preserves persisted enforced run-until behavior and budget state. An unacknowledged completed delegated lane becomes resume-available with reconciliation guidance instead of active-running continuity.",
+      "checkedAt": [
+        "mission_control.build_mission_loop_snapshot -> proofs_c_control.checked(mission-loop)",
+        "proofs_c_control.self_check"
+      ],
+      "impact": [
+        "mission state projection",
+        "operator decisions",
+        "durable evidence"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_empty_workspace_store_falls_back_to_default_workspace",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_empty_workspace_store_falls_back_to_default_workspace",
+      "contracts": [
+        "proofs-c.control.workspaces"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore.load_workspaces -> proofs_c_control.checked(workspaces)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_invalid_workspace_store_falls_back_to_default_workspace",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_invalid_workspace_store_falls_back_to_default_workspace",
+      "contracts": [
+        "proofs-c.control.workspaces"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore.load_workspaces -> proofs_c_control.checked(workspaces)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_workspace_store_reanchors_old_release_root_to_current_release",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_workspace_store_reanchors_old_release_root_to_current_release",
+      "contracts": [
+        "proofs-c.control.workspaces"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore.load_workspaces -> proofs_c_control.checked(workspaces)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_workspace_store_keeps_non_release_roots_unchanged",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_workspace_store_keeps_non_release_roots_unchanged",
+      "contracts": [
+        "proofs-c.control.workspaces"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore.load_workspaces -> proofs_c_control.checked(workspaces)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_delete_workspace_removes_scoped_missions_and_history",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_delete_workspace_removes_scoped_missions_and_history",
+      "contracts": [
+        "proofs-c.control.delete"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore.delete_workspace -> proofs_c_control.checked(delete)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_completed_active_mission_promotes_next_queued_mission",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_completed_active_mission_promotes_next_queued_mission",
+      "contracts": [
+        "proofs-c.control.queue"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._rebalance_workspace_queue_in_place -> proofs_c_control.checked(queue)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_blocked_active_mission_releases_next_queued_mission",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_blocked_active_mission_releases_next_queued_mission",
+      "contracts": [
+        "proofs-c.control.queue"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._rebalance_workspace_queue_in_place -> proofs_c_control.checked(queue)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_recent_events_reads_only_tail_rows_in_newest_first_order",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_recent_events_reads_only_tail_rows_in_newest_first_order",
+      "contracts": [
+        "proofs-c.control.events"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore.recent_events -> proofs_c_control.checked(events)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_control_room_json_loader_reuses_unchanged_file_parse",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_control_room_json_loader_reuses_unchanged_file_parse",
+      "contracts": [
+        "proofs-c.control.cache"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._load_json -> proofs_c_control.checked(cache)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_control_room_json_loader_invalidates_after_write",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_control_room_json_loader_invalidates_after_write",
+      "contracts": [
+        "proofs-c.control.cache"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._load_json -> proofs_c_control.checked(cache)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_mode_mapping_matches_desktop_vocabulary",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mode_mapping_matches_desktop_vocabulary",
+      "contracts": [
+        "proofs-c.control.mode"
+      ],
+      "checkedAt": [
+        "mission_control.mission_mode_to_engine_mode -> proofs_c_control.checked(mode)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_mission_title_strips_prompt_filler_and_keeps_codex_style_name",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_title_strips_prompt_filler_and_keeps_codex_style_name",
+      "contracts": [
+        "proofs-c.control.title"
+      ],
+      "checkedAt": [
+        "mission_control._mission_title -> proofs_c_control.checked(title)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_infer_planned_file_scope_extracts_artifact_directory",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_infer_planned_file_scope_extracts_artifact_directory",
+      "contracts": [
+        "proofs-c.control.scope"
+      ],
+      "checkedAt": [
+        "mission_control.infer_planned_file_scope -> proofs_c_control.checked(scope)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_infer_planned_file_scope_prefers_fusion_workspace_over_sources",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_infer_planned_file_scope_prefers_fusion_workspace_over_sources",
+      "contracts": [
+        "proofs-c.control.scope"
+      ],
+      "checkedAt": [
+        "mission_control.infer_planned_file_scope -> proofs_c_control.checked(scope)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_mission_time_budget_window_prefers_explicit_deadline",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_time_budget_window_prefers_explicit_deadline",
+      "contracts": [
+        "proofs-c.control.budget"
+      ],
+      "checkedAt": [
+        "mission_control.mission_time_budget_window -> proofs_c_control.checked(budget)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_verification_summary_handles_structured_failed_check_rows",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_verification_summary_handles_structured_failed_check_rows",
+      "contracts": [
+        "proofs-c.control.verification"
+      ],
+      "checkedAt": [
+        "mission_control._verification_summary_for_mission -> proofs_c_control.checked(verification)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_generated_image_artifact_snapshot_includes_direct_images_without_manifest",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_generated_image_artifact_snapshot_includes_direct_images_without_manifest",
+      "contracts": [
+        "proofs-c.control.images"
+      ],
+      "checkedAt": [
+        "mission_control._build_generated_image_artifacts_snapshot -> proofs_c_control.checked(images)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_attach_verifier_proof_bundle_copies_report_and_rejects_external_paths",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_attach_verifier_proof_bundle_copies_report_and_rejects_external_paths",
+      "contracts": [
+        "proofs-c.control.attachment"
+      ],
+      "checkedAt": [
+        "mission_control.attach_verifier_proof_bundle -> proofs_c_control.checked(attachment)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_recover_evidence_path_extracts_embedded_windows_runtime_path",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_recover_evidence_path_extracts_embedded_windows_runtime_path",
+      "contracts": [
+        "proofs-c.control.evidence"
+      ],
+      "checkedAt": [
+        "mission_control._recover_evidence_path -> proofs_c_control.checked(evidence)",
+        "proofs_c_control.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_goal_completion_credits_authenticated_agent_first_view_proof",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_goal_completion_credits_authenticated_agent_first_view_proof",
+      "contracts": [
+        "proofs-c.control.goal-audit"
+      ],
+      "checkedAt": [
+        "mission_control._goal_completion_audit_summary -> proofs_c_control.checked(goal-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_goal_completion_credits_clean_red_team_cadence_with_historical_pending_targets",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_goal_completion_credits_clean_red_team_cadence_with_historical_pending_targets",
+      "contracts": [
+        "proofs-c.control.goal-audit"
+      ],
+      "checkedAt": [
+        "mission_control._goal_completion_audit_summary -> proofs_c_control.checked(goal-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_goal_completion_does_not_mark_missing_mission_output_as_complete",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_goal_completion_does_not_mark_missing_mission_output_as_complete",
+      "contracts": [
+        "proofs-c.control.goal-audit"
+      ],
+      "checkedAt": [
+        "mission_control._goal_completion_audit_summary -> proofs_c_control.checked(goal-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_system_loss_does_not_flag_healthy_zero_active_scheduler_state",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_system_loss_does_not_flag_healthy_zero_active_scheduler_state",
+      "contracts": [
+        "proofs-c.control.loss-audit"
+      ],
+      "checkedAt": [
+        "mission_control._system_loss_breakdown -> proofs_c_control.checked(loss-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_system_loss_flags_zero_active_state_without_queue_proof",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_system_loss_flags_zero_active_state_without_queue_proof",
+      "contracts": [
+        "proofs-c.control.loss-audit"
+      ],
+      "checkedAt": [
+        "mission_control._system_loss_breakdown -> proofs_c_control.checked(loss-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_system_loss_keeps_healthy_red_team_cadence_visible_without_gap_loss",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_system_loss_keeps_healthy_red_team_cadence_visible_without_gap_loss",
+      "contracts": [
+        "proofs-c.control.loss-audit"
+      ],
+      "checkedAt": [
+        "mission_control._system_loss_breakdown -> proofs_c_control.checked(loss-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_system_loss_flags_unhealthy_red_team_cadence_as_gap",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_system_loss_flags_unhealthy_red_team_cadence_as_gap",
+      "contracts": [
+        "proofs-c.control.loss-audit"
+      ],
+      "checkedAt": [
+        "mission_control._system_loss_breakdown -> proofs_c_control.checked(loss-audit)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_storage_triage_probe_failure_is_warning_not_blocked",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_storage_triage_probe_failure_is_warning_not_blocked",
+      "contracts": [
+        "proofs-c.control.storage-triage"
+      ],
+      "checkedAt": [
+        "mission_control._storage_triage_summary -> proofs_c_control.checked(storage-triage)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_mission_artifact_manifest_preview_url_binds_into_proof_digest",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_artifact_manifest_preview_url_binds_into_proof_digest",
+      "contracts": [
+        "proofs-c.control.preview",
+        "proofs-c.control.proof-digest"
+      ],
+      "checkedAt": [
+        "mission_control.mission_artifact_manifest_preview_url -> proofs_c_control.checked(preview)",
+        "proofs_c_control.self_check",
+        "mission_control.ControlRoomStore._mission_proof_digest_payload -> proofs_c_control.checked(proof-digest)"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_mission_proof_digest_prefers_live_preview_over_artifact_manifest",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_proof_digest_prefers_live_preview_over_artifact_manifest",
+      "contracts": [
+        "proofs-c.control.preview",
+        "proofs-c.control.proof-digest"
+      ],
+      "checkedAt": [
+        "mission_control.mission_artifact_manifest_preview_url -> proofs_c_control.checked(preview)",
+        "proofs_c_control.self_check",
+        "mission_control.ControlRoomStore._mission_proof_digest_payload -> proofs_c_control.checked(proof-digest)"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_summary_running_mission_progress_falls_back_to_live_activity_signals",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_running_mission_progress_falls_back_to_live_activity_signals",
+      "contracts": [
+        "proofs-c.control.progress"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_summary_failed_mission_progress_uses_proof_repair_readiness",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_failed_mission_progress_uses_proof_repair_readiness",
+      "contracts": [
+        "proofs-c.control.progress"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_summary_queued_mission_progress_does_not_use_stale_runtime_budget",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_queued_mission_progress_does_not_use_stale_runtime_budget",
+      "contracts": [
+        "proofs-c.control.progress"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_summary_running_mission_with_extended_remaining_budget_is_not_exhausted",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_running_mission_with_extended_remaining_budget_is_not_exhausted",
+      "contracts": [
+        "proofs-c.control.progress"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_summary_fresh_running_delegated_mission_uses_activity_progress_floor",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_fresh_running_delegated_mission_uses_activity_progress_floor",
+      "contracts": [
+        "proofs-c.control.progress"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_summary_reconcile_pending_over_budget_mission_is_not_completion_progress",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_reconcile_pending_over_budget_mission_is_not_completion_progress",
+      "contracts": [
+        "proofs-c.control.progress"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_second_mission_is_queued_behind_active_workspace_mission",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_second_mission_is_queued_behind_active_workspace_mission",
+      "contracts": [
+        "proofs-c.control.queue",
+        "proofs-c.control.workspace-queue"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._rebalance_workspace_queue_in_place -> proofs_c_control.checked(queue)",
+        "proofs_c_control.self_check",
+        "mission_control._control_workspace_queue_projection -> proofs_c_control.checked(workspace-queue)"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_route_trust_coverage_surfaces_low_value_repair_plan",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_route_trust_coverage_surfaces_low_value_repair_plan",
+      "contracts": [
+        "proofs-c.control.route-trust"
+      ],
+      "checkedAt": [
+        "mission_control._build_route_trust_coverage_summary -> proofs_c_control.checked(route-trust)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_route_trust_proven_requires_useful_operator_value_samples",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_route_trust_proven_requires_useful_operator_value_samples",
+      "contracts": [
+        "proofs-c.control.route-trust"
+      ],
+      "checkedAt": [
+        "mission_control._build_route_trust_coverage_summary -> proofs_c_control.checked(route-trust)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_route_trust_coverage_uses_sampling_objective_before_workspace_route_defaults",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_route_trust_coverage_uses_sampling_objective_before_workspace_route_defaults",
+      "contracts": [
+        "proofs-c.control.route-trust"
+      ],
+      "checkedAt": [
+        "mission_control._build_route_trust_coverage_summary -> proofs_c_control.checked(route-trust)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_release_quality_counts_live_continuity_without_erasing_terminal_completion",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_quality_counts_live_continuity_without_erasing_terminal_completion",
+      "contracts": [
+        "proofs-c.control.release-quality"
+      ],
+      "checkedAt": [
+        "mission_control._release_quality_score -> proofs_c_control.checked(release-quality)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_completed_runtime_status_emits_slice_notification",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_completed_runtime_status_emits_slice_notification",
+      "contracts": [
+        "proofs-c.control.notifications"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._build_notification_feed -> proofs_c_control.checked(notifications)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_running_notification_hydrates_missing_workflow_sessions",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_running_notification_hydrates_missing_workflow_sessions",
+      "contracts": [
+        "proofs-c.control.notifications"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._build_notification_feed -> proofs_c_control.checked(notifications)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_overnight_digest_separates_repair_from_safely_held_queue",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_overnight_digest_separates_repair_from_safely_held_queue",
+      "contracts": [
+        "proofs-c.control.overnight"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._overnight_progress_projection -> proofs_c_control.checked(overnight)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_mission_summary_includes_planned_scope_artifact_readiness",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_summary_includes_planned_scope_artifact_readiness",
+      "contracts": [
+        "proofs-c.control.progress"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_build_git_actions_includes_pull_for_tracked_branch",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_build_git_actions_includes_pull_for_tracked_branch",
+      "contracts": [
+        "proofs-c.control.git-actions"
+      ],
+      "checkedAt": [
+        "mission_control._build_git_actions -> proofs_c_control.checked(git-actions)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_build_validation_actions_uses_detected_commands",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_build_validation_actions_uses_detected_commands",
+      "contracts": [
+        "proofs-c.control.validation-actions"
+      ],
+      "checkedAt": [
+        "mission_control._build_validation_actions -> proofs_c_control.checked(validation-actions)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_control_room_json_writer_retries_transient_replace_lock",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_control_room_json_writer_retries_transient_replace_lock",
+      "contracts": [
+        "proofs-c.control.replace-lock"
+      ],
+      "checkedAt": [
+        "mission_control.ControlRoomStore._write_json_if_changed -> proofs_c_control.checked(replace-lock)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_summary_harness_lab_uses_mission_session_index_without_full_runtime_scan",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_harness_lab_uses_mission_session_index_without_full_runtime_scan",
+      "contracts": [
+        "proofs-c.control.harness-summary"
+      ],
+      "checkedAt": [
+        "mission_control.build_summary_harness_lab_snapshot -> proofs_c_control.checked(harness-summary)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_summary_harness_lab_reports_completed_or_continuing_live_missions",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_harness_lab_reports_completed_or_continuing_live_missions",
+      "contracts": [
+        "proofs-c.control.harness-summary"
+      ],
+      "checkedAt": [
+        "mission_control.build_summary_harness_lab_snapshot -> proofs_c_control.checked(harness-summary)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_snapshot_surfaces_time_budget_and_run_until_behavior",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_surfaces_time_budget_and_run_until_behavior",
+      "contracts": [
+        "proofs-c.control.mission-loop"
+      ],
+      "checkedAt": [
+        "mission_control.build_mission_loop_snapshot -> proofs_c_control.checked(mission-loop)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_snapshot_does_not_report_completed_delegated_lane_as_active",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_does_not_report_completed_delegated_lane_as_active",
+      "contracts": [
+        "proofs-c.control.mission-loop"
+      ],
+      "checkedAt": [
+        "mission_control.build_mission_loop_snapshot -> proofs_c_control.checked(mission-loop)",
+        "proofs_c_control.self_check"
+      ],
+      "procedure": "self_check"
+    }
+  ],
+  "retained": [
+    {
+      "case": "MissionControlTests.test_blocked_history_reset_removes_legacy_rows_and_counts_only_new_missions",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_blocked_history_reset_removes_legacy_rows_and_counts_only_new_missions",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires watermark reset plus system-audit and notification filtering; local queue promotion does not cover restored legacy projection suppression.",
+      "productionCalls": [
+        "store.blocking_metrics_since",
+        "store.load_autonomous_workflows",
+        "store.load_missions",
+        "store.missions_path.read_text",
+        "store.missions_path.write_text",
+        "store.reset_legacy_blocked_missions",
+        "store.save_autonomous_workflows",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_exposes_legacy_mission_run_read_model_without_migration",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_exposes_legacy_mission_run_read_model_without_migration",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_read_model_surfaces_per_mission_receipts",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_read_model_surfaces_per_mission_receipts",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_mission_run_artifact_layout",
+        "store.build_mission_detail_snapshot",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_surfaces_flight_recorder_snapshot",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_surfaces_flight_recorder_snapshot",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_runtime_dialogue_turns_surface_real_model_output_as_conversation",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_runtime_dialogue_turns_surface_real_model_output_as_conversation",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "mission_control_module.mission_runtime_dialogue_turns",
+        "store.create_mission",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_storage_pressure_preflight_requires_measured_capacity_before_blocking",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_storage_pressure_preflight_requires_measured_capacity_before_blocking",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires aggregate readiness/audit/storage/red-team behavior and its evidence precedence; local persistence contracts do not prove that aggregate.",
+      "productionCalls": []
+    },
+    {
+      "case": "MissionControlTests.test_runtime_compartment_snapshot_derives_mission_chat_mission_id",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_runtime_compartment_snapshot_derives_mission_chat_mission_id",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "mission_control_module.Mission",
+        "mission_control_module._build_runtime_compartments_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_bootstrap_summary_includes_runtime_compartments_for_agent_live_dialogue",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_bootstrap_summary_includes_runtime_compartments_for_agent_live_dialogue",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_bootstrap_summary_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_missing_mission_row_recovers_from_live_autonomous_workflow",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_missing_mission_row_recovers_from_live_autonomous_workflow",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires full summary/snapshot/autonomous-workflow projection assertions including integration truth; safe local store actions do not prove that presentation/integration behavior.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.get_mission",
+        "store.load_workspaces",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_red_team_escalation_snapshot_counts_more_than_default_visible_rows",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_red_team_escalation_snapshot_counts_more_than_default_visible_rows",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_red_team_escalation_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_flags_queue_front_and_repair_step",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_flags_queue_front_and_repair_step",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_watchdog_prunes_only_stale_generated_agent_runs",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_watchdog_prunes_only_stale_generated_agent_runs",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "store.create_mission",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_ignores_stale_historical_delegated_sessions",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_ignores_stale_historical_delegated_sessions",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_flags_stale_running_mission",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_flags_stale_running_mission",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_flags_dead_active_delegated_process",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_flags_dead_active_delegated_process",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_uses_terminal_session_file_before_dead_pid_alarm",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_uses_terminal_session_file_before_dead_pid_alarm",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_ignores_dead_historical_delegate_when_newer_lane_is_live",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_ignores_dead_historical_delegate_when_newer_lane_is_live",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_flags_unreconciled_completed_delegate",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_flags_unreconciled_completed_delegate",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_flags_runtime_cycle_state_mismatch",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_flags_runtime_cycle_state_mismatch",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.append_event",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_flags_active_row_with_idle_planner_loop",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_flags_active_row_with_idle_planner_loop",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_flags_long_running_workspace_queue_pressure",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_flags_long_running_workspace_queue_pressure",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_does_not_report_queue_pressure_after_recent_blocker_movement",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_does_not_report_queue_pressure_after_recent_blocker_movement",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_allows_parallel_worktree_when_file_scopes_are_disjoint",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_allows_parallel_worktree_when_file_scopes_are_disjoint",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_uses_planned_file_scope_from_objective",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_uses_planned_file_scope_from_objective",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_summary_digest_exposes_public_launch_blockers",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_digest_exposes_public_launch_blockers",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_summary_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_summary_digest_preserves_public_launch_repair_packet_operator_fields",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_digest_preserves_public_launch_repair_packet_operator_fields",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_summary_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_public_launch_digest_prefers_fresher_readiness_file",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_public_launch_digest_prefers_fresher_readiness_file",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "mission_control_module._public_launch_readiness_digest"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_flags_completed_missing_planned_scope_artifacts",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_flags_completed_missing_planned_scope_artifacts",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_ignores_stale_non_artifact_scope_when_output_is_ready",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_ignores_stale_non_artifact_scope_when_output_is_ready",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_watchdog_blocks_parallel_worktree_when_file_scopes_overlap",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_watchdog_blocks_parallel_worktree_when_file_scopes_overlap",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_mission_watchdog_report",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_missions",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_evidence_windows_path_translates_for_wsl",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_evidence_windows_path_translates_for_wsl",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires the specific unmigrated production behavior named by this case; retain until its assertions have a real action contract and scratch journey.",
+      "productionCalls": []
+    },
+    {
+      "case": "MissionControlTests.test_workspace_delete_command_rejects_last_workspace",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_workspace_delete_command_rejects_last_workspace",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires command/backend/workspace-action integration, external subprocess behavior or CLI rejection/output, beyond the directly checked store action.",
+      "productionCalls": [
+        "cmd_workspace_delete",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_sync_project_tree_skips_locked_files_instead_of_raising",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_sync_project_tree_skips_locked_files_instead_of_raising",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "_sync_project_tree"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_sync_project_tree_raises_non_lock_permission_errors",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_sync_project_tree_raises_non_lock_permission_errors",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "_sync_project_tree"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_workspace_save_reconciles_local_and_nas_when_both_already_exist",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_workspace_save_reconciles_local_and_nas_when_both_already_exist",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_workspace_save_bidirectional_nas_wins_updates_local_copy",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_workspace_save_bidirectional_nas_wins_updates_local_copy",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_workspace_save_auto_promotes_to_bidirectional_when_both_roots_exist",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_workspace_save_auto_promotes_to_bidirectional_when_both_roots_exist",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_sync_project_tree_records_manual_review_conflict_receipt",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_sync_project_tree_records_manual_review_conflict_receipt",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "_sync_project_tree"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_resolve_workspace_sync_conflict_records_resolution_receipt",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_resolve_workspace_sync_conflict_records_resolution_receipt",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "resolve_workspace_sync_conflict",
+        "store.get_workspace",
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_resolve_workspace_sync_conflict_batch_records_receipts",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_resolve_workspace_sync_conflict_batch_records_receipts",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "resolve_workspace_sync_conflict_batch",
+        "store.get_workspace",
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_cli_mission_follow_up_records_thread_and_runtime_lane",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_cli_mission_follow_up_records_thread_and_runtime_lane",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "cmd_mission_follow_up",
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.recent_events",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_store_creates_default_workspace_and_snapshot",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_store_creates_default_workspace_and_snapshot",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_web_backend_summary_cache_version_tracks_live_progress_semantics",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_web_backend_summary_cache_version_tracks_live_progress_semantics",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": []
+    },
+    {
+      "case": "MissionControlTests.test_summary_over_budget_running_mission_is_not_completion_progress",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_over_budget_running_mission_is_not_completion_progress",
+      "disposition": "retained",
+      "gapClass": "aggregate-wiring-gap",
+      "boundary": "Helper-only startup checks prove persisted budget classification, owner release and row progress. Original final summary.counts/liveControlState/workspace assertions are still not exercised through the actual safe full summary collector; retain the entire case.",
+      "productionCalls": [
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_summary_over_budget_running_mission_does_not_block_next_active_slot",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_over_budget_running_mission_does_not_block_next_active_slot",
+      "disposition": "retained",
+      "gapClass": "aggregate-wiring-gap",
+      "boundary": "Helper-only startup checks prove persisted budget classification, owner release and row progress. Original final summary.counts/liveControlState/workspace assertions are still not exercised through the actual safe full summary collector; retain the entire case.",
+      "productionCalls": [
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_summary_snapshot_is_lightweight_and_notification_ready",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_snapshot_is_lightweight_and_notification_ready",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.build_mission_detail_snapshot",
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission",
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_bootstrap_summary_keeps_slice_notifications_outside_visible_mission_limit",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_bootstrap_summary_keeps_slice_notifications_outside_visible_mission_limit",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_bootstrap_summary_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_bootstrap_connected_apps_marks_solantir_workspace_ready",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_bootstrap_connected_apps_marks_solantir_workspace_ready",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires the specific unmigrated production behavior named by this case; retain until its assertions have a real action contract and scratch journey.",
+      "productionCalls": [
+        "mission_control_module._build_bootstrap_connected_apps_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_summary_defers_terminal_context_roots_to_mission_detail",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_defers_terminal_context_roots_to_mission_detail",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_summary_bounds_skill_red_team_project_and_audit_sections",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_bounds_skill_red_team_project_and_audit_sections",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": []
+    },
+    {
+      "case": "MissionControlTests.test_project_scheduler_respects_declared_workspace_dependencies",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_project_scheduler_respects_declared_workspace_dependencies",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.save_workspaces",
+        "store.update_mission",
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_project_progress_exposes_sync_authority_review_gate",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_project_progress_exposes_sync_authority_review_gate",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "store.build_summary_snapshot",
+        "store.save_workspaces",
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_project_progress_exposes_ready_cross_device_launch_rehearsal",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_project_progress_exposes_ready_cross_device_launch_rehearsal",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "store.build_summary_snapshot",
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_cross_device_launch_rehearsal_receipt_is_archived_and_attached",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_cross_device_launch_rehearsal_receipt_is_archived_and_attached",
+      "disposition": "retained",
+      "gapClass": "restricted-sync-authority",
+      "boundary": "Original assertions exercise NAS/synchronization/cross-device authority excluded from this task; pure local projection alone cannot retire the case.",
+      "productionCalls": [
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.upsert_workspace"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_performance_budget_stays_bounded_with_long_histories",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_performance_budget_stays_bounded_with_long_histories",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.build_mission_detail_snapshot",
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_includes_runtime_compartments_and_hermes_evidence",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_includes_runtime_compartments_and_hermes_evidence",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.save_missions"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_empty_snapshot_reports_honest_runtime_and_hermes_empty_states",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_empty_snapshot_reports_honest_runtime_and_hermes_empty_states",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": []
+    },
+    {
+      "case": "MissionControlTests.test_create_mission_persists_and_builds_preview",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_create_mission_persists_and_builds_preview",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires full summary/snapshot/autonomous-workflow projection assertions including integration truth; safe local store actions do not prove that presentation/integration behavior.",
+      "productionCalls": [
+        "build_escalation_preview",
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.get_mission",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_autonomous_workflow_records_runtime_evidence_and_approvals",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_autonomous_workflow_records_runtime_evidence_and_approvals",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.create_mission",
+        "store.load_autonomous_workflows",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_minimax_portal_auth_does_not_mark_provider_truth_ready_without_openclaw_oauth",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_minimax_portal_auth_does_not_mark_provider_truth_ready_without_openclaw_oauth",
+      "disposition": "retained",
+      "gapClass": "restricted-auth-collection",
+      "boundary": "Original assertions exercise protected/home authentication discovery. No credential/home store observation is authorized.",
+      "productionCalls": [
+        "mission_control_module._runtime_lane_rows_for_mission",
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.save_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_hermes_auth_store_wsl_probe_ignores_login_banner_noise",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_hermes_auth_store_wsl_probe_ignores_login_banner_noise",
+      "disposition": "retained",
+      "gapClass": "restricted-auth-collection",
+      "boundary": "Original assertions exercise protected/home authentication discovery. No credential/home store observation is authorized.",
+      "productionCalls": [
+        "mission_control_module.hermes_auth_store_candidates"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_minimax_portal_auth_marks_provider_truth_ready_with_openclaw_oauth",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_minimax_portal_auth_marks_provider_truth_ready_with_openclaw_oauth",
+      "disposition": "retained",
+      "gapClass": "restricted-auth-collection",
+      "boundary": "Original assertions exercise protected/home authentication discovery. No credential/home store observation is authorized.",
+      "productionCalls": [
+        "mission_control_module._runtime_lane_rows_for_mission",
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.save_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_minimax_oauth_presence_marks_runtime_lane_ready_even_before_profile_mode_saved",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_minimax_oauth_presence_marks_runtime_lane_ready_even_before_profile_mode_saved",
+      "disposition": "retained",
+      "gapClass": "restricted-auth-collection",
+      "boundary": "Original assertions exercise protected/home authentication discovery. No credential/home store observation is authorized.",
+      "productionCalls": [
+        "mission_control_module._runtime_lane_rows_for_mission",
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.save_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_runtime_provider_env_file_marks_minimax_ready_for_cli_snapshots",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_runtime_provider_env_file_marks_minimax_ready_for_cli_snapshots",
+      "disposition": "retained",
+      "gapClass": "restricted-auth-collection",
+      "boundary": "Original assertions exercise protected/home authentication discovery. No credential/home store observation is authorized.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.save_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_adjacent_runtime_codex_auth_marks_planner_ready_for_cli_snapshots",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_adjacent_runtime_codex_auth_marks_planner_ready_for_cli_snapshots",
+      "disposition": "retained",
+      "gapClass": "restricted-auth-collection",
+      "boundary": "Original assertions exercise protected/home authentication discovery. No credential/home store observation is authorized.",
+      "productionCalls": [
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.save_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_summary_reconciles_stale_mission_route_contract_from_workspace_policy",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_reconciles_stale_mission_route_contract_from_workspace_policy",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.build_summary_snapshot",
+        "store.create_mission",
+        "store.load_missions",
+        "store.load_workspaces",
+        "store.save_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_setup_verify_action_persists_history",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_setup_verify_action_persists_history",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires command/backend/workspace-action integration, external subprocess behavior or CLI rejection/output, beyond the directly checked store action.",
+      "productionCalls": [
+        "execute_control_room_workspace_action"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_setup_telegram_action_persists_destination_and_updates_health",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_setup_telegram_action_persists_destination_and_updates_health",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires command/backend/workspace-action integration, external subprocess behavior or CLI rejection/output, beyond the directly checked store action.",
+      "productionCalls": [
+        "execute_control_room_workspace_action",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_setup_telegram_action_detects_openclaw_telegram_allow_list",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_setup_telegram_action_detects_openclaw_telegram_allow_list",
+      "disposition": "retained",
+      "gapClass": "restricted-auth-collection",
+      "boundary": "Original assertions exercise protected/home authentication discovery. No credential/home store observation is authorized.",
+      "productionCalls": [
+        "execute_control_room_workspace_action",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_surfaces_continuity_and_action_source_kind",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_surfaces_continuity_and_action_source_kind",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_workflows_and_services_reflect_setup_and_runtime_truth",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_workflows_and_services_reflect_setup_and_runtime_truth",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_harness_lab_snapshot_reports_efficiency_and_session_health",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_harness_lab_snapshot_reports_efficiency_and_session_health",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_harness_lab_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_harness_lab_session_health_does_not_count_orphaned_runtime_pid_as_stale",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_harness_lab_session_health_does_not_count_orphaned_runtime_pid_as_stale",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_harness_lab_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_snapshot_scores_required_gates",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_snapshot_scores_required_gates",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_reports_release_proof_ci_signal",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_reports_release_proof_ci_signal",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_accepts_dynamic_vite_web_root_resolution",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_accepts_dynamic_vite_web_root_resolution",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires aggregate readiness/audit/storage/red-team behavior and its evidence precedence; local persistence contracts do not prove that aggregate.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_reports_proof_readiness_when_missions_exist",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_reports_proof_readiness_when_missions_exist",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_requires_clear_watchdog_for_active_missions",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_requires_clear_watchdog_for_active_missions",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_blocks_stale_watchdog_supervisor_even_when_pid_is_alive",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_blocks_stale_watchdog_supervisor_even_when_pid_is_alive",
+      "disposition": "retained",
+      "gapClass": "restricted-supervisor-collection",
+      "boundary": "Original assertions require supervisor/watchdog/scheduler collection or its mocked collaborators, outside this worker’s allowed runtime boundary; no supervising process is touched.",
+      "productionCalls": [
+        "build_release_readiness_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_treats_openclaw_proof_as_optional_for_hermes_first",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_treats_openclaw_proof_as_optional_for_hermes_first",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_uses_pending_and_delegated_session_evidence",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_uses_pending_and_delegated_session_evidence",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_uses_runtime_session_file_for_delegated_active_evidence",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_uses_runtime_session_file_for_delegated_active_evidence",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_uses_mission_event_history_for_delegated_active_evidence",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_uses_mission_event_history_for_delegated_active_evidence",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires aggregate readiness/audit/storage/red-team behavior and its evidence precedence; local persistence contracts do not prove that aggregate.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_release_readiness_uses_running_hermes_planner_loop_as_continuity",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_release_readiness_uses_running_hermes_planner_loop_as_continuity",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires aggregate readiness/audit/storage/red-team behavior and its evidence precedence; local persistence contracts do not prove that aggregate.",
+      "productionCalls": [
+        "build_release_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_surfaces_delegated_runtime_activity_across_restart",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_surfaces_delegated_runtime_activity_across_restart",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_recovers_delegated_session_by_mission_id",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_recovers_delegated_session_by_mission_id",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_sorts_delegated_sessions_before_selecting_current_lane",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_sorts_delegated_sessions_before_selecting_current_lane",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_discovers_unlisted_runtime_session_by_plan_step",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_discovers_unlisted_runtime_session_by_plan_step",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_normalizes_execution_target_truth_for_network_sessions",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_normalizes_execution_target_truth_for_network_sessions",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_completed_mission_terminal_state_overrides_failed_delegated_tail",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_completed_mission_terminal_state_overrides_failed_delegated_tail",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires actual runtime/detail reconciliation, transcript evidence prioritization or externally discovered session state; direct local queue/evidence contracts do not cover its assertions.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_snapshot_reconciles_running_mission_from_completed_runtime_cycle_event",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_snapshot_reconciles_running_mission_from_completed_runtime_cycle_event",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_completed_runtime_cycle_with_missing_planned_artifacts_stays_repairable",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_completed_runtime_cycle_with_missing_planned_artifacts_stays_repairable",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_planned_artifact_repair_completes_from_detail_when_scope_is_ready",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_planned_artifact_repair_completes_from_detail_when_scope_is_ready",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_reconciles_failed_runtime_cycle_event_before_render",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_reconciles_failed_runtime_cycle_event_before_render",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_agent_messages_hide_runtime_cycle_spam",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_agent_messages_hide_runtime_cycle_spam",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_reports_missing_runtime_transcript_without_pretending_bookkeeping_is_chat",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_reports_missing_runtime_transcript_without_pretending_bookkeeping_is_chat",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_surfaces_real_runtime_evidence_when_transcript_directory_is_missing",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_surfaces_real_runtime_evidence_when_transcript_directory_is_missing",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_attaches_real_session_timeline_before_bookkeeping",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_attaches_real_session_timeline_before_bookkeeping",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_rejects_read_only_transcript_as_live_message",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_rejects_read_only_transcript_as_live_message",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_attaches_runtime_output_artifact_when_sessions_are_read_only",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_attaches_runtime_output_artifact_when_sessions_are_read_only",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_completes_repaired_hard_artifact_gate",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_completes_repaired_hard_artifact_gate",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.get_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_keeps_latest_session_ahead_of_stale_event_sessions",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_keeps_latest_session_ahead_of_stale_event_sessions",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_mission_detail_prefers_concrete_artifact_session_over_latest_read_only_session",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_detail_prefers_concrete_artifact_session_over_latest_read_only_session",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "store.append_event",
+        "store.build_mission_detail_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_running_mission_ignores_stale_queue_pause_reason_after_parallel_split",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_running_mission_ignores_stale_queue_pause_reason_after_parallel_split",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires the specific unmigrated production behavior named by this case; retain until its assertions have a real action contract and scratch journey.",
+      "productionCalls": [
+        "store.build_snapshot",
+        "store.create_mission",
+        "store.load_workspaces",
+        "store.update_mission"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_git_inspect_action_persists_workspace_history",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_git_inspect_action_persists_workspace_history",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires command/backend/workspace-action integration, external subprocess behavior or CLI rejection/output, beyond the directly checked store action.",
+      "productionCalls": [
+        "execute_control_room_workspace_action",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_git_pull_action_persists_workspace_history",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_git_pull_action_persists_workspace_history",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires command/backend/workspace-action integration, external subprocess behavior or CLI rejection/output, beyond the directly checked store action.",
+      "productionCalls": [
+        "execute_control_room_workspace_action",
+        "store.build_snapshot",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_validate_action_persists_workspace_history",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_validate_action_persists_workspace_history",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires command/backend/workspace-action integration, external subprocess behavior or CLI rejection/output, beyond the directly checked store action.",
+      "productionCalls": [
+        "execute_control_room_workspace_action",
+        "store.load_workspaces"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_integration_readiness_scores_live_evidence_without_fake_100",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_integration_readiness_scores_live_evidence_without_fake_100",
+      "disposition": "retained",
+      "gapClass": "unimplemented-projection-or-collector",
+      "boundary": "Local helper coverage does not yet cover every original final projection/reconciliation assertion. These are coverage gaps, not a blanket claim that every snapshot or runtime helper needs forbidden authority.",
+      "productionCalls": [
+        "build_integration_readiness_snapshot"
+      ]
+    },
+    {
+      "case": "MissionControlTests.test_live_storage_pressure_report_overwrites_stale_blocker",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_live_storage_pressure_report_overwrites_stale_blocker",
+      "disposition": "retained",
+      "gapClass": "coverage-gap",
+      "boundary": "Requires aggregate readiness/audit/storage/red-team behavior and its evidence precedence; local persistence contracts do not prove that aggregate.",
+      "productionCalls": [
+        "mission_control_module.build_live_nas_storage_pressure_report"
+      ]
+    }
+  ],
+  "frontier": [
+    "Only exact coverage rows are retirement eligible. Original five turn-mode cases belong to proofs-c-missions; actual transient replace-lock proof now belongs to this control area.",
+    "Local audit/progress/trust/notification/loop projections consume explicit recorded facts and actual owned-process receipts. They do not certify live provider authentication, browser rendering, release or supervisor readiness.",
+    "Two exhausted-budget aggregate cases remain retained: their local helper checks do not establish final summary.counts/liveControlState assembly.",
+    "Other retained rows distinguish specific unimplemented projections/collectors from explicit auth, NAS/sync and supervisor restrictions.",
+    "Workspace deletion removes mission projection/history; retained autonomous workflows may recover a legacy mission. Live preview URLs are transient view-state properties and are not persisted MissionStateSnapshot fields."
+  ],
+  "helperOnly": [
+    {
+      "original_case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_over_budget_running_mission_does_not_block_next_active_slot",
+      "contracts": [
+        "proofs-c.control.progress",
+        "proofs-c.control.mission-counts",
+        "proofs-c.control.workspace-queue"
+      ],
+      "gap": "Full aggregate collector output has not been exercised; no retirement coverage granted."
+    },
+    {
+      "original_case_id": "tests/test_mission_control.py::MissionControlTests.test_summary_over_budget_running_mission_is_not_completion_progress",
+      "contracts": [
+        "proofs-c.control.progress",
+        "proofs-c.control.mission-counts",
+        "proofs-c.control.workspace-queue"
+      ],
+      "gap": "Full aggregate collector output has not been exercised; no retirement coverage granted."
+    }
+  ],
+  "sourceFiles": [
+    "src/grant_agent/mission_control_workspace_deletion.py"
+  ],
+  "portRoles": []
+}

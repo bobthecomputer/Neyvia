@@ -1,0 +1,28 @@
+{
+  "area": "p22-pdf-backend-journey",
+  "module": "grant_agent.proofs_pdf_backend_journey",
+  "self_check": "self_check",
+  "manuals": ["pdf"],
+  "contracts": [
+    {
+      "id": "p22.pdf.backend-range-raster-worker",
+      "phase": "post",
+      "claim": "A synthetic local PDF is served byte-exactly through the production PDF route and range path, its authenticated MuPDF raster has independently detected ink and matching pixel/source hashes, and the production pypdf worker extracts and searches the known phrase while escaped paths, invalid MIME, out-of-range pages, and unauthenticated requests refuse.",
+      "checkedAt": [
+        "grant_agent.proofs_pdf_backend_journey.self_check",
+        "grant_agent.neyvia_ui_api.serve",
+        "grant_agent.neyvia_pdf_api.serve_file",
+        "grant_agent.neyvia_pdf_api.serve_raster",
+        "grant_agent.neyvia_pdf_api.rasterize",
+        "grant_agent.neyvia_pdf_tools.safe_pdf",
+        "grant_agent.pdf_document.read_pdf",
+        "grant_agent.pdf_document_worker.read"
+      ],
+      "impact": [
+        "local PDF delivery and byte ranges",
+        "PDF raster fallback pixels",
+        "PDF page text extraction and search"
+      ]
+    }
+  ]
+}

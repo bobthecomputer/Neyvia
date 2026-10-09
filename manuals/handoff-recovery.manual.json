@@ -1,0 +1,850 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "handoff-recovery",
+  "kind": "workflow",
+  "proofs": {
+    "area": "a-capabilities",
+    "manifests": [
+      "config/proofs/a-capabilities.json"
+    ],
+    "startup": {
+      "procedures": [
+        "grant_agent.proofs_a_capabilities.self_check"
+      ],
+      "runner": "grant_agent.proof_verifier.run_verification",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.checkpoints.CheckpointStore.save -> check_checkpoint",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Saved checkpoints reread as the complete record with no atomic-write temporary tails.",
+        "id": "a.checkpoint-durable",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "goal"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.files.move": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "from": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "to": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.files.stat": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notes.pin": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "pinned": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notes.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notes.write": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "replace",
+            "append"
+          ]
+        },
+        "expectedModified": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "body": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "intake": {
+      "title": "Reviewed handoff intake: Notes + Files, not a generic model benchmark",
+      "state": {
+        "note": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "folder": {
+                "type": "string"
+              },
+              "exists": {
+                "type": "boolean"
+              },
+              "notes": {
+                "type": "array"
+              },
+              "tags": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "folder",
+              "exists",
+              "notes",
+              "tags"
+            ]
+          },
+          "tool": "neyvia.notes.list"
+        }
+      },
+      "actions": {
+        "notes.read": {
+          "effect": "Return body, relative path, tags, pinned and nanosecond modified stamp",
+          "pre": "Existing .md/.markdown/.txt resolved beneath notes folder, at most 2 MiB",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "body": {
+                "type": "string"
+              },
+              "modified": {
+                "type": "string"
+              },
+              "pinned": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "body",
+              "modified",
+              "pinned"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.read",
+          "tool": "neyvia.notes.read"
+        },
+        "notes.write": {
+          "effect": "Atomically create or replace Markdown; append adds newline-separated text; no path chooses a unique title filename",
+          "pre": "UTF-8 body <=2 MiB; explicit path stays beneath notes folder with note extension; supplied expectedModified must match an existing note",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.notes.write",
+          "tool": "neyvia.notes.write"
+        },
+        "notes.pin": {
+          "effect": "Atomically update .neyvia-notes.json pin list; note bytes unchanged",
+          "pre": "Existing note beneath notes folder; pinned defaults true",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.pin",
+          "tool": "neyvia.notes.pin"
+        },
+        "files.stat": {
+          "effect": "Return kind/size/openWith; preview=true reads first 64 KiB only for text/notes",
+          "pre": "Existing guarded path inside a Files place outside protected tree",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.files.stat",
+          "tool": "neyvia.files.stat"
+        },
+        "files.move": {
+          "effect": "Move/rename without overwrite; an existing destination folder receives source.name; replace undo receipt",
+          "pre": "Existing guarded source; destination parent exists, destination absent except case rename; no folder into itself; model approval for both non-workspace/non-notes places",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.files.move",
+          "tool": "neyvia.files.move"
+        }
+      },
+      "checks": {
+        "captured": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "body",
+            "value": {
+              "$input": "message"
+            }
+          },
+          "tool": "neyvia.notes.read"
+        },
+        "pinned": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "pinned",
+            "value": true
+          },
+          "tool": "neyvia.notes.read"
+        }
+      },
+      "procedures": {
+        "stage-reviewed": {
+          "goal": "Move the explicitly reviewed draft, append its #ready receipt once and pin it",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "source",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "notes.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "action": "files.stat",
+              "args": {
+                "path": {
+                  "$input": "source"
+                },
+                "preview": true
+              },
+              "save": "selected"
+            },
+            {
+              "judge": "approval"
+            },
+            {
+              "action": "files.move",
+              "args": {
+                "from": {
+                  "$input": "source"
+                },
+                "to": {
+                  "$input": "target"
+                }
+              },
+              "save": "moved",
+              "when": {
+                "judge": "approval",
+                "option": "approved"
+              }
+            },
+            {
+              "action": "notes.write",
+              "args": {
+                "body": {
+                  "$input": "message"
+                },
+                "expectedModified": {
+                  "$result": "before.modified"
+                },
+                "mode": "append",
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "captured",
+              "save": "written",
+              "when": {
+                "judge": "approval",
+                "option": "approved"
+              }
+            },
+            {
+              "action": "notes.pin",
+              "args": {
+                "path": {
+                  "$input": "path"
+                },
+                "pinned": true
+              },
+              "check": "pinned",
+              "save": "pin",
+              "when": {
+                "judge": "approval",
+                "option": "approved"
+              }
+            }
+          ]
+        },
+        "record-review": {
+          "goal": "Hold unreviewed draft and append/pin a #needs-review receipt",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "source",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "notes.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "receipt"
+            },
+            {
+              "action": "notes.write",
+              "args": {
+                "body": {
+                  "$input": "message"
+                },
+                "expectedModified": {
+                  "$result": "before.modified"
+                },
+                "mode": "append",
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "captured",
+              "save": "written",
+              "when": {
+                "judge": "receipt",
+                "option": "record"
+              }
+            },
+            {
+              "action": "notes.pin",
+              "args": {
+                "path": {
+                  "$input": "path"
+                },
+                "pinned": true
+              },
+              "check": "pinned",
+              "save": "pin",
+              "when": {
+                "judge": "receipt",
+                "option": "record"
+              }
+            }
+          ]
+        },
+        "record-blocked": {
+          "goal": "Preserve both colliding drafts and append/pin a #blocked receipt",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "source",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "notes.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "receipt"
+            },
+            {
+              "action": "notes.write",
+              "args": {
+                "body": {
+                  "$input": "message"
+                },
+                "expectedModified": {
+                  "$result": "before.modified"
+                },
+                "mode": "append",
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "captured",
+              "save": "written",
+              "when": {
+                "judge": "receipt",
+                "option": "record"
+              }
+            },
+            {
+              "action": "notes.pin",
+              "args": {
+                "path": {
+                  "$input": "path"
+                },
+                "pinned": true
+              },
+              "check": "pinned",
+              "save": "pin",
+              "when": {
+                "judge": "receipt",
+                "option": "record"
+              }
+            }
+          ]
+        },
+        "capture-once": {
+          "goal": "Guarded idempotent capture with a fresh read and an explicit record/skip decision",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "source",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "notes.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "capture"
+            },
+            {
+              "action": "notes.write",
+              "args": {
+                "body": {
+                  "$input": "message"
+                },
+                "expectedModified": {
+                  "$result": "before.modified"
+                },
+                "mode": "append",
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "captured",
+              "save": "written",
+              "when": {
+                "judge": "capture",
+                "option": "record"
+              }
+            },
+            {
+              "action": "notes.pin",
+              "args": {
+                "path": {
+                  "$input": "path"
+                },
+                "pinned": true
+              },
+              "check": "pinned",
+              "save": "pin",
+              "when": {
+                "judge": "capture",
+                "option": "record"
+              }
+            }
+          ]
+        },
+        "restore-selected": {
+          "goal": "Restore the selected staged draft without undoing unrelated Files operations; append/pin #restored receipt",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "source",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "notes.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "action": "files.stat",
+              "args": {
+                "path": {
+                  "$input": "source"
+                },
+                "preview": true
+              },
+              "save": "selected"
+            },
+            {
+              "judge": "restore"
+            },
+            {
+              "action": "files.move",
+              "args": {
+                "from": {
+                  "$input": "source"
+                },
+                "to": {
+                  "$input": "target"
+                }
+              },
+              "save": "moved",
+              "when": {
+                "judge": "restore",
+                "option": "restore"
+              }
+            },
+            {
+              "action": "notes.write",
+              "args": {
+                "body": {
+                  "$input": "message"
+                },
+                "expectedModified": {
+                  "$result": "before.modified"
+                },
+                "mode": "append",
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "captured",
+              "save": "written",
+              "when": {
+                "judge": "restore",
+                "option": "restore"
+              }
+            },
+            {
+              "action": "notes.pin",
+              "args": {
+                "path": {
+                  "$input": "path"
+                },
+                "pinned": true
+              },
+              "check": "pinned",
+              "save": "pin",
+              "when": {
+                "judge": "restore",
+                "option": "restore"
+              }
+            }
+          ]
+        }
+      },
+      "judge": {
+        "capture": {
+          "constraints": "Choose skip when already captured. Otherwise record only by guarded append. A failed conflict run is not resumable: reconcile actual note, restart fresh and choose skip if message already exists.",
+          "options": [
+            "record",
+            "skip"
+          ],
+          "question": "Does the exact message already occur in before.body?"
+        },
+        "approval": {
+          "constraints": "Only explicit reviewed approval with absent destination allows the move. Pending review uses record-review; collisions use record-blocked. Do not overwrite or invent another destination.",
+          "options": [
+            "approved",
+            "stop"
+          ],
+          "question": "Is the draft reviewed and its exact destination absent?"
+        },
+        "receipt": {
+          "constraints": "Record the exact tagged message in the selected note; preserve draft bytes. Pin the receipt so Paul can find it.",
+          "options": [
+            "record",
+            "stop"
+          ],
+          "question": "Is this the authorized handoff receipt for the selected task?"
+        },
+        "restore": {
+          "constraints": "Restore by explicit files.move. Global files.undo targets the most recent operation and must not undo another operation.",
+          "options": [
+            "restore",
+            "stop"
+          ],
+          "question": "Is source the selected staged draft and target its original absent path?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "notes.write returns ok=false status=conflict after another editor changed the note",
+          "recovery": "Do not drop expectedModified or resume the failed run. Start a fresh capture-once run, inspect before.body, then record or skip. Retain concurrent editor text."
+        },
+        {
+          "failure": "A destination exists",
+          "recovery": "Do not rename the destination, overwrite, undo it or choose a suffix. Keep both originals and record-blocked with #blocked."
+        },
+        {
+          "failure": "Another Files operation followed staging",
+          "recovery": "Use restore-selected with the staged path as source and original path as target. Never call global files.undo."
+        }
+      ],
+      "frontier": [
+        "This manual supplies environment-specific receipt conventions; passing it does not prove general model improvement.",
+        "Judgement decisions are external inputs. Deterministic procedure token accounting excludes human/model judgement.",
+        "A move or note receipt proves backend state, not rendered UI."
+      ],
+      "guidance": [
+        "Task mapping: approved => stage-reviewed (approval=approved); pending => record-review (receipt=record); collision => record-blocked (receipt=record); stale and duplicate => capture-once (capture=record if message absent, otherwise skip); undo => restore-selected (restore=restore).",
+        "Always use the exact supplied path/message/source/target inputs. Raw equivalent actions are allowed; procedure use is not required for scoring.",
+        "Every new receipt uses guarded append and is pinned. Exact already-present receipt stays unchanged. Pending and collision tasks do not move files.",
+        "Stale case: the fixture makes one real concurrent edit after first read/judge. A failed verifier is a stop, not success. Re-read via a fresh capture-once run and preserve both paragraphs."
+      ]
+    },
+    "proofs_a_capabilities": {
+      "title": "Capability action contracts (PROOFS-a)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Scratch receipt is mistaken for external runtime or rendered UI evidence",
+          "recovery": "Use a real rendered or authorized external journey before claiming those boundaries"
+        }
+      ],
+      "frontier": [
+        "Unmapped original cases remain protected until complete equivalent contracts and startup receipts exist"
+      ],
+      "guidance": [
+        "Behavior plans preserve selected capsule gates and bounded learned vectors; compiler cache remains observable.",
+        "Challenge selection follows configured token relevance; checkpoint saving verifies the durable full record.",
+        "Capability descriptions bind actual adapter state; artifact lineage binds local file hashes and persistent relation endpoints.",
+        "Typed recovery remains review-only and does not retain narrative file bodies.",
+        "Run neyvia verify --areas a-capabilities in isolated scratch state.",
+        "Capability initialization uses an explicit empty vault configuration under disposable proof state. Saved broker/account configurations are never read; these procedures make no vault/account execution claim."
+      ]
+    }
+  }
+}

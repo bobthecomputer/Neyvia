@@ -1,0 +1,1193 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "image-studio",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-c-frontend",
+    "contracts": [
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:projectToProviderPayload -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Provider payload preserves canvas, selection, prompt intent, layer roles and rounded geometry; only visible layers are counted",
+        "id": "image.payload.geometry",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:createLayerFromSelection -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Selection becomes one editable selected shape with rounded geometry, positive extent and nonnegative feather",
+        "id": "image.layers.selection",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:updateLayerInProject -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "A patch affects only its addressed layer and preserves the other layers",
+        "id": "image.layers.update",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:removeLayerFromProject -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Deletion preserves at least one layer and selects the last survivor when removing the selected layer",
+        "id": "image.layers.delete",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:setFocusedHistoryItem -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Only an existing retained session can become focused; its annotations replace the overlay",
+        "id": "image.history.focus",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:updateFocusedHistoryAnnotations -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Overlay changes persist on the focused history session and preserve other sessions",
+        "id": "image.history.annotations",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:createOpsThreadForFocusedHistory -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "History, overlay and one idempotent issue thread share the receipt/request proof handle",
+        "id": "image.history.thread",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:buildKeyboardTraversalAnnouncement -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Scope/edge jumps announce both scoped positions; focus announces the destination",
+        "id": "image.keyboard.announcement",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:appendKeyboardJumpTrail -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Recent traversal trail is bounded, retains newest records, and carries scope/reason/time",
+        "id": "image.keyboard.trail",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:formatKeyboardJumpTrailEntry -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Trail entry shows its traversal text with a local clock, or an explicit recent fallback for invalid time",
+        "id": "image.keyboard.entry",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:formatKeyboardJumpTrailTooltip -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Traversal tooltip preserves scope/reason, full local time when valid, and announcement",
+        "id": "image.keyboard.tooltip",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imageProviderAdapters.js:registerImageProviderAdapter -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Registered adapter has its trimmed unique identity and callable transport",
+        "id": "image.provider.adapter",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imageProviderAdapters.js:requestProviderOperation -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Every available, blocked or draft operation has a traceable request, timing, handoff and prompt receipt; nonavailable operations preserve failure evidence",
+        "id": "image.provider.receipt",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imageProviderAdapters.js:applyProviderResult -> checkedImageAction",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+        ],
+        "claim": "Provider application preserves receipt/artifact/timing/handoff and annotation proof links, while draft results never masquerade as persisted sessions",
+        "id": "image.provider.history",
+        "impact": [
+          "Image composition, provider dispatch, receipts, annotations and keyboard review"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imagePlaygroundState.js:module initialization -> checkImagePromptPresets",
+          "web/src/neyvia/imagePlaygroundContracts.js:checkImagePromptPresets"
+        ],
+        "claim": "Stable disciplined UI presets retain their composition guidance and bounded strengths",
+        "id": "image.prompt.presets",
+        "impact": [
+          "Image prompt presets"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "src/grant_agent/neyvia_image_generate.py:generate_image",
+          "web/src/neyvia/imageProviderAdapters.js:IMAGE_REQUEST_DEADLINE_MS"
+        ],
+        "claim": "Generation never outlives its request: the backend stops Codex after 300 seconds and the UI gives up at 330, both ending in a plain failed result",
+        "id": "image.generate.deadline",
+        "impact": [
+          "Image generation, provider dispatch, receipts, queue and library"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "src/grant_agent/neyvia_image_generate.py:codex_cli_status"
+        ],
+        "claim": "With no Codex CLI or no Codex sign-in the user gets a plain error naming the fix within seconds, and the job is recorded failed",
+        "id": "image.generate.preflight",
+        "impact": [
+          "Image generation, provider dispatch, receipts, queue and library"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "src/grant_agent/neyvia_image_generate.py:sweep_stale_jobs",
+          "web/src/neyvia/imagePlaygroundState.js:settleStaleHistoryItem"
+        ],
+        "claim": "A generation job is always done or failed: stale running jobs from an earlier backend session are swept to failed",
+        "id": "image.generate.job-settled",
+        "impact": [
+          "Image generation, provider dispatch, receipts, queue and library"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/imageProviderAdapters.js:buildQueueTimeline",
+          "scripts/p22_release_models.mjs"
+        ],
+        "claim": "A failed request does not time-stamp the generating, artifact or handoff stages it never reached",
+        "id": "image.queue.failed-timeline",
+        "impact": [
+          "Image generation, provider dispatch, receipts, queue and library"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/ImagePlayground.jsx:ArtifactThumb",
+          "scripts/p22_release_dom.mjs"
+        ],
+        "claim": "A library image whose file is missing shows a labelled placeholder instead of a broken image",
+        "id": "image.library.missing-file",
+        "impact": [
+          "Image generation, provider dispatch, receipts, queue and library"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_image_studio_journey.self_check",
+          "grant_agent.neyvia_image_tools.call",
+          "grant_agent.neyvia_image_tools.inside",
+          "grant_agent.neyvia_image_tools.inspect",
+          "grant_agent.neyvia_image_tools.publish",
+          "grant_agent.visual_specifications.composite_region",
+          "grant_agent.neyvia_outputs.publish",
+          "grant_agent.ui_command_bus.UICommandBus.get",
+          "grant_agent.ui_command_bus.UICommandBus.put"
+        ],
+        "claim": "Native Image Studio edits synthetic local pixels through crop, resize, composite and export; observers verify output dimensions, selected and preserved pixels, filenames and publication, while invalid rectangles and outside-root images are refused without replacing the requested asset",
+        "id": "p22.image-studio.pixel-edit-journey",
+        "impact": [
+          "Image Studio local crop, resize, composite and export",
+          "Image Studio protected input and requested-asset state"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.image.composite": {
+      "type": "object",
+      "properties": {
+        "edit": {
+          "type": "string"
+        },
+        "region": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "y": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "x",
+            "y",
+            "width",
+            "height"
+          ]
+        }
+      },
+      "required": [
+        "edit",
+        "region"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "edit": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.image.crop": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "y": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "x",
+            "y",
+            "width",
+            "height"
+          ]
+        }
+      },
+      "required": [
+        "region"
+      ]
+    },
+    "neyvia.image.export": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.image.generate": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "request": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "requestId",
+        "request"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "requestId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.image.open": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "source": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.image.resize": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "width",
+        "height"
+      ]
+    },
+    "neyvia.image.state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "rel_view_state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Real pixel edits, protected regions, export and explicit provider generation",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "requested": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "generation": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "state",
+              "requested",
+              "generation"
+            ]
+          },
+          "tool": "neyvia.image.state"
+        }
+      },
+      "actions": {
+        "image.state": {
+          "effect": "Read observed state, requested asset and generation receipts; abandoned running generation is reported uncertain",
+          "pre": "Selected root bus readable; no image required",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "requested": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "generation": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "state",
+              "requested",
+              "generation"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.image.state",
+          "tool": "neyvia.image.state"
+        },
+        "image.composite": {
+          "effect": "Composite edit into region, verify outside pixels unchanged, publish new PNG and parent hash",
+          "pre": "Requested source hash matches; contained integer region; edit is an allowed decodable image",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.image.composite",
+          "tool": "neyvia.image.composite"
+        },
+        "image.crop": {
+          "effect": "Write cropped PNG artifact, publish it as requested asset, retain parentSha256",
+          "pre": "Requested asset exists and source SHA-256 still matches; integer positive rectangle contained in image",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.image.crop",
+          "tool": "neyvia.image.crop"
+        },
+        "image.export": {
+          "effect": "Exclusively copy exact asset bytes to new file and verify SHA-256; parent-directory approval covers new exports",
+          "pre": "Requested source hash matches; absent allowed destination; owner grants image-export for destination parent",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.image.export",
+          "tool": "neyvia.image.export"
+        },
+        "image.generate": {
+          "effect": "Start one provider request asynchronously; exact ID retries return receipt, different payload refused; success publishes asset",
+          "pre": "Stable nonblank requestId and object request; exact fingerprint approval, idle generation worker, running backend and ready Codex subscription; paid fallback disabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.image.generate",
+          "tool": "neyvia.image.generate"
+        },
+        "image.open": {
+          "effect": "Inspect pixels/hash, register asset and emit image.open; source unchanged and uiVerified=false",
+          "pre": "Existing decodable image inside workspace/repo/registered project, <=32 MiB and <=50 megapixels",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.image.open",
+          "tool": "neyvia.image.open"
+        },
+        "image.resize": {
+          "effect": "Write LANCZOS-resized PNG and publish new requested asset; source unchanged",
+          "pre": "Requested asset exists and source hash matches; positive integer width/height with product <=50 million",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.image.resize",
+          "tool": "neyvia.image.resize"
+        },
+        "view.state": {
+          "effect": "Read current windows, ids, placements, mounted DOM geometry and delivered events.",
+          "pre": "The shell reports state after React commits; fresh=false means unavailable.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "rel_view_state",
+          "tool": "neyvia.view.state"
+        }
+      },
+      "checks": {
+        "source-width": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "requested.dimensions.width",
+            "value": {
+              "$input": "width"
+            }
+          },
+          "tool": "neyvia.image.state"
+        },
+        "crop-width": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "requested.dimensions.width",
+            "value": {
+              "$input": "width"
+            }
+          },
+          "tool": "neyvia.image.state"
+        },
+        "export-readable": {
+          "args": {
+            "path": {
+              "$path": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "kind",
+            "value": "file"
+          },
+          "tool": "neyvia.files.stat"
+        },
+        "crop-height": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "requested.dimensions.height",
+            "value": {
+              "$input": "height"
+            }
+          },
+          "tool": "neyvia.image.state"
+        },
+        "preview-ready": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.status",
+            "value": "ready"
+          },
+          "tool": "neyvia.image.state"
+        },
+        "preview-asset": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.assetId",
+            "value": {
+              "$input": "assetId"
+            }
+          },
+          "tool": "neyvia.image.state"
+        },
+        "preview-shell-fresh": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.fresh",
+            "value": true
+          },
+          "tool": "neyvia.view.state"
+        },
+        "preview-window-visible": {
+          "args": {},
+          "expect": {
+            "op": "schema",
+            "path": "state.dom.windows",
+            "schema": {
+              "contains": {
+                "properties": {
+                  "id": {
+                    "const": "app:image-studio"
+                  },
+                  "placement": {
+                    "enum": [
+                      "main",
+                      "side",
+                      "full"
+                    ]
+                  },
+                  "visible": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "visible",
+                  "placement"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "tool": "neyvia.view.state"
+        },
+        "preview-fresh": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "state.fresh",
+            "value": true
+          },
+          "tool": "neyvia.image.state"
+        }
+      },
+      "procedures": {
+        "open-inspect": {
+          "goal": "Open source image and verify original width before editing",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "width": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "source",
+              "width"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "image.open",
+              "args": {
+                "source": {
+                  "$path": "source"
+                }
+              },
+              "check": "source-width",
+              "save": "original"
+            }
+          ]
+        },
+        "crop-for-composition": {
+          "goal": "Inspect source and proposed pixel rectangle, create new PNG and verify its requested width/height",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "x": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "y": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "source",
+              "x",
+              "y",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "image.open",
+              "args": {
+                "source": {
+                  "$path": "source"
+                }
+              },
+              "save": "original"
+            },
+            {
+              "judge": "composition"
+            },
+            {
+              "action": "image.crop",
+              "args": {
+                "region": {
+                  "height": {
+                    "$input": "height"
+                  },
+                  "width": {
+                    "$input": "width"
+                  },
+                  "x": {
+                    "$input": "x"
+                  },
+                  "y": {
+                    "$input": "y"
+                  }
+                }
+              },
+              "check": "crop-width",
+              "save": "cropped",
+              "when": {
+                "judge": "composition",
+                "option": "crop"
+              }
+            },
+            {
+              "action": "image.state",
+              "args": {},
+              "check": "crop-height",
+              "save": "dimensions",
+              "when": {
+                "judge": "composition",
+                "option": "crop"
+              }
+            }
+          ]
+        },
+        "export-reviewed-image": {
+          "goal": "Read current asset, review destination and export without overwrite",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "image.state",
+              "args": {},
+              "save": "current"
+            },
+            {
+              "judge": "export"
+            },
+            {
+              "action": "image.export",
+              "args": {
+                "path": {
+                  "$path": "path"
+                }
+              },
+              "check": "export-readable",
+              "save": "exported",
+              "when": {
+                "judge": "export",
+                "option": "export"
+              }
+            }
+          ]
+        },
+        "verify-effect-image-composite": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "edit": {
+                "type": "string"
+              },
+              "region": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "y": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "width": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "height": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "x",
+                  "y",
+                  "width",
+                  "height"
+                ]
+              }
+            },
+            "required": [
+              "edit",
+              "region"
+            ]
+          },
+          "steps": [
+            {
+              "action": "image.composite",
+              "args": {
+                "edit": {
+                  "$input": "edit"
+                },
+                "region": {
+                  "$input": "region"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-image-crop": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "region": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "y": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "width": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "height": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "x",
+                  "y",
+                  "width",
+                  "height"
+                ]
+              }
+            },
+            "required": [
+              "region"
+            ]
+          },
+          "steps": [
+            {
+              "action": "image.crop",
+              "args": {
+                "region": {
+                  "$input": "region"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-image-export": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "steps": [
+            {
+              "action": "image.export",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-image-open": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source"
+            ]
+          },
+          "steps": [
+            {
+              "action": "image.open",
+              "args": {
+                "source": {
+                  "$input": "source"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-image-resize": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "width",
+              "height"
+            ]
+          },
+          "steps": [
+            {
+              "action": "image.resize",
+              "args": {
+                "height": {
+                  "$input": "height"
+                },
+                "width": {
+                  "$input": "width"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-live-preview": {
+          "goal": "Verify the exact decoded asset reported by Image Studio and its current visible shell window. Opening a file alone is not preview proof.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "assetId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "assetId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "image.state",
+              "args": {},
+              "check": "preview-ready",
+              "save": "preview-ready"
+            },
+            {
+              "action": "image.state",
+              "args": {},
+              "check": "preview-fresh",
+              "save": "preview-fresh"
+            },
+            {
+              "action": "image.state",
+              "args": {},
+              "check": "preview-asset",
+              "save": "preview-asset"
+            },
+            {
+              "action": "view.state",
+              "args": {},
+              "check": "preview-shell-fresh",
+              "save": "preview-shell-fresh"
+            },
+            {
+              "action": "view.state",
+              "args": {},
+              "check": "preview-window-visible",
+              "save": "preview-window-visible"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "composition": {
+          "constraints": "Use requested.dimensions; rectangle uses source pixels, not browser coordinates. Preserve source; review rendered crop before export. Cropping can discard context even when coordinates are valid.",
+          "options": [
+            "crop",
+            "leave"
+          ],
+          "question": "Does the crop preserve the subject and intended context?"
+        },
+        "export": {
+          "constraints": "Destination must be absent inside allowed workspace/project and owner-approved; retain the original source. Backend export copies exact asset bytes.",
+          "options": [
+            "export",
+            "leave"
+          ],
+          "question": "Is this reviewed image ready to save at the new destination?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Source changed after open",
+          "recovery": "Reopen original and recompute region; hash mismatch blocks edits"
+        },
+        {
+          "failure": "Crop exceeds dimensions",
+          "recovery": "Use integer pixel rectangle within requested width/height"
+        },
+        {
+          "failure": "Generation is running/busy/uncertain",
+          "recovery": "Observe image.state and saved provider artifact; same requestId replays, never use new ID just to retry uncertain work"
+        },
+        {
+          "failure": "Export path already exists",
+          "recovery": "Select a new path; export never replaces files"
+        },
+        {
+          "failure": "A valid crop looks wrong",
+          "recovery": "Inspect new pixels at full size; dimension/hash checks cannot decide composition"
+        },
+        {
+          "failure": "Gateway edit receipt wraps asset under toolResult",
+          "recovery": "Read image.state.requested for dimensions/hash instead of assuming the mutation envelope is flat."
+        }
+      ],
+      "frontier": [
+        "Style, subject fidelity and browser-rendered appearance need human/model visual review",
+        "Provider generation readiness and exact-request approval are separate from deterministic pixel edits"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_image_tools.py and neyvia_image_approval.py; tests/test_neyvia_native_studios.py."
+      ]
+    },
+    "proofs-c-image-frontend": {
+      "title": "PROOFS-c: image composition and provider model contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A passing model self-check is mistaken for remote generation or rendered UI proof",
+          "recovery": "Inspect the receipt boundary and run the actual application journey for its remaining frontier"
+        }
+      ],
+      "frontier": [
+        "Image UI route/default runtime wiring and rendered browser controls still need their actual user journeys",
+        "Historical Codex May-11 reference manifest was replaced by current May-13 imagegen reference; missing history alone does not establish dead code",
+        "Live review connected bridge, planner panels, proof-copy links, replay controls and project switcher remain rendered UI boundaries",
+        "Mobile authenticated lazy loading, bootstrap refresh, empty phone indexes and one-session transcript hydration remain integration/UI boundaries",
+        "SVG compositor is a real local registered provider; external remote image generation is not exercised"
+      ],
+      "guidance": [
+        "Startup entry: scripts/proofs-c-frontend.mjs --root <scratch>; config/proofs/proofs-c-frontend.json owns reviewed procedures and per-case coverage"
+      ]
+    }
+  }
+}

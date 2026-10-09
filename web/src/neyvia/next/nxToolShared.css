@@ -1,0 +1,2414 @@
+/* Shared styles required by tools hosted in NxShell. */
+/* Neyvia unified shell — visual language inspired by capability-OS mockups.
+   Product name in UI chrome is always Neyvia / Neyvia.
+   Hooks for specialists: data-neyvia-* attributes, --neyvia-* tokens, motion section. */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.neyvia-skip-link {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 1000;
+  transform: translateY(-160%);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.35));
+  background: var(--neyvia-panel, #121415);
+  color: var(--neyvia-text, #f2efe8);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.neyvia-skip-link:focus,
+.neyvia-skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--neyvia-accent, #d6a84f);
+  outline-offset: 2px;
+}
+
+/* —— Chrome: surface tabs + toolbar + pivot —— */
+
+/* —— Proof strip —— */
+
+.neyvia-proof-strip {
+  width: fit-content;
+  max-width: calc(100% - 32px);
+  margin: 10px 16px 18px auto;
+  border: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--neyvia-panel, var(--panel, #121415)) 82%, transparent);
+  font-size: 12px;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.neyvia-proof-strip > summary {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.neyvia-proof-strip > summary::-webkit-details-marker {
+  display: none;
+}
+
+.neyvia-proof-strip > summary > em {
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+  font-size: 10px;
+  font-style: normal;
+  opacity: 0.72;
+}
+
+.neyvia-proof-details {
+  display: flex;
+  max-width: min(720px, calc(100vw - 48px));
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  padding: 0 10px 10px 25px;
+}
+
+.neyvia-proof-strip strong {
+  color: var(--neyvia-text, var(--text, #f2efe8));
+  font-weight: 600;
+}
+
+.neyvia-proof-strip button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--neyvia-accent, #d6a84f);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* —— Empty launcher / tutorial —— */
+
+.neyvia-surface-head button,
+.neyvia-library-grid button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--neyvia-line, var(--line, #2a2f3a));
+  border-radius: 10px;
+  background: var(--neyvia-panel-soft, #181a1c);
+  color: var(--neyvia-text, var(--text, #f2efe8));
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--neyvia-motion-fast) var(--neyvia-motion-spring), background var(--neyvia-motion-fast);
+}
+
+.neyvia-surface-head button.primary {
+  background: var(--neyvia-accent, #d6a84f);
+  border-color: transparent;
+  color: #1a1408;
+}
+
+.neyvia-surface-head button:active {
+  transform: scale(0.97);
+}
+
+/* —— Surfaces: notebook / lab / library —— */
+
+.neyvia-surface-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.neyvia-surface-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--neyvia-accent, #d6a84f);
+  font-weight: 600;
+}
+
+.neyvia-surface-head h2 {
+  margin: 4px 0 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--neyvia-text, var(--text, #f2efe8));
+}
+
+.neyvia-surface-head p {
+  margin: 4px 0 0;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+  font-size: 12.5px;
+  max-width: 62ch;
+}
+
+.neyvia-notebook-layout {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 280px;
+}
+
+.neyvia-notebook-layout aside {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+
+.neyvia-notebook-layout aside button {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.neyvia-notebook-layout aside button.is-active {
+  background: var(--neyvia-accent-soft, rgba(214, 168, 79, 0.16));
+  color: var(--neyvia-text, var(--text, #f2efe8));
+  border-color: color-mix(in srgb, var(--neyvia-accent, #d6a84f) 35%, transparent);
+}
+
+.neyvia-doc-page {
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid var(--neyvia-line, var(--line, #2a2f3a));
+  background: var(--neyvia-panel, var(--panel, #121415));
+}
+
+.neyvia-page-label {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+  margin-bottom: 10px;
+}
+
+.neyvia-doc-page h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+
+.neyvia-doc-page p,
+.neyvia-empty-hint {
+  margin: 0 0 10px;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+  line-height: 1.45;
+}
+
+.neyvia-lab-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 12px;
+  min-height: 300px;
+}
+
+.neyvia-lab-viewport {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: 8px;
+  border-radius: 14px;
+  border: 1px dashed var(--neyvia-line, var(--line, #2a2f3a));
+  background:
+    radial-gradient(circle at 30% -10%, color-mix(in srgb, var(--neyvia-accent, #d6a84f) 10%, transparent), transparent 40%),
+    var(--neyvia-panel, var(--panel, #121415));
+  padding: 28px;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+}
+
+.neyvia-lab-viewport strong {
+  color: var(--neyvia-text, var(--text, #f2efe8));
+}
+
+.neyvia-lab-stage aside {
+  border: 1px solid var(--neyvia-line, var(--line, #2a2f3a));
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--neyvia-panel-soft, #181a1c);
+}
+
+.neyvia-lab-stage aside h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.neyvia-lab-stage aside p,
+.neyvia-lab-stage aside li {
+  margin: 0 0 8px;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+  font-size: 12px;
+}
+
+.neyvia-lab-stage aside ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.neyvia-lab-stage aside li span {
+  display: inline-block;
+  min-width: 52px;
+  font-weight: 600;
+  color: var(--neyvia-text, var(--text, #f2efe8));
+}
+
+.neyvia-library-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--neyvia-line, var(--line, #2a2f3a));
+  border-radius: 12px;
+  background: var(--neyvia-panel, var(--panel, #121415));
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+}
+
+.neyvia-library-search input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--neyvia-text, var(--text, #f2efe8));
+  font: inherit;
+  outline: none;
+}
+
+.neyvia-library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.neyvia-library-grid article {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--neyvia-line, var(--line, #2a2f3a));
+  background: var(--neyvia-panel-soft, #181a1c);
+}
+
+.neyvia-library-grid article > span {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--neyvia-accent, #d6a84f);
+  font-weight: 700;
+}
+
+.neyvia-library-grid article strong {
+  color: var(--neyvia-text, var(--text, #f2efe8));
+}
+
+.neyvia-library-grid article p {
+  margin: 0;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.neyvia-library-grid article em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--neyvia-muted, var(--muted, #9a958a));
+}
+
+.neyvia-library-grid article[data-available="true"] em {
+  color: var(--neyvia-good, #67d780);
+}
+
+.neyvia-library-grid article[data-available="false"] em {
+  color: var(--neyvia-warn, #eab75c);
+}
+
+.neyvia-library-grid article button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* —— Settings panel —— */
+
+/* —— Motion hooks —— full system lives in neyviaMotion.css
+   Tokens --neyvia-motion-* and data-neyvia-reduce-motion / prefers-reduced-motion. */
+
+@keyframes neyvia-surface-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--neyvia-effect-lift, 8px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+
+  .neyvia-notebook-layout,
+.neyvia-lab-stage {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* —— Overlay panels (tools, sources, plan, roster, PDF, 3D) —— */
+
+.neyvia-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.neyvia-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(6, 7, 8, 0.62);
+  cursor: pointer;
+}
+
+.neyvia-overlay-card {
+  position: relative;
+  z-index: 1;
+  width: min(520px, 100%);
+  max-height: min(84vh, 820px);
+  overflow: auto;
+  border-radius: 16px;
+  border: 1px solid var(--neyvia-line, var(--line, #2a2f3a));
+  background: color-mix(
+    in srgb,
+    var(--neyvia-panel, #121415) var(--neyvia-surface-opacity, 97%),
+    transparent
+  );
+  backdrop-filter: blur(var(--neyvia-surface-blur, 6px));
+  color: var(--neyvia-text, #f2efe8);
+  box-shadow: 0 24px 64px rgb(0 0 0 / var(--neyvia-effect-shadow-alpha, 0.35));
+  animation: neyvia-surface-in var(--neyvia-motion-med, 220ms) var(--neyvia-motion-spring, ease);
+}
+
+.neyvia-overlay.is-wide .neyvia-overlay-card {
+  width: min(820px, 100%);
+}
+
+.neyvia-overlay-card > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--neyvia-line, var(--line, #2a2f3a));
+}
+
+.neyvia-overlay-card > header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.neyvia-overlay-card > header p {
+  margin: 4px 0 0;
+  color: var(--neyvia-muted, #9a958a);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.neyvia-overlay-card > header button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--neyvia-muted, #9a958a);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.neyvia-overlay-body {
+  padding: 14px 18px 18px;
+}
+
+.neyvia-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.neyvia-library-suite-section {
+  display: grid;
+  gap: 16px;
+}
+
+.neyvia-tools-category {
+  display: grid;
+  gap: 8px;
+}
+
+.neyvia-tools-category-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px;
+}
+
+.neyvia-tools-category-head strong {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--neyvia-text, #e8eaed) 72%, transparent);
+}
+
+.neyvia-tools-category-head span {
+  font-size: 11px;
+  color: color-mix(in srgb, var(--neyvia-text, #e8eaed) 45%, transparent);
+}
+
+.neyvia-library-suite-grid {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+.agent-message-chips .neyvia-tool-chip,
+.agent-chat-chips .neyvia-tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 6px 6px 0;
+}
+
+.neyvia-tools-grid button {
+  display: grid;
+  gap: 6px;
+  text-align: left;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--neyvia-line, var(--line, #2a2f3a));
+  background: var(--neyvia-panel-soft, #181a1c);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.neyvia-tools-grid-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--neyvia-accent, #d6a84f) 14%, transparent);
+  color: var(--neyvia-accent, #d6a84f);
+}
+
+.neyvia-library-cap-icon {
+  display: inline-flex;
+  margin-bottom: 4px;
+  color: var(--neyvia-accent, #d6a84f);
+}
+
+.neyvia-tools-grid strong {
+  font-size: 13px;
+}
+
+.neyvia-tools-grid span,
+.neyvia-tools-grid em {
+  color: var(--neyvia-muted, #9a958a);
+  font-size: 12px;
+  font-style: normal;
+}
+
+/*
+ * The legacy non-home monochrome pass uses !important on bare text elements.
+ * Keep the plan overlay on its user-selected Neyvia palette instead of
+ * inheriting white text and dark borders on a light panel.
+ */
+
+@media (max-width: 720px) {
+
+  .neyvia-overlay {
+    padding: 12px;
+  }
+}
+
+/* —— Surfaces specialist extensions: tool drawers, library entries, lab actions —— */
+
+.neyvia-notebook-tool-drawers {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+}
+
+.neyvia-notebook-tool-drawers > span {
+  color: var(--neyvia-muted, #9a958a);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.neyvia-notebook-tool-drawers button,
+.neyvia-lab-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--neyvia-panel-soft, #181a1c) 80%, transparent);
+  color: var(--neyvia-text, #f2efe8);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    transform var(--neyvia-motion-fast, 160ms) var(--neyvia-motion-spring, ease),
+    border-color var(--neyvia-motion-fast, 160ms),
+    background var(--neyvia-motion-fast, 160ms);
+}
+
+.neyvia-notebook-tool-drawers button:hover,
+.neyvia-lab-actions button:hover {
+  border-color: color-mix(in srgb, var(--neyvia-accent, #d6a84f) 55%, transparent);
+  background: var(--neyvia-accent-soft, rgba(214, 168, 79, 0.16));
+}
+
+.neyvia-notebook-tool-drawers button:active {
+  transform: scale(0.98);
+}
+
+.neyvia-lab-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.neyvia-artifact-list p {
+  margin: 0;
+  color: var(--neyvia-muted, #9a958a);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.neyvia-artifact-list {
+  display: grid;
+  gap: 8px;
+}
+
+.neyvia-artifact-list article {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--neyvia-bg, #0a0b0c) 40%, transparent);
+}
+
+.neyvia-artifact-list span {
+  color: var(--neyvia-muted, #9a958a);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* —— Preset chrome effects (Minimal / Creator / Researcher / Engineer) —— */
+
+/* Neyvia conversation rail: keep the rail and its surface in one viewport row. */
+
+/* —— Cmd+K launcher, pack cards, templates, judgment, chart, web-capture —— */
+
+/* —— Availability filters + demoted catalog tiles —— */
+
+.neyvia-availability-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.neyvia-availability-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--neyvia-muted, #9a958a);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.neyvia-availability-filters button.is-selected,
+.neyvia-availability-filters button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--neyvia-accent, #d6a84f) 50%, transparent);
+  background: color-mix(in srgb, var(--neyvia-accent, #d6a84f) 14%, transparent);
+  color: var(--neyvia-accent, #d6a84f);
+}
+
+.neyvia-tools-grid button.is-demoted,
+.neyvia-library-suite-grid button.is-demoted {
+  opacity: 0.72;
+}
+
+.neyvia-tools-grid button.is-agent-ready,
+.neyvia-library-suite-grid button.is-agent-ready {
+  border-color: color-mix(in srgb, var(--neyvia-good, #67d780) 40%, transparent);
+}
+
+.neyvia-tools-grid em[data-tone="good"],
+.neyvia-library-suite-grid em[data-tone="good"] {
+  color: var(--neyvia-good, #67d780);
+}
+
+/* —— Managed CLI orchestration session (Claude Code / Grok Build) —— */
+
+/* —— Session tool panes (ecosystem host) —— */
+
+/* —— Personal Mesh: isolated readable theme and truthful state surfaces —— */
+
+.neyvia-overlay[data-neyvia-panel="personal-mesh"] {
+  --mesh-surface: #111311;
+  --mesh-surface-raised: #1a1d1a;
+  --mesh-surface-subtle: #222622;
+  --mesh-text: #f7f8f3;
+  --mesh-muted: #b7bdb5;
+  --mesh-line: #424842;
+  --mesh-accent: #e7c56f;
+  --mesh-accent-ink: #181306;
+  --mesh-good: #89e0a1;
+  --mesh-good-soft: #153522;
+  --mesh-warn: #ffd27d;
+  --mesh-warn-soft: #3b2d12;
+  --mesh-failed: #ffaaa3;
+  --mesh-failed-soft: #3d1c1c;
+  color-scheme: dark;
+}
+
+.neyvia-overlay[data-neyvia-panel="personal-mesh"] .neyvia-overlay-card {
+  width: min(880px, 100%);
+  border-color: var(--mesh-line);
+  background: var(--mesh-surface);
+  color: var(--mesh-text);
+}
+
+.neyvia-overlay[data-neyvia-panel="personal-mesh"] .neyvia-overlay-card > header {
+  border-color: var(--mesh-line);
+  background: var(--mesh-surface);
+}
+
+.neyvia-overlay[data-neyvia-panel="personal-mesh"] .neyvia-overlay-card > header h2,
+.neyvia-overlay[data-neyvia-panel="personal-mesh"] .neyvia-overlay-card > header button {
+  color: var(--mesh-text);
+}
+
+.neyvia-overlay[data-neyvia-panel="personal-mesh"] .neyvia-overlay-card > header p {
+  color: var(--mesh-muted);
+}
+
+.neyvia-personal-mesh {
+  display: grid;
+  gap: 16px;
+  color: var(--mesh-text);
+}
+
+.neyvia-personal-mesh-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.neyvia-personal-mesh-tabs,
+.neyvia-personal-mesh-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.neyvia-personal-mesh-tabs button,
+.neyvia-personal-mesh-toolbar > button,
+.neyvia-personal-mesh-row-actions button,
+.neyvia-personal-mesh-disabled-action {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  border: 1px solid var(--mesh-line);
+  border-radius: 10px;
+  background: var(--mesh-surface-raised);
+  color: var(--mesh-text);
+  padding: 7px 11px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.neyvia-personal-mesh-tabs button:hover,
+.neyvia-personal-mesh-toolbar > button:hover,
+.neyvia-personal-mesh-row-actions button:hover {
+  border-color: var(--mesh-accent);
+}
+
+.neyvia-personal-mesh-tabs button.is-active {
+  border-color: var(--mesh-accent);
+  background: var(--mesh-accent);
+  color: var(--mesh-accent-ink);
+}
+
+.neyvia-personal-mesh :where(button, [role="tab"]):focus-visible {
+  outline: 3px solid var(--mesh-accent);
+  outline-offset: 2px;
+}
+
+.neyvia-personal-mesh button:disabled,
+.neyvia-personal-mesh-disabled-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.neyvia-personal-mesh-banner {
+  margin: 0;
+  border: 1px solid var(--mesh-line);
+  border-radius: 10px;
+  background: var(--mesh-surface-raised);
+  color: var(--mesh-text);
+  padding: 10px 12px;
+}
+
+.neyvia-personal-mesh-banner[data-tone="warn"],
+.neyvia-personal-mesh-card[data-tone="warn"] {
+  border-color: var(--mesh-warn);
+  background: var(--mesh-warn-soft);
+}
+
+.neyvia-personal-mesh-banner[data-tone="failed"],
+.neyvia-personal-mesh-card[data-tone="failed"] {
+  border-color: var(--mesh-failed);
+  background: var(--mesh-failed-soft);
+}
+
+.neyvia-personal-mesh-card[data-tone="good"] {
+  border-color: var(--mesh-good);
+  background: var(--mesh-good-soft);
+}
+
+.neyvia-personal-mesh-section {
+  display: grid;
+  gap: 12px;
+}
+
+.neyvia-personal-mesh-section > header {
+  display: grid;
+  gap: 4px;
+}
+
+.neyvia-personal-mesh-section > header h3,
+.neyvia-personal-mesh-section h4 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--mesh-text);
+}
+
+.neyvia-personal-mesh-section > header p,
+.neyvia-personal-mesh-card p,
+.neyvia-personal-mesh-note,
+.neyvia-personal-mesh-empty {
+  margin: 0;
+  color: var(--mesh-muted);
+  line-height: 1.5;
+}
+
+.neyvia-personal-mesh-empty {
+  border: 1px dashed var(--mesh-line);
+  border-radius: 10px;
+  background: var(--mesh-surface-raised);
+  padding: 12px;
+}
+
+.neyvia-personal-mesh-empty[data-state="unavailable"] {
+  border-style: solid;
+  color: var(--mesh-warn);
+}
+
+.neyvia-personal-mesh-card {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--mesh-line);
+  border-radius: 12px;
+  background: var(--mesh-surface-raised);
+  color: var(--mesh-text);
+  padding: 13px 14px;
+}
+
+.neyvia-personal-mesh-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.neyvia-personal-mesh-metrics > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  border: 1px solid var(--mesh-line);
+  border-radius: 10px;
+  background: var(--mesh-surface-raised);
+  padding: 10px;
+}
+
+.neyvia-personal-mesh-metrics strong {
+  color: var(--mesh-text);
+  overflow-wrap: anywhere;
+}
+
+.neyvia-personal-mesh-metrics span {
+  color: var(--mesh-muted);
+  font-size: 0.84rem;
+}
+
+.neyvia-personal-mesh-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.neyvia-personal-mesh-status {
+  display: grid;
+  gap: 3px;
+  border: 1px solid var(--mesh-line);
+  border-radius: 9px;
+  background: var(--mesh-surface-subtle);
+  padding: 9px 10px;
+}
+
+.neyvia-personal-mesh-status > strong {
+  color: var(--mesh-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.neyvia-personal-mesh-status > span {
+  color: var(--mesh-text);
+  font-weight: 700;
+}
+
+.neyvia-personal-mesh-gates,
+.neyvia-personal-mesh-list,
+.neyvia-personal-mesh-file-progress,
+.neyvia-personal-mesh-enablement {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.neyvia-personal-mesh-gates li,
+.neyvia-personal-mesh-list > li {
+  border: 1px solid var(--mesh-line);
+  border-radius: 10px;
+  background: var(--mesh-surface-subtle);
+  padding: 10px 12px;
+}
+
+.neyvia-personal-mesh-gates li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "badge title"
+    "badge reason";
+  column-gap: 10px;
+}
+
+.neyvia-personal-mesh-gates li > span {
+  grid-area: badge;
+  align-self: start;
+  border: 1px solid var(--mesh-warn);
+  border-radius: 999px;
+  color: var(--mesh-warn);
+  padding: 3px 7px;
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.neyvia-personal-mesh-gates li[data-passed="true"] > span {
+  border-color: var(--mesh-good);
+  color: var(--mesh-good);
+}
+
+.neyvia-personal-mesh-gates li > strong {
+  grid-area: title;
+  color: var(--mesh-text);
+}
+
+.neyvia-personal-mesh-gates li > em {
+  grid-area: reason;
+  color: var(--mesh-muted);
+  font-size: 0.88rem;
+  font-style: normal;
+}
+
+.neyvia-personal-mesh-list > li {
+  display: grid;
+  gap: 6px;
+}
+
+.neyvia-personal-mesh-list > li > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.neyvia-personal-mesh-list p {
+  color: var(--mesh-muted);
+  font-size: 0.86rem;
+}
+
+.neyvia-personal-mesh-list span[data-tone="good"] {
+  color: var(--mesh-good);
+}
+
+.neyvia-personal-mesh-list span[data-tone="warn"] {
+  color: var(--mesh-warn);
+}
+
+.neyvia-personal-mesh-list span[data-tone="failed"] {
+  color: var(--mesh-failed);
+}
+
+.neyvia-personal-mesh-file-progress {
+  border-top: 1px solid var(--mesh-line);
+  padding-top: 8px;
+}
+
+.neyvia-personal-mesh-file-progress li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  color: var(--mesh-text);
+  font-size: 0.84rem;
+}
+
+.neyvia-personal-mesh-file-progress em,
+.neyvia-personal-mesh-file-progress code {
+  color: var(--mesh-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-personal-mesh-enablement {
+  padding-left: 1.2rem;
+  list-style: disc;
+  color: var(--mesh-muted);
+}
+
+@media (max-width: 760px) {
+  .neyvia-overlay[data-neyvia-panel="personal-mesh"] {
+    padding: 10px;
+  }
+
+  .neyvia-overlay[data-neyvia-panel="personal-mesh"] .neyvia-overlay-card {
+    max-height: 94vh;
+  }
+
+  .neyvia-personal-mesh-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .neyvia-personal-mesh-tabs {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .neyvia-personal-mesh-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .neyvia-personal-mesh-file-progress li {
+    grid-template-columns: 1fr;
+  }
+}
+
+.neyvia-ecosystem-fabric {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+  padding: 18px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(111, 206, 179, 0.07), transparent 42%),
+    var(--neyvia-panel, rgba(18, 20, 21, 0.82));
+}
+
+.neyvia-domain-experiences {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+  padding: 18px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(219, 170, 103, 0.07), transparent 42%),
+    var(--neyvia-panel, rgba(18, 20, 21, 0.82));
+}
+
+.neyvia-domain-experiences h3,
+.neyvia-domain-experiences h4,
+.neyvia-domain-experiences p {
+  margin: 4px 0 0;
+}
+
+.neyvia-domain-layout {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.65fr) minmax(0, 1.35fr);
+  gap: 14px;
+}
+
+.neyvia-domain-list,
+.neyvia-domain-detail {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.11));
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.neyvia-domain-list {
+  max-height: none;
+  overflow: visible;
+}
+
+.neyvia-domain-list button {
+  display: grid;
+  gap: 3px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.neyvia-domain-list button.is-selected {
+  border-color: var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.neyvia-domain-list span,
+.neyvia-domain-detail dd,
+.neyvia-domain-detail label {
+  color: var(--neyvia-muted, rgba(242, 239, 232, 0.64));
+  font-size: 11px;
+}
+
+.neyvia-domain-detail {
+  gap: 12px;
+  padding: 14px;
+}
+
+.neyvia-domain-detail > div:first-child > span {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.neyvia-domain-detail dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0;
+}
+
+.neyvia-domain-detail dl > div {
+  display: grid;
+  gap: 3px;
+  padding: 9px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.08));
+  border-radius: 8px;
+}
+
+.neyvia-domain-detail dt {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.neyvia-domain-detail dd {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.neyvia-domain-detail label {
+  display: grid;
+  gap: 5px;
+}
+
+.neyvia-domain-detail textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+}
+
+.neyvia-domain-detail > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--neyvia-accent, #e8dfcf);
+  color: #171817;
+  cursor: pointer;
+}
+
+.neyvia-ecosystem-fabric-head,
+.neyvia-ecosystem-section-title,
+.neyvia-compiled-prompt > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.neyvia-ecosystem-fabric h3,
+.neyvia-ecosystem-fabric p {
+  margin: 4px 0 0;
+}
+
+.neyvia-ecosystem-fabric h3 {
+  font-size: 18px;
+}
+
+.neyvia-ecosystem-fabric p,
+.neyvia-ecosystem-fabric small,
+.neyvia-ecosystem-fabric span {
+  color: var(--neyvia-muted, rgba(242, 239, 232, 0.62));
+}
+
+.neyvia-ecosystem-tabs {
+  display: flex;
+  gap: 5px;
+  padding: 4px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.neyvia-ecosystem-tabs button,
+.neyvia-ecosystem-section-title button,
+.neyvia-ecosystem-fabric form button,
+.neyvia-compiled-prompt button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.neyvia-ecosystem-tabs button.is-selected {
+  border-color: var(--neyvia-line, rgba(242, 239, 232, 0.15));
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.neyvia-ecosystem-error {
+  padding: 9px 11px;
+  border: 1px solid rgba(225, 107, 93, 0.38);
+  border-radius: 9px;
+  background: rgba(225, 107, 93, 0.08);
+  color: #f1b2aa;
+  font-size: 12px;
+}
+
+.neyvia-ecosystem-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr) minmax(180px, 0.5fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.neyvia-ecosystem-section-title {
+  align-items: center;
+  margin-bottom: 9px;
+}
+
+.neyvia-ecosystem-section-title > div {
+  display: grid;
+  gap: 2px;
+}
+
+.neyvia-communication-accounts {
+  display: grid;
+  gap: 7px;
+}
+
+.neyvia-communication-accounts article,
+.neyvia-connection-form,
+.neyvia-archive-import,
+.neyvia-permission-ladder,
+.neyvia-presentation-bridge form,
+.neyvia-compiled-prompt {
+  padding: 12px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.neyvia-communication-accounts article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+}
+
+.neyvia-communication-accounts article > div,
+.neyvia-connection-form,
+.neyvia-archive-import,
+.neyvia-permission-ladder {
+  display: grid;
+  gap: 8px;
+}
+
+.neyvia-archive-import {
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(180px, 0.45fr) minmax(260px, 1fr);
+  align-items: end;
+}
+
+.neyvia-archive-import > div:first-child,
+.neyvia-archive-inspection,
+.neyvia-archive-import > small {
+  grid-column: 1 / -1;
+}
+
+.neyvia-archive-import label {
+  display: grid;
+  gap: 5px;
+  color: var(--neyvia-muted, rgba(242, 239, 232, 0.68));
+  font-size: 11px;
+}
+
+.neyvia-archive-import input,
+.neyvia-archive-import select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  color: inherit;
+  padding: 8px 9px;
+  font: inherit;
+}
+
+.neyvia-archive-inspection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  padding: 10px;
+  border: 1px solid rgba(120, 213, 182, 0.24);
+  border-radius: 8px;
+}
+
+.neyvia-archive-inspection[data-archive-status="adapter-required"] {
+  border-color: rgba(230, 189, 109, 0.35);
+}
+
+.neyvia-archive-inspection small,
+.neyvia-archive-inspection button {
+  grid-column: 1 / -1;
+}
+
+.neyvia-communication-accounts article p,
+.neyvia-communication-accounts article small {
+  grid-column: 1 / -1;
+  font-size: 11px;
+}
+
+.neyvia-communication-accounts em {
+  align-self: start;
+  font-size: 10px;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.neyvia-communication-accounts em[data-tone="good"] { color: #78d5b6; }
+.neyvia-communication-accounts em[data-tone="warning"] { color: #e6bd6d; }
+.neyvia-communication-accounts em[data-tone="blocked"] { color: #e18a7e; }
+
+.neyvia-connection-form label,
+.neyvia-presentation-bridge label {
+  display: grid;
+  gap: 5px;
+  color: var(--neyvia-muted, rgba(242, 239, 232, 0.68));
+  font-size: 11px;
+}
+
+.neyvia-connection-form input,
+.neyvia-connection-form select,
+.neyvia-presentation-bridge select,
+.neyvia-presentation-bridge textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  color: inherit;
+  padding: 8px 9px;
+  font: inherit;
+}
+
+.neyvia-ecosystem-fabric form button.primary,
+.neyvia-compiled-prompt button {
+  background: var(--neyvia-accent, #e8dfcf);
+  color: #171817;
+}
+
+.neyvia-permission-ladder > strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.neyvia-permission-ladder > div {
+  display: grid;
+  gap: 2px;
+  padding-top: 7px;
+  border-top: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.08));
+  text-transform: capitalize;
+}
+
+.neyvia-presentation-bridge {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+  gap: 14px;
+}
+
+.neyvia-presentation-bridge form {
+  display: grid;
+  gap: 12px;
+}
+
+.neyvia-presentation-capture {
+  grid-column: 1 / -1;
+}
+
+.neyvia-capture-destination {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.45fr) minmax(220px, 1fr);
+  gap: 10px;
+}
+
+.neyvia-explicit-checkbox {
+  display: flex !important;
+  align-items: center;
+}
+
+.neyvia-explicit-checkbox input {
+  width: auto;
+}
+
+.neyvia-capture-receipt {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 3px 7px;
+  padding: 9px;
+  border: 1px solid rgba(120, 213, 182, 0.28);
+  border-radius: 8px;
+  color: #78d5b6;
+}
+
+.neyvia-capture-receipt small {
+  grid-column: 2;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-presentation-bridge textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.neyvia-compiled-prompt {
+  min-width: 0;
+}
+
+.neyvia-compiled-prompt pre {
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  font: 12px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.neyvia-share-capsule,
+.neyvia-lab-evidence-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+  gap: 14px;
+}
+
+.neyvia-share-capsule form,
+.neyvia-share-inspection,
+.neyvia-lab-evidence form,
+.neyvia-experiment-list,
+.neyvia-benchmark-runs {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.neyvia-share-capsule label,
+.neyvia-lab-evidence label {
+  display: grid;
+  gap: 5px;
+  color: var(--neyvia-muted, rgba(242, 239, 232, 0.68));
+  font-size: 11px;
+}
+
+.neyvia-share-capsule select,
+.neyvia-share-capsule textarea,
+.neyvia-lab-evidence input,
+.neyvia-lab-evidence select,
+.neyvia-lab-evidence textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  color: inherit;
+  padding: 8px 9px;
+  font: inherit;
+}
+
+.neyvia-share-inspection > div:first-child,
+.neyvia-benchmark-runs article > div,
+.neyvia-benchmark-runs button > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.neyvia-share-inspection ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.neyvia-share-inspection li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
+.neyvia-share-finding {
+  display: grid;
+  gap: 2px;
+  padding: 8px;
+  border-left: 3px solid #e6bd6d;
+  background: rgba(230, 189, 109, 0.06);
+}
+
+.neyvia-share-finding[data-severity="blocker"] {
+  border-left-color: #e18a7e;
+  background: rgba(225, 138, 126, 0.07);
+}
+
+.neyvia-share-inspection button,
+.neyvia-lab-evidence button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.neyvia-share-inspection button:disabled,
+.neyvia-lab-evidence button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.neyvia-lab-evidence {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(122, 155, 220, 0.07), transparent 42%),
+    var(--neyvia-panel, rgba(18, 20, 21, 0.82));
+}
+
+.neyvia-lab-evidence > header,
+.neyvia-lab-evidence-tabs,
+.neyvia-benchmark-budget {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.neyvia-lab-evidence h3,
+.neyvia-lab-evidence p {
+  margin: 4px 0 0;
+}
+
+.neyvia-lab-evidence-tabs {
+  padding: 4px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.neyvia-lab-evidence-tabs button.is-selected,
+.neyvia-experiment-list button.is-selected {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.neyvia-lab-evidence-grid {
+  grid-template-columns: minmax(230px, 0.7fr) minmax(280px, 1fr) minmax(230px, 0.7fr);
+}
+
+.neyvia-lab-evidence-grid.is-benchmark {
+  grid-template-columns: minmax(240px, 0.7fr) minmax(260px, 1fr) minmax(230px, 0.7fr);
+}
+
+.neyvia-lab-evidence form button.primary {
+  background: var(--neyvia-accent, #e8dfcf);
+  color: #171817;
+}
+
+.neyvia-experiment-list button {
+  display: grid;
+  justify-items: start;
+  text-align: left;
+}
+
+.neyvia-experiment-list button span {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.neyvia-experiment-list button p,
+.neyvia-benchmark-runs article p,
+.neyvia-benchmark-runs button p {
+  margin: 2px 0;
+  font-size: 11px;
+}
+
+.neyvia-action-plan,
+.neyvia-benchmark-runs article,
+.neyvia-benchmark-runs > button {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.1));
+  border-radius: 9px;
+}
+
+.neyvia-benchmark-runs > button {
+  display: grid;
+  justify-content: stretch;
+  text-align: left;
+}
+
+.neyvia-benchmark-runs > button.is-selected {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.neyvia-action-plan[data-action-tier="act"] {
+  border-color: rgba(225, 138, 126, 0.4);
+}
+
+@media (max-width: 1040px) {
+  .neyvia-ecosystem-columns {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .neyvia-permission-ladder {
+    grid-column: 1 / -1;
+  }
+
+  .neyvia-lab-evidence-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .neyvia-lab-evidence-grid form:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .neyvia-ecosystem-fabric-head,
+.neyvia-presentation-bridge,
+.neyvia-ecosystem-columns,
+.neyvia-share-capsule,
+.neyvia-lab-evidence-grid,
+.neyvia-lab-evidence-grid.is-benchmark {
+    grid-template-columns: 1fr;
+  }
+
+  .neyvia-domain-layout,
+.neyvia-domain-detail dl {
+    grid-template-columns: 1fr;
+  }
+
+  .neyvia-ecosystem-fabric-head {
+    display: grid;
+  }
+
+  .neyvia-ecosystem-tabs {
+    overflow-x: auto;
+  }
+
+  .neyvia-permission-ladder {
+    grid-column: auto;
+  }
+
+  .neyvia-archive-import {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .neyvia-archive-import > div:first-child,
+.neyvia-archive-inspection,
+.neyvia-archive-import > small {
+    grid-column: auto;
+  }
+
+  .neyvia-lab-evidence > header {
+    display: grid;
+  }
+
+  .neyvia-lab-evidence-tabs {
+    overflow-x: auto;
+  }
+
+  .neyvia-lab-evidence-grid form:last-child {
+    grid-column: auto;
+  }
+}
+
+/* ------------------------------------------------------------------------ */
+/* Ecosystem host: embedded workspaces + effective runtime composition.      */
+/* One presentation foundation for runtime windows, readers, previews and    */
+/* marketplace applications — collapse keeps state, close releases it.       */
+/* ------------------------------------------------------------------------ */
+
+.neyvia-ecosystem-host {
+  position: fixed;
+  inset: 0;
+  z-index: 62;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px;
+  pointer-events: none;
+}
+
+.neyvia-ecosystem-host > * {
+  pointer-events: auto;
+}
+
+.neyvia-runtime-composition {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  max-width: min(460px, 92vw);
+  padding: 10px 12px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 12px;
+  background: var(--neyvia-panel, #121415);
+  color: var(--neyvia-text, #f2efe8);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.34);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.neyvia-runtime-composition[data-surface-owner]:not([data-surface-owner="neyvia"]) {
+  border-color: var(--neyvia-accent, rgba(255, 196, 120, 0.55));
+}
+
+.neyvia-runtime-composition small {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.68;
+}
+
+.neyvia-runtime-delegations,
+.neyvia-runtime-invocation-list {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.neyvia-runtime-invocation-list li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.neyvia-runtime-invocation-list button {
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.18));
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+/* Runtime picker — the three relationships stated as an explicit choice. */
+.neyvia-runtime-picker {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, 94vw);
+  max-height: 88vh;
+  overflow: auto;
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.16));
+  border-radius: 16px;
+  background: var(--neyvia-panel, #121415);
+  color: var(--neyvia-text, #f2efe8);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.5);
+}
+
+.neyvia-runtime-picker header,
+.neyvia-runtime-picker footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.neyvia-runtime-picker h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.neyvia-runtime-picker fieldset {
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+  border-radius: 12px;
+  margin: 0;
+  padding: 10px 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.neyvia-runtime-picker legend {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.neyvia-runtime-picker label {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 12.5px;
+}
+
+.neyvia-runtime-picker label small {
+  display: block;
+  opacity: 0.68;
+  line-height: 1.35;
+}
+
+.neyvia-runtime-modes label[data-selected="true"] strong {
+  color: var(--neyvia-accent, #ffc478);
+}
+
+.neyvia-runtime-select {
+  display: grid;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.neyvia-runtime-select select {
+  padding: 7px 9px;
+  border-radius: 9px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.18));
+  background: transparent;
+  color: inherit;
+}
+
+.neyvia-runtime-readiness {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.neyvia-runtime-readiness[data-ready="false"] {
+  color: var(--neyvia-warn, #ffb27a);
+}
+
+.neyvia-runtime-reserved {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  opacity: 0.65;
+}
+
+.neyvia-runtime-picker footer button {
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.2));
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 12.5px;
+}
+
+.neyvia-runtime-picker footer button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Embedded workspaces */
+.neyvia-embed-host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  max-height: 100%;
+  width: 100%;
+}
+
+.neyvia-embed {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: min(420px, 94vw);
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 14px;
+  background: var(--neyvia-panel, #121415);
+  color: var(--neyvia-text, #f2efe8);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.neyvia-embed.is-background {
+  opacity: 0.82;
+}
+
+.neyvia-embed.presentation-dock-right,
+.neyvia-embed.presentation-dock-left {
+  width: min(520px, 96vw);
+  max-height: 82vh;
+}
+
+.neyvia-embed.presentation-floating-center {
+  width: min(560px, 96vw);
+  max-height: 78vh;
+}
+
+.neyvia-embed.presentation-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-height: none;
+  border-radius: 0;
+  border: 0;
+  z-index: 64;
+}
+
+.neyvia-embed-chrome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+}
+
+.neyvia-embed-title {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 12.5px;
+}
+
+.neyvia-embed-title small {
+  opacity: 0.65;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.neyvia-embed-presentation {
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.neyvia-embed-actions {
+  display: flex;
+  gap: 3px;
+}
+
+.neyvia-embed-actions button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 3px 5px;
+  border-radius: 7px;
+  line-height: 1;
+}
+
+.neyvia-embed-actions button:hover {
+  background: rgba(242, 239, 232, 0.08);
+}
+
+.neyvia-embed-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 12px;
+}
+
+.neyvia-embed-collapsed-note,
+.neyvia-embed-loading {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.neyvia-embed-blocked {
+  font-size: 12px;
+}
+
+.neyvia-embed-blocked ul {
+  margin: 6px 0 0;
+  padding-left: 16px;
+  opacity: 0.78;
+}
+
+@media (max-width: 760px) {
+  .neyvia-ecosystem-host {
+    padding: 8px;
+  }
+
+  .neyvia-embed,
+.neyvia-embed.presentation-dock-right,
+.neyvia-embed.presentation-dock-left,
+.neyvia-embed.presentation-floating-center {
+    width: 100%;
+    max-height: 70vh;
+  }
+}
+
+/* Library placement: shared capability identity, discovery vs use. */
+.neyvia-library-placement {
+  display: grid;
+  gap: 8px;
+}
+
+.neyvia-library-placement-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 10px 12px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+  border-radius: 12px;
+}
+
+.neyvia-library-placement-row p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  opacity: 0.72;
+}
+
+.neyvia-library-placement-row dl {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  font-size: 11.5px;
+}
+
+.neyvia-library-placement-row dl div {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.neyvia-library-placement-row dt {
+  opacity: 0.55;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.neyvia-library-placement-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-library-placement-row button {
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.2));
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  padding: 5px 11px;
+  cursor: pointer;
+}
+
+.neyvia-library-placement-note {
+  font-size: 11.5px;
+  opacity: 0.6;
+  max-width: 220px;
+}
+
+@media (max-width: 860px) {
+  .neyvia-library-placement-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Mode one: a runtime owns the session surface, Neyvia keeps the ecosystem. */
+
+/* Builder's per-mission dated sequence and the route back from Agent Live. */
+
+/* ------------------------------------------------------------------------ */
+/* Embedded adapters: one window grammar, content-specific bodies.           */
+/* ------------------------------------------------------------------------ */
+
+.neyvia-adapter {
+  display: grid;
+  gap: 8px;
+  min-height: 0;
+  height: 100%;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.neyvia-adapter-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 12.5px;
+}
+
+.neyvia-adapter-head small {
+  display: block;
+  opacity: 0.6;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-adapter-body {
+  min-height: 0;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.neyvia-adapter-foot,
+.neyvia-adapter-lineage {
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.55;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-adapter-frame {
+  width: 100%;
+  min-height: 260px;
+  height: 100%;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.neyvia-embed.presentation-fullscreen .neyvia-adapter-frame {
+  min-height: 60vh;
+}
+
+.neyvia-adapter-image {
+  max-width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.12));
+}
+
+.neyvia-adapter-fallback {
+  margin: 0;
+  padding: 12px;
+  font-size: 12px;
+}
+
+.neyvia-adapter-unavailable {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  padding: 14px;
+  border: 1px dashed var(--neyvia-line, rgba(242, 239, 232, 0.18));
+  border-radius: 10px;
+  font-size: 12.5px;
+}
+
+.neyvia-adapter-unavailable p {
+  margin: 0;
+  opacity: 0.72;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-adapter-facts {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  font-size: 12px;
+}
+
+.neyvia-adapter-facts div {
+  display: grid;
+  grid-template-columns: minmax(88px, auto) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.neyvia-adapter-facts dt {
+  opacity: 0.55;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.neyvia-adapter-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.neyvia-adapter-facts dd[data-ready="false"] {
+  color: var(--neyvia-warn, #ffb27a);
+}
+
+.neyvia-adapter-problems {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 12px;
+  color: var(--neyvia-warn, #ffb27a);
+}
+
+.neyvia-adapter-returns section {
+  margin-top: 8px;
+}
+
+.neyvia-adapter-returns h4 {
+  margin: 0 0 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.neyvia-adapter-returns ol,
+.neyvia-adapter-returns ul {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 12px;
+  display: grid;
+  gap: 3px;
+}
+
+.neyvia-adapter-waiting {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.68;
+}
+
+.neyvia-adapter-runtime-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.neyvia-adapter-runtime-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.2));
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.neyvia-adapter-runtime-actions button[data-runtime-action="close"] {
+  border-color: var(--neyvia-warn, rgba(255, 178, 122, 0.5));
+}
+
+.neyvia-adapter-reserved {
+  opacity: 0.5;
+  font-size: 10.5px;
+}
+
+/* Composition control: compact by default, inspectable on demand. */
+.neyvia-runtime-composition-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+}
+
+.neyvia-runtime-composition-summary span {
+  flex: 1;
+  min-width: 0;
+}
+
+.neyvia-runtime-composition.is-expanded {
+  max-width: min(520px, 94vw);
+}
+
+.neyvia-runtime-composition-detail h4 {
+  margin: 10px 0 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.neyvia-runtime-retained {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.neyvia-runtime-retained li {
+  border: 1px solid var(--neyvia-line, rgba(242, 239, 232, 0.14));
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.neyvia-runtime-invocation-list li {
+  align-items: flex-start;
+}
+
+.neyvia-runtime-invocation-list small {
+  display: block;
+  opacity: 0.6;
+  font-size: 11px;
+}
+
+.neyvia-runtime-invocation-actions {
+  display: inline-flex;
+  gap: 4px;
+}
+
+/* Primary runtime: panes, actions, suspended bar. */
+
+/* Agent Live: the working room projection. */
+
+.neyvia-marketplace-application-note {
+  margin: 0;
+  font-size: 11.5px;
+  opacity: 0.62;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Compact attention sidebar: one priority lane, then recoverable history. */
+/* ------------------------------------------------------------------------ */
+
+/* Priority is restrained but unmistakable; status color belongs to rows. */

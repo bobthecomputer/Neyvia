@@ -1,0 +1,559 @@
+
+# The first-run test pack checks these files byte for byte: keep them identical in every checkout.
+# PDFs carry byte offsets (xref); never convert their line endings.
+# T5 receipt digests must survive Windows checkout unchanged.
+# T22 artifact-manifest hashes refer to the exact receipt and capture bytes.
+# T13 frozen judge and receipt digests refer to exact working bytes.
+# Preserve verbatim emitted prompts, including their original trailing spaces.
+# A4 ledger receipts are hashed as exact bytes, including source Windows newlines.
+# A1 model, runtime and served-source digests refer to exact bytes.
+# A3B source/receipt hashes refer to exact bytes, including vendored licenses.
+# Verbatim vendor licenses and study input retain upstream/source whitespace.
+# CL benchmark receipts also preserve their recorded byte digests.
+# FOLLOW receipts and their recorded digests must survive Windows checkout.
+# Cargo provenance binds the exact raw metadata stdout bytes.
+# License evidence binds the raw lockfile bytes.
+src/grant_agent/generated/neyvia_contracts.py text eol=lf
+sdk/typescript/src/generated/neyvia-contracts.ts text eol=lf
+*.sh text eol=lf
+config/base_pack/test-files/** -text
+*.pdf binary
+scripts/evidence/T5*.json text eol=lf
+scripts/evidence/T5-models-*.jsonl text eol=lf
+scripts/evidence/T18-runs/** -text whitespace=cr-at-eol
+scripts/evidence/T18-sources/** -text whitespace=cr-at-eol
+scripts/evidence/T22/** -text whitespace=cr-at-eol
+scripts/evidence/T22.json -text whitespace=cr-at-eol
+scripts/evidence/T20*.json text eol=lf
+scripts/evidence/C7*.json -text whitespace=cr-at-eol
+src/grant_agent/evolver*.py -text whitespace=cr-at-eol
+config/evolver/** -text whitespace=cr-at-eol
+rust/evolver-core/** -text whitespace=cr-at-eol
+scripts/evidence/T13* -text whitespace=cr-at-eol
+scripts/evidence/T13-runs/** -text whitespace=cr-at-eol
+scripts/evidence/T13-runs/model/** whitespace=-trailing-space,cr-at-eol
+scripts/evidence/A4-receipts/** -text whitespace=cr-at-eol,-blank-at-eof
+scripts/evidence/A4-runs/** -text whitespace=cr-at-eol
+scripts/evidence/A4-source-catalogs/** -text whitespace=cr-at-eol
+scripts/evidence/A4.json text eol=lf
+docs/research/*.jsonl text eol=lf
+docs/research/*.json text eol=lf
+docs/research/*.md text eol=lf
+scripts/efficiency_log.py text eol=lf
+scripts/import_efficiency_history.py text eol=lf
+scripts/prove_efficiency_log.py text eol=lf
+config/app_sdk/** -text whitespace=cr-at-eol
+src/grant_agent/app_sdk*.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_app_sdk.py -text whitespace=cr-at-eol
+scripts/prove_A1*.py -text whitespace=cr-at-eol
+scripts/app_sdk.py -text whitespace=cr-at-eol
+scripts/evidence/A1* -text whitespace=cr-at-eol
+scripts/evidence/A1-runs/** -text whitespace=cr-at-eol
+apps/scroll-study/** -text whitespace=cr-at-eol
+scripts/evidence/A3B* -text whitespace=cr-at-eol
+scripts/evidence/A3B-runs/** -text whitespace=cr-at-eol
+scripts/scroll_vendor/** -text whitespace=cr-at-eol
+scripts/*scroll* -text whitespace=cr-at-eol
+scripts/seal_A3B.py -text whitespace=cr-at-eol
+config/scroll-study* -text whitespace=cr-at-eol
+config/neyvia_manuals.json -text whitespace=cr-at-eol
+manuals/scroll-generator.manual.json -text whitespace=cr-at-eol
+src/grant_agent/scroll_*.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_scroll.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_workspace_tools.py -text whitespace=cr-at-eol
+# C2f source pins, manual compiler bindings and live observations retain exact bytes.
+scripts/c2f* -text whitespace=cr-at-eol,-blank-at-eof
+scripts/build_c2f_browser_manual.py -text whitespace=cr-at-eol
+scripts/seal_c2f.cjs -text whitespace=cr-at-eol
+scripts/obscura-v024-fetch-retention.patch -text whitespace=cr-at-eol,-blank-at-eof,-trailing-space
+scripts/evidence/C2f* -text whitespace=cr-at-eol,-blank-at-eof
+scripts/evidence/C2f*/** -text whitespace=cr-at-eol,-blank-at-eof,-trailing-space
+src/grant_agent/browser_scripts.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_panes.py -text whitespace=cr-at-eol
+web/src/neyvia/next/NxBrowser.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxBrowserParts.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxPanes.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/nxBrowserApi.js -text whitespace=cr-at-eol
+config/browser.manual.contract.json -text whitespace=cr-at-eol
+docs/manuals/browser-side-pane.md -text whitespace=cr-at-eol
+src/grant_agent/neyvia_ui_api.py -text whitespace=cr-at-eol
+src/grant_agent/web_backend.py -text whitespace=cr-at-eol
+src/grant_agent/desktop_bridge.py -text whitespace=cr-at-eol
+plugins/neyvia/mcp/neyvia_mcp.py -text whitespace=cr-at-eol
+apps/scroll-study/www/vendor/** -text whitespace=-trailing-space,cr-at-eol
+scripts/evidence/A3B-runs/raw/** -text whitespace=-blank-at-eof,-trailing-space,cr-at-eol
+config/scroll-study-pack.schema.json -text whitespace=-blank-at-eof,cr-at-eol
+scripts/A3B-README.md -text whitespace=cr-at-eol
+scripts/evidence/cl/** -text whitespace=cr-at-eol
+scripts/evidence/cl11/** -text whitespace=cr-at-eol
+scripts/evidence/CL11*.json text eol=lf
+scripts/evidence/intcl/** -text whitespace=cr-at-eol
+scripts/evidence/INTCL.json text eol=lf
+scripts/evidence/int2/** -text whitespace=cr-at-eol
+scripts/evidence/INT2.json text eol=lf
+scripts/evidence/FOLLOW*.json text eol=lf
+scripts/evidence/FOLLOW-engine.patch -text whitespace=cr-at-eol
+scripts/evidence/FOLLOW-license-desktop-metadata.json -text
+scripts/evidence/FOLLOW-license-cache-metadata.json -text
+scripts/evidence/FOLLOW-license-python-metadata.json -text
+scripts/evidence/FOLLOW-license-python-requirements.txt -text
+uv.lock text eol=lf
+scripts/evidence/MS* -text -whitespace
+scripts/evidence/MS-runs/** -text -whitespace
+scripts/fixtures/ms-chain-rule-course.md -text
+docs/research/results.jsonl text eol=lf
+scripts/evidence/MS-runs/study/** -text -whitespace
+apps/scroll-study/host-contract.json -text whitespace=cr-at-eol
+apps/scroll-study/manual.cl -text whitespace=cr-at-eol
+apps/scroll-study/neyvia.app.json -text whitespace=cr-at-eol
+apps/scroll-study/package.json -text whitespace=cr-at-eol
+apps/scroll-study/scripts/journey.py -text whitespace=cr-at-eol
+apps/scroll-study/scripts/property-results.json -text whitespace=cr-at-eol
+apps/scroll-study/scripts/property.cjs -text whitespace=cr-at-eol
+apps/scroll-study/scripts/simulate.cjs -text whitespace=cr-at-eol
+apps/scroll-study/www/app.js -text whitespace=cr-at-eol
+apps/scroll-study/www/feed.js -text whitespace=cr-at-eol
+apps/scroll-study/www/icon.svg -text whitespace=cr-at-eol
+apps/scroll-study/www/index.html -text whitespace=cr-at-eol
+apps/scroll-study/www/load-pack.js -text whitespace=cr-at-eol
+apps/scroll-study/www/manifest.webmanifest -text whitespace=cr-at-eol
+apps/scroll-study/www/pack.js -text whitespace=cr-at-eol
+apps/scroll-study/www/storage.js -text whitespace=cr-at-eol
+apps/scroll-study/www/styles.css -text whitespace=cr-at-eol
+apps/scroll-study/www/vendor/README.md -text whitespace=cr-at-eol
+apps/scroll-study/www/vendor/ts-fsrs.LICENSE -text whitespace=cr-at-eol
+apps/scroll-study/www/vendor/ts-fsrs.js -text whitespace=cr-at-eol
+config/design_details.json -text whitespace=cr-at-eol
+config/evolver/workflows.panels.json -text whitespace=cr-at-eol
+config/neyvia_apps.json -text whitespace=cr-at-eol
+config/scroll-study-prices.json -text whitespace=cr-at-eol
+config/scroll-study-procedures.json -text whitespace=cr-at-eol
+docs/manuals/creativity.md -text whitespace=cr-at-eol
+docs/manuals/critique-review.md -text whitespace=cr-at-eol
+docs/manuals/design.md -text whitespace=cr-at-eol
+docs/manuals/efficiency.md -text whitespace=cr-at-eol
+docs/manuals/hill-climb.md -text whitespace=cr-at-eol
+docs/manuals/research.md -text whitespace=cr-at-eol
+docs/manuals/scroll-generator.md -text whitespace=cr-at-eol
+docs/research/efficiency-log.md -text whitespace=cr-at-eol
+# C11 source and small native receipts retain their proof-bound bytes.
+src/grant_agent/cua_desktop.py -text whitespace=cr-at-eol
+src/grant_agent/cua_guard.py -text whitespace=cr-at-eol
+src/grant_agent/cua_launch.py -text whitespace=cr-at-eol
+config/cua-desktop-contract.json -text whitespace=cr-at-eol
+scripts/prove_c11_preview.py -text whitespace=cr-at-eol
+scripts/c11_preview_ui.py -text whitespace=cr-at-eol
+scripts/spike_c11_desktop.py -text whitespace=cr-at-eol
+scripts/run_c11_cohort.py -text whitespace=cr-at-eol
+scripts/seal_c11_receipt.py -text whitespace=cr-at-eol
+scripts/prove_c1c_native.py -text whitespace=cr-at-eol
+scripts/verify_c1c_apps.py -text whitespace=cr-at-eol
+scripts/evidence/C11*.json -text whitespace=cr-at-eol
+scripts/evidence/C11-runs/*.json -text whitespace=cr-at-eol
+scripts/evidence/C11-preview-runs/*.json -text whitespace=cr-at-eol
+docs/research/schema.md -text whitespace=cr-at-eol
+docs/research/scroll-study-learning.md -text whitespace=cr-at-eol
+manuals/cl/creativity.cl -text whitespace=cr-at-eol
+manuals/cl/critique-review.cl -text whitespace=cr-at-eol
+manuals/cl/design.cl -text whitespace=cr-at-eol
+manuals/cl/efficiency.cl -text whitespace=cr-at-eol
+manuals/cl/hill-climb.cl -text whitespace=cr-at-eol
+manuals/cl/research.cl -text whitespace=cr-at-eol
+manuals/cl/scroll-generator.cl -text whitespace=cr-at-eol
+manuals/creativity.manual.json -text whitespace=cr-at-eol
+manuals/critique-review.manual.json -text whitespace=cr-at-eol
+manuals/design.manual.json -text whitespace=cr-at-eol
+manuals/efficiency.manual.json -text whitespace=cr-at-eol
+manuals/hill-climb.manual.json -text whitespace=cr-at-eol
+manuals/research.manual.json -text whitespace=cr-at-eol
+rust/evolver-core/.gitignore -text whitespace=cr-at-eol
+rust/evolver-core/Cargo.lock -text whitespace=cr-at-eol
+rust/evolver-core/Cargo.toml -text whitespace=cr-at-eol
+rust/evolver-core/src/main.rs -text whitespace=cr-at-eol
+scripts/ms_backend.py -text whitespace=cr-at-eol
+scripts/prove_ms_evolver.py -text whitespace=cr-at-eol
+scripts/prove_ms_evolver_live.py -text whitespace=cr-at-eol
+scripts/prove_ms_http.py -text whitespace=cr-at-eol
+scripts/prove_ms_manuals.py -text whitespace=cr-at-eol
+scripts/prove_ms_study.py -text whitespace=cr-at-eol
+scripts/prove_ms_study_feed.cjs -text whitespace=cr-at-eol
+scripts/scroll_math_validate.mjs -text whitespace=cr-at-eol
+scripts/scroll_vendor/README.md -text whitespace=cr-at-eol
+scripts/scroll_vendor/package/LICENSE -text whitespace=cr-at-eol
+scripts/scroll_vendor/package/dist/katex.mjs -text whitespace=cr-at-eol
+scripts/verify_ms_workflows.py -text whitespace=cr-at-eol
+src/grant_agent/evolver_core.py -text whitespace=cr-at-eol
+src/grant_agent/native_tools.py -text whitespace=cr-at-eol
+src/grant_agent/scroll_cost.py -text whitespace=cr-at-eol
+src/grant_agent/scroll_generation.py -text whitespace=cr-at-eol
+src/grant_agent/scroll_pack.py -text whitespace=cr-at-eol
+src/grant_agent/scroll_study_format.py -text whitespace=cr-at-eol
+src/grant_agent/workflow_evolver.py -text whitespace=cr-at-eol
+src/grant_agent/workflow_manuals.py -text whitespace=cr-at-eol
+src/grant_agent/workflow_panels.py -text whitespace=cr-at-eol
+web/src/neyvia/next/NxScrollStudy.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxStage.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/nxApps.js -text whitespace=cr-at-eol
+web/src/neyvia/next/nxDocs.css -text whitespace=cr-at-eol
+.gitattributes text eol=lf
+scripts/verify_ms_evidence.py -text whitespace=cr-at-eol
+scripts/evidence/R2-intent/** -text whitespace=cr-at-eol
+config/paul_intent/** -text whitespace=cr-at-eol
+src/grant_agent/paul_intent_judge.py -text whitespace=cr-at-eol
+scripts/evidence/PROOFS*.json text eol=lf
+config/proofs/*.json text eol=lf
+config/proof-coverage-revalidation.json text eol=lf
+scripts/evidence/FIX*.json -text
+scripts/evidence/fix/** -text
+# FIX2 receipts and shipped-client byte bindings survive Windows checkout.
+scripts/evidence/FIX2.json -text whitespace=cr-at-eol
+scripts/evidence/fix2-*.json -text whitespace=cr-at-eol
+scripts/evidence/fix2-*.log -text whitespace=cr-at-eol
+scripts/verify_fix2*.py text eol=lf
+scripts/seal_fix2.py text eol=lf
+src/grant_agent/laya_client/*.py text eol=lf
+src/grant_agent/laya_service.py text eol=lf
+src/grant_agent/app_sdk.py text eol=lf
+config/app_sdk/web/** text eol=lf
+web/src/neyvia/next/details/details.manifest.json -text whitespace=cr-at-eol
+scripts/evidence/C8.json -text whitespace=cr-at-eol
+scripts/evidence/C8-runs/** -text whitespace=cr-at-eol
+
+scripts/evidence/C8c.json -text whitespace=cr-at-eol
+
+scripts/evidence/C8d*.json -text whitespace=cr-at-eol
+scripts/c8d_worker.py -text
+scripts/run_c8d.py -text
+scripts/c8_scope.py -text
+scripts/c8_backend.py -text
+scripts/prove_c8_report.py -text
+src/grant_agent/neyvia_inception.py -text
+config/inception_journeys.json -text
+scripts/c8_journey.py -text
+scripts/c8_desktop_guard.py -text
+scripts/c8_fixtures.py -text
+scripts/c8_headless.py -text
+scripts/seal_c8d.py -text
+src/grant_agent/web_backend_serving.py -text
+
+scripts/evidence/C8e*.json -text whitespace=cr-at-eol
+scripts/c8e_*.py -text whitespace=cr-at-eol
+config/inception_c8e*.json -text whitespace=cr-at-eol
+manuals/host-runtime.manual.json -text
+manuals/nearby-send-runtime.manual.json -text
+manuals/neyvia-core.manual.json -text
+manuals/runtime-provider.manual.json -text
+src/grant_agent/browser_obscura.py -text
+src/grant_agent/neyvia_devices.py -text
+manuals/cl/host-runtime.cl -text
+manuals/cl/nearby-send-runtime.cl -text
+manuals/cl/neyvia-core.cl -text
+manuals/cl/runtime-provider.cl -text
+manuals/cl/creativity.cl -text
+manuals/cl/critique-review.cl -text
+manuals/cl/design.cl -text
+manuals/cl/efficiency.cl -text
+manuals/cl/hill-climb.cl -text
+manuals/cl/research.cl -text
+scripts/c8e_vite.config.mjs -text
+src/grant_agent/workflow_manuals.py -text
+
+manuals/creativity.manual.json -text
+manuals/critique-review.manual.json -text
+manuals/design.manual.json -text
+manuals/efficiency.manual.json -text
+manuals/hill-climb.manual.json -text
+manuals/research.manual.json -text
+src/grant_agent/neyvia_manuals.py -text
+src/grant_agent/neyvia_workspace_tools.py -text
+src/grant_agent/neyvia_settings.py -text
+web/src/neyvia/next/nxSettingsApi.js -text
+web/src/neyvia/next/nxOsStore.js -text
+scripts/c8e_verify_slim.mjs -text whitespace=cr-at-eol
+scripts/prepare_slim_release.mjs -text whitespace=cr-at-eol
+scripts/verify_proofs.py -text whitespace=cr-at-eol
+src/grant_agent/proof_verifier.py -text whitespace=cr-at-eol
+src/grant_agent/proofs_b_adapters.py -text whitespace=cr-at-eol
+web/src/neyvia/next/NxArrange.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxFilesApp.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxHomeWidgets.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxOtherPcs.jsx -text whitespace=cr-at-eol
+manuals/neyvia.manual.json -text whitespace=cr-at-eol
+manuals/cl/neyvia.cl -text whitespace=cr-at-eol
+manuals/cl/computer-use.cl -text
+manuals/computer-use.manual.json -text
+manuals/cl/nightshift.cl -text
+manuals/nightshift.manual.json -text
+
+src/grant_agent/connected_sessions/neyvia.py -text whitespace=cr-at-eol
+
+scripts/seal_c8e.py -text
+
+# FIXCL exact source/manual/evidence hashes survive Windows checkout.
+scripts/evidence/FIXCL*.json -text whitespace=cr-at-eol
+scripts/fixcl_*.py -text whitespace=cr-at-eol
+scripts/seal_fixcl.py -text whitespace=cr-at-eol
+src/grant_agent/cl/codecs.py -text whitespace=cr-at-eol
+src/grant_agent/cl/effects.py -text whitespace=cr-at-eol
+
+# C10 raw public-source/model evidence retains exact bytes.
+scripts/evidence/C10*.json -text whitespace=cr-at-eol
+scripts/evidence/C10*/** -text whitespace=cr-at-eol
+# C4 source and raw receipts retain their measured bytes.
+src/grant_agent/cl/host.py -text whitespace=cr-at-eol
+src/grant_agent/cl/integration.py -text whitespace=cr-at-eol
+src/grant_agent/cl/protocol.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_impact.py -text whitespace=cr-at-eol
+manuals/cl/agents.cl -text whitespace=cr-at-eol
+manuals/agents.manual.json -text whitespace=cr-at-eol
+manuals/cl/app-sdk.cl -text whitespace=cr-at-eol
+manuals/app-sdk.manual.json -text whitespace=cr-at-eol
+manuals/cl/awareness.cl -text whitespace=cr-at-eol
+manuals/awareness.manual.json -text whitespace=cr-at-eol
+manuals/cl/files.cl -text whitespace=cr-at-eol
+manuals/files.manual.json -text whitespace=cr-at-eol
+manuals/cl/image-studio.cl -text whitespace=cr-at-eol
+manuals/image-studio.manual.json -text whitespace=cr-at-eol
+manuals/cl/neyvia-reference.cl -text whitespace=cr-at-eol
+manuals/neyvia-reference.manual.json -text whitespace=cr-at-eol
+manuals/cl/neyvia.cl -text whitespace=cr-at-eol
+manuals/neyvia.manual.json -text whitespace=cr-at-eol
+manuals/cl/notes.cl -text whitespace=cr-at-eol
+manuals/notes.manual.json -text whitespace=cr-at-eol
+manuals/cl/outputs.cl -text whitespace=cr-at-eol
+manuals/outputs.manual.json -text whitespace=cr-at-eol
+manuals/cl/settings.cl -text whitespace=cr-at-eol
+manuals/settings.manual.json -text whitespace=cr-at-eol
+manuals/cl/tools-depth.cl -text whitespace=cr-at-eol
+manuals/tools-depth.manual.json -text whitespace=cr-at-eol
+manuals/cl/transparency.cl -text whitespace=cr-at-eol
+manuals/transparency.manual.json -text whitespace=cr-at-eol
+manuals/cl/workspace.cl -text whitespace=cr-at-eol
+manuals/workspace.manual.json -text whitespace=cr-at-eol
+
+# FIXCL2 source bindings include lazy admission, owner effects and compiled cache.
+src/grant_agent/cl/*effects.py -text whitespace=cr-at-eol
+scripts/fixcl2*.py -text whitespace=cr-at-eol
+scripts/seal_fixcl2.py -text whitespace=cr-at-eol
+scripts/build_fixcl_manual_cache.py -text whitespace=cr-at-eol
+config/fixcl_manual_cache.json -text whitespace=cr-at-eol
+src/grant_agent/neyvia_cl.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_manuals.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_mcp_stdio.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_agent.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_panes.py -text whitespace=cr-at-eol
+src/grant_agent/ui_command_bus.py -text whitespace=cr-at-eol
+src/grant_agent/manual_versions.py -text whitespace=cr-at-eol
+src/grant_agent/manual_contracts.py -text whitespace=cr-at-eol
+src/grant_agent/proof_contracts.py -text whitespace=cr-at-eol
+src/grant_agent/verified_operations.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_pdf_tools.py -text whitespace=cr-at-eol
+manuals/cl/pdf.cl -text whitespace=cr-at-eol
+manuals/pdf.manual.json -text whitespace=cr-at-eol
+manuals/cl/nightshift.cl -text whitespace=cr-at-eol
+manuals/nightshift.manual.json -text whitespace=cr-at-eol
+manuals/cl/manuals-next.cl -text whitespace=cr-at-eol
+manuals/manuals-next.manual.json -text whitespace=cr-at-eol
+src/grant_agent/semantic_missions.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_gateway.py -text whitespace=cr-at-eol
+manuals/cl/*.cl -text whitespace=cr-at-eol
+manuals/*.manual.json -text whitespace=cr-at-eol
+src/grant_agent/cl/*.py -text whitespace=cr-at-eol
+src/grant_agent/browser_obscura.py -text whitespace=cr-at-eol
+src/grant_agent/adaptive_work.py -text whitespace=cr-at-eol
+src/grant_agent/behavioral_experiments.py -text whitespace=cr-at-eol
+src/grant_agent/contextual_learning.py -text whitespace=cr-at-eol
+src/grant_agent/creative_tools.py -text whitespace=cr-at-eol
+src/grant_agent/innovation_tools.py -text whitespace=cr-at-eol
+src/grant_agent/living_applications.py -text whitespace=cr-at-eol
+src/grant_agent/mission_control.py -text whitespace=cr-at-eol
+src/grant_agent/native_commands.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_browser.py -text whitespace=cr-at-eol
+src/grant_agent/nightshift.py -text whitespace=cr-at-eol
+src/grant_agent/nightshift_resources.py -text whitespace=cr-at-eol
+src/grant_agent/operation_adapters.py -text whitespace=cr-at-eol
+src/grant_agent/proof_capsules.py -text whitespace=cr-at-eol
+src/grant_agent/recovery_objects.py -text whitespace=cr-at-eol
+src/grant_agent/semantic_tools.py -text whitespace=cr-at-eol
+src/grant_agent/situation_interface.py -text whitespace=cr-at-eol
+src/grant_agent/situation_tools.py -text whitespace=cr-at-eol
+src/grant_agent/workspace_intelligence.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_sidebar.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_sidebar_semantics.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_notes_tools.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_files_tools.py -text whitespace=cr-at-eol
+src/grant_agent/local_provisioning.py -text whitespace=cr-at-eol
+src/grant_agent/sidebar_model_assets.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_mcp_stdio.py -text whitespace=cr-at-eol
+scripts/run_web_backend.py -text whitespace=cr-at-eol
+scripts/fixcl3*.py -text whitespace=cr-at-eol
+scripts/evidence/FIXCL3*.json -text whitespace=cr-at-eol
+src/grant_agent/shared_environments.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_voice.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_outputs.py -text whitespace=cr-at-eol
+src/grant_agent/web_documents.py -text whitespace=cr-at-eol
+scripts/seal_fixcl3.py -text whitespace=cr-at-eol
+config/neyvia_remote.json -text whitespace=cr-at-eol
+src/grant_agent/improvement_tools.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_nightshift.py -text whitespace=cr-at-eol
+scripts/fixcl4*.py -text whitespace=cr-at-eol
+# FIXCL4 receipts bind these source and proof files as exact bytes.
+scripts/seal_fixcl4.py -text whitespace=cr-at-eol
+scripts/evidence/FIXCL4*.json -text whitespace=cr-at-eol
+src/grant_agent/connected_sessions/codex_rpc.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_pdf_api.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_pdf_tools.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_ui_api.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_view_tools.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_workspace_tools.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_perception.py -text whitespace=cr-at-eol
+src/grant_agent/perception_browser.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_autopilot.py -text whitespace=cr-at-eol
+src/grant_agent/efficiency_cascade.py -text whitespace=cr-at-eol
+scripts/fixcl5*.py -text whitespace=cr-at-eol
+scripts/seal_fixcl5.py -text whitespace=cr-at-eol
+src/grant_agent/proof_credential_guard.py -text whitespace=cr-at-eol
+src/grant_agent/web_backend_http.py -text whitespace=cr-at-eol
+web/src/neyvia/next/NxBubbles.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxPdfApp.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxPdfPage.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxShell.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/NxToasts.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/nxBus.js -text whitespace=cr-at-eol
+web/src/neyvia/next/nxPdfModel.js -text whitespace=cr-at-eol
+web/src/neyvia/next/nxShellObserve.js -text whitespace=cr-at-eol
+web/src/neyvia/next/NxNotesApp.jsx -text whitespace=cr-at-eol
+# C1 receipts and runtime byte bindings survive Windows checkout unchanged.
+scripts/evidence/C1* -text whitespace=cr-at-eol
+scripts/evidence/C1-runs/** -text whitespace=cr-at-eol
+scripts/evidence/C1b-runs/** -text whitespace=cr-at-eol
+scripts/*c1*.py -text whitespace=cr-at-eol
+src/grant_agent/cua_adaptation.py -text whitespace=cr-at-eol
+src/grant_agent/cua_native.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_cua.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_cua_mcp.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_manuals.py -text whitespace=cr-at-eol
+src/grant_agent/manual_versions.py -text whitespace=cr-at-eol
+tools/cua-driver-win/NativeWorker.cs -text whitespace=cr-at-eol
+tools/cua-driver-win/json-host.cs -text whitespace=cr-at-eol
+manuals/cl/computer-use.cl -text whitespace=cr-at-eol
+manuals/computer-use.manual.json -text whitespace=cr-at-eol
+docs/manuals/computer-use.md -text whitespace=cr-at-eol
+src/grant_agent/cua_fast.py -text whitespace=cr-at-eol
+tools/cua-driver-win/c1-probe.cs -text whitespace=cr-at-eol
+scripts/prove_c1b_native.py -text whitespace=cr-at-eol
+scripts/verify_c1b_apps.py -text whitespace=cr-at-eol
+scripts/measure_c1_clients.py -text whitespace=cr-at-eol
+scripts/evidence/c1_csharp_probe.cs -text whitespace=cr-at-eol
+pyproject.toml text eol=lf
+src-tauri/resources/backend-requirements.txt text eol=lf
+# Retain the generated log's existing CRLF baseline for append-only diffs.
+docs/research/efficiency-log.md -text whitespace=cr-at-eol
+# C11c hidden Bureau sources and immutable receipts keep measured bytes.
+src/grant_agent/cua_bureau.py -text whitespace=cr-at-eol
+src/grant_agent/cua_parked.py -text whitespace=cr-at-eol
+tools/cua-driver-win/parked-hook.cpp -text whitespace=cr-at-eol
+tools/cua-driver-win/parked-probe.cpp -text whitespace=cr-at-eol
+scripts/build_c11_parked.ps1 -text whitespace=cr-at-eol
+scripts/setup_c11_bureau.ps1 -text whitespace=cr-at-eol
+scripts/verify_cua_guard_attribution.py -text whitespace=cr-at-eol
+scripts/evidence/C11c-runs/** -text whitespace=cr-at-eol
+scripts/evidence/C11d-runs/** -text whitespace=cr-at-eol
+scripts/evidence/C11d*.log -text whitespace=-blank-at-eof,cr-at-eol
+web/src/neyvia/next/NxPreviewPane.jsx -text whitespace=cr-at-eol
+# C11e raw receipts and the owned-profile adapter retain measured bytes.
+scripts/evidence/C11e-runs/** -text whitespace=cr-at-eol,-blank-at-eof
+src/grant_agent/cua_chromium.py -text whitespace=cr-at-eol
+# C11f retains exact source bindings and raw successful/failed trial bytes.
+src/grant_agent/cua_office.py -text whitespace=cr-at-eol
+src/grant_agent/cua_upstream.py -text whitespace=cr-at-eol
+config/cua-everyday-tasks.json -text whitespace=cr-at-eol
+scripts/build_c11f_panel.py -text whitespace=cr-at-eol
+scripts/evidence/C11f*.json -text whitespace=cr-at-eol
+scripts/evidence/C11f-runs/** -text whitespace=cr-at-eol,-blank-at-eof
+scripts/evidence/C11f-office-runs/** -text whitespace=cr-at-eol,-blank-at-eof
+# C11g source-bound native protocols, loaded preview and failed trial archives.
+src/grant_agent/cua_native_procedures.py -text whitespace=cr-at-eol
+src/grant_agent/native_tools.py -text whitespace=cr-at-eol
+src/grant_agent/cua_guard.py -text whitespace=cr-at-eol
+src/grant_agent/cua_desktop.py -text whitespace=cr-at-eol
+manuals/native-applications.manual.json -text whitespace=cr-at-eol
+manuals/cl/native-applications.cl -text whitespace=cr-at-eol
+scripts/evidence/C11g-runs/** -text whitespace=cr-at-eol,-blank-at-eof
+scripts/evidence/C11-preview-runs/** -text whitespace=cr-at-eol,-blank-at-eof
+scripts/C1-comparison-run.json -text whitespace=cr-at-eol
+scripts/evidence/C11g-artifacts/** -text whitespace=cr-at-eol
+src/grant_agent/neyvia_mcp.py -text whitespace=cr-at-eol
+src-tauri/src/lib.rs -text whitespace=cr-at-eol
+# Preserve the unchanged runtime source bytes bound by C11g run receipts.
+src/grant_agent/native_tool_worker.py -text whitespace=cr-at-eol
+src/grant_agent/manual_compiler.py -text whitespace=cr-at-eol
+tools/cua-driver-win/probe.cs -text whitespace=cr-at-eol
+tools/cua-driver-win/remote-indicator.cs -text whitespace=cr-at-eol
+tools/cua-driver-win/remote-probe.cs -text whitespace=cr-at-eol
+tools/cua-driver-win/stdio-host.cs -text whitespace=cr-at-eol
+web/src/neyvia/next/NxShell.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/nxOsStore.js -text whitespace=cr-at-eol
+web/src/neyvia/next/NxPanes.jsx -text whitespace=cr-at-eol
+web/src/neyvia/next/nxCuaApi.js -text whitespace=cr-at-eol
+web/src/neyvia/next/nxCuaModel.js -text whitespace=cr-at-eol
+src/grant_agent/web_backend_http.py -text whitespace=cr-at-eol
+# C1CMP checker/source and evidence receipts bind exact measured bytes.
+scripts/run_c1_comparison.py -text whitespace=cr-at-eol
+scripts/c1_comparison*.py -text whitespace=cr-at-eol
+scripts/c1_openai_arm.py -text whitespace=cr-at-eol
+scripts/c1cmp_visible_checker.py -text whitespace=cr-at-eol
+scripts/record_c1cmp_provider.py -text whitespace=cr-at-eol
+scripts/probe_c1cmp_repair.py -text whitespace=cr-at-eol
+scripts/review_c1cmp.py -text whitespace=cr-at-eol
+scripts/evidence/C1CMP* -text whitespace=cr-at-eol,-blank-at-eof
+scripts/evidence/C1CMP*/** -text whitespace=cr-at-eol,-blank-at-eof
+scripts/evidence/C1-claude-arm/** -text whitespace=cr-at-eol
+scripts/evidence/C1-openai-probe/** -text whitespace=cr-at-eol,-blank-at-eof
+# C2 receipts and their raw source bindings must survive Windows checkout.
+scripts/evidence/C2*.json -text whitespace=cr-at-eol
+scripts/evidence/C2*.log -text whitespace=cr-at-eol
+scripts/c2_browser_benchmark.cjs -text whitespace=cr-at-eol
+scripts/c2_laya_consistency.py -text whitespace=cr-at-eol
+scripts/seal_c2.py -text whitespace=cr-at-eol
+scripts/build_c2_browser_manual.py -text whitespace=cr-at-eol
+scripts/browser-probe/src/main.rs -text whitespace=cr-at-eol
+src-tauri/src/browser_projection.js -text whitespace=cr-at-eol
+src-tauri/src/browser_runtime.rs -text whitespace=cr-at-eol
+src/grant_agent/browser_dom.js -text whitespace=cr-at-eol
+src/grant_agent/browser_verification.py -text whitespace=cr-at-eol
+src/grant_agent/browser_obscura.py -text whitespace=cr-at-eol
+src/grant_agent/perception_browser.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_browser.py -text whitespace=cr-at-eol
+src/grant_agent/laya_client/browser_client.py -text whitespace=cr-at-eol
+src/grant_agent/laya_client/calibration.py -text whitespace=cr-at-eol
+src/grant_agent/laya_service.py -text whitespace=cr-at-eol
+manuals/cl/browser.cl -text whitespace=cr-at-eol
+manuals/browser.manual.json -text whitespace=cr-at-eol
+pyproject.toml -text whitespace=cr-at-eol
+# C2b raw observations, model/source bindings and failed-attempt receipts.
+scripts/c2b* -text whitespace=cr-at-eol
+scripts/seal_c2b.py -text whitespace=cr-at-eol
+scripts/browser-probe/README.md -text whitespace=cr-at-eol
+scripts/evidence/C2b* -text whitespace=cr-at-eol
+scripts/evidence/C2b*/** -text whitespace=cr-at-eol,-blank-at-eof,-trailing-space
+src/grant_agent/laya_client/fast_cpu.py -text whitespace=cr-at-eol
+src/grant_agent/local_browser_authority.py -text whitespace=cr-at-eol
+# C2c frozen tasks, model identity bindings and actual observations.
+scripts/c2c* -text whitespace=cr-at-eol,-blank-at-eof
+scripts/seal_c2c.py -text whitespace=cr-at-eol
+scripts/evidence/C2-webvoyager* -text whitespace=cr-at-eol
+scripts/evidence/C2c* -text whitespace=cr-at-eol
+scripts/evidence/C2c*/** -text whitespace=cr-at-eol,-blank-at-eof,-trailing-space
+# C2d source pins and compact observation receipts retain exact bytes.
+scripts/c2d* -text whitespace=cr-at-eol,-blank-at-eof
+scripts/seal_c2d.cjs -text whitespace=cr-at-eol,-blank-at-eof
+scripts/evidence/C2d* -text whitespace=cr-at-eol,-blank-at-eof
+scripts/evidence/C2d*/** -text whitespace=cr-at-eol,-blank-at-eof,-trailing-space
+scripts/evidence/--backend-port/** -text whitespace=cr-at-eol,-blank-at-eof,-trailing-space
+scripts/browser-probe/Cargo.toml -text whitespace=cr-at-eol
+src/grant_agent/browser_site_manuals.py -text whitespace=cr-at-eol
+src/grant_agent/neyvia_workspace_tools.py -text whitespace=cr-at-eol
+scripts/evidence/C2f*.log -text whitespace=cr-at-eol,-blank-at-eof,-trailing-space
+# EVOLVE2 patches carry exact bytes (a CRLF-committed generated file inside a hunk).
+scripts/evidence/EVOLVE2-*.patch -text whitespace=cr-at-eol

@@ -1,0 +1,302 @@
+/* Sign-in page. Colours come from nxThemes.css (Forest, Morning, Sunset). */
+
+.ny-si {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  background: var(--nx-bg);
+  color: var(--nx-text);
+  isolation: isolate;
+}
+
+/* The sky: the theme's ambient light, and a low sun glowing behind the card. */
+.ny-si .ny-si-sky {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(520px 300px at 50% 64%, color-mix(in srgb, var(--nx-amber) 16%, transparent), transparent 70%),
+    var(--nx-ambient);
+}
+.ny-si .ny-si-sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--nx-dapple);
+  opacity: 0.9;
+  animation: ny-si-drift 26s ease-in-out infinite alternate;
+}
+@keyframes ny-si-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-2.5%, 1.5%, 0); }
+}
+
+.ny-si .ny-si-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+}
+.ny-si .ny-si-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font: 500 17px/1 var(--nx-display);
+  letter-spacing: 0.01em;
+}
+
+.ny-si .ny-si-themes {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nx-raised) 70%, transparent);
+  box-shadow: 0 0 0 1px var(--nx-line);
+}
+.ny-si .ny-si-themes button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: var(--nx-muted);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.ny-si .ny-si-themes button:hover { color: var(--nx-text); }
+.ny-si .ny-si-themes button.is-on { background: var(--nx-active); color: var(--nx-accent-text); }
+
+.ny-si .ny-si-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px 28px;
+}
+
+.ny-si .ny-si-mark {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 18px;
+  filter: drop-shadow(0 10px 28px color-mix(in srgb, var(--nx-gold) 35%, transparent));
+  animation: ny-si-rise 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes ny-si-rise {
+  from { opacity: 0; transform: translateY(14px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+.ny-si .ny-si-title {
+  margin: 0;
+  text-align: center;
+  font: 400 clamp(28px, 4.6vw, 38px) / 1.12 var(--nx-display);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  animation: ny-si-fade 700ms 120ms ease both;
+}
+.ny-si .ny-si-sub {
+  margin: 8px 0 22px;
+  color: var(--nx-muted);
+  text-align: center;
+  animation: ny-si-fade 700ms 180ms ease both;
+}
+@keyframes ny-si-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.ny-si .ny-si-card {
+  width: min(400px, 100%);
+  padding: 18px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--nx-raised) 88%, transparent);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--nx-card-shadow), 0 30px 60px -36px rgba(0, 0, 0, 0.55);
+  animation: ny-si-fade 600ms 220ms ease both;
+}
+/* Morning: the low sun behind the card shows on paper too, and the card casts forest
+   shade down-right instead of a black pool. */
+.nx[data-nx-theme="light"] .ny-si .ny-si-sky {
+  background:
+    radial-gradient(560px 320px at 50% 62%, color-mix(in srgb, var(--nx-amber) 22%, transparent), transparent 70%),
+    var(--nx-ambient);
+}
+.nx[data-nx-theme="light"] .ny-si .ny-si-card { box-shadow: var(--nx-card-shadow), 12px 30px 60px -34px var(--nx-shade); }
+.ny-si .ny-si-card.is-shake { animation: ny-si-shake 380ms ease; }
+@keyframes ny-si-shake {
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+
+.ny-si .ny-si-card form { display: grid; gap: 14px; }
+
+/* Account chooser */
+.ny-si .ny-si-accounts { display: grid; gap: 4px; }
+.ny-si .ny-si-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 14px;
+  text-align: left;
+  transition: background-color 140ms ease;
+}
+.ny-si .ny-si-account:hover, .ny-si .ny-si-account:focus-visible { background: var(--nx-hover); }
+.ny-si .ny-si-account-go { margin-left: auto; color: var(--nx-faint); transition: transform 160ms ease, color 160ms ease; }
+.ny-si .ny-si-account:hover .ny-si-account-go { color: var(--nx-accent-text); transform: translateX(3px); }
+.ny-si .ny-si-account.is-other strong { font-weight: 500; color: var(--nx-text-2); }
+
+.ny-si .ny-si-account-text { display: grid; gap: 1px; min-width: 0; }
+.ny-si .ny-si-account-text strong { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ny-si .ny-si-account-text span { color: var(--nx-muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Shared with the Accounts screen (NxAvatar). */
+.nx .ny-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: hsl(var(--hue) 70% 92%);
+  background:
+    radial-gradient(circle at 30% 25%, hsl(var(--hue) 75% 62%), hsl(var(--hue) 60% 36%));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+/* Morning: the same lit sphere (highlight top-left, where the sun is), a shade deeper so
+   white initials read at 4.5:1 on its centre. */
+.nx[data-nx-theme="light"] .ny-avatar {
+  color: #fff;
+  background: radial-gradient(circle at 30% 25%, hsl(var(--hue) 46% 34%), hsl(var(--hue) 56% 21%));
+}
+.nx .ny-avatar.is-blank {
+  width: 40px;
+  height: 40px;
+  color: var(--nx-muted);
+  background: var(--nx-hover);
+  box-shadow: inset 0 0 0 1px var(--nx-line-strong);
+}
+
+/* The chosen account above the password */
+.ny-si .ny-si-who { display: flex; align-items: center; gap: 12px; padding: 2px 2px 4px; }
+.ny-si .ny-si-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 6px 9px;
+  border-radius: 9px;
+  color: var(--nx-muted);
+  font-size: 13px;
+}
+.ny-si .ny-si-link:hover { color: var(--nx-text); background: var(--nx-hover); }
+.ny-si .ny-si-link.is-center { justify-self: center; margin: 0; }
+
+.ny-si .ny-si-field { display: grid; gap: 6px; }
+.ny-si .ny-si-field > span:first-child { font-size: 12.5px; color: var(--nx-text-2); font-weight: 500; }
+.ny-si .ny-si-field input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--nx-line-strong);
+  background: var(--nx-panel);
+  color: var(--nx-text);
+  font-size: 15px;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.ny-si .ny-si-field input:focus { outline: none; border-color: var(--nx-accent-hi); box-shadow: 0 0 0 3px var(--nx-accent-soft); }
+.ny-si .ny-si-field input[aria-invalid="true"] { border-color: var(--nx-red); }
+
+.ny-si .ny-si-password { position: relative; display: block; }
+.ny-si .ny-si-password input { padding-right: 46px; }
+.ny-si .ny-si-reveal {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  color: var(--nx-muted);
+  transform: translateY(-50%);
+}
+.ny-si .ny-si-reveal:hover { color: var(--nx-text); background: var(--nx-hover); }
+
+.ny-si .ny-si-hint { margin: -6px 0 0; font-size: 12.5px; color: var(--nx-gold); }
+.ny-si .ny-si-error {
+  margin: -4px 0 0;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--nx-red-soft);
+  color: var(--nx-red);
+  font-size: 13px;
+}
+
+.ny-si .ny-si-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  border-radius: 999px;
+  background: var(--nx-sun);
+  color: var(--nx-sun-ink);
+  font-weight: 650;
+  font-size: 15px;
+  box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--nx-gold) 80%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 140ms ease, filter 140ms ease, opacity 140ms ease;
+}
+.ny-si .ny-si-primary:hover:not(:disabled) { filter: brightness(1.06); }
+.ny-si .ny-si-primary:active:not(:disabled) { transform: translateY(1px) scale(0.99); }
+/* Quiet until there is something to send; the sun lights up once a password is typed. */
+.ny-si .ny-si-primary:disabled { background: var(--nx-raised-2); color: var(--nx-muted); box-shadow: inset 0 0 0 1px var(--nx-line); }
+
+.ny-si .ny-si-spin {
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: ny-si-turn 700ms linear infinite;
+}
+@keyframes ny-si-turn { to { transform: rotate(1turn); } }
+
+.ny-si .ny-si-offline { display: grid; gap: 8px; text-align: center; }
+.ny-si .ny-si-offline span { color: var(--nx-muted); font-size: 13.5px; }
+.ny-si .ny-si-offline .ny-si-primary { margin-top: 6px; }
+
+.ny-si .ny-si-help {
+  width: min(400px, 100%);
+  margin-top: 16px;
+  color: var(--nx-muted);
+  font-size: 13px;
+  text-align: center;
+}
+.ny-si .ny-si-help summary { cursor: pointer; list-style: none; display: inline-block; padding: 4px 8px; border-radius: 8px; }
+.ny-si .ny-si-help summary::-webkit-details-marker { display: none; }
+.ny-si .ny-si-help summary:hover { color: var(--nx-text); }
+.ny-si .ny-si-help p { margin: 8px 0 0; line-height: 1.55; }
+
+.ny-si .ny-si-foot {
+  padding: 14px 16px 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--nx-faint);
+}
+
+@media (max-width: 520px) {
+  .ny-si-top { padding: 14px 16px; }
+  .ny-si-center { justify-content: flex-start; padding-top: 6vh; }
+  .ny-si-card { padding: 14px; border-radius: 18px; }
+  .ny-si-mark { width: 64px; height: 64px; }
+  .ny-si-mark img { width: 64px; height: 64px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ny-si-sky::after, .ny-si .ny-si-mark, .ny-si .ny-si-title, .ny-si .ny-si-sub, .ny-si .ny-si-card, .ny-si .ny-si-card.is-shake { animation: none; }
+}

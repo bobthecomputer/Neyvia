@@ -1,0 +1,68 @@
+name: Publish signed Neyvia desktop release
+
+# Manual only until the public CI inputs are repaired (plans/30): the 0.2.2 beta
+# installer was built and updater-signed locally with the same embedded key.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-publish-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install Python package
+        run: python -m pip install -e .
+      - name: Install JavaScript dependencies
+        run: npm ci
+      - name: Generate and enforce canonical dependency inventory
+        run: >-
+          python scripts/generate_dependency_inventory.py
+          --root .
+          --output .agent_control/dependency_inventory.json
+          --proof-output .agent_control/release_artifacts/dependency-inventory-proof.json
+          --require-updater-eligible
+      - name: Preserve dependency inventory release proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: neyvia-dependency-inventory-${{ github.ref_name }}
+          path: |
+            .agent_control/dependency_inventory.json
+            .agent_control/release_artifacts/dependency-inventory-proof.json
+          if-no-files-found: error
+      - name: Verify core update and marketplace contracts
+        run: >-
+          python -m pytest -q
+          tests/test_dependency_inventory.py
+          tests/test_install_profiles.py
+          tests/test_module_marketplace.py
+          tests/test_sdk.py
+          tests/test_updater_contract.py
+      - name: Build web application
+        run: npm run frontend:build
+      - name: Build, sign, and publish desktop bundles
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: neyvia-v__VERSION__
+          releaseName: Neyvia v__VERSION__
+          releaseBody: Signed Neyvia desktop release. See the generated notes and attached verification artifacts.
+          releaseDraft: true
+          prerelease: false
+          generateReleaseNotes: true
+          uploadUpdaterJson: true
+          updaterJsonPreferNsis: true
+          uploadUpdaterSignatures: true

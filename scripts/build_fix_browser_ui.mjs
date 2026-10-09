@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {build} from 'vite';
+import react from '@vitejs/plugin-react';
+const repo=path.resolve(import.meta.dirname,'..');
+const root=path.join(repo,'.agent_control/fix/browser-ui');
+fs.mkdirSync(root,{recursive:true});
+const source=path.join(repo,'web/src/neyvia/next').replaceAll('\\','/');
+fs.writeFileSync(path.join(root,'ui-proof.html'),'<!doctype html><html><head><meta charset="utf-8"><title>Actual Browser UI proof</title></head><body style="margin:0"><div id="root"></div><script type="module" src="/entry.jsx"></script></body></html>');
+fs.writeFileSync(path.join(root,'entry.jsx'),`import React from 'react';import{createRoot}from'react-dom/client';
+import '${source}/nxTokens.css';import '${source}/nxThemes.css';import '${source}/nxShell.css';import '${source}/nxOs.css';
+import{NxBrowser}from'${source}/NxBrowser.jsx';import{NxToasts}from'${source}/NxToasts.jsx';
+await fetch('/api/auth/local-session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',credentials:'include'}).then(r=>{if(!r.ok)throw Error('Owned local session failed')});
+createRoot(document.querySelector('#root')).render(<div className="nx nx-root" data-nx-theme="dark" style={{height:'100vh',width:'100vw',display:'flex'}}><NxBrowser/><NxToasts/></div>);`);
+await build({configFile:false,root,cacheDir:path.join(root,'vite-cache'),plugins:[react()],define:{'import.meta.env.VITE_FLUXIO_BACKEND_URL':JSON.stringify('http://127.0.0.1:48668')},build:{outDir:path.join(root,'dist'),emptyOutDir:true,target:'esnext',rollupOptions:{input:path.join(root,'ui-proof.html')}}});
+console.log(path.join(root,'dist'));

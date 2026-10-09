@@ -1,0 +1,964 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "outputs",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-e-models",
+    "manifests": [
+      "config/proofs/proofs-e-models.json",
+      "config/proofs/outputs-journey.json",
+      "config/proofs/semantic-outcomes.json"
+    ],
+    "contracts": [
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOutputsModel.js:perceptionTarget -> checkedProofsEModel"
+        ],
+        "claim": "Typed pane target preserves the caller's full path/session identifier",
+        "id": "outputs.perceptionTarget",
+        "impact": [
+          "outputs frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOutputsModel.js:parsePerceptionTarget -> checkedProofsEModel"
+        ],
+        "claim": "Only image/file paths, HTTP(S) URLs and integer window targets are accepted; delimiters in paths/session ids survive",
+        "id": "outputs.parsePerceptionTarget",
+        "impact": [
+          "outputs frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOutputsModel.js:outsideDock -> checkedProofsEModel"
+        ],
+        "claim": "Undocking requires crossing a known dock boundary by the requested margin",
+        "id": "outputs.outsideDock",
+        "impact": [
+          "outputs frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOutputsModel.js:dropSpot -> checkedProofsEModel"
+        ],
+        "claim": "Floating drops choose nearest side and a clamped vertical fraction",
+        "id": "outputs.dropSpot",
+        "impact": [
+          "outputs frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/NxOutputs.jsx",
+          "web/src/neyvia/next/NxArtifactPane.jsx",
+          "web/src/neyvia/next/NxLocalOnly.jsx",
+          "web/src/neyvia/next/nxSettingsApi.js",
+          "scripts/p22_outputs_journey.mjs"
+        ],
+        "claim": "Mounted production Outputs shows a finite scratch report with available status and its Markdown content; the mounted ArtifactPane reopens the same content, and Local-only visibly refuses an external artifact URL without requesting it. Local route fixtures prove component rendering and gating only, not backend publication or retrieval.",
+        "id": "outputs.rendered-scratch-artifact-journey",
+        "impact": [
+          "Outputs list and published-status preview",
+          "ArtifactPane reopen behavior and local-only URL refusal"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_semantic_outcomes.outputs_publication",
+          "grant_agent.proofs_semantic_outcomes._outputs_assert_opened",
+          "grant_agent.neyvia_workspace_tools.WorkspaceTools.call",
+          "grant_agent.neyvia_workspace_tools.WorkspaceTools._call_unchecked",
+          "grant_agent.proof_contracts.invoke",
+          "grant_agent.neyvia_outputs.publish",
+          "grant_agent.neyvia_outputs.get",
+          "grant_agent.neyvia_outputs.listing",
+          "grant_agent.neyvia_outputs.call",
+          "grant_agent.neyvia_files_tools.guard",
+          "grant_agent.neyvia_workspace_tools.WorkspaceTools.safe_path",
+          "grant_agent.neyvia_panes.open_artifact",
+          "grant_agent.cl.renderer_effects.show"
+        ],
+        "claim": "The production WorkspaceTools artifact actions publish an in-scope Markdown report with independently checked exact bytes and digest, replay an exact request idempotently, and return its exact preview with a persisted pending-renderer pane request. Changed bytes make the prior get/open unavailable and conflict with reuse of its requestId; a fresh request publishes a linked recoverable version. An outside-workspace path is refused by the Files guard before publication.",
+        "id": "outputs.backend-publication-byte-recovery",
+        "impact": [
+          "Native Outputs publication, identity, and retry behavior",
+          "Changed-byte refusal and linked-version recovery",
+          "Markdown preview payload and pending renderer handoff",
+          "Files-scope refusal before publication"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.app.open": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "app"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "app": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.artifact.get": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.artifact.list": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "file",
+            "diff",
+            "image",
+            "report",
+            "receipt"
+          ]
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": []
+    },
+    "neyvia.artifact.open": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.artifact.publish": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "file",
+            "diff",
+            "image",
+            "report",
+            "receipt"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.pane.show": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "diff",
+            "file",
+            "artifact",
+            "terminal",
+            "browser",
+            "mission",
+            "replay",
+            "builder",
+            "accounts",
+            "runtime",
+            "settings",
+            "preview",
+            "outputs",
+            "perception",
+            "agentview",
+            "sessions",
+            "usage",
+            "parallel",
+            "agents"
+          ]
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "target"
+      ]
+    },
+    "neyvia.state": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "proofs-e-models.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "proofs-e-shell.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "navigation": {
+      "title": "Shared pane navigation",
+      "state": {},
+      "actions": {
+        "pane.show": {
+          "effect": "Persist a shared UI bus request. UI acknowledgement proves rendered opening.",
+          "pre": "Selected workspace; typed target belongs to the requested pane",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.pane.show",
+          "tool": "neyvia.pane.show"
+        }
+      },
+      "checks": {
+        "pane-request-saved": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "pane",
+            "value": {
+              "kind": "outputs",
+              "target": {
+                "$input": "target"
+              }
+            }
+          },
+          "tool": "neyvia.state"
+        }
+      },
+      "procedures": {
+        "request-pane": {
+          "goal": "Persist and independently observe the outputs pane request",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "target"
+            ]
+          },
+          "steps": [
+            {
+              "action": "pane.show",
+              "args": {
+                "kind": "outputs",
+                "target": {
+                  "$input": "target"
+                }
+              },
+              "check": "pane-request-saved",
+              "save": "requested"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [
+        "A persisted bus request does not prove the UI rendered the pane."
+      ],
+      "guidance": []
+    },
+    "overview": {
+      "title": "Outputs and shared navigation",
+      "state": {
+        "outputs": {
+          "args": {
+            "limit": 50
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "artifacts": {
+                "type": "array"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "artifacts",
+              "total"
+            ]
+          },
+          "tool": "neyvia.artifact.list"
+        }
+      },
+      "actions": {
+        "artifact.publish": {
+          "effect": "Register an existing output with hash and provenance in the shared Outputs panel. Reuse requestId for retries; changed bytes produce a new version.",
+          "pre": "Existing file inside Files scopes; exact requestId and hash on retries",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "artifact": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "sha256",
+                  "path"
+                ]
+              },
+              "artifacts": {
+                "type": "array"
+              },
+              "availability": {
+                "type": "string"
+              },
+              "event": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.publish",
+          "tool": "neyvia.artifact.publish"
+        },
+        "artifact.list": {
+          "effect": "Read published outputs, newest first, with optional kind/session/run filters and pagination.",
+          "pre": "Selected workspace; limit 1-200, nonnegative offset",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "artifact": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "sha256",
+                  "path"
+                ]
+              },
+              "artifacts": {
+                "type": "array"
+              },
+              "availability": {
+                "type": "string"
+              },
+              "event": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.list",
+          "tool": "neyvia.artifact.list"
+        },
+        "artifact.get": {
+          "effect": "Read a publication and check whether its exact bytes are still available.",
+          "pre": "Known publication id; its bytes must be unchanged to open",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "artifact": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "sha256",
+                  "path"
+                ]
+              },
+              "artifacts": {
+                "type": "array"
+              },
+              "availability": {
+                "type": "string"
+              },
+              "event": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.get",
+          "tool": "neyvia.artifact.get"
+        },
+        "artifact.open": {
+          "effect": "Verify published bytes, then open the existing guarded artifact/diff/file pane. Refuses changed or missing bytes.",
+          "pre": "Known publication id; its bytes must be unchanged to open",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "artifact": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "sha256",
+                  "path"
+                ]
+              },
+              "artifacts": {
+                "type": "array"
+              },
+              "availability": {
+                "type": "string"
+              },
+              "event": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.open",
+          "tool": "neyvia.artifact.open"
+        },
+        "app.open": {
+          "effect": "Open a ready app through the shared UI bus; refuses unfinished apps.",
+          "pre": "Known ready registry app or workspace pane; target is text",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "artifact": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "sha256",
+                  "path"
+                ]
+              },
+              "artifacts": {
+                "type": "array"
+              },
+              "availability": {
+                "type": "string"
+              },
+              "event": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.app.open",
+          "tool": "neyvia.app.open"
+        }
+      },
+      "checks": {
+        "published-bytes": {
+          "args": {
+            "id": {
+              "$result": "published.artifact.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "availability",
+            "value": "available"
+          },
+          "tool": "neyvia.artifact.get"
+        }
+      },
+      "procedures": {
+        "publish-and-open": {
+          "goal": "Register a real output, verify its bytes, and request its preview through the shared bus",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "file",
+                  "diff",
+                  "image",
+                  "report",
+                  "receipt"
+                ]
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "kind",
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "artifact.publish",
+              "args": {
+                "kind": {
+                  "$input": "kind"
+                },
+                "path": {
+                  "$input": "path"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "check": "published-bytes",
+              "save": "published"
+            },
+            {
+              "action": "artifact.open",
+              "args": {
+                "id": {
+                  "$result": "published.artifact.id"
+                }
+              },
+              "save": "opened"
+            }
+          ]
+        },
+        "verify-effect-artifact-publish": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "steps": [
+            {
+              "action": "artifact.publish",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "changed-output": {
+          "constraints": "Never label new bytes as the old publication; never run an output as a command",
+          "options": [
+            "publish-new-version",
+            "inspect-writer"
+          ],
+          "question": "A published file changed. Is the new version an intended output?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "File changed or disappeared",
+          "recovery": "Use artifact.get; inspect the writer and publish a new version only for intended new bytes"
+        },
+        {
+          "failure": "Request id conflict",
+          "recovery": "Reuse the original request only for exact retries; choose a new id for a new intended publication"
+        },
+        {
+          "failure": "Navigation event emitted but no rendered proof",
+          "recovery": "Inspect the UI event ack and actual target; negative acks mean the screen is not wired"
+        }
+      ],
+      "frontier": [
+        "Dock-to-float gesture and classic-screen migration need Claude's rendered acceptance; backend bus receipts do not prove them",
+        "Publications retain path and hash, not immutable byte copies; an old version cannot open after its file changed",
+        "Existing third-party producers must call artifact.publish to join the gallery; no speculative whole-disk scan"
+      ],
+      "guidance": [
+        "HTTP: /api/ui/outputs and /api/ui/navigation; desktop: artifact_publish/list/get/open_command and app_open_command",
+        "Output events: artifact.published; navigation events: app.open or pane.show. UI deduplicates bus ids and acknowledges rendered actions",
+        "Source: src/grant_agent/neyvia_outputs.py and neyvia_voice.py; manual procedure makes deterministic tool calls with executable hash availability check"
+      ]
+    },
+    "proofs-e-models": {
+      "title": "PROOFS-e: production model contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the most recent verification receipt without invoking production actions again",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-models.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-model-proof-receipt": {
+          "goal": "Read the latest receipt after the production model self-check runner",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Model transforms are reported as proof of a native app/provider/device effect",
+          "recovery": "Use the real owning feature procedure and its observed runtime"
+        }
+      ],
+      "frontier": [
+        "Rendered browser/desktop journeys are separate from pure model proof",
+        "Remote device, game editor and provider behavior require their real runtimes"
+      ],
+      "guidance": [
+        "outputs.perceptionTarget: Typed pane target preserves the caller's full path/session identifier",
+        "outputs.parsePerceptionTarget: Only image/file paths, HTTP(S) URLs and integer window targets are accepted; delimiters in paths/session ids survive",
+        "outputs.outsideDock: Undocking requires crossing a known dock boundary by the requested margin",
+        "outputs.dropSpot: Floating drops choose nearest side and a clamped vertical fraction",
+        "Startup runner: scripts/proofs-e-models.mjs --root <owned-scratch>; area proofs-e-models checks real model actions and corrupted output refusals"
+      ]
+    },
+    "proofs-e-shell": {
+      "title": "PROOFS-e shell state and action contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the latest verification receipt without repeating shell actions",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-shell.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-shell-proof-receipt": {
+          "goal": "Observe the latest shell proof receipt without replaying mutations",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A queue or shell state receipt is treated as rendered app proof",
+          "recovery": "Inspect the owned running UI and actual PDF/output/provider separately"
+        }
+      ],
+      "frontier": [
+        "Rendered shell journeys and PDF loading require owned UI proof",
+        "Provider execution and actual artifact publishing are separate proof boundaries"
+      ],
+      "guidance": [
+        "artifact.published increments the Outputs refresh signal; announces only offscreen and requires artifact.id",
+        "Startup runner: scripts/proofs-e-shell.mjs --root <owned-scratch>; area proofs-e-shell checks five composed production journeys and eleven semantic corruptions"
+      ]
+    },
+    "rendered-journey": {
+      "title": "Rendered Outputs and ArtifactPane journey",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [
+        "The finite fixture drives production React components through local intercepted routes. It proves visible component content/status and local-only URL refusal; it does not prove the backend published or retrieved a real artifact."
+      ],
+      "guidance": [
+        "Run scripts/p22_outputs_journey.mjs --root <owned-scratch> with the assigned Obscura ports. The receipt contains the exact scratch artifact hash and mounted DOM observations."
+      ]
+    }
+  }
+}

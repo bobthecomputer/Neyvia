@@ -1,0 +1,581 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "sidebar",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-e-shell",
+    "manifests": [
+      "config/proofs/proofs-e-shell.json"
+    ],
+    "contracts": [
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxSidebarModel.js:kindOf -> checkSidebar",
+          "scripts/proofs-e-shell.mjs:runProofsEShell"
+        ],
+        "claim": "No-folder lanes reflect observed transcript kind; unknown observations remain Other",
+        "id": "proofs-e.shell.kindOf",
+        "impact": [
+          "Shell bus and rendered sidebar/launcher consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxSidebarModel.js:placeSession -> checkSidebar",
+          "scripts/proofs-e-shell.mjs:runProofsEShell"
+        ],
+        "claim": "Only observed projects or explicit overrides enter a project; scratch folders remain No folder",
+        "id": "proofs-e.shell.placeSession",
+        "impact": [
+          "Shell bus and rendered sidebar/launcher consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxSidebarModel.js:agentSummary -> checkSidebar",
+          "scripts/proofs-e-shell.mjs:runProofsEShell"
+        ],
+        "claim": "Nested agents count exactly once with observed running and failed states",
+        "id": "proofs-e.shell.agentSummary",
+        "impact": [
+          "Shell bus and rendered sidebar/launcher consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxSidebarModel.js:buildTree -> checkSidebar",
+          "scripts/proofs-e-shell.mjs:runProofsEShell"
+        ],
+        "claim": "Visible sessions partition into needs-you, pinned, project and transcript lanes; child chats fold and empty projects survive",
+        "id": "proofs-e.shell.buildTree",
+        "impact": [
+          "Shell bus and rendered sidebar/launcher consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxSidebarModel.js:staleCandidates -> checkSidebar",
+          "scripts/proofs-e-shell.mjs:runProofsEShell"
+        ],
+        "claim": "Archive candidates exceed per-placement age thresholds and require observed safety; protected or dirty sessions survive Default cleanup never authorizes automatic archival.",
+        "id": "proofs-e.shell.staleCandidates",
+        "impact": [
+          "Shell bus and rendered sidebar/launcher consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxSidebarModel.js:shouldOfferTidy -> checkSidebar",
+          "scripts/proofs-e-shell.mjs:runProofsEShell"
+        ],
+        "claim": "Tidy offers require candidates and the configured size or candidate threshold",
+        "id": "proofs-e.shell.shouldOfferTidy",
+        "impact": [
+          "Shell bus and rendered sidebar/launcher consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxOsStore.js:withOverrides -> checkOverrides",
+          "scripts/proofs-e-shell.mjs:runProofsEShell"
+        ],
+        "claim": "Bus overrides reach displayed title, pin, archive and named folder without exposing subject ids",
+        "id": "proofs-e.shell.overrides",
+        "impact": [
+          "Shell bus and rendered sidebar/launcher consumers"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.sidebar.confirm": {
+      "type": "object",
+      "properties": {
+        "previewId": {
+          "type": "string"
+        },
+        "confirmed": {
+          "const": true
+        },
+        "groupIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "previewId",
+        "confirmed"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "previewId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.sidebar.preview": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "uniqueItems": true
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0.35,
+          "maximum": 0.95
+        }
+      },
+      "required": []
+    },
+    "neyvia.sidebar.state": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "uniqueItems": true
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "query": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.sidebar.undo": {
+      "type": "object",
+      "properties": {
+        "undoId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "undoId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "undoId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "proofs-e-shell.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Actual agent trees, event lanes and reversible semantic subject folders",
+      "state": {
+        "current": {
+          "args": {
+            "ids": {
+              "$input": "ids"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 100,
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "ids"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "required": [
+              "sessions",
+              "subjectFolders",
+              "errors"
+            ]
+          },
+          "tool": "neyvia.sidebar.state"
+        }
+      },
+      "actions": {
+        "sidebar.state": {
+          "effect": "Observe transcript-based lanes, actual agent subtrees and hover text.",
+          "pre": "Authenticated owner and readable local conversations; confirmation uses an unchanged preview",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "previewId": {
+                "type": "string"
+              },
+              "undoId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.sidebar.state",
+          "tool": "neyvia.sidebar.state"
+        },
+        "sidebar.preview": {
+          "effect": "Preview local semantic subject folders; moves nothing.",
+          "pre": "Authenticated owner and readable local conversations; confirmation uses an unchanged preview",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "previewId": {
+                "type": "string"
+              },
+              "undoId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.sidebar.preview",
+          "tool": "neyvia.sidebar.preview"
+        },
+        "sidebar.confirm": {
+          "effect": "Confirm an unchanged durable sidebar preview. Reuse previewId for retries.",
+          "pre": "Authenticated owner and readable local conversations; confirmation uses an unchanged preview",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "previewId": {
+                "type": "string"
+              },
+              "undoId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.sidebar.confirm",
+          "tool": "neyvia.sidebar.confirm"
+        },
+        "sidebar.undo": {
+          "effect": "Restore exact prior assignments; preserve later manual changes.",
+          "pre": "Authenticated owner and readable local conversations; confirmation uses an unchanged preview",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "previewId": {
+                "type": "string"
+              },
+              "undoId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.sidebar.undo",
+          "tool": "neyvia.sidebar.undo"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {
+            "ids": {
+              "$input": "ids"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.sidebar.state"
+        }
+      },
+      "procedures": {
+        "preview-subjects": {
+          "goal": "Observe actual conversations and preview semantic subject groups without moving them",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 100,
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "ids"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "sidebar.state",
+              "args": {
+                "ids": {
+                  "$input": "ids"
+                }
+              },
+              "check": "observed",
+              "save": "observed"
+            },
+            {
+              "action": "sidebar.preview",
+              "args": {
+                "ids": {
+                  "$input": "ids"
+                }
+              },
+              "save": "preview"
+            },
+            {
+              "judge": "review"
+            }
+          ]
+        },
+        "confirm-preview": {
+          "goal": "Apply a reviewed preview exactly once; stop on stale or active conversations",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "previewId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "previewId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "sidebar.confirm",
+              "args": {
+                "confirmed": true,
+                "previewId": {
+                  "$input": "previewId"
+                }
+              },
+              "save": "receipt"
+            }
+          ]
+        },
+        "undo-grouping": {
+          "goal": "Restore prior assignments while preserving later moves",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "undoId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "undoId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "sidebar.undo",
+              "args": {
+                "undoId": {
+                  "$input": "undoId"
+                }
+              },
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "review": {
+          "constraints": "Compare actual prompts and semantic scores; use confirm-preview only after the owner accepts. Never move during preview.",
+          "options": [
+            "accept",
+            "keep"
+          ],
+          "question": "Do the proposed groups describe the same work?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "model_unavailable",
+          "recovery": "Run scripts/setup_t7_embeddings.py in this worktree; bounded pinned model only, no package install"
+        },
+        {
+          "failure": "stale_preview",
+          "recovery": "Observe again and create a fresh preview; do not retry changed intent as confirmed"
+        },
+        {
+          "failure": "Incomplete transcript",
+          "recovery": "Keep Other; completeness and read errors are exposed, never guess from title or age"
+        }
+      ],
+      "frontier": [
+        "Collapsed rail and rendered controls belong to the UI handoff",
+        "English embedding model; French semantic quality is unmeasured",
+        "Subject folders are sidebar overlays, not disk directories"
+      ],
+      "guidance": [
+        "Images requires an actual generation event; Quick requires a complete transcript with fewer than three user turns",
+        "CPU only; no runtime network or automatic downloads",
+        "Undo survives restart and never overwrites a later move",
+        "New subject group names use informative words shared by the grouped user prompts; unrelated auto-titles never name a group. Related conversations means no shared phrase was observed, so review the member prompts before confirming."
+      ]
+    },
+    "proofs-e-shell": {
+      "title": "PROOFS-e shell state and action contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the latest verification receipt without repeating shell actions",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-shell.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-shell-proof-receipt": {
+          "goal": "Observe the latest shell proof receipt without replaying mutations",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A queue or shell state receipt is treated as rendered app proof",
+          "recovery": "Inspect the owned running UI and actual PDF/output/provider separately"
+        }
+      ],
+      "frontier": [
+        "Rendered shell journeys and PDF loading require owned UI proof",
+        "Provider execution and actual artifact publishing are separate proof boundaries"
+      ],
+      "guidance": [
+        "proofs-e.shell.kindOf: No-folder lanes reflect observed transcript kind; unknown observations remain Other",
+        "proofs-e.shell.placeSession: Only observed projects or explicit overrides enter a project; scratch folders remain No folder",
+        "proofs-e.shell.agentSummary: Nested agents count exactly once with observed running and failed states",
+        "proofs-e.shell.buildTree: Visible sessions partition into needs-you, pinned, project and transcript lanes; child chats fold and empty projects survive",
+        "proofs-e.shell.staleCandidates: Archive candidates exceed per-placement age thresholds and require observed safety; protected or dirty sessions survive",
+        "proofs-e.shell.shouldOfferTidy: Tidy offers require candidates and the configured size or candidate threshold",
+        "proofs-e.shell.overrides: Bus overrides reach displayed title, pin, archive and named folder without exposing subject ids",
+        "Startup runner: scripts/proofs-e-shell.mjs --root <owned-scratch>; area proofs-e-shell checks five composed production journeys and eleven semantic corruptions"
+      ]
+    }
+  }
+}

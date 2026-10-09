@@ -1,0 +1,163 @@
+/* Settings > Look on the shell root (NxShell sets the attributes from
+   nxLookModel.js): the typeface pair, the text size and, when it isn't the
+   theme's own, the background behind the chats with its dim layer. */
+
+/* ---------- typeface pairs (all bundled or shipped with Windows) ---------- */
+.nx[data-nx-font="windows"] {
+  --nx-font: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --nx-display: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --nx-mono: "Cascadia Code", "Cascadia Mono", Consolas, ui-monospace, monospace;
+  --nx-display-weight: 600;
+  --nx-display-tracking: -0.015em;
+}
+.nx[data-nx-font="inter"] {
+  --nx-font: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --nx-display: "Inter", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --nx-display-weight: 600;
+  --nx-display-tracking: -0.025em;
+  font-feature-settings: "cv11", "ss03"; /* Inter's single-storey a and straighter digits read calmer */
+}
+.nx[data-nx-font="geist"] {
+  --nx-display: "Geist", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --nx-display-weight: 600;
+  --nx-display-tracking: -0.03em;
+}
+.nx[data-nx-font="editorial"] {
+  --nx-font: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --nx-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --nx-display-weight: 560;
+  --nx-display-tracking: -0.015em;
+}
+
+/* ---------- text size ---------- */
+.nx[data-nx-text="s"] { --nx-ts: 0.92; }
+.nx[data-nx-text="l"] { --nx-ts: 1.1; }
+
+/* ---------- your own background ----------
+   .nx-backdrop sits under everything: the picture, gradient or colour, an
+   optional grain, then a layer of the theme's own background colour at the
+   dim the contrast guard allows. The surfaces above turn to frosted glass so
+   it shows through without losing their shape. */
+.nx .nx-backdrop { display: none; }
+.nx[data-nx-bg] { isolation: isolate; }
+.nx[data-nx-bg] > .nx-backdrop {
+  display: block; position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+}
+.nx .nx-backdrop-fill {
+  position: absolute; inset: 0; background-size: cover; background-position: center;
+  transition: opacity var(--nx-settle) var(--nx-ease);
+}
+.nx .nx-backdrop-fill.is-blurred { inset: -48px; } /* a blurred edge would show the page behind */
+.nx .nx-backdrop-grain { position: absolute; inset: 0; mix-blend-mode: overlay; background-size: 180px 180px; }
+.nx .nx-backdrop-dim { position: absolute; inset: 0; transition: opacity var(--nx-settle) var(--nx-ease); }
+.nx[data-nx-bg] > .nx-os,
+.nx[data-nx-bg] > .nx-strip { position: relative; z-index: 1; }
+
+.nx[data-nx-bg] .nx-work-chat,
+.nx[data-nx-bg] .nx-main { background: transparent; }
+.nx[data-nx-bg] .nx-ambient { display: none; }
+.nx.nx[data-nx-bg] .nx-side {
+  background: color-mix(in srgb, var(--nx-sidebar) 78%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15); backdrop-filter: blur(22px) saturate(1.15);
+}
+.nx[data-nx-bg] .nx-strip {
+  background: color-mix(in srgb, var(--nx-sidebar) 80%, transparent);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+.nx[data-nx-bg] .nx-stage {
+  background: color-mix(in srgb, var(--nx-panel) 90%, transparent);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+.nx.nx[data-nx-bg] :is(.nx-widget, .nx-ac-card, .nx-composer, .nx-continue-card, .nx-canopy) {
+  background: color-mix(in srgb, var(--nx-raised) 86%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1); backdrop-filter: blur(16px) saturate(1.1);
+}
+
+/* ---------- the Look card's own controls (NxLook.jsx) ---------- */
+.nx .nx-set-row.is-stacked { display: grid; gap: var(--nx-space-10); justify-content: stretch; }
+.nx .nx-set-row.is-stacked > span:first-child { flex: none; }
+
+/* A selection ring that slides between cards on a spring (Motion layoutId). */
+.nx .nx-look-ring {
+  position: absolute; inset: -1px; z-index: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi), 0 0 0 var(--nx-halo-wide) var(--nx-accent-soft);
+}
+
+.nx .nx-look-fonts { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: var(--nx-space-8); }
+.nx .nx-look-font {
+  position: relative; display: grid; gap: var(--nx-space-2); align-content: start; min-height: 104px; padding: var(--nx-space-12) var(--nx-space-12) var(--nx-space-11);
+  border-radius: var(--nx-r); cursor: pointer; text-align: left;
+  background: color-mix(in srgb, var(--nx-text) 3.5%, transparent); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+  transition: background var(--nx-fast) var(--nx-ease), box-shadow var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-look-font:hover { background: var(--nx-hover); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-look-font[data-selected] { background: var(--nx-accent-soft); box-shadow: none; }
+.nx.nx .nx-look-font:focus-visible { outline: 2px solid var(--nx-focus-ring); outline-offset: 3px; }
+.nx .nx-look-font > :not(.nx-look-ring) { position: relative; z-index: 1; }
+.nx .nx-look-font-sample { font-size: var(--nx-fs-hero); line-height: 1.05; color: var(--nx-text); margin-bottom: var(--nx-space-6); }
+.nx .nx-look-font-name { font-size: var(--nx-fs); font-weight: 600; color: var(--nx-text); }
+.nx .nx-look-font-hint { font-size: var(--nx-fs-xs); line-height: 1.35; color: var(--nx-muted); }
+.nx .nx-look-check { position: absolute !important; top: 10px; right: 10px; color: var(--nx-accent-text); }
+
+.nx .nx-look-bgs { display: flex; flex-wrap: wrap; gap: var(--nx-space-10); }
+.nx .nx-look-bg {
+  position: relative; display: grid; justify-items: center; gap: var(--nx-space-6); width: 76px; padding: var(--nx-space-4) var(--nx-space-4) var(--nx-space-2); border-radius: var(--nx-r);
+  cursor: pointer;
+}
+.nx .nx-look-bg > :not(.nx-look-ring) { position: relative; z-index: 1; }
+.nx .nx-look-bg-swatch {
+  display: grid; place-items: center; width: 68px; height: 46px; border-radius: var(--nx-r); overflow: hidden; color: var(--nx-text-2);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-1);
+  transition: transform var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-look-bg:hover .nx-look-bg-swatch { transform: translateY(-1px); }
+.nx .nx-look-bg:active .nx-look-bg-swatch { transform: scale(0.97); }
+.nx.nx .nx-look-bg:focus-visible { outline: 2px solid var(--nx-focus-ring); outline-offset: 2px; }
+.nx .nx-look-bg-grain { position: absolute; inset: 0; opacity: 0.35; mix-blend-mode: overlay; }
+.nx .nx-look-bg-busy { font-size: var(--nx-fs-xs); color: var(--nx-text); }
+.nx .nx-look-bg-name { font-size: var(--nx-fs-xs); color: var(--nx-text-2); white-space: nowrap; }
+.nx .nx-look-bg[data-selected] .nx-look-bg-name { color: var(--nx-text); font-weight: 600; }
+
+.nx .nx-look-solid { display: flex; align-items: center; gap: var(--nx-space-14); flex-wrap: wrap; }
+.nx .nx-look-swatches { display: flex; gap: var(--nx-space-6); }
+.nx .nx-look-swatch { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); transition: transform var(--nx-snappy) var(--nx-spring-snappy); }
+.nx .nx-look-swatch:hover { transform: scale(1.08); }
+.nx .nx-look-swatch.is-on { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi), inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-look-color { display: inline-flex; align-items: center; gap: var(--nx-space-8); font-size: var(--nx-fs-sm); color: var(--nx-text-2); cursor: pointer; }
+.nx .nx-look-color input[type="color"] { width: 30px; height: 26px; padding: 0; border-radius: var(--nx-r-sm); cursor: pointer; background: none; }
+.nx .nx-look-color code { font: var(--nx-fs-xs) var(--nx-mono); color: var(--nx-muted); }
+.nx .nx-look-image { display: flex; align-items: center; gap: var(--nx-space-10); flex-wrap: wrap; }
+
+.nx .nx-look-sliders { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--nx-space-10) var(--nx-space-20); }
+.nx .nx-look-slider { display: grid; gap: var(--nx-space-6); }
+.nx .nx-look-slider-head { display: flex; justify-content: space-between; font-size: var(--nx-fs-sm); color: var(--nx-text); }
+.nx .nx-look-slider-head output { color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+/* The dim slider's floor (what the contrast guard needs) shows as a hatched part of the track. */
+.nx .nx-look-range {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 22px; background: transparent; cursor: pointer;
+}
+.nx .nx-look-range::-webkit-slider-runnable-track {
+  height: 4px; border-radius: var(--nx-r-xs);
+  background:
+    linear-gradient(90deg, var(--nx-accent) var(--fill), transparent var(--fill)),
+    repeating-linear-gradient(135deg, var(--nx-line-strong) 0 3px, transparent 3px 6px) 0 0 / var(--floor) 100% no-repeat,
+    var(--nx-line-strong);
+}
+.nx .nx-look-range::-moz-range-track { height: 4px; border-radius: var(--nx-r-xs); background: var(--nx-line-strong); }
+.nx .nx-look-range::-moz-range-progress { height: 4px; border-radius: var(--nx-r-xs); background: var(--nx-accent); }
+.nx .nx-look-range::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; margin-top: calc(-1 * var(--nx-space-7)); border-radius: 50%; border: 0;
+  background: var(--nx-raised-2); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-1);
+  transition: transform var(--nx-snappy) var(--nx-spring-snappy);
+}
+.nx .nx-look-range::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%; border: 0; background: var(--nx-raised-2); box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), var(--nx-lift-1);
+}
+.nx .nx-look-range:active::-webkit-slider-thumb { transform: scale(1.12); }
+.nx.nx .nx-look-range:focus-visible { outline: none; }
+.nx .nx-look-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-focus-ring), var(--nx-lift-1); }
+.nx .nx-look-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-focus-ring), var(--nx-lift-1); }
+.nx .nx-look-guard { color: var(--nx-text-2); }
+.nx.is-phone .nx-look-fonts { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+.nx.is-phone .nx-look-font { min-height: 0; padding: var(--nx-space-10); }
+.nx.is-phone .nx-look-font-hint { display: none; }

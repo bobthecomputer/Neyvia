@@ -1,0 +1,270 @@
+[
+  {
+    "manifest_id": "manifest_oratio_viva",
+    "schema_version": "fluxio.app-capability/v0-draft",
+    "app_id": "oratio-viva",
+    "name": "Oratio Viva",
+    "description": "Speech and voice workflows exposed through a local bridge for guided agent execution.",
+    "bridge": {
+      "transport": "http",
+      "endpoint": "http://127.0.0.1:47830/fluxio",
+      "healthcheck": "/health",
+      "event_stream": "/events"
+    },
+    "auth": {
+      "mode": "local_token",
+      "scopes": ["speech.manage", "voice.render"]
+    },
+    "permissions": ["task.run", "context.read", "action.invoke"],
+    "tasks": [
+      {
+        "task_id": "render-voice-preview",
+        "label": "Render voice preview",
+        "description": "Create a short preview from app-managed voices and prompts.",
+        "requires_approval": false
+      }
+    ],
+    "context_surfaces": [
+      {
+        "surface_id": "voice-catalog",
+        "label": "Voice Catalog",
+        "description": "App-managed voice inventory and metadata.",
+        "access": "read"
+      }
+    ],
+    "action_hooks": [
+      {
+        "hook_id": "queue-render",
+        "label": "Queue Render",
+        "description": "Send a render request into the app job queue.",
+        "mutability": "write",
+        "risk_level": "medium",
+        "requires_approval": false
+      }
+    ],
+    "ui_hints": {
+      "category": "speech",
+      "requiresUserPresent": false
+    }
+  },
+  {
+    "manifest_id": "manifest_synology_fast_sync",
+    "schema_version": "fluxio.app-capability/v0-draft",
+    "app_id": "synology-fast-sync",
+    "name": "Synology Fast Sync",
+    "description": "Computer-to-NAS project bridge for upload, download, continuous NAS runtime, and mobile review.",
+    "bridge": {
+      "transport": "http",
+      "endpoint": "http://127.0.0.1:8765",
+      "public_endpoint": "https://192.0.2.10/fast-sync",
+      "preferred_transport": "https",
+      "internal_endpoint": "http://127.0.0.1:8765",
+      "healthcheck": "/api/status",
+      "event_stream": "/api/job",
+      "workspace_root": "C:/Users/example/Projects/Cowork",
+      "source_root": "C:/Users/example/Projects",
+      "target_root": "Y:/projects",
+      "nas_host": "192.0.2.10",
+      "control_protocol": "ssh",
+      "ssh_user": "nas-user",
+      "ssh_port": 22,
+      "requested_ssh_port": 22,
+      "ssh_port_status": "verified TCP reachability on SSH/SFTP port 22",
+      "remote_project_root": "/volume1/Saclay/projects",
+      "requires_approval_for_write": false,
+      "auto_sync": true,
+      "write_policy": "automatic_bidirectional",
+      "share_name": "Saclay",
+      "drive_letter": "Y",
+      "connection_mode": "tailscale",
+      "activation_project": "Core",
+      "activation_command": "C:/Users/example/Projects/Cowork/map-synology-fast-path.cmd"
+    },
+    "auth": {
+      "mode": "local_session",
+      "scopes": ["sync.status", "sync.job.read", "sync.selection.write", "sync.bidirectional.plan"]
+    },
+    "permissions": ["task.run", "context.read", "approval.callback", "sync.plan"],
+    "tasks": [
+      {
+        "task_id": "monitor-fast-sync",
+        "label": "Monitor Fast Sync output",
+        "description": "Read current computer/NAS mapping, transfer direction, job progress, and latest transfer output.",
+        "requires_approval": false
+      }
+    ],
+    "context_surfaces": [
+      {
+        "surface_id": "sync-status",
+        "label": "Sync Status",
+        "description": "Current LAN/Tailscale route, source root, target root, and transfer state.",
+        "access": "read"
+      }
+    ],
+    "action_hooks": [
+      {
+        "hook_id": "start-sync-selection",
+        "label": "Start Sync Selection",
+        "description": "Queue a selected upload or download through the Fast Sync bridge.",
+        "mutability": "write",
+        "risk_level": "medium",
+        "requires_approval": false
+      }
+    ],
+    "ui_hints": {
+      "category": "storage",
+      "bridgeRole": "nas_storage",
+      "requiresUserPresent": true,
+      "mobileSurface": true
+    }
+  },
+  {
+    "manifest_id": "manifest_cloud_drive_sync",
+    "schema_version": "fluxio.app-capability/v0-draft",
+    "app_id": "cloud-drive-sync",
+    "name": "Cloud Drive Bridge",
+    "description": "Google Drive and mounted cloud-folder bridge for moving files between workstation, NAS, and user cloud storage.",
+    "bridge": {
+      "transport": "local_mount_oauth",
+      "endpoint": "local://cloud-drive",
+      "healthcheck": "provider-presence",
+      "event_stream": "local-events",
+      "workspace_root": "C:/Users/example/Projects",
+      "source_root": "C:/Users/example/Projects"
+    },
+    "auth": {
+      "mode": "google_oauth_or_local_mount",
+      "scopes": ["drive.status", "drive.file.bridge", "drive.selection.write", "drive.provider.login"]
+    },
+    "permissions": ["task.run", "context.read", "approval.callback", "cloud.plan"],
+    "tasks": [
+      {
+        "task_id": "monitor-cloud-drive",
+        "label": "Monitor Cloud Drive bridge",
+        "description": "Read Google Drive OAuth readiness and mounted cloud-folder availability.",
+        "requires_approval": false
+      }
+    ],
+    "context_surfaces": [
+      {
+        "surface_id": "cloud-drive-status",
+        "label": "Cloud Drive Status",
+        "description": "Google login readiness, discovered mounted drives, source root, and transfer policy.",
+        "access": "read"
+      }
+    ],
+    "action_hooks": [
+      {
+        "hook_id": "queue-cloud-drive-transfer",
+        "label": "Queue Cloud Drive Transfer",
+        "description": "Queue a selected upload or download through the cloud-drive bridge after preview.",
+        "mutability": "write",
+        "risk_level": "medium",
+        "requires_approval": true
+      }
+    ],
+    "ui_hints": {
+      "category": "storage",
+      "bridgeRole": "cloud_storage",
+      "requiresUserPresent": true,
+      "mobileSurface": true,
+      "providers": ["google-drive", "onedrive", "dropbox", "local-mounted-drive"],
+      "primaryProvider": "google-drive"
+    }
+  },
+  {
+    "manifest_id": "manifest_solantir_terminal",
+    "schema_version": "fluxio.app-capability/v0-draft",
+    "app_id": "solantir-terminal",
+    "name": "Solantir Terminal",
+    "description": "Operator dashboard surfaces exposed to Fluxio through a capability-scoped bridge.",
+    "bridge": {
+      "transport": "workspace_bridge",
+      "endpoint": "local://solantir-terminal",
+      "healthcheck": "npm run typecheck",
+      "event_stream": "local-events",
+      "workspace_root": "Y:/projects/solantir-mindtower-fusion/Solantir",
+      "source_root": "Y:/projects/solantir-mindtower-fusion",
+      "app_subdir": "apps/terminal",
+      "nas_project_root": "Y:/projects/solantir-mindtower-fusion",
+      "verification_commands": [
+        "npm run typecheck",
+        "npm run test:data",
+        "npm run test:sidecar",
+        "npm run build"
+      ]
+    },
+    "auth": {
+      "mode": "local_session",
+      "scopes": ["dashboard.read", "watchlist.write", "feeds.read", "camera.read", "briefing.read"]
+    },
+    "permissions": ["task.run", "context.read", "approval.request", "feed.read", "delivery.receipt"],
+    "tasks": [
+      {
+        "task_id": "verify-intelligence-feeds",
+        "label": "Verify intelligence feeds",
+        "description": "Run Solantir's app-native checks for RSS, live news, camera, briefing, and workspace data readiness.",
+        "requires_approval": false
+      },
+      {
+        "task_id": "refresh-watchlist",
+        "label": "Refresh watchlist",
+        "description": "Run the app-native watchlist refresh workflow after feed health is visible.",
+        "requires_approval": true
+      }
+    ],
+    "context_surfaces": [
+      {
+        "surface_id": "watchlist",
+        "label": "Watchlist",
+        "description": "Current analyst watchlist state.",
+        "access": "read"
+      },
+      {
+        "surface_id": "intelligence-feeds",
+        "label": "Intelligence Feeds",
+        "description": "RSS, news, market, social, camera, and briefing pipeline readiness from the Solantir terminal workspace.",
+        "access": "read"
+      },
+      {
+        "surface_id": "runtime-readiness",
+        "label": "Runtime Readiness",
+        "description": "Solantir scripts, contracts, terminal package, and verification commands Fluxio can supervise.",
+        "access": "read"
+      }
+    ],
+    "action_hooks": [
+      {
+        "hook_id": "verify-feeds",
+        "label": "Verify feeds",
+        "description": "Run Solantir's non-mutating feed and readiness checks from the NAS workspace.",
+        "mutability": "read",
+        "risk_level": "low",
+        "requires_approval": false,
+        "execution_kind": "command",
+        "execution_command": "npm run typecheck && npm run test:data && npm run test:sidecar && npm run build",
+        "health_url": "local://solantir-terminal/typecheck"
+      },
+      {
+        "hook_id": "ack-alert",
+        "label": "Acknowledge alert",
+        "description": "Mark a surfaced alert as acknowledged inside the app.",
+        "mutability": "write",
+        "risk_level": "medium",
+        "requires_approval": true
+      }
+    ],
+    "ui_hints": {
+      "category": "operations",
+      "bridgeRole": "intelligence_terminal",
+      "workspaceRoot": "Y:/projects/solantir-mindtower-fusion/Solantir",
+      "runtimeManager": "solantir-feed-and-briefing-manager",
+      "appUrl": "http://127.0.0.1:4173/",
+      "settingsUrl": "http://127.0.0.1:4173/settings.html",
+      "previewCommand": "npm run preview",
+      "requiresUserPresent": true,
+      "verificationLoop": true,
+      "primarySurfaces": ["RSS", "Live news", "Camera feeds", "Briefing studio", "Watchlists"]
+    }
+  }
+]

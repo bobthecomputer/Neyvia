@@ -1,0 +1,121 @@
+/* Rewritten-prompt card under the composer (NxAmplifyCard.jsx, plan 20 C14). Theme tokens only; motion only when allowed. */
+
+.nx .nx-amp-peek {
+  display: flex; align-items: center; gap: var(--nx-space-8); width: 100%; min-height: 30px; margin-top: var(--nx-space-6); padding: 0 var(--nx-space-10);
+  border-radius: var(--nx-r); font-size: var(--nx-fs-sm); color: var(--nx-muted); text-align: left;
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+}
+.nx .nx-amp-peek:hover { background: var(--nx-hover); color: var(--nx-text-2); }
+.nx .nx-amp-peek .nx-icon { flex: none; color: var(--nx-accent-text); }
+.nx .nx-amp-peek.is-error .nx-icon { color: var(--nx-amber); }
+.nx .nx-amp-peek-text { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-amp-peek-ask { flex: none; display: inline-flex; align-items: center; gap: var(--nx-space-4); color: var(--nx-gold); }
+.nx .nx-amp-peek-ask .nx-icon { color: inherit; }
+.nx .nx-amp-peek .nx-amp-peek-caret { color: var(--nx-faint); }
+
+.nx .nx-amp {
+  display: grid; gap: 0; margin-top: var(--nx-space-8); border-radius: var(--nx-r); overflow: hidden;
+  background: var(--nx-panel); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+  font-size: var(--nx-fs-sm); color: var(--nx-text-2);
+}
+.nx .nx-amp.is-ask { box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-gold) 45%, transparent); }
+
+.nx .nx-amp-head { display: flex; align-items: center; gap: var(--nx-space-8); min-height: 38px; padding: 0 var(--nx-space-6) 0 var(--nx-space-12); }
+.nx .nx-amp-head > .nx-icon, .nx .nx-amp-head > .nx-spinner { flex: none; color: var(--nx-accent-text); }
+.nx .nx-amp-title { flex: 1 1 auto; min-width: 0; font-weight: 600; color: var(--nx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-amp-receipt { flex: none; font-size: var(--nx-fs-xs); color: var(--nx-faint); font-variant-numeric: tabular-nums; }
+.nx .nx-amp-head .nx-btn[aria-pressed="true"] { background: var(--nx-hover); color: var(--nx-text); }
+
+.nx .nx-amp-original {
+  margin: 0 var(--nx-space-12) var(--nx-space-8); padding: var(--nx-space-8) var(--nx-space-10); border-radius: var(--nx-r-sm); white-space: pre-wrap; overflow-wrap: anywhere;
+  max-height: 140px; overflow: auto; color: var(--nx-text-2); background: var(--nx-hover);
+  box-shadow: inset var(--nx-stroke-strong) 0 0 var(--nx-line-strong); line-height: 1.5;
+}
+
+.nx .nx-amp-body {
+  display: grid; gap: var(--nx-space-10); max-height: min(36vh, 300px); overflow: auto; padding: var(--nx-space-2) var(--nx-space-12) var(--nx-space-10);
+  border-top: 1px solid var(--nx-line); padding-top: var(--nx-space-10);
+}
+.nx .nx-amp-group { display: grid; gap: var(--nx-space-3); min-width: 0; }
+.nx .nx-amp-label {
+  display: inline-flex; align-items: center; gap: var(--nx-space-4); font-size: var(--nx-fs-xs); font-weight: 600; color: var(--nx-muted);
+}
+.nx .nx-amp-group.is-question .nx-amp-label { color: var(--nx-gold); }
+.nx .nx-amp-ask { color: var(--nx-text); line-height: 1.45; }
+
+/* Fields read as text until pointed at or focused. */
+/* Fields grow with their words: the textarea and a hidden copy of its text share one grid cell. */
+.nx .nx-amp-grow { display: grid; flex: 1 1 auto; min-width: 0; font-size: var(--nx-fs-sm); line-height: 1.45; }
+.nx .nx-amp-grow.is-goal { font-size: var(--nx-fs); font-weight: 500; }
+.nx .nx-amp-grow::after {
+  content: attr(data-value) " "; grid-area: 1 / 1; visibility: hidden; color: transparent; pointer-events: none; white-space: pre-wrap; overflow-wrap: anywhere;
+  padding: var(--nx-space-3) var(--nx-space-6); font: inherit; max-height: 120px; overflow: hidden;
+}
+.nx .nx-amp-input {
+  grid-area: 1 / 1; display: block; width: 100%; min-width: 0; min-height: 26px; height: auto; margin: 0; padding: var(--nx-space-3) var(--nx-space-6); resize: none; border: 0;
+  border-radius: var(--nx-r-xs); background: transparent; color: var(--nx-text); font: inherit; overflow-wrap: anywhere;
+  max-height: 120px; overflow: auto;
+}
+.nx .nx-amp-input:hover:not(:disabled) { background: var(--nx-hover); }
+.nx .nx-amp-input:focus { outline: none; background: var(--nx-raised); box-shadow: var(--nx-focus); }
+.nx .nx-amp-input.is-answer { background: var(--nx-raised); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); }
+.nx .nx-amp-input.is-answer:focus { box-shadow: var(--nx-focus); }
+.nx .nx-amp-input::placeholder { color: var(--nx-faint); }
+.nx .nx-amp-input:disabled { opacity: 0.7; }
+
+.nx .nx-amp-list { display: grid; gap: var(--nx-space-1); margin: 0; padding: 0; list-style: none; }
+.nx .nx-amp-item { display: flex; align-items: flex-start; gap: var(--nx-space-4); }
+.nx .nx-amp-mark { flex: none; width: 12px; height: 12px; margin: var(--nx-space-7) var(--nx-space-2) 0 0; }
+.nx .nx-amp-mark.is-check { border-radius: 50%; box-shadow: inset 0 0 0 var(--nx-stroke-icon) color-mix(in srgb, var(--nx-green) 70%, transparent); background: var(--nx-green-soft); }
+.nx .nx-amp-mark.is-assume { height: 2px; margin-top: var(--nx-space-12); border-radius: var(--nx-r-xxs); background: var(--nx-line-strong); }
+.nx .nx-amp-mark.is-limit { border-radius: var(--nx-r-xxs); box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-line-strong); }
+.nx .nx-amp-remove { flex: none; opacity: 0; }
+.nx .nx-amp-item:hover .nx-amp-remove, .nx .nx-amp-item:focus-within .nx-amp-remove { opacity: 1; }
+.nx .nx-amp-add, .nx .nx-amp-more, .nx .nx-amp-link {
+  justify-self: start; display: inline-flex; align-items: center; gap: var(--nx-space-4); height: 22px; padding: 0 var(--nx-space-6); border-radius: var(--nx-r-xs);
+  font-size: var(--nx-fs-xs); color: var(--nx-muted); white-space: nowrap;
+}
+.nx .nx-amp-add:hover:not(:disabled), .nx .nx-amp-more:hover, .nx .nx-amp-link:hover:not(:disabled) { background: var(--nx-hover); color: var(--nx-text); }
+.nx .nx-amp-more-caret { transition: transform var(--nx-med) var(--nx-ease); }
+.nx .nx-amp-more[aria-expanded="true"] .nx-amp-more-caret { transform: rotate(180deg); }
+.nx .nx-amp-chips { display: flex; flex-wrap: wrap; gap: var(--nx-space-4); margin: 0; padding: 0; list-style: none; }
+.nx .nx-amp-chips li {
+  max-width: 220px; padding: var(--nx-space-1) var(--nx-space-8); border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs); color: var(--nx-text-2);
+  background: var(--nx-hover); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--nx-mono);
+}
+
+.nx .nx-amp-error { margin: 0; padding: 0 var(--nx-space-12) var(--nx-space-8); color: var(--nx-red); line-height: 1.45; }
+
+.nx .nx-amp-foot .nx-btn, .nx .nx-amp-head .nx-btn { white-space: nowrap; }
+.nx .nx-amp-foot {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-6); padding: var(--nx-space-8) var(--nx-space-8) var(--nx-space-8) var(--nx-space-12); border-top: 1px solid var(--nx-line);
+}
+.nx .nx-amp-status { flex: 1 1 auto; min-width: 0; color: var(--nx-muted); font-variant-numeric: tabular-nums; }
+.nx .nx-amp.is-ask .nx-amp-status { color: var(--nx-gold); }
+/* The countdown: a thin line that drains, low contrast, next to the seconds. */
+.nx .nx-amp-clock { flex: none; position: relative; width: 44px; height: 3px; border-radius: var(--nx-r-xxs); background: var(--nx-line); overflow: hidden; }
+.nx .nx-amp-clock-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--nx-accent-hi); opacity: 0.7; transform-origin: left center; }
+
+.nx .nx-amp-mode {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--nx-space-6); padding: 0 var(--nx-space-8) var(--nx-space-8) var(--nx-space-12);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nx .nx-amp.is-open { animation: nx-amp-in var(--nx-settle) var(--nx-spring-settle); }
+  .nx .nx-amp-clock-fill { animation: nx-amp-drain var(--amp-ms, var(--nx-undo-window)) linear forwards; }
+}
+/* No moving bar when the OS or Settings → Look → Motion asks for less; the seconds count is the clock. */
+@media (prefers-reduced-motion: reduce) {
+  .nx .nx-amp-clock { display: none; }
+}
+.nx[data-nx-motion="reduce"] .nx-amp-clock { display: none; }
+@keyframes nx-amp-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes nx-amp-drain { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+.nx .nx-amp-note { margin-top: var(--nx-space-6); margin-bottom: 0; padding: 0 var(--nx-space-4); font-size: var(--nx-fs-xs); line-height: 1.45; color: var(--nx-muted); }
+
+.nx.is-phone .nx-amp-body { max-height: 30vh; padding-left: var(--nx-space-10); padding-right: var(--nx-space-10); }
+.nx.is-phone .nx-amp-receipt { display: none; }
+.nx.is-phone .nx-amp-input { min-height: 48px; }
+.nx.is-phone .nx-amp-remove { opacity: 1; }
+.nx.is-phone .nx-amp-foot .nx-btn { min-height: 32px; }

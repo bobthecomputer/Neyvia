@@ -1,0 +1,27 @@
+{
+  "area": "session-events-journey",
+  "module": "grant_agent.proofs_session_events_journey",
+  "self_check": "self_check",
+  "manuals": [
+    "C7e-sessions"
+  ],
+  "contracts": [
+    {
+      "id": "p22.session-event-cursor",
+      "phase": "post",
+      "claim": "The host-scoped connected-session stream retains exact session, run, request, and monotonic cursor identities across bounded replay; stale or ahead cursors request resync, oversized payloads are bounded, and readers drain or close without hanging.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer.publish",
+        "grant_agent.connected_sessions.events.EventBuffer.since",
+        "grant_agent.connected_sessions.events.EventBuffer.wait",
+        "grant_agent.connected_sessions.events.EventBuffer.close",
+        "grant_agent.proofs_session_events_journey.cursor_overflow_wait_close"
+      ],
+      "impact": [
+        "Live connected-session event timeline and reconnect cursor"
+      ]
+    }
+  ],
+  "networkContracts": [],
+  "portRoles": []
+}

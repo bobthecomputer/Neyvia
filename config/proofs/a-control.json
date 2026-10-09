@@ -1,0 +1,2356 @@
+{
+  "area": "a-control",
+  "manual": "agents",
+  "module": "grant_agent.proofs_a_control",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "control.approval-policy",
+      "phase": "pre",
+      "claim": "Approval decisions reflect classified category, current session mode, first-server trust and exact action grants.",
+      "checkedAt": [
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.approval-description",
+      "phase": "post",
+      "claim": "Settings describes every protected category and all modes; approve-all is session scoped.",
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.questions-durable",
+      "phase": "post",
+      "claim": "Successful question transactions persist the exact returned row without changing unrelated entries.",
+      "checkedAt": [
+        "grant_agent.agent_questions.request_question",
+        "grant_agent.agent_questions.answer_question"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.questions-session",
+      "phase": "invariant",
+      "claim": "At most one pending question exists per session; observers retain exact session and pending filters.",
+      "checkedAt": [
+        "grant_agent.agent_questions.request_question",
+        "grant_agent.agent_questions.list_questions"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.questions-immutable",
+      "phase": "invariant",
+      "claim": "Answered questions retain question identity, immutable answers and retry idempotence.",
+      "checkedAt": [
+        "grant_agent.agent_questions.answer_question"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.prompts-composition",
+      "phase": "post",
+      "claim": "Every loaded library preserves authored/default role text and exact composed hashes for five roles.",
+      "checkedAt": [
+        "grant_agent.agent_prompt_library.load_prompt_library"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.prompts-durable",
+      "phase": "post",
+      "claim": "Successful save/reset commits exactly the next payload and revision; invalid or stale saves are rejected.",
+      "checkedAt": [
+        "grant_agent.agent_prompt_library._write_prompt_payload",
+        "grant_agent.agent_prompt_library.save_prompt_library",
+        "grant_agent.agent_prompt_library.reset_prompt_library"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.context-budget",
+      "phase": "invariant",
+      "claim": "Token accounting equals accumulated events and thresholds determine current status.",
+      "checkedAt": [
+        "grant_agent.context_manager.ContextWindowManager.status"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.context-compaction",
+      "phase": "post",
+      "claim": "Compaction retains every exact user message and a marker for non-user activity.",
+      "checkedAt": [
+        "grant_agent.context_manager.ContextWindowManager.compact_window"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.image-magic",
+      "phase": "post",
+      "claim": "Image extension derives from bytes, independent of filename.",
+      "checkedAt": [
+        "scripts/run_controlled_ai_safety_review.py:detected_image_extension"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.attachments-content",
+      "phase": "post",
+      "claim": "Attachment names are sanitized and content-addressed; returned paths stay inside the selected folder and contain exact decoded bytes.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.attachments.save_files"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.attachments-message",
+      "phase": "post",
+      "claim": "Message retains authored text and every attached path, with a default instruction only for empty text.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.attachments.with_files"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.import-upload",
+      "phase": "post",
+      "claim": "Staged upload uses a generated identity, sanitized display name, exact byte count and hash-bound durable receipt.",
+      "checkedAt": [
+        "grant_agent.context_import.stage_upload"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.import-preview",
+      "phase": "post",
+      "claim": "Preview requires selection, redacts credential text and imports only user/assistant response messages from Codex rollouts.",
+      "checkedAt": [
+        "grant_agent.context_import.preview_export"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.import-selection",
+      "phase": "post",
+      "claim": "Import persists only explicitly selected reviewed rows with exact content, source hashes and lineage.",
+      "checkedAt": [
+        "grant_agent.context_import.import_selection"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.import-read",
+      "phase": "invariant",
+      "claim": "Every read refuses duplicate, extra, foreign, incomplete or hash-conflicting rows against the durable receipt.",
+      "checkedAt": [
+        "grant_agent.context_import.read_import_selection"
+      ],
+      "impact": [
+        "agent control",
+        "durable operator intent",
+        "provider context"
+      ]
+    },
+    {
+      "id": "control.import-packet",
+      "phase": "post",
+      "claim": "Delegated selected context packets retain source/import lineage and exact selected content within item and character bounds.",
+      "checkedAt": [
+        "grant_agent.neyvia_runtime_invocation.build_selected_context_packet"
+      ],
+      "impact": [
+        "delegated runtime context",
+        "imported content lineage"
+      ]
+    },
+    {
+      "id": "control.context-bundle",
+      "phase": "invariant",
+      "claim": "Durable bundle retains schema, messages and stable/full cache identities.",
+      "checkedAt": [
+        "grant_agent.context_engine.DurableContextEngine.bundle"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.context-cache",
+      "phase": "invariant",
+      "claim": "Provider cache hints preserve stable identity and report unsupported provider status honestly.",
+      "checkedAt": [
+        "grant_agent.context_microkernel.emit_prompt_cache_control"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.context-cache-wire",
+      "phase": "invariant",
+      "claim": "Assembled prompts and provider payloads preserve nested and flattened cache identities.",
+      "checkedAt": [
+        "grant_agent.context_microkernel.assemble_prompt_with_cache",
+        "grant_agent.openai_adapter.apply_attached_cache_control"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.context-metrics",
+      "phase": "invariant",
+      "claim": "Durable context receipt preserves all recorded invocation, token, tool and image counters.",
+      "checkedAt": [
+        "grant_agent.context_microkernel.ContextTurnMetrics.write_receipt"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.tools-deferred-schema",
+      "phase": "invariant",
+      "claim": "Progressive tools list/search omit schemas by default and describe returns the selected real schema.",
+      "checkedAt": [
+        "grant_agent.progressive_tools.ProgressiveToolSurface.list_tools",
+        "grant_agent.progressive_tools.ProgressiveToolSurface.describe"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.vision-wire",
+      "phase": "invariant",
+      "claim": "Chat Completion image transport moves the exact two latest image observations to supported user content without changing tool input.",
+      "checkedAt": [
+        "grant_agent.agent_vision.chat_completions_vision_input"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.vision-pixels",
+      "phase": "invariant",
+      "claim": "Workspace image tool refuses outside images and returns exact image file pixels; provider-compatible reasoning stays on the appropriate wire.",
+      "checkedAt": [
+        "grant_agent.neyvia_agent.build_neyvia_agent"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.submission-verdict",
+      "phase": "invariant",
+      "claim": "Incoming source-bound submission verdict exactly reflects all validation errors.",
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.submission-source-phase",
+      "phase": "invariant",
+      "claim": "Incoming receipts validate allowed/forbidden phase scope, before Git hashes, current after hashes, missing and deleted files.",
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.submission-lineage",
+      "phase": "invariant",
+      "claim": "Incoming proof hashes and nested source lineage must describe current changed files; live/device claims require corresponding evidence kinds.",
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.submission-counts",
+      "phase": "invariant",
+      "claim": "Incoming summaries and command exit/count results must be internally consistent.",
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.submission-git-delta",
+      "phase": "invariant",
+      "claim": "Receipt changedFiles equals the exact in-scope Git baseline delta, including deletions and untracked files.",
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.submission-secrets",
+      "phase": "invariant",
+      "claim": "Secret-like incoming receipt keys/values are refused with a fixed redacted error before other inspection.",
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "impact": [
+        "agent context",
+        "operator control",
+        "source-bound evidence"
+      ]
+    },
+    {
+      "id": "control.stream-order",
+      "phase": "post",
+      "claim": "Every emitted text is the exact ordered accepted prefix, merged only within matching kind and item metadata, preserving first arrival.",
+      "checkedAt": [
+        "grant_agent.chat_stream.StreamCoalescer._emit"
+      ],
+      "impact": [
+        "chat stream",
+        "reconnecting result",
+        "provider usage"
+      ]
+    },
+    {
+      "id": "control.stream-frame",
+      "phase": "post",
+      "claim": "Persisted text chunks reconstruct accepted message within 4000 characters and preserve supplied rounded timestamps.",
+      "checkedAt": [
+        "grant_agent.chat_stream.append_chat_stream"
+      ],
+      "impact": [
+        "chat stream",
+        "reconnecting result",
+        "provider usage"
+      ]
+    },
+    {
+      "id": "control.stream-tail",
+      "phase": "post",
+      "claim": "Backward block scan returns newest matching event even across line boundaries.",
+      "checkedAt": [
+        "grant_agent.chat_stream.last_stream_event"
+      ],
+      "impact": [
+        "chat stream",
+        "reconnecting result",
+        "provider usage"
+      ]
+    },
+    {
+      "id": "control.stream-relay",
+      "phase": "post",
+      "claim": "Actual runtime child callbacks release coalesced text on deadline during silence; raw stdout remains complete.",
+      "checkedAt": [
+        "grant_agent.web_backend._communicate_runtime_events"
+      ],
+      "impact": [
+        "chat stream",
+        "reconnecting result",
+        "provider usage"
+      ]
+    },
+    {
+      "id": "control.result-retention",
+      "phase": "post",
+      "claim": "Durable results omit session window copies, retain references and preserve usage when oversized metadata is dropped.",
+      "checkedAt": [
+        "grant_agent.chat_run_control.record_chat_run_result"
+      ],
+      "impact": [
+        "chat stream",
+        "reconnecting result",
+        "provider usage"
+      ]
+    },
+    {
+      "id": "control.result-compaction",
+      "phase": "post",
+      "claim": "Removing duplicate session windows preserves every unrelated turn field and durable conversation reference.",
+      "checkedAt": [
+        "grant_agent.chat_run_control._compartment_without_session_window"
+      ],
+      "impact": [
+        "chat stream",
+        "reconnecting result",
+        "provider usage"
+      ]
+    },
+    {
+      "id": "control.bridge-authority",
+      "phase": "post",
+      "claim": "Every bridge decision preserves requested lane and identity; approved file roots, command prefixes and inspection surfaces carry current scoped authority.",
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "impact": [
+        "connected device policy",
+        "durable permission grants",
+        "bridge audit"
+      ]
+    },
+    {
+      "id": "control.bridge-receipt",
+      "phase": "post",
+      "claim": "Operation receipts preserve each host/audit/sync identity and aggregate denied before pending; plan-only receipts claim no execution.",
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.build_bridge_operation_receipt"
+      ],
+      "impact": [
+        "connected device policy",
+        "durable permission grants",
+        "bridge audit"
+      ]
+    },
+    {
+      "id": "control.bridge-grants",
+      "phase": "post",
+      "claim": "Persisted operator capability/scope grants read back exactly and are merged into current host permissions.",
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.save_bridge_permission_grants"
+      ],
+      "impact": [
+        "connected device policy",
+        "durable permission grants",
+        "bridge audit"
+      ]
+    },
+    {
+      "id": "control.bridge-snapshot",
+      "phase": "post",
+      "claim": "Snapshots expose the actual host capabilities, mapping and pending/denied permissions without claiming command execution.",
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.build_dual_path_bridge_snapshot"
+      ],
+      "impact": [
+        "connected device policy",
+        "durable permission grants",
+        "bridge audit"
+      ]
+    },
+    {
+      "id": "control.bridge-feedback",
+      "phase": "post",
+      "claim": "Received structured feedback retains exact event/handoff identity, routing, task, verifier and followup context.",
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.build_live_review_structured_feedback_receipt"
+      ],
+      "impact": [
+        "connected device policy",
+        "durable permission grants",
+        "bridge audit"
+      ]
+    },
+    {
+      "id": "control.execution-scope",
+      "phase": "post",
+      "claim": "Prepared execution scopes accurately distinguish direct workspace, real Git worktree or filesystem copy and local storage/host.",
+      "checkedAt": [
+        "grant_agent.action_executor.prepare_execution_scope"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.execution-proposal",
+      "phase": "post",
+      "claim": "Verification steps retain the real verification surface; proposals preserve branch and isolation target identity.",
+      "checkedAt": [
+        "grant_agent.action_executor.build_action_proposal"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.execution-result",
+      "phase": "post",
+      "claim": "Execution preserves required approval/lease attribution and turns actual deadlines into failed124 receipts.",
+      "checkedAt": [
+        "grant_agent.action_executor.execute_action"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.execution-cleanup",
+      "phase": "post",
+      "claim": "Isolation cleanup is confined to the source workspace sibling container and accurately reports remaining directories.",
+      "checkedAt": [
+        "grant_agent.action_executor.cleanup_execution_scope"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.execution-phase",
+      "phase": "post",
+      "claim": "Explicit role routing determines delegated phase without objective verification words contaminating execute steps.",
+      "checkedAt": [
+        "grant_agent.action_executor.delegated_cycle_phase_for_step"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.chrome-policy",
+      "phase": "post",
+      "claim": "Routine navigation remains routine; destructive, capacity and unknown controls ask using exact page/action fingerprints.",
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.assess"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.chrome-grant",
+      "phase": "post",
+      "claim": "Consequential actions refuse absent or cross-action fingerprint approval.",
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.ensure_approved"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.console-observation",
+      "phase": "post",
+      "claim": "Authentication confidence follows readable page evidence; instance rows retain visible heuristic provenance and GPU/status.",
+      "checkedAt": [
+        "grant_agent.thunder_compute._assess_authentication",
+        "grant_agent.thunder_compute._extract_instances"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.console-memory",
+      "phase": "post",
+      "claim": "Project memory reopens accepted purpose/checkpoint fields and never persists rejected unknown input.",
+      "checkedAt": [
+        "grant_agent.thunder_compute.save_project_memory"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.chrome-live-action",
+      "phase": "post",
+      "claim": "Approved browser actions verify expected changed DOM after readback; missing approval performs no action.",
+      "checkedAt": [
+        "grant_agent.thunder_compute.execute_proposal"
+      ],
+      "impact": [
+        "local action execution",
+        "connected browser control"
+      ]
+    },
+    {
+      "id": "control.neyvia-live-action",
+      "phase": "post",
+      "claim": "Explicit Neyvia native browser proposals require a fresh observed revision, owner tab grant and recomputed approval; completion and expected page effects come only from actual native action and fresh DOM readback.",
+      "checkedAt": [
+        "grant_agent.thunder_compute.execute_neyvia_proposal"
+      ],
+      "impact": [
+        "Neyvia integrated browser action",
+        "connected approval policy"
+      ]
+    },
+    {
+      "id": "control.browser-preflight",
+      "phase": "post",
+      "claim": "Actual bounded version subprocess diagnosis determines availability and missing-library repair packages.",
+      "checkedAt": [
+        "grant_agent.browser_preflight.build_browser_dependency_preflight"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.browser-repair",
+      "phase": "post",
+      "claim": "Dry repair produces durable planned commands and unchanged diagnostic before/after, never executes installation.",
+      "checkedAt": [
+        "grant_agent.browser_preflight.repair_browser_dependencies"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.plan-transitions",
+      "phase": "post",
+      "claim": "Every checklist operation preserves exact task IDs/order/text/status, clears empty replacements and keeps changing sequence/time.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan.apply_op"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.plan-limits",
+      "phase": "post",
+      "claim": "Only app-reported plan windows persist atomically under service root, with bounded percentages and reported resets/timestamps.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan_limits._save_claude",
+        "grant_agent.connected_sessions.plan_limits.record_claude",
+        "grant_agent.connected_sessions.plan_limits.codex_windows"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.plan-dashboard",
+      "phase": "post",
+      "claim": "Dashboard counts actual subagent calls and preserves owner-start precedence while displaying reply activity without private reasoning.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.dashboard._row"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.plan-history",
+      "phase": "post",
+      "claim": "History folds match current tail stamp, exclude materialized/paged duplicate task calls and include matching late results before final transitions.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.claude_transcript.ItemStore.plan"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.agents-manual",
+      "phase": "post",
+      "claim": "Agents manual remains in current discoverable index and loads through a real rooted workspace service after grounded schema validation.",
+      "checkedAt": [
+        "grant_agent.neyvia_manuals.call"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.cu-receipt",
+      "phase": "post",
+      "claim": "Compact v2 CU receipts preserve accepted result identity, exclude giant trees and maintain exact latest mirror.",
+      "checkedAt": [
+        "grant_agent.cu_acceptance.write_receipt"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.cu-verdict",
+      "phase": "post",
+      "claim": "Standalone acceptance keeps unavailable/skipped/failed evidence failed with exact summary counts.",
+      "checkedAt": [
+        "grant_agent.cu_acceptance.run_suite"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.cu-aliases",
+      "phase": "post",
+      "claim": "Compatibility aliases resolve registered canonical flows and standalone CLI lists current canonical names.",
+      "checkedAt": [
+        "grant_agent.cu_acceptance.run_flow"
+      ],
+      "impact": [
+        "browser diagnostic protocol",
+        "connected plan and reports",
+        "standalone CU receipt"
+      ]
+    },
+    {
+      "id": "control.cu-recovery",
+      "phase": "post",
+      "claim": "Actual unavailable-server responses emit standalone frontend-start and CU verification recovery commands, default control URL and the explicitly probed candidate context, never a test-suite recovery command.",
+      "checkedAt": [
+        "grant_agent.cu_acceptance.skip_reason_no_server"
+      ],
+      "impact": [
+        "operator unavailable-server recovery"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_routine_actions_run_under_auto_approve",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_routine_actions_run_under_auto_approve"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_routine_actions_still_ask_in_ask_mode",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_routine_actions_still_ask_in_ask_mode"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_consequential_categories_ask_in_every_mode",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_consequential_categories_ask_in_every_mode"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_approve_everything_does_not_cover_spending",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_approve_everything_does_not_cover_spending"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_approve_everything_covers_ordinary_work",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_approve_everything_covers_ordinary_work"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_an_unclassified_action_is_not_assumed_safe",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_an_unclassified_action_is_not_assumed_safe"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_a_new_mcp_server_always_asks_then_can_be_trusted",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_a_new_mcp_server_always_asks_then_can_be_trusted"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_a_grant_binds_to_one_action_and_cannot_be_replayed",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_a_grant_binds_to_one_action_and_cannot_be_replayed"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_require_raises_with_the_decision_attached",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_require_raises_with_the_decision_attached"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_approve_everything_is_session_scoped_and_never_persisted",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_approve_everything_is_session_scoped_and_never_persisted"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_an_unknown_mode_is_refused_rather_than_coerced",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_an_unknown_mode_is_refused_rather_than_coerced"
+    },
+    {
+      "test": "tests/test_approval_modes.py",
+      "case": "test_the_settings_surface_states_what_is_never_skipped",
+      "contracts": [
+        "control.approval-policy",
+        "control.approval-description"
+      ],
+      "checkedAt": [
+        "grant_agent.approval_modes.describe_modes",
+        "grant_agent.approval_modes.evaluate"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_approval_modes.py::test_the_settings_surface_states_what_is_never_skipped"
+    },
+    {
+      "test": "tests/test_agent_questions.py",
+      "case": "AgentQuestionTests.test_persistence_and_session_separation",
+      "contracts": [
+        "control.questions-durable",
+        "control.questions-session",
+        "control.questions-immutable"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_questions.answer_question",
+        "grant_agent.agent_questions.list_questions",
+        "grant_agent.agent_questions.request_question"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_questions.py::AgentQuestionTests.test_persistence_and_session_separation"
+    },
+    {
+      "test": "tests/test_agent_questions.py",
+      "case": "AgentQuestionTests.test_different_pending_question_is_blocked",
+      "contracts": [
+        "control.questions-durable",
+        "control.questions-session",
+        "control.questions-immutable"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_questions.answer_question",
+        "grant_agent.agent_questions.list_questions",
+        "grant_agent.agent_questions.request_question"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_questions.py::AgentQuestionTests.test_different_pending_question_is_blocked"
+    },
+    {
+      "test": "tests/test_agent_questions.py",
+      "case": "AgentQuestionTests.test_answer_once_is_immutable_and_idempotent",
+      "contracts": [
+        "control.questions-durable",
+        "control.questions-session",
+        "control.questions-immutable"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_questions.answer_question",
+        "grant_agent.agent_questions.list_questions",
+        "grant_agent.agent_questions.request_question"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_questions.py::AgentQuestionTests.test_answer_once_is_immutable_and_idempotent"
+    },
+    {
+      "test": "tests/test_agent_questions.py",
+      "case": "AgentQuestionTests.test_bounds_are_enforced",
+      "contracts": [
+        "control.questions-durable",
+        "control.questions-session",
+        "control.questions-immutable"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_questions.answer_question",
+        "grant_agent.agent_questions.list_questions",
+        "grant_agent.agent_questions.request_question"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_questions.py::AgentQuestionTests.test_bounds_are_enforced"
+    },
+    {
+      "test": "tests/test_agent_prompt_library.py",
+      "case": "AgentPromptLibraryTests.test_defaults_have_roles_and_hashes",
+      "contracts": [
+        "control.prompts-composition",
+        "control.prompts-durable"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_prompt_library._write_prompt_payload",
+        "grant_agent.agent_prompt_library.load_prompt_library",
+        "grant_agent.agent_prompt_library.reset_prompt_library",
+        "grant_agent.agent_prompt_library.save_prompt_library"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_prompt_library.py::AgentPromptLibraryTests.test_defaults_have_roles_and_hashes"
+    },
+    {
+      "test": "tests/test_agent_prompt_library.py",
+      "case": "AgentPromptLibraryTests.test_save_revision_conflict_and_partial_override",
+      "contracts": [
+        "control.prompts-composition",
+        "control.prompts-durable"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_prompt_library._write_prompt_payload",
+        "grant_agent.agent_prompt_library.load_prompt_library",
+        "grant_agent.agent_prompt_library.reset_prompt_library",
+        "grant_agent.agent_prompt_library.save_prompt_library"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_prompt_library.py::AgentPromptLibraryTests.test_save_revision_conflict_and_partial_override"
+    },
+    {
+      "test": "tests/test_agent_prompt_library.py",
+      "case": "AgentPromptLibraryTests.test_reset_only_requested_role_and_validation",
+      "contracts": [
+        "control.prompts-composition",
+        "control.prompts-durable"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_prompt_library._write_prompt_payload",
+        "grant_agent.agent_prompt_library.load_prompt_library",
+        "grant_agent.agent_prompt_library.reset_prompt_library",
+        "grant_agent.agent_prompt_library.save_prompt_library"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_prompt_library.py::AgentPromptLibraryTests.test_reset_only_requested_role_and_validation"
+    },
+    {
+      "test": "tests/test_agent_prompt_library.py",
+      "case": "AgentPromptLibraryTests.test_compiled_prompt_combines_common_and_role",
+      "contracts": [
+        "control.prompts-composition",
+        "control.prompts-durable"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_prompt_library._write_prompt_payload",
+        "grant_agent.agent_prompt_library.load_prompt_library",
+        "grant_agent.agent_prompt_library.reset_prompt_library",
+        "grant_agent.agent_prompt_library.save_prompt_library"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_prompt_library.py::AgentPromptLibraryTests.test_compiled_prompt_combines_common_and_role"
+    },
+    {
+      "test": "tests/test_context_manager.py",
+      "case": "ContextManagerTests.test_status_transitions",
+      "contracts": [
+        "control.context-budget",
+        "control.context-compaction"
+      ],
+      "checkedAt": [
+        "grant_agent.context_manager.ContextWindowManager.compact_window",
+        "grant_agent.context_manager.ContextWindowManager.status"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_manager.py::ContextManagerTests.test_status_transitions"
+    },
+    {
+      "test": "tests/test_context_manager.py",
+      "case": "ContextManagerTests.test_compaction_keeps_user_messages",
+      "contracts": [
+        "control.context-budget",
+        "control.context-compaction"
+      ],
+      "checkedAt": [
+        "grant_agent.context_manager.ContextWindowManager.compact_window",
+        "grant_agent.context_manager.ContextWindowManager.status"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_manager.py::ContextManagerTests.test_compaction_keeps_user_messages"
+    },
+    {
+      "test": "tests/test_controlled_ai_safety_review.py",
+      "case": "ControlledAiSafetyReviewTests.test_detected_image_extension_reads_content_not_filename",
+      "contracts": [
+        "control.image-magic"
+      ],
+      "checkedAt": [
+        "scripts/run_controlled_ai_safety_review.py:detected_image_extension"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_controlled_ai_safety_review.py::ControlledAiSafetyReviewTests.test_detected_image_extension_reads_content_not_filename"
+    },
+    {
+      "test": "tests/test_controlled_ai_safety_review.py",
+      "case": "ControlledAiSafetyReviewTests.test_detected_image_extension_accepts_png_magic",
+      "contracts": [
+        "control.image-magic"
+      ],
+      "checkedAt": [
+        "scripts/run_controlled_ai_safety_review.py:detected_image_extension"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_controlled_ai_safety_review.py::ControlledAiSafetyReviewTests.test_detected_image_extension_accepts_png_magic"
+    },
+    {
+      "test": "tests/test_connected_attachments.py",
+      "case": "test_files_are_saved_by_content_and_named_in_the_message",
+      "contracts": [
+        "control.attachments-content",
+        "control.attachments-message"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.attachments.save_files",
+        "grant_agent.connected_sessions.attachments.with_files"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_connected_attachments.py::test_files_are_saved_by_content_and_named_in_the_message"
+    },
+    {
+      "test": "tests/test_connected_attachments.py",
+      "case": "test_bad_or_oversized_files_are_refused",
+      "contracts": [
+        "control.attachments-content",
+        "control.attachments-message"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.attachments.save_files",
+        "grant_agent.connected_sessions.attachments.with_files"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_connected_attachments.py::test_bad_or_oversized_files_are_refused"
+    },
+    {
+      "test": "tests/test_context_import.py",
+      "case": "test_durable_selected_import_is_verified_and_loaded_into_bounded_packet",
+      "contracts": [
+        "control.import-upload",
+        "control.import-preview",
+        "control.import-selection",
+        "control.import-read",
+        "control.import-packet"
+      ],
+      "checkedAt": [
+        "grant_agent.context_import.import_selection",
+        "grant_agent.context_import.preview_export",
+        "grant_agent.context_import.read_import_selection",
+        "grant_agent.context_import.stage_upload",
+        "grant_agent.neyvia_runtime_invocation.build_selected_context_packet"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_import.py::test_durable_selected_import_is_verified_and_loaded_into_bounded_packet"
+    },
+    {
+      "test": "tests/test_context_import.py",
+      "case": "test_durable_selected_import_rejects_extra_or_foreign_rows",
+      "contracts": [
+        "control.import-upload",
+        "control.import-preview",
+        "control.import-selection",
+        "control.import-read",
+        "control.import-packet"
+      ],
+      "checkedAt": [
+        "grant_agent.context_import.import_selection",
+        "grant_agent.context_import.preview_export",
+        "grant_agent.context_import.read_import_selection",
+        "grant_agent.context_import.stage_upload",
+        "grant_agent.neyvia_runtime_invocation.build_selected_context_packet"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_import.py::test_durable_selected_import_rejects_extra_or_foreign_rows"
+    },
+    {
+      "test": "tests/test_context_import.py",
+      "case": "test_staged_browser_upload_is_generated_id_hash_bound_and_importable_without_path",
+      "contracts": [
+        "control.import-upload",
+        "control.import-preview",
+        "control.import-selection",
+        "control.import-read",
+        "control.import-packet"
+      ],
+      "checkedAt": [
+        "grant_agent.context_import.import_selection",
+        "grant_agent.context_import.preview_export",
+        "grant_agent.context_import.read_import_selection",
+        "grant_agent.context_import.stage_upload",
+        "grant_agent.neyvia_runtime_invocation.build_selected_context_packet"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_import.py::test_staged_browser_upload_is_generated_id_hash_bound_and_importable_without_path"
+    },
+    {
+      "test": "tests/test_context_import.py",
+      "case": "test_staged_codex_rollout_import_keeps_only_user_and_assistant_messages",
+      "contracts": [
+        "control.import-upload",
+        "control.import-preview",
+        "control.import-selection",
+        "control.import-read",
+        "control.import-packet"
+      ],
+      "checkedAt": [
+        "grant_agent.context_import.import_selection",
+        "grant_agent.context_import.preview_export",
+        "grant_agent.context_import.read_import_selection",
+        "grant_agent.context_import.stage_upload",
+        "grant_agent.neyvia_runtime_invocation.build_selected_context_packet"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_import.py::test_staged_codex_rollout_import_keeps_only_user_and_assistant_messages"
+    },
+    {
+      "test": "tests/test_codex_completion_contracts.py",
+      "case": "SelectiveContextImportTests.test_preview_redacts_credentials_and_imports_only_selected_items",
+      "contracts": [
+        "control.import-preview",
+        "control.import-selection"
+      ],
+      "checkedAt": [
+        "grant_agent.context_import.import_selection",
+        "grant_agent.context_import.preview_export"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_codex_completion_contracts.py::SelectiveContextImportTests.test_preview_redacts_credentials_and_imports_only_selected_items"
+    },
+    {
+      "test": "tests/test_context_microkernel.py",
+      "case": "ContextMicrokernelTests.test_durable_bundle_alias_and_cache_keys",
+      "contracts": [
+        "control.context-bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.context_engine.DurableContextEngine.bundle"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_microkernel.py::ContextMicrokernelTests.test_durable_bundle_alias_and_cache_keys"
+    },
+    {
+      "test": "tests/test_context_microkernel.py",
+      "case": "ContextMicrokernelTests.test_model_visible_context_prefers_engine",
+      "contracts": [
+        "control.context-cache",
+        "control.context-cache-wire",
+        "control.context-bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.context_engine.DurableContextEngine.bundle",
+        "grant_agent.context_microkernel.assemble_prompt_with_cache",
+        "grant_agent.context_microkernel.emit_prompt_cache_control",
+        "grant_agent.openai_adapter.apply_attached_cache_control"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_microkernel.py::ContextMicrokernelTests.test_model_visible_context_prefers_engine"
+    },
+    {
+      "test": "tests/test_context_microkernel.py",
+      "case": "ContextMicrokernelTests.test_metrics_receipt_fields",
+      "contracts": [
+        "control.context-metrics"
+      ],
+      "checkedAt": [
+        "grant_agent.context_microkernel.ContextTurnMetrics.write_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_microkernel.py::ContextMicrokernelTests.test_metrics_receipt_fields"
+    },
+    {
+      "test": "tests/test_context_microkernel.py",
+      "case": "ContextMicrokernelTests.test_cache_control_emission_openai_and_unknown",
+      "contracts": [
+        "control.context-cache",
+        "control.context-cache-wire",
+        "control.context-bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.context_engine.DurableContextEngine.bundle",
+        "grant_agent.context_microkernel.assemble_prompt_with_cache",
+        "grant_agent.context_microkernel.emit_prompt_cache_control",
+        "grant_agent.openai_adapter.apply_attached_cache_control"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_microkernel.py::ContextMicrokernelTests.test_cache_control_emission_openai_and_unknown"
+    },
+    {
+      "test": "tests/test_context_microkernel.py",
+      "case": "ContextMicrokernelTests.test_openai_adapter_as_dict_puts_prompt_cache_key_on_wire",
+      "contracts": [
+        "control.context-cache",
+        "control.context-cache-wire",
+        "control.context-bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.context_engine.DurableContextEngine.bundle",
+        "grant_agent.context_microkernel.assemble_prompt_with_cache",
+        "grant_agent.context_microkernel.emit_prompt_cache_control",
+        "grant_agent.openai_adapter.apply_attached_cache_control"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_microkernel.py::ContextMicrokernelTests.test_openai_adapter_as_dict_puts_prompt_cache_key_on_wire"
+    },
+    {
+      "test": "tests/test_context_microkernel.py",
+      "case": "ContextMicrokernelTests.test_prompt_with_cache_flattens_provider_fields",
+      "contracts": [
+        "control.context-cache",
+        "control.context-cache-wire",
+        "control.context-bundle"
+      ],
+      "checkedAt": [
+        "grant_agent.context_engine.DurableContextEngine.bundle",
+        "grant_agent.context_microkernel.assemble_prompt_with_cache",
+        "grant_agent.context_microkernel.emit_prompt_cache_control",
+        "grant_agent.openai_adapter.apply_attached_cache_control"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_microkernel.py::ContextMicrokernelTests.test_prompt_with_cache_flattens_provider_fields"
+    },
+    {
+      "test": "tests/test_context_microkernel.py",
+      "case": "ContextMicrokernelTests.test_progressive_tools_schemas_off_by_default",
+      "contracts": [
+        "control.tools-deferred-schema"
+      ],
+      "checkedAt": [
+        "grant_agent.progressive_tools.ProgressiveToolSurface.describe",
+        "grant_agent.progressive_tools.ProgressiveToolSurface.list_tools"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_context_microkernel.py::ContextMicrokernelTests.test_progressive_tools_schemas_off_by_default"
+    },
+    {
+      "test": "tests/test_agent_vision.py",
+      "case": "test_image_tool_delivers_pixels_and_chat_transport_preserves_them",
+      "contracts": [
+        "control.vision-pixels",
+        "control.vision-wire"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_vision.chat_completions_vision_input",
+        "grant_agent.neyvia_agent.build_neyvia_agent"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_vision.py::test_image_tool_delivers_pixels_and_chat_transport_preserves_them",
+      "migrationNote": "Original eager tool lookup is obsolete: public agent construction defers neyvia_view_image until neyvia_tools_describe binds it. Startup proves describe -> bind -> workspace PNG pixels -> Chat Completions user image wire, unchanged source input, reasoning route and outside-path refusal. See grant_agent.neyvia_agent.build_neyvia_agent, grant_agent.progressive_tools.ProgressiveToolSurface and agents chapter proofs_a_control."
+    },
+    {
+      "test": "tests/test_agent_vision.py",
+      "case": "test_vision_filter_keeps_only_two_latest_images_on_the_wire",
+      "contracts": [
+        "control.vision-wire"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_vision.chat_completions_vision_input"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_vision.py::test_vision_filter_keeps_only_two_latest_images_on_the_wire",
+      "migrationNote": "Original eager tool lookup is obsolete: public agent construction defers neyvia_view_image until neyvia_tools_describe binds it. Startup proves describe -> bind -> workspace PNG pixels -> Chat Completions user image wire, unchanged source input, reasoning route and outside-path refusal. See grant_agent.neyvia_agent.build_neyvia_agent, grant_agent.progressive_tools.ProgressiveToolSurface and agents chapter proofs_a_control."
+    },
+    {
+      "test": "tests/test_agent_submission_gate.py",
+      "case": "AgentSubmissionGateTests.test_accepts_receipt_bound_to_current_source_and_baseline",
+      "contracts": [
+        "control.submission-verdict",
+        "control.submission-source-phase",
+        "control.submission-lineage",
+        "control.submission-counts",
+        "control.submission-git-delta"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_submission_gate.py::AgentSubmissionGateTests.test_accepts_receipt_bound_to_current_source_and_baseline"
+    },
+    {
+      "test": "tests/test_agent_submission_gate.py",
+      "case": "AgentSubmissionGateTests.test_rejects_hash_drift_missing_files_and_out_of_phase_files",
+      "contracts": [
+        "control.submission-source-phase"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_submission_gate.py::AgentSubmissionGateTests.test_rejects_hash_drift_missing_files_and_out_of_phase_files"
+    },
+    {
+      "test": "tests/test_agent_submission_gate.py",
+      "case": "AgentSubmissionGateTests.test_rejects_stale_nested_proofs_contradictory_counts_and_unproven_claims",
+      "contracts": [
+        "control.submission-lineage",
+        "control.submission-counts"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_submission_gate.py::AgentSubmissionGateTests.test_rejects_stale_nested_proofs_contradictory_counts_and_unproven_claims"
+    },
+    {
+      "test": "tests/test_agent_submission_gate.py",
+      "case": "AgentSubmissionGateTests.test_rejects_forbidden_file_unstable_before_hash_and_command_contradiction",
+      "contracts": [
+        "control.submission-source-phase",
+        "control.submission-counts"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_submission_gate.py::AgentSubmissionGateTests.test_rejects_forbidden_file_unstable_before_hash_and_command_contradiction"
+    },
+    {
+      "test": "tests/test_agent_submission_gate.py",
+      "case": "AgentSubmissionGateTests.test_accepts_deleted_file_and_requires_the_exact_in_scope_git_delta",
+      "contracts": [
+        "control.submission-git-delta",
+        "control.submission-source-phase"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_submission_gate.py::AgentSubmissionGateTests.test_accepts_deleted_file_and_requires_the_exact_in_scope_git_delta"
+    },
+    {
+      "test": "tests/test_agent_submission_gate.py",
+      "case": "AgentSubmissionGateTests.test_rejects_secret_like_receipt_material_without_echoing_it",
+      "contracts": [
+        "control.submission-secrets"
+      ],
+      "checkedAt": [
+        "grant_agent.agent_submission_gate.validate_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "case_id": "tests/test_agent_submission_gate.py::AgentSubmissionGateTests.test_rejects_secret_like_receipt_material_without_echoing_it"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_consecutive_deltas_merge_and_other_events_keep_their_order",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_consecutive_deltas_merge_and_other_events_keep_their_order",
+      "contracts": [
+        "control.stream-order"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.StreamCoalescer._emit"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_pending_text_is_released_once_its_window_passes",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_pending_text_is_released_once_its_window_passes",
+      "contracts": [
+        "control.stream-order"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.StreamCoalescer._emit"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_merged_text_stays_within_one_stream_frame",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_merged_text_stays_within_one_stream_frame",
+      "contracts": [
+        "control.stream-order"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.StreamCoalescer._emit"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_append_keeps_a_supplied_timestamp",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_append_keeps_a_supplied_timestamp",
+      "contracts": [
+        "control.stream-frame"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.append_chat_stream"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_last_stream_event_reads_from_the_end_of_a_long_stream",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_last_stream_event_reads_from_the_end_of_a_long_stream",
+      "contracts": [
+        "control.stream-tail"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.last_stream_event"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_runtime_relay_merges_deltas_without_holding_them_through_a_pause",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_runtime_relay_merges_deltas_without_holding_them_through_a_pause",
+      "contracts": [
+        "control.stream-relay",
+        "control.stream-order"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.StreamCoalescer._emit",
+        "grant_agent.web_backend._communicate_runtime_events"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_runtime_relay_releases_text_during_a_pause",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_runtime_relay_releases_text_during_a_pause",
+      "contracts": [
+        "control.stream-relay",
+        "control.stream-order"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_stream.StreamCoalescer._emit",
+        "grant_agent.web_backend._communicate_runtime_events"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_a_recorded_result_leaves_out_the_session_window",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_a_recorded_result_leaves_out_the_session_window",
+      "contracts": [
+        "control.result-retention"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_run_control.record_chat_run_result"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_compacting_recorded_results_rewrites_only_old_window_copies",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_compacting_recorded_results_rewrites_only_old_window_copies",
+      "contracts": [
+        "control.result-compaction",
+        "control.result-retention"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_run_control._compartment_without_session_window",
+        "grant_agent.chat_run_control.record_chat_run_result"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_an_oversized_result_drops_the_session_copy_first",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_an_oversized_result_drops_the_session_copy_first",
+      "contracts": [
+        "control.result-retention"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_run_control.record_chat_run_result"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_a_result_too_large_for_its_receipt_still_keeps_the_usage",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_a_result_too_large_for_its_receipt_still_keeps_the_usage",
+      "contracts": [
+        "control.result-retention"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_run_control.record_chat_run_result"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_chat_stream_plumbing.py",
+      "case": "test_a_result_within_bounds_is_kept_whole",
+      "case_id": "tests/test_chat_stream_plumbing.py::test_a_result_within_bounds_is_kept_whole",
+      "contracts": [
+        "control.result-retention"
+      ],
+      "checkedAt": [
+        "grant_agent.chat_run_control.record_chat_run_result"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_capability_snapshot_models_local_and_nas_hosts_with_sync_status",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_capability_snapshot_models_local_and_nas_hosts_with_sync_status",
+      "contracts": [
+        "control.bridge-snapshot"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.build_dual_path_bridge_snapshot"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_permission_gate_denies_unapproved_local_file_scope_and_records_denial",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_permission_gate_denies_unapproved_local_file_scope_and_records_denial",
+      "contracts": [
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_manual_github_bridge_scenario_requires_local_gh_git_and_approval",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_manual_github_bridge_scenario_requires_local_gh_git_and_approval",
+      "contracts": [
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_command_gate_marks_missing_permission_as_pending_approval",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_command_gate_marks_missing_permission_as_pending_approval",
+      "contracts": [
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_command_gate_denies_unsafe_shell_operator_even_if_prefix_matches",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_command_gate_denies_unsafe_shell_operator_even_if_prefix_matches",
+      "contracts": [
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_surface_inspection_requires_surface_permission_grant",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_surface_inspection_requires_surface_permission_grant",
+      "contracts": [
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_direction_and_source_host_must_match_bridge_lane",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_direction_and_source_host_must_match_bridge_lane",
+      "contracts": [
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_operation_receipt_links_manual_github_bridge_steps_with_host_status_and_audit",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_operation_receipt_links_manual_github_bridge_steps_with_host_status_and_audit",
+      "contracts": [
+        "control.bridge-receipt",
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.build_bridge_operation_receipt",
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_operation_receipt_surfaces_pending_and_denied_steps_without_executing",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_operation_receipt_surfaces_pending_and_denied_steps_without_executing",
+      "contracts": [
+        "control.bridge-receipt",
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.build_bridge_operation_receipt",
+        "grant_agent.connected_device_bridge.evaluate_bridge_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_persisted_permission_grants_turn_manual_github_bridge_from_pending_to_approved",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_persisted_permission_grants_turn_manual_github_bridge_from_pending_to_approved",
+      "contracts": [
+        "control.bridge-snapshot",
+        "control.bridge-grants",
+        "control.bridge-authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.build_dual_path_bridge_snapshot",
+        "grant_agent.connected_device_bridge.evaluate_bridge_action",
+        "grant_agent.connected_device_bridge.save_bridge_permission_grants"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_device_bridge.py",
+      "case": "ConnectedDeviceBridgeTests.test_live_review_structured_feedback_receipt_preserves_handoff_context",
+      "case_id": "tests/test_connected_device_bridge.py::ConnectedDeviceBridgeTests.test_live_review_structured_feedback_receipt_preserves_handoff_context",
+      "contracts": [
+        "control.bridge-feedback"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_device_bridge.build_live_review_structured_feedback_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_scoped_autonomy_lease_approves_repeated_in_scope_action_without_prompt",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_scoped_autonomy_lease_approves_repeated_in_scope_action_without_prompt",
+      "contracts": [
+        "control.execution-result"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.execute_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_prepare_execution_scope_direct_marks_local_workspace",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_prepare_execution_scope_direct_marks_local_workspace",
+      "contracts": [
+        "control.execution-scope"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.prepare_execution_scope"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_prepare_execution_scope_creates_isolated_worktree",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_prepare_execution_scope_creates_isolated_worktree",
+      "contracts": [
+        "control.execution-scope"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.prepare_execution_scope"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_prepare_execution_scope_uses_filesystem_copy_when_git_unavailable",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_prepare_execution_scope_uses_filesystem_copy_when_git_unavailable",
+      "contracts": [
+        "control.execution-cleanup",
+        "control.execution-scope"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.cleanup_execution_scope",
+        "grant_agent.action_executor.prepare_execution_scope"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_cleanup_execution_scope_removes_isolated_worktree_root",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_cleanup_execution_scope_removes_isolated_worktree_root",
+      "contracts": [
+        "control.execution-cleanup",
+        "control.execution-scope"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.cleanup_execution_scope",
+        "grant_agent.action_executor.prepare_execution_scope"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_file_patch_executes_under_hands_free_policy",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_file_patch_executes_under_hands_free_policy",
+      "contracts": [
+        "control.execution-proposal",
+        "control.execution-result"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.build_action_proposal",
+        "grant_agent.action_executor.execute_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_verify_words_in_objective_do_not_turn_non_verify_step_into_test_run",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_verify_words_in_objective_do_not_turn_non_verify_step_into_test_run",
+      "contracts": [
+        "control.execution-proposal"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.build_action_proposal"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_verify_words_in_objective_do_not_route_execute_step_to_verifier",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_verify_words_in_objective_do_not_route_execute_step_to_verifier",
+      "contracts": [
+        "control.execution-phase"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.delegated_cycle_phase_for_step"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_execute_action_timeout_returns_failed_record_not_exception",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_execute_action_timeout_returns_failed_record_not_exception",
+      "contracts": [
+        "control.execution-result"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.execute_action"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_balanced_delegation_does_not_hide_approval_gated_verification",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_balanced_delegation_does_not_hide_approval_gated_verification",
+      "contracts": [
+        "control.execution-proposal"
+      ],
+      "checkedAt": [
+        "grant_agent.action_executor.build_action_proposal"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_reading_the_page_is_routine",
+      "case_id": "tests/test_connected_chrome.py::test_reading_the_page_is_routine",
+      "contracts": [
+        "control.chrome-policy"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.assess"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_destructive_controls_require_approval",
+      "case_id": "tests/test_connected_chrome.py::test_destructive_controls_require_approval",
+      "contracts": [
+        "control.chrome-policy"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.assess"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_billable_controls_require_approval",
+      "case_id": "tests/test_connected_chrome.py::test_billable_controls_require_approval",
+      "contracts": [
+        "control.chrome-policy"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.assess"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_unlabelled_click_is_not_taken_unattended",
+      "case_id": "tests/test_connected_chrome.py::test_unlabelled_click_is_not_taken_unattended",
+      "contracts": [
+        "control.chrome-policy"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.assess"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_approval_cannot_be_replayed_against_a_different_action",
+      "case_id": "tests/test_connected_chrome.py::test_approval_cannot_be_replayed_against_a_different_action",
+      "contracts": [
+        "control.chrome-grant",
+        "control.chrome-policy"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.assess",
+        "grant_agent.connected_chrome_policy.ensure_approved"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_missing_approval_is_refused",
+      "case_id": "tests/test_connected_chrome.py::test_missing_approval_is_refused",
+      "contracts": [
+        "control.chrome-grant",
+        "control.chrome-policy"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.assess",
+        "grant_agent.connected_chrome_policy.ensure_approved"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_sign_in_page_is_reported_as_signed_out",
+      "case_id": "tests/test_connected_chrome.py::test_sign_in_page_is_reported_as_signed_out",
+      "contracts": [
+        "control.console-observation"
+      ],
+      "checkedAt": [
+        "grant_agent.thunder_compute._assess_authentication",
+        "grant_agent.thunder_compute._extract_instances"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_unrecognisable_page_does_not_guess",
+      "case_id": "tests/test_connected_chrome.py::test_unrecognisable_page_does_not_guess",
+      "contracts": [
+        "control.console-observation"
+      ],
+      "checkedAt": [
+        "grant_agent.thunder_compute._assess_authentication",
+        "grant_agent.thunder_compute._extract_instances"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_instance_rows_are_extracted_with_their_provenance",
+      "case_id": "tests/test_connected_chrome.py::test_instance_rows_are_extracted_with_their_provenance",
+      "contracts": [
+        "control.console-observation"
+      ],
+      "checkedAt": [
+        "grant_agent.thunder_compute._assess_authentication",
+        "grant_agent.thunder_compute._extract_instances"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_project_memory_round_trips_and_rejects_unknown_fields",
+      "case_id": "tests/test_connected_chrome.py::test_project_memory_round_trips_and_rejects_unknown_fields",
+      "contracts": [
+        "control.console-memory"
+      ],
+      "checkedAt": [
+        "grant_agent.thunder_compute.save_project_memory"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_chrome.py",
+      "case": "test_live_console_requires_approval_then_verifies",
+      "case_id": "tests/test_connected_chrome.py::test_live_console_requires_approval_then_verifies",
+      "contracts": [
+        "control.chrome-live-action",
+        "control.chrome-policy",
+        "control.chrome-grant"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_chrome_policy.assess",
+        "grant_agent.connected_chrome_policy.ensure_approved",
+        "grant_agent.thunder_compute.execute_proposal"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_browser_preflight.py",
+      "case": "BrowserPreflightTests.test_preflight_reports_missing_chrome_shared_library",
+      "case_id": "tests/test_browser_preflight.py::BrowserPreflightTests.test_preflight_reports_missing_chrome_shared_library",
+      "contracts": [
+        "control.browser-preflight"
+      ],
+      "checkedAt": [
+        "grant_agent.browser_preflight.build_browser_dependency_preflight"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "migrationNote": "Original monkeypatched subprocess outcomes are now observed from a finite compiled diagnostic protocol executable. This proves discovery/diagnostic/env/dry-plan semantics, not a Linux shared-library installation or browser performance; real Chrome is independently exercised in connected_chrome."
+    },
+    {
+      "test": "tests/test_browser_preflight.py",
+      "case": "BrowserPreflightTests.test_repair_dry_run_writes_planned_commands",
+      "case_id": "tests/test_browser_preflight.py::BrowserPreflightTests.test_repair_dry_run_writes_planned_commands",
+      "contracts": [
+        "control.browser-repair",
+        "control.browser-preflight"
+      ],
+      "checkedAt": [
+        "grant_agent.browser_preflight.build_browser_dependency_preflight",
+        "grant_agent.browser_preflight.repair_browser_dependencies"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "migrationNote": "Original monkeypatched subprocess outcomes are now observed from a finite compiled diagnostic protocol executable. This proves discovery/diagnostic/env/dry-plan semantics, not a Linux shared-library installation or browser performance; real Chrome is independently exercised in connected_chrome."
+    },
+    {
+      "test": "tests/test_browser_preflight.py",
+      "case": "BrowserPreflightTests.test_preflight_finds_runtime_browser_cache_from_release_root",
+      "case_id": "tests/test_browser_preflight.py::BrowserPreflightTests.test_preflight_finds_runtime_browser_cache_from_release_root",
+      "contracts": [
+        "control.browser-preflight"
+      ],
+      "checkedAt": [
+        "grant_agent.browser_preflight.build_browser_dependency_preflight"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "migrationNote": "Original monkeypatched subprocess outcomes are now observed from a finite compiled diagnostic protocol executable. This proves discovery/diagnostic/env/dry-plan semantics, not a Linux shared-library installation or browser performance; real Chrome is independently exercised in connected_chrome."
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_claude_task_tools_fold_into_one_checklist_with_the_ids_claude_gave",
+      "case_id": "tests/test_connected_plan.py::test_claude_task_tools_fold_into_one_checklist_with_the_ids_claude_gave",
+      "contracts": [
+        "control.plan-transitions"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan.apply_op"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_todowrite_replaces_the_list_and_an_empty_list_clears_it",
+      "case_id": "tests/test_connected_plan.py::test_todowrite_replaces_the_list_and_an_empty_list_clears_it",
+      "contracts": [
+        "control.plan-transitions"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan.apply_op"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_codex_plans_come_from_the_live_event_and_from_the_rollout",
+      "case_id": "tests/test_connected_plan.py::test_codex_plans_come_from_the_live_event_and_from_the_rollout",
+      "contracts": [
+        "control.plan-transitions"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan.apply_op"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_plan_limits_read_codex_windows_and_claude_fractions",
+      "case_id": "tests/test_connected_plan.py::test_plan_limits_read_codex_windows_and_claude_fractions",
+      "contracts": [
+        "control.plan-limits"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan_limits._save_claude",
+        "grant_agent.connected_sessions.plan_limits.codex_windows",
+        "grant_agent.connected_sessions.plan_limits.record_claude"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_dashboard_preserves_real_agent_calls_and_reply_activity",
+      "case_id": "tests/test_connected_plan.py::test_dashboard_preserves_real_agent_calls_and_reply_activity",
+      "contracts": [
+        "control.plan-dashboard"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.dashboard._row"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_claude_plan_recovers_history_ids_errors_and_late_results",
+      "case_id": "tests/test_connected_plan.py::test_claude_plan_recovers_history_ids_errors_and_late_results",
+      "contracts": [
+        "control.plan-history",
+        "control.plan-transitions"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.claude_transcript.ItemStore.plan",
+        "grant_agent.connected_sessions.plan.apply_op"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_claude_old_todowrite_clears_and_paging_never_replays_taskcreate",
+      "case_id": "tests/test_connected_plan.py::test_claude_old_todowrite_clears_and_paging_never_replays_taskcreate",
+      "contracts": [
+        "control.plan-history",
+        "control.plan-transitions"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.claude_transcript.ItemStore.plan",
+        "grant_agent.connected_sessions.plan.apply_op"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_claude_limits_restart_in_service_root_and_stream_uses_that_root",
+      "case_id": "tests/test_connected_plan.py::test_claude_limits_restart_in_service_root_and_stream_uses_that_root",
+      "contracts": [
+        "control.plan-limits"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan_limits._save_claude",
+        "grant_agent.connected_sessions.plan_limits.codex_windows",
+        "grant_agent.connected_sessions.plan_limits.record_claude"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_connected_plan.py",
+      "case": "test_agents_manual_is_discoverable_and_loadable",
+      "case_id": "tests/test_connected_plan.py::test_agents_manual_is_discoverable_and_loadable",
+      "contracts": [
+        "control.agents-manual"
+      ],
+      "checkedAt": [
+        "grant_agent.neyvia_manuals.call"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "migrationNote": "Original None service and agents-parenthesis prompt format are obsolete. Current manual.load requires a rooted service and live native schema registry; startup loads agents through that production seam with exact digest/text and current prompt_index exposure."
+    },
+    {
+      "test": "tests/test_cu_acceptance_neyvia.py",
+      "case": "test_cu_acceptance_writes_compact_v2_receipt",
+      "case_id": "tests/test_cu_acceptance_neyvia.py::test_cu_acceptance_writes_compact_v2_receipt",
+      "contracts": [
+        "control.cu-receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.cu_acceptance.write_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_cu_acceptance_neyvia.py",
+      "case": "test_legacy_smoke_names_are_compatibility_aliases",
+      "case_id": "tests/test_cu_acceptance_neyvia.py::test_legacy_smoke_names_are_compatibility_aliases",
+      "contracts": [
+        "control.cu-aliases"
+      ],
+      "checkedAt": [
+        "grant_agent.cu_acceptance.run_flow"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_cu_acceptance_neyvia.py",
+      "case": "test_missing_server_is_a_receipted_failure",
+      "case_id": "tests/test_cu_acceptance_neyvia.py::test_missing_server_is_a_receipted_failure",
+      "contracts": [
+        "control.cu-verdict",
+        "control.cu-receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.cu_acceptance.run_suite",
+        "grant_agent.cu_acceptance.write_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_cu_acceptance_neyvia.py",
+      "case": "test_standalone_suite_never_converts_unavailable_to_pass",
+      "case_id": "tests/test_cu_acceptance_neyvia.py::test_standalone_suite_never_converts_unavailable_to_pass",
+      "contracts": [
+        "control.cu-verdict",
+        "control.cu-receipt"
+      ],
+      "checkedAt": [
+        "grant_agent.cu_acceptance.run_suite",
+        "grant_agent.cu_acceptance.write_receipt"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_cu_acceptance_neyvia.py",
+      "case": "test_cli_lists_canonical_flows",
+      "case_id": "tests/test_cu_acceptance_neyvia.py::test_cli_lists_canonical_flows",
+      "contracts": [
+        "control.cu-aliases"
+      ],
+      "checkedAt": [
+        "grant_agent.cu_acceptance.run_flow"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check"
+    },
+    {
+      "test": "tests/test_cu_acceptance_neyvia.py",
+      "case": "test_product_gate_docs_are_standalone",
+      "case_id": "tests/test_cu_acceptance_neyvia.py::test_product_gate_docs_are_standalone",
+      "contracts": [
+        "control.cu-recovery"
+      ],
+      "checkedAt": [
+        "grant_agent.cu_acceptance.skip_reason_no_server"
+      ],
+      "selfCheck": "grant_agent.proofs_a_control.self_check",
+      "migrationNote": "Original module-string help assertion now replaced by actual explicit-port missing-server run_flow responses and durable receipts that expose the standalone recovery commands and default UI hint. Only48465 is probed; mentioning the historical default1420 in instructions does not contact it."
+    }
+  ],
+  "frontier": [
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_runtime_delegate_returns_normalized_session",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_runtime_delegate_returns_normalized_session",
+      "reason": "Original asserts actual runtime supervisor/provider delegation session normalization or launch routing. User prohibits supervisor/provider credential access; no public finite transport injection seam exists without patching runtime adapter maps. Proposal/local scope proofs do not replace delegated execution."
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_runtime_delegate_uses_route_selected_runtime_not_mission_default",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_runtime_delegate_uses_route_selected_runtime_not_mission_default",
+      "reason": "Original asserts actual runtime supervisor/provider delegation session normalization or launch routing. User prohibits supervisor/provider credential access; no public finite transport injection seam exists without patching runtime adapter maps. Proposal/local scope proofs do not replace delegated execution."
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_runtime_delegate_preserves_worktree_execution_truth",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_runtime_delegate_preserves_worktree_execution_truth",
+      "reason": "Original asserts actual runtime supervisor/provider delegation session normalization or launch routing. User prohibits supervisor/provider credential access; no public finite transport injection seam exists without patching runtime adapter maps. Proposal/local scope proofs do not replace delegated execution."
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_runtime_delegate_preserves_planner_phase_for_delegated_launch",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_runtime_delegate_preserves_planner_phase_for_delegated_launch",
+      "reason": "Original asserts actual runtime supervisor/provider delegation session normalization or launch routing. User prohibits supervisor/provider credential access; no public finite transport injection seam exists without patching runtime adapter maps. Proposal/local scope proofs do not replace delegated execution."
+    }
+  ],
+  "pending": [
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_runtime_delegate_returns_normalized_session",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_runtime_delegate_returns_normalized_session",
+      "reason": "Real runtime_delegate launch uses the forbidden supervisor/global provider boundary; isolated executor actions are proven, but the actual delegated provider route, worktree and planner phase require separately authorized runtime execution."
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_runtime_delegate_uses_route_selected_runtime_not_mission_default",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_runtime_delegate_uses_route_selected_runtime_not_mission_default",
+      "reason": "Real runtime_delegate launch uses the forbidden supervisor/global provider boundary; isolated executor actions are proven, but the actual delegated provider route, worktree and planner phase require separately authorized runtime execution."
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_runtime_delegate_preserves_worktree_execution_truth",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_runtime_delegate_preserves_worktree_execution_truth",
+      "reason": "Real runtime_delegate launch uses the forbidden supervisor/global provider boundary; isolated executor actions are proven, but the actual delegated provider route, worktree and planner phase require separately authorized runtime execution."
+    },
+    {
+      "test": "tests/test_action_executor.py",
+      "case": "ActionExecutorTests.test_runtime_delegate_preserves_planner_phase_for_delegated_launch",
+      "case_id": "tests/test_action_executor.py::ActionExecutorTests.test_runtime_delegate_preserves_planner_phase_for_delegated_launch",
+      "reason": "Real runtime_delegate launch uses the forbidden supervisor/global provider boundary; isolated executor actions are proven, but the actual delegated provider route, worktree and planner phase require separately authorized runtime execution."
+    }
+  ]
+,
+  "portRoles": [48469, 48466, 48465],
+  "portPhases": [[48469], [48466, 48469], [48465]],
+  "asyncioLoops": 6
+}

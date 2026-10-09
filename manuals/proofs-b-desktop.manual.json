@@ -1,0 +1,315 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "proofs-b-desktop",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-b-desktop",
+    "manifests": [
+      "config/proofs/proofs-b-desktop.json"
+    ],
+    "startup": {
+      "procedures": [
+        "debugger-bundle",
+        "document-ingestion",
+        "gateway-routing",
+        "demo-and-dashboard",
+        "delivery-journal",
+        "bridge-allowlist"
+      ],
+      "runner": "grant_agent.proofs_b_desktop.self_check",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.debugger_bundle.write_debugger_bundle",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Returned debugger manifest equals durable state; copied evidence bytes match source, missing evidence is explicit, snapshots are compact, and every bundle includes a next action.",
+        "id": "desktop.debugger.bundle",
+        "impact": [
+          "diagnostic artifacts",
+          "debugger manifest"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.debugger_bundle.build_diagnostic_summary",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Diagnostic summaries use the newest concrete failing receipt; absent evidence is insufficient_evidence with no invented failure or proof paths; proof links are unique and bounded.",
+        "id": "desktop.debugger.summary",
+        "impact": [
+          "operator failure diagnosis"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.doc_ingestion.ingest_docs",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Every requested document receives a bounded successful observation or explicit error; docs_evidence.json equals the returned ordered observations.",
+        "id": "desktop.docs.evidence",
+        "impact": [
+          "document evidence",
+          "session observer"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.desktop_gateway.record_desktop_gateway_heartbeat",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "A gateway heartbeat is durably recorded and agrees with the local accelerator registry capabilities, unlimited concurrency and workspace mapping.",
+        "id": "desktop.gateway.heartbeat",
+        "impact": [
+          "gateway availability",
+          "cluster registry"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.desktop_gateway.route_gateway_job",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Gateway routing preserves all required capabilities, selects a capable online PC, leaves ordinary work on the controller, and queues missing gateway work as a proof gap.",
+        "id": "desktop.gateway.route",
+        "impact": [
+          "job routing",
+          "proof availability"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.desktop_gateway.reconcile_disappeared_gateway_jobs",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Lost gateway jobs are durably queued with a proof-gap explanation and cluster event rather than being declared failed.",
+        "id": "desktop.gateway.reconcile",
+        "impact": [
+          "gateway job lifecycle",
+          "recovery queue"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.desktop_gateway.record_gateway_event",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Gateway evidence is written to the event journal and, for a job, mirrored into the cluster event history with unchanged payload.",
+        "id": "desktop.gateway.event",
+        "impact": [
+          "gateway event observers",
+          "job evidence"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.demo_runner.compare_training",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Scores, remaining work and verification-failure deltas derive from the supplied runs; improvement requires no negative delta in any dimension.",
+        "id": "desktop.demo.comparison",
+        "impact": [
+          "training comparison claims"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.demo_runner.run_adversarial_probe",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "The local deterministic pattern probe records attempts whose outcomes determine the exact count, resistance and threshold status; this is not a live model resilience claim.",
+        "id": "desktop.demo.probe",
+        "impact": [
+          "local pattern probe",
+          "defensive benchmark report"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.demo_runner.export_report_bundle",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Exports preserve findings and before/after/comparison evidence; report, panel and manifest exist and raw probe prompts are replaced by redaction text with their original hashes and lengths.",
+        "id": "desktop.demo.export",
+        "impact": [
+          "demo export bundle",
+          "export payload confidentiality"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.dashboard.write_proof_dashboard",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "The generated dashboard contains parseable HTML navigation and embedded evidence rows identical to current valid proof bundles; corrupt bundles are skipped. Rendered interactions are a separate frontier.",
+        "id": "desktop.dashboard.artifact",
+        "impact": [
+          "generated dashboard artifact",
+          "bundle evidence projection"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.delivery_receipt._append_receipt",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Appending under an interprocess journal lease preserves retained prior rows and records exactly the new receipt, capped at 500 journal lines.",
+        "id": "delivery.append",
+        "impact": [
+          "delivery audit log",
+          "overnight retention"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.delivery_receipt._update_last_receipt",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Updating under the journal lease matches receipt identity, preserves unrelated and malformed rows, and appends delayed missing receipts within the retention cap.",
+        "id": "delivery.update",
+        "impact": [
+          "delivery identity",
+          "late recovery",
+          "unrelated progress audit"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.delivery_receipt._update_receipt",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "The legacy tail update is serialized with all receipt mutators and preserves preceding retained rows; it does not promise identity-based replacement.",
+        "id": "delivery.tail-update",
+        "impact": [
+          "legacy provider receipt audit"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.delivery_receipt.acknowledge_delivery_receipt",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Acknowledgement under the journal lease changes only eligible matching receipt status/time; terminal errors, unknown identifiers and corrupt rows stay unchanged.",
+        "id": "delivery.ack",
+        "impact": [
+          "browser acknowledgements",
+          "terminal transport errors"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.delivery_receipt.load_receipts",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Receipt observations under the journal lease skip unreadable rows, retain newest-last order, and filter a mission before applying the limit.",
+        "id": "delivery.observe",
+        "impact": [
+          "browser polling",
+          "mission delivery observer"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.delivery_receipt.record_browser_delivery_receipt",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Local browser progress is recorded as delivered to control-room with unchanged event kind/message and no token in a delivery URL.",
+        "id": "delivery.browser",
+        "impact": [
+          "browser progress",
+          "local delivery receipt"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.delivery_receipt.send_approval_escalation_receipt",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Disabled or unconfigured escalation persists an explicit skipped receipt and reason; this declaration does not claim real provider delivery.",
+        "id": "delivery.skipped",
+        "impact": [
+          "approval audit",
+          "configuration failures"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.delivery_receipt._format_telegram_message",
+          "grant_agent.proofs_b_desktop.check"
+        ],
+        "claim": "Telegram HTML escapes all caller-controlled mission identity, body and note while retaining only the fixed approval/code markup.",
+        "id": "delivery.message",
+        "impact": [
+          "notification text",
+          "HTML control characters"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.desktop_bridge.dispatch_desktop_command"
+        ],
+        "claim": "Desktop commands outside the product allow-list are rejected before root resolution, policy installation, backend construction or forwarding.",
+        "id": "desktop.bridge.allowlist",
+        "impact": [
+          "desktop IPC authority"
+        ],
+        "phase": "pre"
+      }
+    ]
+  },
+  "schemas": {},
+  "chapters": {
+    "proofs-b-desktop": {
+      "title": "PROOFS-b desktop evidence, gateway lifecycle and local delivery journals",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A generated HTML artifact or local deterministic pattern probe is mistaken for rendered desktop behavior or a real provider run.",
+          "recovery": "Use the recorded artifact boundary; keep native UI and provider journeys in frontier until their real runtime is observed."
+        },
+        {
+          "failure": "Lock metadata was refreshed without capturing matching package license evidence.",
+          "recovery": "Keep the inventory blocked and capture authoritative local package evidence before updating the bound hashes."
+        }
+      ],
+      "frontier": [
+        "Live transport retries and delivery-ready mission integration remain unobserved; CORS PATCH/HTTP limit journeys require the real HTTP boundary.",
+        "Current repository build correctly rejects stale Cargo and uv lock license evidence; no provenance is invented. Hoisting/identity ambiguity, reparse/source race and canonical release CLI need independent real journeys.",
+        "Durable conversation snapshot requires an isolated backend/native journey; bundled skill byte installation alone would not cover allowed image command dispatch.",
+        "75 broad source assertions remain unmigrated across Agent, Builder, Workbench, Settings, PWA, desktop/device, provider and release features. Installed Chrome has proved the separate bounded Harness browser chapter; that does not cover these journeys. Actual NAS/public/live-app targets are outside this task authority, and no dead-code inference comes from missing source strings."
+      ],
+      "guidance": [
+        "Contract checks execute at the listed production functions for direct, backend and native callers.",
+        "The registered proofs-b-desktop self-check uses a new local scratch root and no credentials, provider calls or device control.",
+        "Delivery audit mutations and observers share an interprocess journal lease; legacy tail update keeps its historical tail semantics.",
+        "Startup: neyvia verify --area proofs-b-desktop; machine receipt lists each observed contract and actual artifact path.",
+        "Feature actions and generated artifacts are the proof boundary; retained desktop/provider cases protect unobserved journeys."
+      ]
+    }
+  }
+}

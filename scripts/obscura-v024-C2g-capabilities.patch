@@ -1,0 +1,406 @@
+diff --git a/crates/obscura-js/src/ops.rs b/crates/obscura-js/src/ops.rs
+index d1863686..25ea5ee1 100644
+--- a/crates/obscura-js/src/ops.rs
++++ b/crates/obscura-js/src/ops.rs
+@@ -800,6 +800,38 @@ impl Drop for FetchNetworkGuard {
+     }
+ }
+ 
++struct FetchStreamResource {
++    response: RefCell<Option<reqwest::Response>>,
++    cancel: Rc<CancelHandle>,
++    total: Cell<usize>,
++    network: RefCell<FetchNetworkGuard>,
++    _in_flight: PageInFlightGuard,
++}
++impl Resource for FetchStreamResource {
++    fn close(self: Rc<Self>) { self.cancel.cancel(); self.response.borrow_mut().take(); }
++}
++#[op2]
++#[serde]
++async fn op_fetch_stream_read(state: Rc<RefCell<OpState>>, rid: u32) -> Result<serde_json::Value, deno_error::JsErrorBox> {
++    let resource = state.borrow().resource_table.get::<FetchStreamResource>(rid)
++        .map_err(|e| deno_error::JsErrorBox::generic(e.to_string()))?;
++    let mut response = resource.response.borrow_mut().take()
++        .ok_or_else(|| deno_error::JsErrorBox::type_error("Stream is already reading or closed"))?;
++    let chunk = response.chunk().or_cancel(resource.cancel.clone()).await
++        .map_err(|_| deno_error::JsErrorBox::generic("Stream cancelled"))?
++        .map_err(|e| deno_error::JsErrorBox::generic(e.to_string()))?;
++    if let Some(chunk) = chunk {
++        let total = resource.total.get() + chunk.len();
++        if total > fetch_max_body_bytes() { resource.close(); return Err(deno_error::JsErrorBox::generic("Stream exceeds body limit")); }
++        resource.total.set(total);
++        *resource.response.borrow_mut() = Some(response);
++        Ok(serde_json::json!({"done":false,"data":BASE64.encode(&chunk)}))
++    } else {
++        resource.network.borrow_mut().event = None;
++        if let Ok(resource) = state.borrow_mut().resource_table.take_any(rid) { resource.close(); }
++        Ok(serde_json::json!({"done":true}))
++    }
++}
+ struct FetchBodyResource {
+     body: RefCell<Option<AsyncResult<Vec<u8>>>>,
+     cancel: Rc<CancelHandle>,
+@@ -3984,7 +4016,7 @@ async fn fetch_url_inner(
+         {
+             req = req.header(
+                 "User-Agent",
+-                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
++                "NeyviaAgent/1.0 (Automation; Obscura)",
+             );
+         }
+ 
+@@ -4167,6 +4199,17 @@ async fn fetch_url_inner(
+         "opaque": opaque,
+         "headers": script_headers,
+     });
++    // SSE remains incremental: one awaited chunk per reader pull, bounded total
++    // bytes, normal routing/CORS/redirect checks and abort ownership retained.
++    if !internal_load && !opaque && resp_headers.get("content-type").is_some_and(|value| value.split(';').next().unwrap_or("").trim().eq_ignore_ascii_case("text/event-stream")) {
++        let rid = state.borrow_mut().resource_table.add(FetchStreamResource {
++            response: RefCell::new(Some(response)), cancel: cancel.unwrap_or_else(CancelHandle::new_rc),
++            total: Cell::new(0), network: RefCell::new(network_guard), _in_flight: _page_in_flight,
++        });
++        let mut metadata = metadata;
++        metadata["streamRid"] = serde_json::json!(rid);
++        return Ok(metadata.to_string());
++    }
+     // A resource must not form an ownership cycle with its OpState table.
+     let body_state = Rc::downgrade(&state);
+     let body = Box::pin(async move {
+@@ -6879,6 +6922,7 @@ pub fn build_extension() -> Extension {
+         op_fetch_cancel_handle(),
+         op_abort_signal_state(),
+         op_fetch_body(),
++        op_fetch_stream_read(),
+         op_get_cookies(),
+         op_set_cookie(),
+         op_navigate(),
+
+diff --git a/crates/obscura-js/src/runtime.rs b/crates/obscura-js/src/runtime.rs
+index 462153a3..1a1a8957 100644
+--- a/crates/obscura-js/src/runtime.rs
++++ b/crates/obscura-js/src/runtime.rs
+@@ -1466,6 +1466,14 @@ impl ObscuraJsRuntime {
+     }
+ 
+     /// Keep JavaScript media queries and CSS selection on the same preference.
++    pub fn set_dark(&mut self, dark: bool) {
++        #[cfg(feature = "render")]
++        {
++            let media = self.state.borrow().render_media.with_dark(dark);
++            self.set_render_media(media);
++        }
++        let _ = self.execute_runtime_script("<color-scheme>", format!("globalThis.__obscura_dark={dark};globalThis.__obscura_recompute_media_queries();"));
++    }
+     pub fn set_reduced_motion(&mut self, reduce: bool) {
+         #[cfg(feature = "render")]
+         {
+
+diff --git a/crates/obscura-js/js/bootstrap.js b/crates/obscura-js/js/bootstrap.js
+index be457daf..fc412b5e 100644
+--- a/crates/obscura-js/js/bootstrap.js
++++ b/crates/obscura-js/js/bootstrap.js
+@@ -609,7 +609,7 @@ function _rebaseCssUrls(css, baseUrl) {
+ function _cssImportApplies(media) {
+   const compact = media.replace(/\s+/g, "").toLowerCase();
+   if (!compact) return true;
+-  if (compact.includes("prefers-color-scheme:dark")) return false;
++  if (compact.includes("prefers-color-scheme:dark") && !globalThis.__obscura_dark) return false;
+   if (compact.includes("print")
+     && !compact.includes("screen")
+     && !compact.includes("all")) return false;
+@@ -4157,7 +4157,16 @@ class Element extends Node {
+       const link = this.tagName === 'A' ? this : (this.closest ? this.closest('a[href]') : null);
+       if (link) {
+         const href = link.getAttribute('href');
+-        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
++        if (href && !href.startsWith('javascript:')) {
++          const oldURL=location.href,next=new URL(href,oldURL);
++          const old=new URL(oldURL);
++          if(next.origin===old.origin&&next.pathname===old.pathname&&next.search===old.search&&next.hash){
++            history.pushState(null,'',next.href);
++            let id;try{id=decodeURIComponent(next.hash.slice(1));}catch(_){id=next.hash.slice(1);}
++            const target=document.getElementById(id)||Array.from(document.querySelectorAll('a[name]')).find(e=>e.getAttribute('name')===id);
++            if(target)target.scrollIntoView({block:'start',behavior:'instant'});
++            return;
++          }
+           location.assign(href);
+           return;
+         }
+@@ -7915,7 +7924,9 @@ async function _fetch(input, init = {}, resourceType = "Fetch") {
+     redirected: exposeRedirectMetadata && !!parsed.redirected,
+   });
+   _attachResponseAbort(response, signal);
+-  if (typeof parsed.bodyRid === 'number') {
++  if (typeof parsed.streamRid === 'number') {
++    response._fetchStream = {rid:parsed.streamRid,cleanup};
++  } else if (typeof parsed.bodyRid === 'number') {
+     // ponytail: preserve bounded one-chunk bodies; incremental delivery needs
+     // stream backpressure rather than eagerly queuing every network chunk.
+     const promise = __obscuraCore.ops.op_fetch_body(parsed.bodyRid)
+@@ -8423,11 +8434,21 @@ if (typeof Response === 'undefined') {
+               if (bytes.length) controller.enqueue(bytes);
+               controller.close();
+             };
++            if (this._fetchStream) return;
+             if (this._fetchBody) this._fetchBody.promise.then(deliver, error => controller.error(error));
+             else deliver(this._bodyBytes);
+           },
++          pull: async controller => {
++            if(!this._fetchStream)return;
++            try{
++              const chunk=await __obscuraCore.ops.op_fetch_stream_read(this._fetchStream.rid);
++              if(chunk.done){controller.close();this._fetchStream.cleanup();}
++              else controller.enqueue(_base64ToUint8Array(chunk.data));
++            }catch(error){controller.error(error);this._fetchStream.cleanup();}
++          },
+           cancel: () => {
+             this._bodyUsed = true;
++            if(this._fetchStream){__obscuraCore.ops.op_try_close(this._fetchStream.rid);this._fetchStream.cleanup();}
+             if (this._fetchBody && --this._fetchBody.resource.consumers === 0) {
+               __obscuraCore.ops.op_try_close(this._fetchBody.resource.rid);
+             }
+@@ -8451,11 +8472,19 @@ if (typeof Response === 'undefined') {
+       return this._bodyStream;
+     }
+     get bodyUsed() { return this._bodyUsed; }
+-    async text() { this._consumeBody(); return _decodeBodyWithCharset(this._fetchBody ? await this._fetchBody.promise : this._bodyBytes, this.headers); }
+-    async json() { this._consumeBody(); return JSON.parse(await _decodeBodyWithCharset(this._fetchBody ? await this._fetchBody.promise : this._bodyBytes, this.headers)); }
+-    async arrayBuffer() { this._consumeBody(); return _arrayBufferFromBytes(this._fetchBody ? await this._fetchBody.promise : this._bodyBytes); }
+-    async blob() { this._consumeBody(); return new Blob([this._fetchBody ? await this._fetchBody.promise : this._bodyBytes]); }
++    async _readBodyBytes() {
++      if(!this._fetchStream){this._consumeBody();return this._fetchBody?await this._fetchBody.promise:this._bodyBytes;}
++      const reader=this.body.getReader(),parts=[];let length=0;
++      try{while(true){const {value,done}=await reader.read();if(done)break;parts.push(value);length+=value.length;}}
++      finally{reader.releaseLock();}
++      const bytes=new Uint8Array(length);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}return bytes;
++    }
++    async text() { return _decodeBodyWithCharset(await this._readBodyBytes(), this.headers); }
++    async json() { return JSON.parse(await this.text()); }
++    async arrayBuffer() { return _arrayBufferFromBytes(await this._readBodyBytes()); }
++    async blob() { return new Blob([await this._readBodyBytes()]); }
+     clone() {
++      if(this._fetchStream)throw new DOMException("Incremental event-stream response cloning is unsupported", "NotSupportedError");
+       const copy = _createInternalResponse(this._bodyNull ? null : this._bodyBytes, { status: this.status, statusText: this.statusText, headers: this.headers, type: this.type, url: this.url, redirected: this.redirected });
+       if (this._fetchBody) {
+         const promise = this._fetchBody.promise.then(bytes => bytes.slice());
+@@ -9057,7 +9086,7 @@ function _evaluateMediaFeature(raw) {
+   }
+ 
+   match = feature.match(/^prefers-color-scheme\s*:\s*(dark|light|no-preference)$/);
+-  if (match) return match[1] === 'light';
++  if (match) return match[1] === (globalThis.__obscura_dark ? 'dark' : 'light');
+   match = feature.match(/^prefers-reduced-motion\s*:\s*(reduce|no-preference)$/);
+   if (match) return match[1] === (globalThis.__obscura_reduced_motion ? 'reduce' : 'no-preference');
+ 
+@@ -11039,6 +11068,7 @@ function _abortResponseBody(response, reason) {
+   response._bodyAborted = true;
+   response._bodyAbortReason = reason;
+   if (response._bodyStream) response._bodyStream._controller.error(reason);
++  if(response._fetchStream){__obscuraCore.ops.op_try_close(response._fetchStream.rid);response._fetchStream.cleanup();}
+ }
+ function _attachResponseAbort(response, signal) {
+   if (signal && !response._bodyNull) {
+@@ -15702,7 +15732,13 @@ if (typeof ReadableStream === 'undefined') {
+           }
+           if (stream._state === "closed") return Promise.resolve({ value: undefined, done: true });
+           if (stream._state === "errored") return Promise.reject(stream._error);
+-          return new Promise((resolve, reject) => stream._reads.push({resolve, reject}));
++          const pending=new Promise((resolve, reject) => stream._reads.push({resolve, reject}));
++          const pull=()=>{
++            if(!stream._source.pull||stream._pulling||stream._state!=="readable")return;
++            stream._pulling=true;
++            Promise.resolve().then(()=>stream._source.pull(stream._controller)).catch(error=>stream._controller.error(error)).finally(()=>{stream._pulling=false;if(stream._reads.length)pull();});
++          };pull();
++          return pending;
+         },
+         releaseLock() { stream.locked = false; },
+         cancel(reason) { return stream.cancel(reason); },
+@@ -16345,26 +16381,40 @@ function _makeListenerBox(self) {
+   };
+ }
+ 
+-if (typeof EventSource === 'undefined') {
+-  globalThis.EventSource = class EventSource {
+-    constructor(url, init) {
+-      this.url = url;
+-      this.readyState = 0; // CONNECTING
+-      this.withCredentials = !!(init && init.withCredentials);
+-      this.onopen = null; this.onmessage = null; this.onerror = null;
+-      _makeListenerBox(this);
+-      Promise.resolve().then(() => {
+-        if (this.readyState !== 0) return;
+-        this.readyState = 1; // OPEN
+-        const ev = new Event('open');
+-        if (typeof this.onopen === 'function') { try { this.onopen(ev); } catch (e) {} }
+-        try { this.dispatchEvent(ev); } catch (e) {}
+-      });
+-    }
+-    close() { this.readyState = 2; }
+-    static CONNECTING = 0; static OPEN = 1; static CLOSED = 2;
+-  };
+-}
++/* Normal anonymous EventSource transport, using the engine's routed fetch stream. */
++globalThis.EventSource = class EventSource extends EventTarget {
++  static CONNECTING=0;static OPEN=1;static CLOSED=2;
++  CONNECTING=0;OPEN=1;CLOSED=2;
++  constructor(url, options={}){
++    super();this.url=new URL(String(url),location.href).href;this.withCredentials=!!options.withCredentials;
++    this.readyState=0;this.onopen=null;this.onerror=null;this.onmessage=null;this._lastId='';this._retry=3000;
++    this._connect();
++  }
++  _emit(type,init={}){const event=type==='open'||type==='error'?new Event(type):new MessageEvent(type,init);this.dispatchEvent(event);const handler=this['on'+type];if(typeof handler==='function')handler.call(this,event);}
++  async _connect(){
++    if(this.readyState===2)return;
++    this._abort=new AbortController();
++    try{
++      const headers={Accept:'text/event-stream'};if(this._lastId)headers['Last-Event-ID']=this._lastId;
++      const response=await fetch(this.url,{headers,credentials:this.withCredentials?'include':'same-origin',signal:this._abort.signal});
++      if(response.status===204){this.close();return;}
++      if(response.status!==200||!/^text\/event-stream(?:;|$)/i.test(response.headers.get('content-type')||''))throw Error('Invalid event stream response');
++      this.readyState=1;this._emit('open');
++      const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='',data=[],type='message';
++      const line=value=>{
++        if(value===''){if(data.length)this._emit(type,{data:data.join('\n'),lastEventId:this._lastId,origin:new URL(this.url).origin});data=[];type='message';return;}
++        if(value.startsWith(':'))return;
++        const colon=value.indexOf(':'),field=colon<0?value:value.slice(0,colon);let text=colon<0?'':value.slice(colon+1);if(text.startsWith(' '))text=text.slice(1);
++        if(field==='data')data.push(text);else if(field==='event')type=text||'message';else if(field==='id'&&!text.includes('\0'))this._lastId=text;else if(field==='retry'&&/^\d+$/.test(text))this._retry=Math.max(1000,Number(text));
++      };
++      while(this.readyState!==2){const chunk=await reader.read();if(chunk.done)break;buffer+=decoder.decode(chunk.value,{stream:true});let match;while((match=/\r\n|\r|\n/.exec(buffer))){if(match[0]==='\r'&&match.index===buffer.length-1)break;line(buffer.slice(0,match.index));buffer=buffer.slice(match.index+match[0].length);}if(buffer.length>1048576)throw Error('Event line exceeds limit');}
++      reader.releaseLock();
++    }catch(error){if(this.readyState===2)return;}
++    if(this.readyState!==2){this.readyState=0;this._emit('error');this._timer=setTimeout(()=>this._connect(),this._retry);}
++  }
++  close(){this.readyState=2;clearTimeout(this._timer);this._abort?.abort();}
++};
++
+ 
+ if (typeof WebSocket === 'undefined') {
+   globalThis.WebSocket = class WebSocket {
+
+diff --git a/crates/obscura-browser/src/page.rs b/crates/obscura-browser/src/page.rs
+index 8d1878f0..af850946 100644
+--- a/crates/obscura-browser/src/page.rs
++++ b/crates/obscura-browser/src/page.rs
+@@ -267,6 +267,7 @@ pub struct Page {
+     /// only when the override is cleared.
+     device_metrics_baseline: Option<DeviceMetricsBaseline>,
+     reduced_motion: bool,
++    dark: bool,
+     /// Output device pixels per CSS pixel for CDP surface capture. Layout and
+     /// CSSOM stay in CSS pixels; Emulation.setDeviceMetricsOverride owns this
+     /// independent raster scale.
+@@ -1110,6 +1111,7 @@ impl Page {
+             locale_override: None,
+             device_metrics_baseline: None,
+             reduced_motion: false,
++            dark: false,
+             device_scale_factor: 1.0,
+             default_background_color_override: None,
+             encoding: "UTF-8".to_string(),
+@@ -1695,6 +1697,11 @@ impl Page {
+         self.set_device_scale_factor(baseline.device_scale_factor);
+     }
+ 
++    pub fn set_dark(&mut self, dark: bool) {
++        self.dark = dark;
++        if let Some(js) = &mut self.js { js.set_dark(dark); }
++    }
++
+     pub fn set_reduced_motion(&mut self, reduce: bool) {
+         self.reduced_motion = reduce;
+         if let Some(js) = &mut self.js {
+@@ -1856,6 +1863,7 @@ impl Page {
+         rt.set_navigation_timing(self.navigation_timing.clone());
+         rt.run_page_init();
+         rt.set_reduced_motion(self.reduced_motion);
++        rt.set_dark(self.dark);
+         let _ = rt.execute_script(
+             "<device-metrics>",
+             &format!("globalThis.devicePixelRatio={};", self.device_scale_factor),
+
+diff --git a/crates/obscura-cdp/src/domains/emulation.rs b/crates/obscura-cdp/src/domains/emulation.rs
+index 42cedd9a..ad2dd25b 100644
+--- a/crates/obscura-cdp/src/domains/emulation.rs
++++ b/crates/obscura-cdp/src/domains/emulation.rs
+@@ -73,8 +73,12 @@ pub async fn handle(
+                 if !matches!(value, "" | "reduce" | "no-preference") {
+                     return Err("Invalid prefers-reduced-motion value".into());
+                 }
+-                ctx.get_session_page_mut(session_id).ok_or("No page for session")?
+-                    .set_reduced_motion(value == "reduce");
++                let color = features.iter().find(|feature| feature["name"] == "prefers-color-scheme")
++                    .and_then(|feature| feature["value"].as_str()).unwrap_or("light");
++                if !matches!(color, "light" | "dark" | "no-preference") { return Err("Invalid prefers-color-scheme value".into()); }
++                let page = ctx.get_session_page_mut(session_id).ok_or("No page for session")?;
++                page.set_reduced_motion(value == "reduce");
++                page.set_dark(color == "dark");
+             }
+             Ok(json!({}))
+         }
+
+diff --git a/crates/obscura-render/src/css.rs b/crates/obscura-render/src/css.rs
+index 82a9f6ce..72ebabe8 100644
+--- a/crates/obscura-render/src/css.rs
++++ b/crates/obscura-render/src/css.rs
+@@ -27,21 +27,31 @@ pub enum CssMediaType {
+     Print,
+     ScreenReducedMotion,
+     PrintReducedMotion,
++    ScreenDark,
++    PrintDark,
++    ScreenDarkReducedMotion,
++    PrintDarkReducedMotion,
+ }
+ 
+ impl CssMediaType {
+     pub fn with_reduced_motion(self, reduce: bool) -> Self {
+-        match (self, reduce) {
+-            (Self::Print | Self::PrintReducedMotion, false) => Self::Print,
+-            (Self::Print | Self::PrintReducedMotion, true) => Self::PrintReducedMotion,
+-            (_, false) => Self::Screen,
+-            (_, true) => Self::ScreenReducedMotion,
++        Self::preferences(self.print(), self.dark(), reduce)
++    }
++    pub fn with_dark(self, dark: bool) -> Self {
++        Self::preferences(self.print(), dark, self.reduced_motion())
++    }
++    fn preferences(print: bool, dark: bool, reduce: bool) -> Self {
++        match (print,dark,reduce) {
++            (false,false,false)=>Self::Screen,(false,false,true)=>Self::ScreenReducedMotion,
++            (false,true,false)=>Self::ScreenDark,(false,true,true)=>Self::ScreenDarkReducedMotion,
++            (true,false,false)=>Self::Print,(true,false,true)=>Self::PrintReducedMotion,
++            (true,true,false)=>Self::PrintDark,(true,true,true)=>Self::PrintDarkReducedMotion,
+         }
+     }
++    pub fn print(self) -> bool { matches!(self, Self::Print | Self::PrintReducedMotion | Self::PrintDark | Self::PrintDarkReducedMotion) }
++    pub fn dark(self) -> bool { matches!(self, Self::ScreenDark | Self::ScreenDarkReducedMotion | Self::PrintDark | Self::PrintDarkReducedMotion) }
++    pub fn reduced_motion(self) -> bool { matches!(self, Self::ScreenReducedMotion | Self::PrintReducedMotion | Self::ScreenDarkReducedMotion | Self::PrintDarkReducedMotion) }
+ 
+-    pub fn reduced_motion(self) -> bool {
+-        matches!(self, Self::ScreenReducedMotion | Self::PrintReducedMotion)
+-    }
+ }
+ 
+ /// The part of the tree whose selector match may change when a dependency on
+@@ -6864,8 +6874,8 @@ fn single_media_query_applies_for_viewport(
+     let medium = compact.split_once("and").map_or(compact, |(medium, _)| medium);
+     let medium_matches = match medium {
+         "all" => true,
+-        "screen" => matches!(media_type, CssMediaType::Screen | CssMediaType::ScreenReducedMotion),
+-        "print" => matches!(media_type, CssMediaType::Print | CssMediaType::PrintReducedMotion),
++        "screen" => !media_type.print(),
++        "print" => media_type.print(),
+         medium if medium.starts_with('(') => true,
+         // Unknown named media such as `speech` do not match either visual
+         // rendering mode.
+@@ -6879,7 +6889,7 @@ fn single_media_query_applies_for_viewport(
+     // `@media (prefers-color-scheme: dark)` block must NOT apply on top of its
+     // light defaults (that is what was leaking dark backgrounds, e.g. near
+     // black inline <code>); a `:light` block should apply.
+-    if compact.contains("prefers-color-scheme:dark") {
++    if (compact.contains("prefers-color-scheme:dark") && !media_type.dark()) || (compact.contains("prefers-color-scheme:light") && media_type.dark()) {
+         return false;
+     }
+     // Reduced-motion / high-contrast / inverted: default (no preference).

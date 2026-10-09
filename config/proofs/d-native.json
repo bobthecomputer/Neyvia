@@ -1,0 +1,1876 @@
+{
+  "area": "d-native",
+  "module": "grant_agent.proofs_d_native",
+  "self_check": "self_check",
+  "manuals": [
+    "native-runtime"
+  ],
+  "contracts": [
+    {
+      "id": "native.events.append",
+      "phase": "post",
+      "claim": "Each append has sequential identity and previous hash, its digest covers its payload, durable bytes equal emitted bytes, and streamed output uses those same bytes.",
+      "checkedAt": [
+        "native_event_stream.NativeEventStream.emit -> proofs_d_native.check_event",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.events.integrity",
+      "phase": "invariant",
+      "claim": "The verification observer reads the whole durable chain and refuses JSON, payload digest, previous-hash and sequence corruption.",
+      "checkedAt": [
+        "native_event_stream.NativeEventStream.verify",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.goals.durable",
+      "phase": "post",
+      "claim": "Goal creation and heartbeat preserve the requested milestones, goal identity and checks, store exact transition fields, and append an identical durable event in the same transaction.",
+      "checkedAt": [
+        "native_goals.NativeGoalStore.create/heartbeat/_append_event -> proofs_d_native.check_goal/check_goal_event",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.goals.complete",
+      "phase": "pre",
+      "claim": "Completing a goal requires a receipt path; successful completion stores the exact receipt and terminal state, removes its due time, and appends the completion event.",
+      "checkedAt": [
+        "native_goals.NativeGoalStore.complete -> proofs_d_native.check_goal/check_goal_event",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.goals.due",
+      "phase": "invariant",
+      "claim": "The due observer returns only scheduled active goals whose next due time is no later than this observation.",
+      "checkedAt": [
+        "native_goals.NativeGoalStore.due",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.pairing.digest",
+      "phase": "post",
+      "claim": "Pairing stores only the salted token digest with exact approved scopes; token and returned device secret are absent from durable rows.",
+      "checkedAt": [
+        "native_pairing.NativePairingStore.create -> proofs_d_native.check_pairing",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.pairing.single-use",
+      "phase": "invariant",
+      "claim": "A serialized redeem checks expiry, revocation and token digest, then creates exactly one device with inherited target/scopes and only the salted device-secret digest.",
+      "checkedAt": [
+        "native_pairing.NativePairingStore.redeem -> proofs_d_native.check_redemption",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.pairing.authority",
+      "phase": "invariant",
+      "claim": "Authentication succeeds exactly for a matching secret, an active device and required scope; revoked devices fail authentication.",
+      "checkedAt": [
+        "native_pairing.NativePairingStore.authenticate/revoke -> proofs_d_native.check_auth",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.pairing.scope-input",
+      "phase": "pre",
+      "claim": "Pairing creation rejects unknown device targets and scopes before any durable write.",
+      "checkedAt": [
+        "native_pairing.NativePairingStore.create/_scopes",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.resources.admission",
+      "phase": "invariant",
+      "claim": "Automatic resource mode follows observed physical-memory thresholds, preserves verification turns, serializes eco specialists and reserves larger context for memory-rich hosts.",
+      "checkedAt": [
+        "native_resource_profiles.resolve_resource_profile/_profile_for_memory -> proofs_d_native.check_resource",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.resources.mode",
+      "phase": "pre",
+      "claim": "Resource mode accepts the documented aliases including low consumption and max and refuses unrecognized modes.",
+      "checkedAt": [
+        "native_resource_profiles.normalize_resource_mode",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.spawn.routes",
+      "phase": "invariant",
+      "claim": "The bounded capsule chooses ordered specialist roles and honors their model/effort overrides; only executor routes may receive mutation authority.",
+      "checkedAt": [
+        "native_spawn_contracts.build_specialist_routes -> proofs_d_native.check_routes",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.spawn.lineage",
+      "phase": "post",
+      "claim": "Starting and finishing children preserves exact parent/child lineage and plan hash in SQLite; terminal receipt bytes and status equal durable registry state, including failure.",
+      "checkedAt": [
+        "native_spawn_contracts.NativeSpawnRegistry.start/finish -> proofs_d_native.check_spawn",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.spawn.evaluate",
+      "phase": "invariant",
+      "claim": "Receipt acceptance requires matching lineage, completed status, route authority, nonempty output and matching output digest; pleasant prose cannot override a failure.",
+      "checkedAt": [
+        "native_spawn_evaluator.evaluate_spawn_receipt -> proofs_d_native.check_evaluation",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.hooks.argv",
+      "phase": "pre",
+      "claim": "A hook configuration accepts only a nonempty string argv list, supported event and bounded timeout; shell strings are refused and processes launch with shell=False.",
+      "checkedAt": [
+        "native_hooks.NativeHook.from_mapping/NativeHookRunner.run",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.hooks.authority",
+      "phase": "pre",
+      "claim": "A mutating hook without parent authority is not executed and receives an approval_required failure receipt.",
+      "checkedAt": [
+        "native_hooks.NativeHookRunner.run -> proofs_d_native.check_hook",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.hooks.receipt",
+      "phase": "post",
+      "claim": "Each hook action persists its exact result with a content hash; normal completion agrees with the real process exit code.",
+      "checkedAt": [
+        "native_hooks.NativeHookRunner.run -> proofs_d_native.check_hook",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.learning.usage",
+      "phase": "post",
+      "claim": "Usage receipts normalize absent optional cache fields while retaining actual token observations.",
+      "checkedAt": [
+        "native_learning.usage_payload -> proofs_d_native.check_usage",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.learning.receipt-gate",
+      "phase": "invariant",
+      "claim": "Only completed audited runs qualify as learning observations; failed or unaudited attempts preserve their failure state.",
+      "checkedAt": [
+        "native_learning.NativeLearningStore.record_run -> proofs_d_native.check_learning",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.learning.sample-floor",
+      "phase": "invariant",
+      "claim": "Observational recommendations require the sample floor and never execute or promote themselves.",
+      "checkedAt": [
+        "native_learning.NativeLearningStore.recommend -> proofs_d_native.check_recommendation",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.audit.failure-gate",
+      "phase": "invariant",
+      "claim": "A failing verification receipt cannot be reported as audited success even when files changed.",
+      "checkedAt": [
+        "native_proof_audit.NativeProofAuditor.audit -> proofs_d_native.check_audit",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.audit.delta",
+      "phase": "pre",
+      "claim": "A requested worktree delta must exist before audit success can be issued.",
+      "checkedAt": [
+        "native_proof_audit.NativeProofAuditor.audit",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.audit.proof-discovery",
+      "phase": "goal",
+      "claim": "Repository manual-proof commands are automatically discovered and run as real bounded argv processes with their actual exit status.",
+      "checkedAt": [
+        "native_proof_audit._verification_candidates/select_verification/NativeProofAuditor._run_check/audit",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.checkpoints.capture",
+      "phase": "post",
+      "claim": "Captured manifest bytes and content-addressed blobs match the actual selected workspace entries.",
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore.create/_write_blob -> proofs_d_native.require",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.checkpoints.scope",
+      "phase": "pre",
+      "claim": "Checkpoint paths and recovery journals must remain inside the selected workspace and may not redirect writes through symlinks.",
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._resolve/_load_transaction",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.checkpoints.authority",
+      "phase": "pre",
+      "claim": "Restore mutation requires explicit human authority and otherwise leaves workspace contents intact.",
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore.restore",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.checkpoints.preflight",
+      "phase": "pre",
+      "claim": "Restore validates its complete selected entries and before-image before changing workspace files.",
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._validated_restore_entries/_snapshot_workspace/restore",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.checkpoints.restore",
+      "phase": "post",
+      "claim": "Successful restoration matches captured entries and persists the exact restore receipt.",
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._apply_entries/_write_restore_receipt -> proofs_d_native.require",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.checkpoints.recovery",
+      "phase": "invariant",
+      "claim": "Incomplete staged transactions are recovered from their confined durable before-image before a new restore begins.",
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._load_transaction/_rollback_transaction_locked/_recover_incomplete_restores_locked",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.checkpoints.rollback",
+      "phase": "goal",
+      "claim": "A real write failure restores changed entries to their before-image and records whether the workspace is safe; unchanged locked entries need no rewrite.",
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore.restore/_apply_entries/_rollback_transaction_locked",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.mcp.read-only",
+      "phase": "pre",
+      "claim": "Compact MCP denies mutating and unknown calls and rechecks deferred calls at invocation.",
+      "checkedAt": [
+        "neyvia_mcp_stdio.CompactNeyviaMCPServer._allowed/handle",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.mcp.discovery",
+      "phase": "invariant",
+      "claim": "Compact MCP exposes only its read-only allowlist while progressive search remains callable.",
+      "checkedAt": [
+        "neyvia_mcp_stdio.CompactNeyviaMCPServer.handle",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.scope",
+      "phase": "pre",
+      "claim": "Paired device credentials and advertised capabilities gate command requests and claims; advertisements contain no provider secrets.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore._authenticate/publish_capabilities/request_approval",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.approval",
+      "phase": "pre",
+      "claim": "Command authority requires explicit human confirmation bound to the exact device, action, arguments and actor/session/run; approval is consumed once.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.decide_approval/enqueue/_authorization_valid_locked",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.idempotency",
+      "phase": "invariant",
+      "claim": "A repeated idempotency identity may observe its original exact command but may not change its request or mint authority.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.enqueue",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.final-gate",
+      "phase": "pre",
+      "claim": "Before delivery, claims recheck durable authority, capability and pairing revocation and reject legacy unbound rows.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.claim/_authorization_valid_locked/_reconcile_locked; native_pairing.NativePairingStore.revoke",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.single-flight",
+      "phase": "invariant",
+      "claim": "Only one live claim per device is permitted and duplicate claims do not duplicate delivery.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.claim",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.receipt",
+      "phase": "post",
+      "claim": "Command completion persists its actual result and exact lifecycle projection without inventing remote execution evidence.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.complete/_receipt -> proofs_d_native.check_command",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.cancel",
+      "phase": "pre",
+      "claim": "Cancellation respects lifecycle authority and prevents later delivery of a cancelled queued command.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.cancel",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.uncertainty",
+      "phase": "invariant",
+      "claim": "Expired claimed delivery remains uncertain and is never silently replayed; a late completion cannot revive authority.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore._reconcile_locked/complete/claim",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.deadline",
+      "phase": "invariant",
+      "claim": "A command never outlives its human authority; its claim lease never outlives the command, and expiry is enforced on observation.",
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.enqueue/claim/_reconcile_locked/_receipt -> proofs_d_native.check_command",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.commands.secret-free",
+      "phase": "pre",
+      "claim": "Device request/result payloads reject secret-bearing fields and durable state stores only secret/idempotency digests.",
+      "checkedAt": [
+        "native_device_commands._prepare_request/_idempotency_digest/NativeDeviceCommandStore.complete; native_pairing.NativePairingStore.redeem",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.operator.pinned-verifier",
+      "phase": "pre",
+      "claim": "Operator authority loads only an explicitly pinned Ed25519 public verifier outside the mutable workspace and reports readiness truthfully.",
+      "checkedAt": [
+        "native_device_operator_authority.OperatorDecisionVerifier.__init__/status",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.operator.signature",
+      "phase": "pre",
+      "claim": "Approval requires a valid external signature over the exact canonical transaction; unsigned approval, replay, JSON type changes and unsigned denial fail closed.",
+      "checkedAt": [
+        "native_device_operator_authority.OperatorDecisionVerifier.verify_approval/OperatorAuthorizedDeviceCommandStore.decide_approval",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.operator.final-gate",
+      "phase": "pre",
+      "claim": "Device delivery re-verifies persisted operator authority against current durable approval rather than trusting stored status flags.",
+      "checkedAt": [
+        "native_device_operator_authority.OperatorAuthorizedDeviceCommandStore._authorization_valid_locked",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.operator.wire",
+      "phase": "invariant",
+      "claim": "The signing wire binds displayed summary, canonical signing bytes, digest and exact approval context; edited fields are rejected.",
+      "checkedAt": [
+        "native_device_operator_signing_wire.inspect_signing_request/prepare_signing_request/validate_signing_request_against_store",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.operator.retry",
+      "phase": "invariant",
+      "claim": "A lost acknowledgement may retry the same recorded signature but cannot create another approval authority.",
+      "checkedAt": [
+        "native_device_operator_signing_wire.submit_operator_signature; native_device_operator_authority.OperatorAuthorizedDeviceCommandStore.decide_approval",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.receipt",
+      "phase": "post",
+      "claim": "Every Native tool call stores its exact named arguments and returned result with a digest-bound durable receipt.",
+      "checkedAt": [
+        "native_tools.NativeToolRegistry.call -> proofs_d_native.check_tool_receipt",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.catalog",
+      "phase": "invariant",
+      "claim": "Native catalog/search/describe projections agree with actual tool specifications, availability and authority properties.",
+      "checkedAt": [
+        "native_tools.NativeToolRegistry.list_tools/search/describe -> proofs_d_native.check_catalog",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.workspace",
+      "phase": "post",
+      "claim": "Workspace read/search observe only selected contained files and return exact bounded contents and digest.",
+      "checkedAt": [
+        "native_tools.NativeToolRegistry._workspace_read/_workspace_search -> proofs_d_native.require",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.arguments",
+      "phase": "pre",
+      "claim": "Tool arguments are JSON objects whose typed values, required fields, defaults and extra-field policy satisfy the selected specification before dispatch.",
+      "checkedAt": [
+        "native_tools.NativeToolRegistry.prepare_arguments/_validate_arguments/_validate_value",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.skill-revision",
+      "phase": "post",
+      "claim": "Explicit CODEX_HOME resolves within that skills root; authorized revision preserves original bytes, writes actual revised content and verifies the version receipt.",
+      "checkedAt": [
+        "skill_iteration.resolve_codex_skill_file/iterate_codex_skill_file -> proofs_d_native.require; native_tools.NativeToolRegistry._skill_live_read/_skill_live_iterate",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.routing",
+      "phase": "invariant",
+      "claim": "Native proposal routing preserves typed target and arguments, mutation policy, preview URLs and inspiration queries.",
+      "checkedAt": [
+        "action_executor.HybridExecutionAdapter._proposal -> proofs_d_native.check_native_proposal",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.preview",
+      "phase": "post",
+      "claim": "Preview inspection returns observed bounded HTTP content with its actual status and digest.",
+      "checkedAt": [
+        "native_tools.NativeToolRegistry._preview_inspect -> proofs_d_native.check_preview",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.annotation",
+      "phase": "post",
+      "claim": "Browser annotation requires nonempty real capture artifacts and persists exact W3C-compatible annotation geometry and metadata.",
+      "checkedAt": [
+        "native_tools.NativeToolRegistry._preview_annotate -> proofs_d_native.check_annotation",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.tools.inspiration",
+      "phase": "post",
+      "claim": "Inspiration queries preserve requested surface/platform/style and board assembly faithfully preserves observed provider image results without fabricating freshness.",
+      "checkedAt": [
+        "native_tools.NativeToolRegistry._ui_inspiration_search/_inspiration_request/_inspiration_board -> proofs_d_native.check_inspiration",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    },
+    {
+      "id": "native.worker.reuse",
+      "phase": "invariant",
+      "claim": "A persistent browser worker reuses its actual browser runtime, creates fresh page contexts, reports real counters and closes owned browser resources on shutdown.",
+      "checkedAt": [
+        "native_tool_worker.run_worker -> proofs_d_native.require; native_tools.ReusablePlaywrightRuntime.page/close; neyvia_browser_capture.NeyviaCaptureRuntime.page/close (explicit Neyvia transport)",
+        "proofs_d_native.self_check"
+      ],
+      "impact": [
+        "Native runtime",
+        "durable operator receipts",
+        "Native agents and paired devices"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "case": "test_event_stream_is_hash_chained_and_streamable",
+      "case_id": "tests/test_native_event_stream.py::test_event_stream_is_hash_chained_and_streamable",
+      "test": "tests/test_native_event_stream.py",
+      "contracts": [
+        "native.events.append"
+      ],
+      "checkedAt": [
+        "native_event_stream.NativeEventStream.emit -> proofs_d_native.check_event",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_event_stream_detects_tampering",
+      "case_id": "tests/test_native_event_stream.py::test_event_stream_detects_tampering",
+      "test": "tests/test_native_event_stream.py",
+      "contracts": [
+        "native.events.integrity"
+      ],
+      "checkedAt": [
+        "native_event_stream.NativeEventStream.verify",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_goal_preserves_milestones_and_heartbeat",
+      "case_id": "tests/test_native_goals.py::test_goal_preserves_milestones_and_heartbeat",
+      "test": "tests/test_native_goals.py",
+      "contracts": [
+        "native.goals.durable"
+      ],
+      "checkedAt": [
+        "native_goals.NativeGoalStore.create/heartbeat/_append_event -> proofs_d_native.check_goal/check_goal_event",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_due_query_returns_only_scheduled_active_goals",
+      "case_id": "tests/test_native_goals.py::test_due_query_returns_only_scheduled_active_goals",
+      "test": "tests/test_native_goals.py",
+      "contracts": [
+        "native.goals.due"
+      ],
+      "checkedAt": [
+        "native_goals.NativeGoalStore.due",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_goal_completion_requires_receipt",
+      "case_id": "tests/test_native_goals.py::test_goal_completion_requires_receipt",
+      "test": "tests/test_native_goals.py",
+      "contracts": [
+        "native.goals.complete"
+      ],
+      "checkedAt": [
+        "native_goals.NativeGoalStore.complete -> proofs_d_native.check_goal/check_goal_event",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_pairing_is_one_time_scoped_and_secret_free_at_rest",
+      "case_id": "tests/test_native_pairing.py::test_pairing_is_one_time_scoped_and_secret_free_at_rest",
+      "test": "tests/test_native_pairing.py",
+      "contracts": [
+        "native.pairing.digest",
+        "native.pairing.single-use",
+        "native.pairing.authority"
+      ],
+      "checkedAt": [
+        "native_pairing.NativePairingStore.create -> proofs_d_native.check_pairing",
+        "proofs_d_native.self_check",
+        "native_pairing.NativePairingStore.redeem -> proofs_d_native.check_redemption",
+        "native_pairing.NativePairingStore.authenticate/revoke -> proofs_d_native.check_auth"
+      ]
+    },
+    {
+      "case": "test_revoked_device_cannot_authenticate",
+      "case_id": "tests/test_native_pairing.py::test_revoked_device_cannot_authenticate",
+      "test": "tests/test_native_pairing.py",
+      "contracts": [
+        "native.pairing.authority"
+      ],
+      "checkedAt": [
+        "native_pairing.NativePairingStore.authenticate/revoke -> proofs_d_native.check_auth",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_pairing_rejects_unknown_scope_and_target",
+      "case_id": "tests/test_native_pairing.py::test_pairing_rejects_unknown_scope_and_target",
+      "test": "tests/test_native_pairing.py",
+      "contracts": [
+        "native.pairing.scope-input"
+      ],
+      "checkedAt": [
+        "native_pairing.NativePairingStore.create/_scopes",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_eco_preserves_verification_reserve",
+      "case_id": "tests/test_native_resource_profiles.py::test_eco_preserves_verification_reserve",
+      "test": "tests/test_native_resource_profiles.py",
+      "contracts": [
+        "native.resources.admission"
+      ],
+      "checkedAt": [
+        "native_resource_profiles.resolve_resource_profile/_profile_for_memory -> proofs_d_native.check_resource",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_auto_uses_memory_rich_profile_on_large_host",
+      "case_id": "tests/test_native_resource_profiles.py::test_auto_uses_memory_rich_profile_on_large_host",
+      "test": "tests/test_native_resource_profiles.py",
+      "contracts": [
+        "native.resources.admission"
+      ],
+      "checkedAt": [
+        "native_resource_profiles.resolve_resource_profile/_profile_for_memory -> proofs_d_native.check_resource",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_resource_mode_aliases_and_rejection",
+      "case_id": "tests/test_native_resource_profiles.py::test_resource_mode_aliases_and_rejection",
+      "test": "tests/test_native_resource_profiles.py",
+      "contracts": [
+        "native.resources.mode",
+        "native.resources.admission"
+      ],
+      "checkedAt": [
+        "native_resource_profiles.normalize_resource_mode",
+        "proofs_d_native.self_check",
+        "native_resource_profiles.resolve_resource_profile/_profile_for_memory -> proofs_d_native.check_resource"
+      ]
+    },
+    {
+      "case": "test_behavior_capsule_controls_spawned_specialist_team",
+      "case_id": "tests/test_native_spawn_contracts.py::test_behavior_capsule_controls_spawned_specialist_team",
+      "test": "tests/test_native_spawn_contracts.py",
+      "contracts": [
+        "native.spawn.routes"
+      ],
+      "checkedAt": [
+        "native_spawn_contracts.build_specialist_routes -> proofs_d_native.check_routes",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_only_executor_can_receive_mutation_authority",
+      "case_id": "tests/test_native_spawn_contracts.py::test_only_executor_can_receive_mutation_authority",
+      "test": "tests/test_native_spawn_contracts.py",
+      "contracts": [
+        "native.spawn.routes"
+      ],
+      "checkedAt": [
+        "native_spawn_contracts.build_specialist_routes -> proofs_d_native.check_routes",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_spawn_registry_preserves_parent_child_lineage_and_failure",
+      "case_id": "tests/test_native_spawn_contracts.py::test_spawn_registry_preserves_parent_child_lineage_and_failure",
+      "test": "tests/test_native_spawn_contracts.py",
+      "contracts": [
+        "native.spawn.lineage"
+      ],
+      "checkedAt": [
+        "native_spawn_contracts.NativeSpawnRegistry.start/finish -> proofs_d_native.check_spawn",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_completed_child_with_matching_lineage_is_accepted",
+      "case_id": "tests/test_native_spawn_evaluator.py::test_completed_child_with_matching_lineage_is_accepted",
+      "test": "tests/test_native_spawn_evaluator.py",
+      "contracts": [
+        "native.spawn.evaluate"
+      ],
+      "checkedAt": [
+        "native_spawn_evaluator.evaluate_spawn_receipt -> proofs_d_native.check_evaluation",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_pleasant_output_cannot_override_failed_status",
+      "case_id": "tests/test_native_spawn_evaluator.py::test_pleasant_output_cannot_override_failed_status",
+      "test": "tests/test_native_spawn_evaluator.py",
+      "contracts": [
+        "native.spawn.evaluate"
+      ],
+      "checkedAt": [
+        "native_spawn_evaluator.evaluate_spawn_receipt -> proofs_d_native.check_evaluation",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_non_executor_mutation_authority_is_rejected",
+      "case_id": "tests/test_native_spawn_evaluator.py::test_non_executor_mutation_authority_is_rejected",
+      "test": "tests/test_native_spawn_evaluator.py",
+      "contracts": [
+        "native.spawn.evaluate"
+      ],
+      "checkedAt": [
+        "native_spawn_evaluator.evaluate_spawn_receipt -> proofs_d_native.check_evaluation",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_hook_runs_without_shell_and_writes_receipt",
+      "case_id": "tests/test_native_hooks.py::test_hook_runs_without_shell_and_writes_receipt",
+      "test": "tests/test_native_hooks.py",
+      "contracts": [
+        "native.hooks.argv",
+        "native.hooks.receipt"
+      ],
+      "checkedAt": [
+        "native_hooks.NativeHook.from_mapping/NativeHookRunner.run",
+        "proofs_d_native.self_check",
+        "native_hooks.NativeHookRunner.run -> proofs_d_native.check_hook"
+      ]
+    },
+    {
+      "case": "test_mutating_hook_requires_parent_authority",
+      "case_id": "tests/test_native_hooks.py::test_mutating_hook_requires_parent_authority",
+      "test": "tests/test_native_hooks.py",
+      "contracts": [
+        "native.hooks.authority",
+        "native.hooks.receipt"
+      ],
+      "checkedAt": [
+        "native_hooks.NativeHookRunner.run -> proofs_d_native.check_hook",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_hook_schema_rejects_shell_string",
+      "case_id": "tests/test_native_hooks.py::test_hook_schema_rejects_shell_string",
+      "test": "tests/test_native_hooks.py",
+      "contracts": [
+        "native.hooks.argv"
+      ],
+      "checkedAt": [
+        "native_hooks.NativeHook.from_mapping/NativeHookRunner.run",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_usage_normalizes_optional_provider_cache_details",
+      "case_id": "tests/test_native_learning.py::test_usage_normalizes_optional_provider_cache_details",
+      "test": "tests/test_native_learning.py",
+      "contracts": [
+        "native.learning.usage"
+      ],
+      "checkedAt": [
+        "native_learning.usage_payload -> proofs_d_native.check_usage",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_learning_stays_observational_below_real_sample_floor",
+      "case_id": "tests/test_native_learning.py::test_learning_stays_observational_below_real_sample_floor",
+      "test": "tests/test_native_learning.py",
+      "contracts": [
+        "native.learning.sample-floor",
+        "native.learning.receipt-gate"
+      ],
+      "checkedAt": [
+        "native_learning.NativeLearningStore.recommend -> proofs_d_native.check_recommendation",
+        "proofs_d_native.self_check",
+        "native_learning.NativeLearningStore.record_run -> proofs_d_native.check_learning"
+      ]
+    },
+    {
+      "case": "test_failed_prose_never_counts_as_verified_learning",
+      "case_id": "tests/test_native_learning.py::test_failed_prose_never_counts_as_verified_learning",
+      "test": "tests/test_native_learning.py",
+      "contracts": [
+        "native.learning.receipt-gate"
+      ],
+      "checkedAt": [
+        "native_learning.NativeLearningStore.record_run -> proofs_d_native.check_learning",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_failed_receipt_blocks_even_when_workspace_changed",
+      "case_id": "tests/test_native_proof_audit.py::test_failed_receipt_blocks_even_when_workspace_changed",
+      "test": "tests/test_native_proof_audit.py",
+      "contracts": [
+        "native.audit.failure-gate"
+      ],
+      "checkedAt": [
+        "native_proof_audit.NativeProofAuditor.audit -> proofs_d_native.check_audit",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_expected_mutation_without_delta_is_not_narrative_success",
+      "case_id": "tests/test_native_proof_audit.py::test_expected_mutation_without_delta_is_not_narrative_success",
+      "test": "tests/test_native_proof_audit.py",
+      "contracts": [
+        "native.audit.delta",
+        "native.audit.failure-gate"
+      ],
+      "checkedAt": [
+        "native_proof_audit.NativeProofAuditor.audit",
+        "proofs_d_native.self_check",
+        "native_proof_audit.NativeProofAuditor.audit -> proofs_d_native.check_audit"
+      ]
+    },
+    {
+      "case": "test_checkpoint_restores_changed_and_new_files",
+      "case_id": "tests/test_native_checkpoints.py::test_checkpoint_restores_changed_and_new_files",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.authority",
+        "native.checkpoints.restore"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore.restore",
+        "proofs_d_native.self_check",
+        "native_checkpoints.NativeCheckpointStore._apply_entries/_write_restore_receipt -> proofs_d_native.require"
+      ]
+    },
+    {
+      "case": "test_checkpoint_is_content_addressed_and_deduplicated",
+      "case_id": "tests/test_native_checkpoints.py::test_checkpoint_is_content_addressed_and_deduplicated",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.capture"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore.create/_write_blob -> proofs_d_native.require",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_checkpoint_refuses_secret_and_escape_paths",
+      "case_id": "tests/test_native_checkpoints.py::test_checkpoint_refuses_secret_and_escape_paths",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.scope"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._resolve/_load_transaction",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_restore_preflight_failure_never_partially_mutates_workspace",
+      "case_id": "tests/test_native_checkpoints.py::test_restore_preflight_failure_never_partially_mutates_workspace",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.preflight"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._validated_restore_entries/_snapshot_workspace/restore",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_reopen_rolls_back_an_interrupted_restore_transaction",
+      "case_id": "tests/test_native_checkpoints.py::test_reopen_rolls_back_an_interrupted_restore_transaction",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.recovery",
+        "native.checkpoints.restore"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._load_transaction/_rollback_transaction_locked/_recover_incomplete_restores_locked",
+        "proofs_d_native.self_check",
+        "native_checkpoints.NativeCheckpointStore._apply_entries/_write_restore_receipt -> proofs_d_native.require"
+      ]
+    },
+    {
+      "case": "test_prepared_crash_preserves_later_workspace_edits_without_rollback",
+      "case_id": "tests/test_native_checkpoints.py::test_prepared_crash_preserves_later_workspace_edits_without_rollback",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.recovery"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._load_transaction/_rollback_transaction_locked/_recover_incomplete_restores_locked",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_recovery_conflict_preserves_external_edit_instead_of_overwriting",
+      "case_id": "tests/test_native_checkpoints.py::test_recovery_conflict_preserves_external_edit_instead_of_overwriting",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.recovery"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._load_transaction/_rollback_transaction_locked/_recover_incomplete_restores_locked",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_unresolved_recovery_failure_degrades_restore_without_taking_down_store",
+      "case_id": "tests/test_native_checkpoints.py::test_unresolved_recovery_failure_degrades_restore_without_taking_down_store",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.recovery"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._load_transaction/_rollback_transaction_locked/_recover_incomplete_restores_locked",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_restore_journal_from_different_workspace_is_never_replayed",
+      "case_id": "tests/test_native_checkpoints.py::test_restore_journal_from_different_workspace_is_never_replayed",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.recovery",
+        "native.checkpoints.scope"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore._load_transaction/_rollback_transaction_locked/_recover_incomplete_restores_locked",
+        "proofs_d_native.self_check",
+        "native_checkpoints.NativeCheckpointStore._resolve/_load_transaction"
+      ]
+    },
+    {
+      "case": "NativeMcpReadOnlyTests.test_list_matches_read_only_allowlist",
+      "case_id": "tests/test_native_mcp_read_only.py::NativeMcpReadOnlyTests.test_list_matches_read_only_allowlist",
+      "test": "tests/test_native_mcp_read_only.py",
+      "contracts": [
+        "native.mcp.read-only",
+        "native.mcp.discovery"
+      ],
+      "checkedAt": [
+        "neyvia_mcp_stdio.CompactNeyviaMCPServer._allowed/handle",
+        "proofs_d_native.self_check",
+        "neyvia_mcp_stdio.CompactNeyviaMCPServer.handle"
+      ]
+    },
+    {
+      "case": "NativeMcpReadOnlyTests.test_progressive_search_is_callable",
+      "case_id": "tests/test_native_mcp_read_only.py::NativeMcpReadOnlyTests.test_progressive_search_is_callable",
+      "test": "tests/test_native_mcp_read_only.py",
+      "contracts": [
+        "native.mcp.discovery"
+      ],
+      "checkedAt": [
+        "neyvia_mcp_stdio.CompactNeyviaMCPServer.handle",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "NativeMcpReadOnlyTests.test_mutating_browser_and_unknown_calls_are_denied",
+      "case_id": "tests/test_native_mcp_read_only.py::NativeMcpReadOnlyTests.test_mutating_browser_and_unknown_calls_are_denied",
+      "test": "tests/test_native_mcp_read_only.py",
+      "contracts": [
+        "native.mcp.read-only"
+      ],
+      "checkedAt": [
+        "neyvia_mcp_stdio.CompactNeyviaMCPServer._allowed/handle",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "NativeMcpReadOnlyTests.test_prove_rejects_non_observational_operation",
+      "case_id": "tests/test_native_mcp_read_only.py::NativeMcpReadOnlyTests.test_prove_rejects_non_observational_operation",
+      "test": "tests/test_native_mcp_read_only.py",
+      "contracts": [
+        "native.mcp.read-only"
+      ],
+      "checkedAt": [
+        "neyvia_mcp_stdio.CompactNeyviaMCPServer._allowed/handle",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_device_commands_require_authenticated_advertised_capability",
+      "case_id": "tests/test_native_device_commands.py::test_device_commands_require_authenticated_advertised_capability",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.scope"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore._authenticate/publish_capabilities/request_approval",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_human_approval_is_exact_single_use_and_context_bound",
+      "case_id": "tests/test_native_device_commands.py::test_human_approval_is_exact_single_use_and_context_bound",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.approval"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.decide_approval/enqueue/_authorization_valid_locked",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_approval_decision_requires_explicit_human_confirmation_and_denial_fails_closed",
+      "case_id": "tests/test_native_device_commands.py::test_approval_decision_requires_explicit_human_confirmation_and_denial_fails_closed",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.approval"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.decide_approval/enqueue/_authorization_valid_locked",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_command_idempotency_prevents_duplicate_side_effect_requests",
+      "case_id": "tests/test_native_device_commands.py::test_command_idempotency_prevents_duplicate_side_effect_requests",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.idempotency"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.enqueue",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_final_claim_gate_rejects_tampered_command_without_delivery",
+      "case_id": "tests/test_native_device_commands.py::test_final_claim_gate_rejects_tampered_command_without_delivery",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.final-gate"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.claim/_authorization_valid_locked/_reconcile_locked; native_pairing.NativePairingStore.revoke",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_claim_is_single_flight_and_terminal_receipt_is_idempotent",
+      "case_id": "tests/test_native_device_commands.py::test_claim_is_single_flight_and_terminal_receipt_is_idempotent",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.single-flight",
+        "native.commands.receipt"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.claim",
+        "proofs_d_native.self_check",
+        "native_device_commands.NativeDeviceCommandStore.complete/_receipt -> proofs_d_native.check_command"
+      ]
+    },
+    {
+      "case": "test_human_cancel_before_claim_is_terminal_and_not_delivered",
+      "case_id": "tests/test_native_device_commands.py::test_human_cancel_before_claim_is_terminal_and_not_delivered",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.cancel"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.cancel",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_cancel_after_claim_does_not_fabricate_a_stop",
+      "case_id": "tests/test_native_device_commands.py::test_cancel_after_claim_does_not_fabricate_a_stop",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.cancel"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.cancel",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_lost_claim_becomes_uncertain_and_is_never_replayed",
+      "case_id": "tests/test_native_device_commands.py::test_lost_claim_becomes_uncertain_and_is_never_replayed",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.uncertainty"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore._reconcile_locked/complete/claim",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_expired_unclaimed_command_does_not_execute",
+      "case_id": "tests/test_native_device_commands.py::test_expired_unclaimed_command_does_not_execute",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.final-gate"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.claim/_authorization_valid_locked/_reconcile_locked; native_pairing.NativePairingStore.revoke",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_device_revocation_rejects_queued_and_marks_claimed_uncertain",
+      "case_id": "tests/test_native_device_commands.py::test_device_revocation_rejects_queued_and_marks_claimed_uncertain",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.final-gate"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.claim/_authorization_valid_locked/_reconcile_locked; native_pairing.NativePairingStore.revoke",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_command_payload_rejects_secret_fields_and_device_secret_stays_out_of_db",
+      "case_id": "tests/test_native_device_commands.py::test_command_payload_rejects_secret_fields_and_device_secret_stays_out_of_db",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.secret-free"
+      ],
+      "checkedAt": [
+        "native_device_commands._prepare_request/_idempotency_digest/NativeDeviceCommandStore.complete; native_pairing.NativePairingStore.redeem",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_late_authenticated_receipt_resolves_uncertain_claim_without_replay",
+      "case_id": "tests/test_native_device_commands.py::test_late_authenticated_receipt_resolves_uncertain_claim_without_replay",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.uncertainty",
+        "native.commands.receipt"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore._reconcile_locked/complete/claim",
+        "proofs_d_native.self_check",
+        "native_device_commands.NativeDeviceCommandStore.complete/_receipt -> proofs_d_native.check_command"
+      ]
+    },
+    {
+      "case": "test_capability_withdrawal_never_silently_executes_stale_commands",
+      "case_id": "tests/test_native_device_commands.py::test_capability_withdrawal_never_silently_executes_stale_commands",
+      "test": "tests/test_native_device_commands.py",
+      "contracts": [
+        "native.commands.final-gate",
+        "native.commands.receipt"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.claim/_authorization_valid_locked/_reconcile_locked; native_pairing.NativePairingStore.revoke",
+        "proofs_d_native.self_check",
+        "native_device_commands.NativeDeviceCommandStore.complete/_receipt -> proofs_d_native.check_command"
+      ]
+    },
+    {
+      "case": "test_command_deadline_never_outlives_human_approval",
+      "case_id": "tests/test_native_device_command_deadlines.py::test_command_deadline_never_outlives_human_approval",
+      "test": "tests/test_native_device_command_deadlines.py",
+      "contracts": [
+        "native.commands.deadline"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.enqueue/claim/_reconcile_locked/_receipt -> proofs_d_native.check_command",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_claim_lease_never_outlives_command_authority_window",
+      "case_id": "tests/test_native_device_command_deadlines.py::test_claim_lease_never_outlives_command_authority_window",
+      "test": "tests/test_native_device_command_deadlines.py",
+      "contracts": [
+        "native.commands.deadline"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.enqueue/claim/_reconcile_locked/_receipt -> proofs_d_native.check_command",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_legacy_overlong_claim_becomes_uncertain_at_command_expiry_without_replay",
+      "case_id": "tests/test_native_device_command_deadlines.py::test_legacy_overlong_claim_becomes_uncertain_at_command_expiry_without_replay",
+      "test": "tests/test_native_device_command_deadlines.py",
+      "contracts": [
+        "native.commands.deadline",
+        "native.commands.uncertainty"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.enqueue/claim/_reconcile_locked/_receipt -> proofs_d_native.check_command",
+        "proofs_d_native.self_check",
+        "native_device_commands.NativeDeviceCommandStore._reconcile_locked/complete/claim"
+      ]
+    },
+    {
+      "case": "test_late_authenticated_receipt_can_reconcile_command_expiry_uncertainty",
+      "case_id": "tests/test_native_device_command_deadlines.py::test_late_authenticated_receipt_can_reconcile_command_expiry_uncertainty",
+      "test": "tests/test_native_device_command_deadlines.py",
+      "contracts": [
+        "native.commands.uncertainty",
+        "native.commands.receipt"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore._reconcile_locked/complete/claim",
+        "proofs_d_native.self_check",
+        "native_device_commands.NativeDeviceCommandStore.complete/_receipt -> proofs_d_native.check_command"
+      ]
+    },
+    {
+      "case": "test_capability_withdrawal_uncertainty_accepts_only_matching_late_receipt",
+      "case_id": "tests/test_native_device_command_deadlines.py::test_capability_withdrawal_uncertainty_accepts_only_matching_late_receipt",
+      "test": "tests/test_native_device_command_deadlines.py",
+      "contracts": [
+        "native.commands.uncertainty",
+        "native.commands.receipt"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore._reconcile_locked/complete/claim",
+        "proofs_d_native.self_check",
+        "native_device_commands.NativeDeviceCommandStore.complete/_receipt -> proofs_d_native.check_command"
+      ]
+    },
+    {
+      "case": "test_expired_human_approval_cannot_be_consumed_into_a_command",
+      "case_id": "tests/test_native_device_command_authority.py::test_expired_human_approval_cannot_be_consumed_into_a_command",
+      "test": "tests/test_native_device_command_authority.py",
+      "contracts": [
+        "native.commands.approval"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.decide_approval/enqueue/_authorization_valid_locked",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_legacy_unbound_queued_command_fails_closed_before_device_delivery",
+      "case_id": "tests/test_native_device_command_authority.py::test_legacy_unbound_queued_command_fails_closed_before_device_delivery",
+      "test": "tests/test_native_device_command_authority.py",
+      "contracts": [
+        "native.commands.final-gate"
+      ],
+      "checkedAt": [
+        "native_device_commands.NativeDeviceCommandStore.claim/_authorization_valid_locked/_reconcile_locked; native_pairing.NativePairingStore.revoke",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_operator_verifier_requires_external_pinned_ed25519_key",
+      "case_id": "tests/test_native_device_operator_authority.py::test_operator_verifier_requires_external_pinned_ed25519_key",
+      "test": "tests/test_native_device_operator_authority.py",
+      "contracts": [
+        "native.operator.pinned-verifier"
+      ],
+      "checkedAt": [
+        "native_device_operator_authority.OperatorDecisionVerifier.__init__/status",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_approved_decision_fails_closed_without_external_signature_or_verifier",
+      "case_id": "tests/test_native_device_operator_authority.py::test_approved_decision_fails_closed_without_external_signature_or_verifier",
+      "test": "tests/test_native_device_operator_authority.py",
+      "contracts": [
+        "native.operator.signature"
+      ],
+      "checkedAt": [
+        "native_device_operator_authority.OperatorDecisionVerifier.verify_approval/OperatorAuthorizedDeviceCommandStore.decide_approval",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_signed_operator_decision_binds_exact_transaction_and_survives_restart",
+      "case_id": "tests/test_native_device_operator_authority.py::test_signed_operator_decision_binds_exact_transaction_and_survives_restart",
+      "test": "tests/test_native_device_operator_authority.py",
+      "contracts": [
+        "native.operator.signature",
+        "native.operator.final-gate"
+      ],
+      "checkedAt": [
+        "native_device_operator_authority.OperatorDecisionVerifier.verify_approval/OperatorAuthorizedDeviceCommandStore.decide_approval",
+        "proofs_d_native.self_check",
+        "native_device_operator_authority.OperatorAuthorizedDeviceCommandStore._authorization_valid_locked"
+      ]
+    },
+    {
+      "case": "test_signed_decision_cannot_be_replayed_for_another_approval",
+      "case_id": "tests/test_native_device_operator_authority.py::test_signed_decision_cannot_be_replayed_for_another_approval",
+      "test": "tests/test_native_device_operator_authority.py",
+      "contracts": [
+        "native.operator.signature"
+      ],
+      "checkedAt": [
+        "native_device_operator_authority.OperatorDecisionVerifier.verify_approval/OperatorAuthorizedDeviceCommandStore.decide_approval",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_final_claim_gate_reverifies_operator_signature_after_database_tamper",
+      "case_id": "tests/test_native_device_operator_authority.py::test_final_claim_gate_reverifies_operator_signature_after_database_tamper",
+      "test": "tests/test_native_device_operator_authority.py",
+      "contracts": [
+        "native.operator.final-gate"
+      ],
+      "checkedAt": [
+        "native_device_operator_authority.OperatorAuthorizedDeviceCommandStore._authorization_valid_locked",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_signed_arguments_are_json_type_strict",
+      "case_id": "tests/test_native_device_operator_authority_security_review.py::test_signed_arguments_are_json_type_strict",
+      "test": "tests/test_native_device_operator_authority_security_review.py",
+      "contracts": [
+        "native.operator.signature"
+      ],
+      "checkedAt": [
+        "native_device_operator_authority.OperatorDecisionVerifier.verify_approval/OperatorAuthorizedDeviceCommandStore.decide_approval",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_final_claim_gate_never_accepts_a_signed_denial_after_database_tamper",
+      "case_id": "tests/test_native_device_operator_authority_security_review.py::test_final_claim_gate_never_accepts_a_signed_denial_after_database_tamper",
+      "test": "tests/test_native_device_operator_authority_security_review.py",
+      "contracts": [
+        "native.operator.final-gate"
+      ],
+      "checkedAt": [
+        "native_device_operator_authority.OperatorAuthorizedDeviceCommandStore._authorization_valid_locked",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_external_signer_signs_exact_server_bytes_without_json_reserialization",
+      "case_id": "tests/test_native_device_operator_signing_wire.py::test_external_signer_signs_exact_server_bytes_without_json_reserialization",
+      "test": "tests/test_native_device_operator_signing_wire.py",
+      "contracts": [
+        "native.operator.wire",
+        "native.operator.signature"
+      ],
+      "checkedAt": [
+        "native_device_operator_signing_wire.inspect_signing_request/prepare_signing_request/validate_signing_request_against_store",
+        "proofs_d_native.self_check",
+        "native_device_operator_authority.OperatorDecisionVerifier.verify_approval/OperatorAuthorizedDeviceCommandStore.decide_approval"
+      ]
+    },
+    {
+      "case": "test_review_projection_cannot_diverge_from_the_bytes_to_be_signed",
+      "case_id": "tests/test_native_device_operator_signing_wire.py::test_review_projection_cannot_diverge_from_the_bytes_to_be_signed",
+      "test": "tests/test_native_device_operator_signing_wire.py",
+      "contracts": [
+        "native.operator.wire"
+      ],
+      "checkedAt": [
+        "native_device_operator_signing_wire.inspect_signing_request/prepare_signing_request/validate_signing_request_against_store",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_reserialized_or_whitespace_changed_payload_is_not_an_acceptable_signing_wire",
+      "case_id": "tests/test_native_device_operator_signing_wire.py::test_reserialized_or_whitespace_changed_payload_is_not_an_acceptable_signing_wire",
+      "test": "tests/test_native_device_operator_signing_wire.py",
+      "contracts": [
+        "native.operator.wire"
+      ],
+      "checkedAt": [
+        "native_device_operator_signing_wire.inspect_signing_request/prepare_signing_request/validate_signing_request_against_store",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_signing_wire_rejects_non_interoperable_json_values",
+      "case_id": "tests/test_native_device_operator_signing_wire.py::test_signing_wire_rejects_non_interoperable_json_values",
+      "test": "tests/test_native_device_operator_signing_wire.py",
+      "contracts": [
+        "native.operator.wire"
+      ],
+      "checkedAt": [
+        "native_device_operator_signing_wire.inspect_signing_request/prepare_signing_request/validate_signing_request_against_store",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_submission_rebinds_server_bytes_to_current_durable_approval",
+      "case_id": "tests/test_native_device_operator_signing_wire.py::test_submission_rebinds_server_bytes_to_current_durable_approval",
+      "test": "tests/test_native_device_operator_signing_wire.py",
+      "contracts": [
+        "native.operator.wire",
+        "native.operator.signature"
+      ],
+      "checkedAt": [
+        "native_device_operator_signing_wire.inspect_signing_request/prepare_signing_request/validate_signing_request_against_store",
+        "proofs_d_native.self_check",
+        "native_device_operator_authority.OperatorDecisionVerifier.verify_approval/OperatorAuthorizedDeviceCommandStore.decide_approval"
+      ]
+    },
+    {
+      "case": "test_signing_request_is_single_approval_authority_not_a_reusable_bearer_grant",
+      "case_id": "tests/test_native_device_operator_signing_wire.py::test_signing_request_is_single_approval_authority_not_a_reusable_bearer_grant",
+      "test": "tests/test_native_device_operator_signing_wire.py",
+      "contracts": [
+        "native.operator.wire"
+      ],
+      "checkedAt": [
+        "native_device_operator_signing_wire.inspect_signing_request/prepare_signing_request/validate_signing_request_against_store",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "test_lost_approval_ack_can_retry_same_signature_without_minting_new_authority",
+      "case_id": "tests/test_native_device_operator_signing_wire_retry.py::test_lost_approval_ack_can_retry_same_signature_without_minting_new_authority",
+      "test": "tests/test_native_device_operator_signing_wire_retry.py",
+      "contracts": [
+        "native.operator.retry"
+      ],
+      "checkedAt": [
+        "native_device_operator_signing_wire.submit_operator_signature; native_device_operator_authority.OperatorAuthorizedDeviceCommandStore.decide_approval",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "NativeToolTests.test_catalog_search_describe_and_workspace_call_are_receipted",
+      "case_id": "tests/test_native_tools.py::NativeToolTests.test_catalog_search_describe_and_workspace_call_are_receipted",
+      "test": "tests/test_native_tools.py",
+      "contracts": [
+        "native.tools.catalog",
+        "native.tools.workspace",
+        "native.tools.receipt"
+      ],
+      "checkedAt": [
+        "native_tools.NativeToolRegistry.list_tools/search/describe -> proofs_d_native.check_catalog",
+        "proofs_d_native.self_check",
+        "native_tools.NativeToolRegistry._workspace_read/_workspace_search -> proofs_d_native.require",
+        "native_tools.NativeToolRegistry.call -> proofs_d_native.check_tool_receipt"
+      ]
+    },
+    {
+      "case": "NativeToolTests.test_tool_protocol_rejects_wrong_types_and_out_of_range_values",
+      "case_id": "tests/test_native_tools.py::NativeToolTests.test_tool_protocol_rejects_wrong_types_and_out_of_range_values",
+      "test": "tests/test_native_tools.py",
+      "contracts": [
+        "native.tools.arguments"
+      ],
+      "checkedAt": [
+        "native_tools.NativeToolRegistry.prepare_arguments/_validate_arguments/_validate_value",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "NativeToolTests.test_live_skill_iteration_is_a_receipted_native_tool",
+      "case_id": "tests/test_native_tools.py::NativeToolTests.test_live_skill_iteration_is_a_receipted_native_tool",
+      "test": "tests/test_native_tools.py",
+      "contracts": [
+        "native.tools.skill-revision",
+        "native.tools.receipt"
+      ],
+      "checkedAt": [
+        "skill_iteration.resolve_codex_skill_file/iterate_codex_skill_file -> proofs_d_native.require; native_tools.NativeToolRegistry._skill_live_read/_skill_live_iterate",
+        "proofs_d_native.self_check",
+        "native_tools.NativeToolRegistry.call -> proofs_d_native.check_tool_receipt"
+      ]
+    },
+    {
+      "case": "NativeToolTests.test_harness_selects_screenshot_as_a_native_tool_action",
+      "case_id": "tests/test_native_tools.py::NativeToolTests.test_harness_selects_screenshot_as_a_native_tool_action",
+      "test": "tests/test_native_tools.py",
+      "contracts": [
+        "native.tools.routing"
+      ],
+      "checkedAt": [
+        "action_executor.HybridExecutionAdapter._proposal -> proofs_d_native.check_native_proposal",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "NativeToolTests.test_harness_selects_ui_inspiration_as_native_tool_action",
+      "case_id": "tests/test_native_tools.py::NativeToolTests.test_harness_selects_ui_inspiration_as_native_tool_action",
+      "test": "tests/test_native_tools.py",
+      "contracts": [
+        "native.tools.routing"
+      ],
+      "checkedAt": [
+        "action_executor.HybridExecutionAdapter._proposal -> proofs_d_native.check_native_proposal",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "NativeToolTests.test_preview_inspect_reads_a_real_local_http_surface",
+      "case_id": "tests/test_native_tools.py::NativeToolTests.test_preview_inspect_reads_a_real_local_http_surface",
+      "test": "tests/test_native_tools.py",
+      "contracts": [
+        "native.tools.preview",
+        "native.tools.receipt"
+      ],
+      "checkedAt": [
+        "native_tools.NativeToolRegistry._preview_inspect -> proofs_d_native.check_preview",
+        "proofs_d_native.self_check",
+        "native_tools.NativeToolRegistry.call -> proofs_d_native.check_tool_receipt"
+      ]
+    },
+    {
+      "case": "test_worker_reuses_chromium_with_fresh_contexts",
+      "case_id": "tests/test_native_tool_worker.py::test_worker_reuses_chromium_with_fresh_contexts",
+      "test": "tests/test_native_tool_worker.py",
+      "contracts": [
+        "native.worker.reuse",
+        "native.tools.receipt"
+      ],
+      "checkedAt": [
+        "native_tool_worker.run_worker -> proofs_d_native.require; native_tools.ReusablePlaywrightRuntime.page/close",
+        "proofs_d_native.self_check",
+        "native_tools.NativeToolRegistry.call -> proofs_d_native.check_tool_receipt"
+      ]
+    },
+    {
+      "case": "NativeToolTests.test_annotation_rectangle_is_clamped_and_w3c_capture_is_real",
+      "case_id": "tests/test_native_tools.py::NativeToolTests.test_annotation_rectangle_is_clamped_and_w3c_capture_is_real",
+      "test": "tests/test_native_tools.py",
+      "contracts": [
+        "native.tools.annotation"
+      ],
+      "checkedAt": [
+        "native_tools.NativeToolRegistry._preview_annotate -> proofs_d_native.check_annotation",
+        "proofs_d_native.self_check"
+      ]
+    },
+    {
+      "case": "NativeToolTests.test_visual_search_catalog_and_ui_inspiration_contract",
+      "case_id": "tests/test_native_tools.py::NativeToolTests.test_visual_search_catalog_and_ui_inspiration_contract",
+      "test": "tests/test_native_tools.py",
+      "contracts": [
+        "native.tools.catalog",
+        "native.tools.inspiration"
+      ],
+      "checkedAt": [
+        "native_tools.NativeToolRegistry.list_tools/search/describe -> proofs_d_native.check_catalog",
+        "proofs_d_native.self_check",
+        "native_tools.NativeToolRegistry._ui_inspiration_search/_inspiration_request/_inspiration_board -> proofs_d_native.check_inspiration"
+      ]
+    },
+    {
+      "case": "test_restore_failure_rolls_back_files_already_replaced",
+      "case_id": "tests/test_native_checkpoints.py::test_restore_failure_rolls_back_files_already_replaced",
+      "test": "tests/test_native_checkpoints.py",
+      "contracts": [
+        "native.checkpoints.rollback",
+        "native.checkpoints.restore"
+      ],
+      "checkedAt": [
+        "native_checkpoints.NativeCheckpointStore.restore/_apply_entries/_rollback_transaction_locked",
+        "proofs_d_native.self_check",
+        "native_checkpoints.NativeCheckpointStore._apply_entries/_write_restore_receipt -> proofs_d_native.require"
+      ]
+    },
+    {
+      "case": "test_changed_workspace_requires_and_passes_discovered_python_check",
+      "case_id": "tests/test_native_proof_audit.py::test_changed_workspace_requires_and_passes_discovered_python_check",
+      "test": "tests/test_native_proof_audit.py",
+      "contracts": [
+        "native.audit.proof-discovery",
+        "native.audit.failure-gate"
+      ],
+      "checkedAt": [
+        "native_proof_audit._verification_candidates/select_verification/NativeProofAuditor._run_check/audit",
+        "proofs_d_native.self_check",
+        "native_proof_audit.NativeProofAuditor.audit -> proofs_d_native.check_audit"
+      ]
+    }
+  ],
+  "frontier": []
+,
+  "portRoles": [48497, 48498]
+}

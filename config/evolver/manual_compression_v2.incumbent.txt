@@ -1,0 +1,26 @@
+INDEX Markdown notes folder: list, search, tags, pins, safe writes
+STATE current: neyvia.notes.list({}) → {"type":"object","properties":{"folder":{"type":"string"},"exists":{"type":"boolean"},"notes":{"type":"array"},"tags":{"type":"array"}},"required":["folder","exists","notes","tags"]}
+ACTIONS notes.list=neyvia.notes.list(query?,tag?,limit?); pre=Configured notes folder; query words and tags are conjunctive; limit 1–500; effect=Read up to 3000 eligible notes, pinned then recent; return filtered notes and tag counts; reversible
+ACTIONS notes.folder=neyvia.notes.folder(folder?); pre=No folder reads current choice; supplied folder resolves outside protected live tree and is a directory or missing; effect=Persist selected folder and create it if needed; existing notes are not moved; reversible
+ACTIONS notes.open=neyvia.notes.open(path); pre=Existing readable note beneath configured notes folder; effect=Emit notes.open to user app; receipt alone has uiVerified=false; reversible
+ACTIONS notes.pin=neyvia.notes.pin(path,pinned?); pre=Existing note beneath notes folder; pinned defaults true; effect=Atomically update .neyvia-notes.json pin list; note bytes unchanged; reversible
+ACTIONS notes.read=neyvia.notes.read(path); pre=Existing .md/.markdown/.txt resolved beneath notes folder, at most 2 MiB; effect=Return body, relative path, tags, pinned and nanosecond modified stamp; reversible
+ACTIONS notes.search=neyvia.notes.search(query,limit?); pre=Nonblank query; every word and #tag must match; limit 1–500; effect=Read matching note snippets ranked by title match then recency; no model call; reversible
+ACTIONS notes.write=neyvia.notes.write(path?,title?,body,mode?,expectedModified?); pre=UTF-8 body <=2 MiB; explicit path stays beneath notes folder with note extension; supplied expectedModified must match an existing note; effect=Atomically create or replace Markdown; append adds newline-separated text; no path chooses a unique title filename; ⚠ review authority
+CHECKS captured: neyvia.notes.read({"path":{"$input":"path"}}) {"path":"body","op":"contains","value":{"$input":"idea"}}
+CHECKS tagged: neyvia.notes.read({"path":{"$input":"path"}}) {"path":"tags","op":"contains","value":{"$input":"tag"}}
+CHECKS body-saved: neyvia.notes.read({"path":{"$input":"path"}}) {"path":"body","op":"eq","value":{"$input":"body"}}
+CHECKS pin-saved: neyvia.notes.read({"path":{"$input":"path"}}) {"path":"pinned","op":"eq","value":true}
+PROCEDURE capture-tagged-idea(path,idea,tag): Read a note, choose append, save the dictated idea with its prose tag and verify both → notes.read → JUDGE:capture → notes.write [captured] → notes.read [tagged]
+STEPS capture-tagged-idea: [{"action":"notes.read","args":{"path":{"$input":"path"}},"save":"before"},{"judge":"capture"},{"action":"notes.write","args":{"path":{"$input":"path"},"body":{"$input":"idea"},"mode":"append","expectedModified":{"$result":"before.modified"}},"save":"written","check":"captured","when":{"judge":"capture","option":"append"}},{"action":"notes.read","args":{"path":{"$input":"path"}},"save":"after","check":"tagged","when":{"judge":"capture","option":"append"}}]
+PROCEDURE write-and-pin(path,body,expectedModified): Review replacement of an existing note, CAS-write the body and pin it → notes.read → JUDGE:replace-note → notes.write [body-saved] → notes.pin [pin-saved]
+STEPS write-and-pin: [{"action":"notes.read","args":{"path":{"$input":"path"}},"save":"current"},{"judge":"replace-note"},{"action":"notes.write","args":{"path":{"$input":"path"},"body":{"$input":"body"},"expectedModified":{"$input":"expectedModified"}},"save":"written","check":"body-saved","when":{"judge":"replace-note","option":"replace"}},{"action":"notes.pin","args":{"path":{"$input":"path"},"pinned":true},"save":"pinned","check":"pin-saved","when":{"judge":"replace-note","option":"replace"}}]
+JUDGE capture: Add this dictated idea to the selected note or keep the note unchanged? options=append,leave; Input idea is already transcribed and includes a prose #tag; confirm destination/topic before append. Re-read after conflicts; no automatic replacement of concurrent text.
+JUDGE replace-note: Does the proposed body preserve what matters in this existing note? options=replace,leave; Compare current body before replacing; expectedModified comes from that observation. There is no automatic undo for note bytes.
+PITFALL status=conflict from expectedModified → Read new modified/body and merge the idea; do not retry stale stamp or remove guard
+PITFALL Tag absent from tags[] → Put #tag in prose outside backticks/fences; numeric/hex-looking tags and link anchors do not count
+PITFALL Changing notes.folder appears to lose notes → Folder selection does not move files; switch back or explicitly migrate chosen files
+PITFALL A note is absent from list → Check extension, hidden/_ directories, 2 MiB limit and 3000-file scan bound; read known path directly
+FRONTIER Mic recording, language routing and transcription quality are outside notes.write; use dictation manual when present
+FRONTIER No version history, note-delete or multi-writer merge tool; preserve body before replacement
+GUIDANCE Source: src/grant_agent/neyvia_notes_tools.py (_note_path, write_note, tags_of, _all); tests/test_neyvia_notes_files.py.

@@ -1,0 +1,74 @@
+{
+  "area": "cl-completion",
+  "module": "grant_agent.proofs_cl_completion",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "cl.completion-after-effect",
+      "phase": "post",
+      "claim": "A real CL observer and explicit done complete the authored task; a subsequent native note write persists its requested bytes and invalidates the prior completion in the product observer.",
+      "checkedAt": [
+        "grant_agent.cl.protocol.Protocol.run",
+        "grant_agent.cl.protocol.Protocol.completion",
+        "grant_agent.neyvia_gateway.NeyviaToolGateway.call_native",
+        "grant_agent.neyvia_agent._product_cl_completion",
+        "grant_agent.neyvia_notes_tools.call_notes",
+        "grant_agent.proofs_cl_completion.check_completion"
+      ],
+      "impact": [
+        "CL task completion",
+        "native note bytes",
+        "done proof invalidation"
+      ]
+    },
+    {
+      "id": "cl.stale-reference-preserves",
+      "phase": "invariant",
+      "claim": "Restored observer bindings are reread against current bytes; a fresh native observation supersedes the old ref, and a stale ref is refused without changing the selected file or exposing its native token.",
+      "checkedAt": [
+        "grant_agent.cl.host.HostContext.resolve",
+        "grant_agent.cl.host.HostContext.completion_bindings",
+        "grant_agent.cl.host.HostContext.restore_completion_bindings",
+        "grant_agent.cl.host.HostContext.execute",
+        "grant_agent.proofs_cl_completion.check_stale_reference"
+      ],
+      "impact": [
+        "Native target safety",
+        "restored CL completion observations",
+        "stale action refusal"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_cl_product_completion.py",
+      "case": "test_explicit_done_invalidates_after_goal_or_generic_mutation",
+      "contracts": ["cl.completion-after-effect"],
+      "checkedAt": [
+        "grant_agent.neyvia_gateway.NeyviaToolGateway.call_native",
+        "grant_agent.neyvia_agent._product_cl_completion",
+        "grant_agent.cl.protocol.Protocol.completion"
+      ]
+    },
+    {
+      "test": "tests/test_cl_product_completion.py",
+      "case": "test_restored_window_style_ref_rechecks_actual_file",
+      "contracts": ["cl.stale-reference-preserves"],
+      "checkedAt": [
+        "grant_agent.cl.host.HostContext.completion_bindings",
+        "grant_agent.cl.host.HostContext.restore_completion_bindings",
+        "grant_agent.cl.host.HostContext.evaluate"
+      ]
+    },
+    {
+      "test": "tests/test_cl_product_completion.py",
+      "case": "test_reused_element_token_checks_latest_ref_and_rejects_old_ref",
+      "contracts": ["cl.stale-reference-preserves"],
+      "checkedAt": [
+        "grant_agent.cl.host.HostContext.live_refs",
+        "grant_agent.cl.host.HostContext.resolve",
+        "grant_agent.cl.host.HostContext.execute"
+      ]
+    }
+  ]
+}

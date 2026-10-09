@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neyvia.local/schemas/application-surface-v1.json",
+  "title": "N-E-Y-V-I-A optional application surface",
+  "description": "An optional, bounded desktop/web surface declared inside a Fluxio app capability manifest as application_surface.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "surface_id",
+    "title",
+    "description",
+    "control_modes",
+    "permissions",
+    "targets"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "neyvia.application-surface/v1"
+    },
+    "surface_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$",
+      "maxLength": 96
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "control_modes": {
+      "type": "array",
+      "items": {
+        "enum": ["agent", "user"]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "permissions": {
+      "$ref": "#/$defs/permissions"
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "$ref": "#/$defs/target"
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status_file": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "max_age_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 86400
+        },
+        "states": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "declared",
+              "ready",
+              "launching",
+              "running",
+              "stopped",
+              "failed",
+              "unavailable"
+            ]
+          }
+        }
+      }
+    },
+    "observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "log_paths": {
+          "$ref": "#/$defs/pathList"
+        },
+        "proof_paths": {
+          "$ref": "#/$defs/pathList"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "permission": {
+      "enum": [
+        "context.read",
+        "artifact.read",
+        "artifact.write",
+        "workspace.read",
+        "workspace.write",
+        "process.execute",
+        "network.read",
+        "network.write",
+        "secret.use",
+        "external.side_effect",
+        "compute.spend",
+        "device.control",
+        "security.assess",
+        "tool.manage",
+        "destructive"
+      ]
+    },
+    "permissionList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/permission"
+      },
+      "uniqueItems": true
+    },
+    "permissions": {
+      "type": "object",
+      "required": ["inspect", "launch", "control"],
+      "additionalProperties": false,
+      "properties": {
+        "inspect": {
+          "$ref": "#/$defs/permissionList"
+        },
+        "launch": {
+          "$ref": "#/$defs/permissionList"
+        },
+        "control": {
+          "$ref": "#/$defs/permissionList"
+        }
+      }
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "pathList": {
+      "type": "array",
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/relativePath"
+      }
+    },
+    "build": {
+      "type": "object",
+      "required": ["status"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": ["available", "unavailable", "not_required"]
+        },
+        "artifact": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 536870912
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "architecture": {
+          "enum": ["x86_64", "arm64", "x86"]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "proof_paths": {
+          "$ref": "#/$defs/pathList"
+        },
+        "evidence": {
+          "$ref": "#/$defs/readiness"
+        }
+      }
+    },
+    "launch": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": ["url", "artifact"]
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "artifact": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "arguments": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 1024
+          }
+        },
+        "working_directory": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": [
+        "target_id",
+        "kind",
+        "platform",
+        "build",
+        "required_permissions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "target_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$",
+          "maxLength": 96
+        },
+        "kind": {
+          "enum": ["web", "desktop"]
+        },
+        "platform": {
+          "enum": ["web", "windows", "macos", "linux", "android", "ios"]
+        },
+        "build": {
+          "$ref": "#/$defs/build"
+        },
+        "launch": {
+          "$ref": "#/$defs/launch"
+        },
+        "required_permissions": {
+          "$ref": "#/$defs/permissionList"
+        },
+        "readiness": {
+          "$ref": "#/$defs/readiness"
+        }
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "required": ["receipt_id"],
+      "additionalProperties": false,
+      "properties": {
+        "receipt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "max_age_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 604800
+        }
+      }
+    }
+  }
+}

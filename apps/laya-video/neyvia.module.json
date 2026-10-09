@@ -1,0 +1,183 @@
+{
+  "requires": {"neyviaApi": ">=1.0 <2"},
+ "schema": "neyvia.module.v1",
+ "id": "laya-video",
+ "name": "LAYA video",
+ "purpose": "LAYA edits video by itself: a CL brief becomes a first draft from real captures, the shared Scene core judges the rendered file and keeps only fixes that remove findings; A/B votes become personal taste episodes.",
+ "files": [
+  "apps/laya-video/laya_video_mod.py",
+  "apps/laya-video/manual.cl",
+  "apps/laya-video/host-contract.json",
+  "apps/laya-video/briefs/neyvia-launch.cl",
+  "apps/laya-video/briefs/practice.cl"
+ ],
+ "manual": "laya-video",
+ "sourceManual": "manual.cl",
+ "contract": "host-contract.json",
+ "ownerSurface": "Marketplace / Mods",
+ "settings": [
+  "enabled"
+ ],
+ "events": [],
+ "dependencies": [
+  "hyperframes"
+ ],
+ "permissions": [
+  "Renders through the HyperFrames mod (headless)",
+  "Reads the captures named in the brief and writes the project folder you name",
+  "Runs local Whisper and Windows OCR; no paid or cloud model calls"
+ ],
+ "actions": [
+  {
+   "name": "neyvia.mod.laya_video.draft",
+   "description": "Assemble the first draft EDL from a CL brief and real captures.",
+   "file": "apps/laya-video/laya_video_mod.py",
+   "function": "draft",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "brief": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "brief",
+     "out"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.laya_video.inspect",
+   "description": "Render and transcribe a project, then judge it with the shared core.",
+   "file": "apps/laya-video/laya_video_mod.py",
+   "function": "inspect",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "quality": {
+      "type": "string",
+      "maxLength": 4000,
+      "enum": [
+       "preview",
+       "master"
+      ]
+     }
+    },
+    "required": [
+     "project"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.laya_video.improve",
+   "description": "Guarded improve rounds: each named EDL fix is kept only on a strict finding reduction.",
+   "file": "apps/laya-video/laya_video_mod.py",
+   "function": "improve",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "rounds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 24
+     },
+     "maxSeconds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 300
+     },
+     "allowedFixes": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 4000
+      }
+     }
+    },
+    "required": [
+     "project"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.laya_video.vote",
+   "description": "Record a person's A/B preference between two cuts as personal episodes.",
+   "file": "apps/laya-video/laya_video_mod.py",
+   "function": "vote",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "a": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "b": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "winner": {
+      "type": "string",
+      "maxLength": 4000,
+      "enum": [
+       "a",
+       "b"
+      ]
+     },
+     "user": {
+      "type": "string",
+      "maxLength": 4000,
+      "minLength": 1
+     },
+     "reason": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "voteId": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "a",
+     "b",
+     "winner",
+     "user"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.laya_video.verify",
+   "description": "Replay the recorded launch-cut proof against the laya-video CL contracts.",
+   "file": "apps/laya-video/laya_video_mod.py",
+   "function": "verify",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+   }
+  }
+ ]
+}

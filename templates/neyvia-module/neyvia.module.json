@@ -1,0 +1,22 @@
+{
+  "schema": "neyvia.module.v1",
+  "id": "hello-module",
+  "name": "Hello module",
+  "purpose": "Build a personal greeting through a small agent-callable optional mod.",
+  "files": ["apps/hello-module/greeting.py", "apps/hello-module/manual.cl", "apps/hello-module/host-contract.json"],
+  "manual": "hello-module",
+  "sourceManual": "manual.cl",
+  "contract": "host-contract.json",
+  "ownerSurface": "Marketplace / Mods",
+  "settings": ["enabled"],
+  "events": [],
+  "dependencies": [],
+  "actions": [{
+    "name": "neyvia.mod.hello.greet",
+    "description": "Read a personal greeting for the supplied name.",
+    "file": "apps/hello-module/greeting.py",
+    "function": "greet",
+    "mutability": "read",
+    "inputSchema": {"type": "object", "properties": {"name": {"type": "string", "minLength": 1, "maxLength": 80}}, "required": ["name"], "additionalProperties": false}
+  }]
+}

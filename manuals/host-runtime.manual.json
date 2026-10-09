@@ -1,0 +1,514 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "host-runtime",
+  "kind": "environment",
+  "proofs": {
+    "area": "d-host",
+    "manifests": [
+      "config/proofs/d-host.json"
+    ],
+    "startup": {
+      "procedures": [
+        "stable-event-identity",
+        "live-skill-catalog",
+        "scoped-remote-url-refusals",
+        "durable-stage-checkpoint-rollback",
+        "unknown-executable-refused",
+        "typed-delta-merge-synthesis",
+        "progressive-real-file-authority-and-parallel-stages",
+        "bounded-import-lineage-context",
+        "nearby-durable-recovery-redacted-bounded-history",
+        "settings-real-owner-lifetime-child-start-and-socket-worker",
+        "artifact-gate-safe-url-and-outside-refusal"
+      ],
+      "runner": "grant_agent.proofs_d_host.self_check",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "web_backend_workspace.decorate_mission_events -> proofs_d_host.check_event_identity"
+        ],
+        "claim": "Detail and delta preserve caller identities or derive the same canonical 24-hex event identity.",
+        "id": "d.host.event-identity",
+        "impact": [
+          "mission receipts",
+          "native execution",
+          "operator authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "skills.SkillRegistry._load -> proofs_d_host.check_skill_catalog"
+        ],
+        "claim": "The canonical design/verification skill catalog retains required entries and real capability provenance.",
+        "id": "d.host.skill-provenance",
+        "impact": [
+          "mission receipts",
+          "native execution",
+          "operator authority"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "neyvia_remote._url/_proof_ports"
+        ],
+        "claim": "Remote transports admit only numeric authorized addresses without URL credentials, path, query or fragment; loopback needs explicit granted proof ports and mode.",
+        "id": "d.host.remote-transport",
+        "impact": [
+          "mission receipts",
+          "native execution",
+          "operator authority"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "neyvia_stage_scheduler.NeyviaStageScheduler.execute -> proofs_d_host.check_stage_receipt"
+        ],
+        "claim": "Compiled stage order and plan hash match durable receipts; regressed repairs keep rollback evidence and never claim rolled-back steps complete.",
+        "id": "d.host.stage-receipt",
+        "impact": [
+          "mission receipts",
+          "native execution",
+          "operator authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "neyvia_stage_scheduler.default_step_handler"
+        ],
+        "claim": "Unknown executable actions return no_handler and never report success.",
+        "id": "d.host.stage-refusal",
+        "impact": [
+          "mission receipts",
+          "native execution",
+          "operator authority"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "agent_delta.merge_agent_deltas -> proofs_d_host.check_delta_merge"
+        ],
+        "claim": "Typed delta items merge deterministically by identity with later entries winning and evidence preserved.",
+        "id": "d.host.delta-merge",
+        "impact": [
+          "mission receipts",
+          "native execution",
+          "operator authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "agent_delta.synthesize_agent_deltas -> proofs_d_host.check_synthesis"
+        ],
+        "claim": "Synthesis reads typed deltas, keeps transcripts excluded, computes blocker/conflict status and leaves unproven competing candidates disabled.",
+        "id": "d.host.delta-synthesis",
+        "impact": [
+          "mission receipts",
+          "native execution",
+          "operator authority"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "neyvia_stage_scheduler.build_progressive_step_handler"
+        ],
+        "claim": "Read tools dispatch through the progressive surface; mutating tools require explicit approval before the effect.",
+        "id": "d.host.stage-tool-authority",
+        "impact": [
+          "scheduled tools",
+          "approval",
+          "deterministic receipts"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_stage_scheduler.NeyviaStageScheduler._run_parallel_steps/execute -> proofs_d_host.check_stage_receipt"
+        ],
+        "claim": "Independent parallel-safe stages use worker futures and merge the resulting outcomes in compiled order.",
+        "id": "d.host.stage-parallel",
+        "impact": [
+          "scheduled tools",
+          "approval",
+          "deterministic receipts"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_runtime_invocation.build_selected_context_packet -> proofs_d_host.check_context_packet"
+        ],
+        "claim": "Selected context preserves bounded source/import lineage and canonical content hashes, including empty selections.",
+        "id": "d.host.selected-context",
+        "impact": [
+          "delegated runtime context",
+          "receipt provenance"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "nearby_send.NearbySendService._public_receipt/_public_progress -> proofs_d_host.check_nearby_projection"
+        ],
+        "claim": "Every public transfer receipt/progress projection excludes transport capabilities and absolute sources, caps files/chunks and discloses truncation.",
+        "id": "d.host.nearby-redaction",
+        "impact": [
+          "transfer receipts",
+          "scoped local network authority",
+          "Settings lifetime"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "nearby_send.NearbySendService.get_active_transfer -> proofs_d_host.check_nearby_state"
+        ],
+        "claim": "Under the state lock, a dead owner becomes interrupted without retaining transfer claims or secrets; corrupt state yields an inactive empty projection.",
+        "id": "d.host.nearby-recovery",
+        "impact": [
+          "transfer receipts",
+          "scoped local network authority",
+          "Settings lifetime"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "nearby_send.NearbySendService.list_transfer_history -> proofs_d_host.check_nearby_history"
+        ],
+        "claim": "History is bounded by caller and server limits, skips corrupt receipts and reports accurate returned-state counts.",
+        "id": "d.host.nearby-history",
+        "impact": [
+          "transfer receipts",
+          "scoped local network authority",
+          "Settings lifetime"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "local_network_policy.install/release/enabled -> proofs_d_host.check_policy_release"
+        ],
+        "claim": "Settings owners register their selected state root, release independently and reopen the persisted local-only preference.",
+        "id": "d.host.policy-owner",
+        "impact": [
+          "transfer receipts",
+          "scoped local network authority",
+          "Settings lifetime"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "local_network_policy.enabled/install"
+        ],
+        "claim": "Missing policy roots retire after a locked recheck; existing state directories stay observed and Settings re-registers its owner.",
+        "id": "d.host.policy-root",
+        "impact": [
+          "transfer receipts",
+          "scoped local network authority",
+          "Settings lifetime"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "local_network_policy.child_start/transition; src/grant_agent/connected_sessions/claude_terminal.py:spawn_terminal"
+        ],
+        "claim": "Pending child startup permits socket workers but refuses local-only activation; enabled local-only mode refuses native terminal launch before loading its launcher.",
+        "id": "d.host.policy-startup",
+        "impact": [
+          "transfer receipts",
+          "scoped local network authority",
+          "Settings lifetime"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "web_backend_workspace.WorkspaceArtifactMixin._decorate_mission_artifacts -> proofs_d_host.check_artifact_row"
+        ],
+        "claim": "Only paths accepted by the artifact gate gain safe 24-hex serving URLs/media types; rejected paths lose stale artifact endpoints.",
+        "id": "d.host.artifact-serving",
+        "impact": [
+          "mission artifacts",
+          "authenticated content serving"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.efficiency.extract": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "cascade",
+            "direct-small",
+            "direct-big"
+          ]
+        },
+        "useScript": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path",
+        "field"
+      ]
+    },
+    "terminal.exec": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shell": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "powershell",
+            "python",
+            "bash",
+            "cmd"
+          ]
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120000
+        },
+        "maxOutputChars": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 50000
+        }
+      },
+      "required": [
+        "command"
+      ]
+    },
+    "workspace.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "startLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "proofs-d-host": {
+      "title": "PROOFS-d host semantic contracts",
+      "state": {},
+      "actions": {
+        "exercise": {
+          "effect": "Execute the production stage scheduler and workspace writer; retain actual output and refused unapproved mutation.",
+          "pre": "Owned disposable cwd, explicit owner approval and the pinned C8e journey adapter. Never use the input desktop or an external provider.",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "exitCode": {
+                "const": 0
+              }
+            },
+            "required": [
+              "ok",
+              "exitCode"
+            ]
+          },
+          "reversible": true,
+          "schema": "terminal.exec",
+          "tool": "terminal.exec"
+        },
+        "read-effect": {
+          "effect": "Read durable effect bytes afresh through the workspace boundary.",
+          "pre": "Read the actual artifact produced by this procedure.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "workspace.read",
+          "tool": "workspace.read"
+        }
+      },
+      "checks": {
+        "staged-bytes": {
+          "args": {
+            "path": "c8e-effects/host-runtime/staged.txt"
+          },
+          "expect": {
+            "op": "eq",
+            "path": "content",
+            "value": {
+              "$input": "expectedMarker"
+            }
+          },
+          "tool": "workspace.read"
+        },
+        "unapproved-write-refused": {
+          "args": {
+            "field": "/refusedMutation/metadata/approval_required",
+            "path": "c8e-effects/host-runtime/effect.json",
+            "useScript": true
+          },
+          "expect": {
+            "op": "eq",
+            "path": "answer.valueJson",
+            "value": "true"
+          },
+          "tool": "neyvia.efficiency.extract"
+        },
+        "durable-stage-completed": {
+          "args": {
+            "field": "/durableReceipt/completedStepIds",
+            "path": "c8e-effects/host-runtime/effect.json",
+            "useScript": true
+          },
+          "expect": {
+            "op": "eq",
+            "path": "answer.valueJson",
+            "value": "[\"write\"]"
+          },
+          "tool": "neyvia.efficiency.extract"
+        }
+      },
+      "procedures": {
+        "stage-real-workspace-write": {
+          "goal": "Execute the production stage scheduler and workspace writer; retain actual output and refused unapproved mutation.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "command": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expectedMarker": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "command",
+              "expectedMarker"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "exercise",
+              "args": {
+                "command": {
+                  "$input": "command"
+                },
+                "maxOutputChars": 12000,
+                "shell": "python",
+                "timeoutMs": 30000
+              },
+              "save": "executed"
+            },
+            {
+              "action": "read-effect",
+              "args": {
+                "path": "c8e-effects/host-runtime/effect.json"
+              },
+              "check": "staged-bytes",
+              "save": "fresh0"
+            },
+            {
+              "action": "read-effect",
+              "args": {
+                "path": "c8e-effects/host-runtime/effect.json"
+              },
+              "check": "unapproved-write-refused",
+              "save": "fresh1"
+            },
+            {
+              "action": "read-effect",
+              "args": {
+                "path": "c8e-effects/host-runtime/effect.json"
+              },
+              "check": "durable-stage-completed",
+              "save": "fresh2"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A host invariant fails",
+          "recovery": "Stop the action and repair the semantic boundary before retrying"
+        }
+      ],
+      "frontier": [
+        "Settings availability-probe/custom-worker/race fixtures remain unmapped.",
+        "Nearby Send cancellation/resume/integrity transport requires the byte-stream peer fixture; no physical recipient proof is claimed.",
+        "Orchestration runtime turns and frontend prompt selection remain pending faithful provider/rendered journeys.",
+        "This executable journey proves only Execute the production stage scheduler and workspace writer; retain actual output and refused unapproved mutation. Other declared contracts, rendered surfaces, physical devices and live provider behavior require their separate journeys."
+      ],
+      "guidance": [
+        "Claims below are enforced in the feature owners on real actions; scratch procedures use the same functions."
+      ]
+    }
+  }
+}

@@ -1,0 +1,1013 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "awareness",
+  "kind": "environment",
+  "proofs": {
+    "area": "awareness",
+    "manifests": [
+      "config/proofs/proofs-e-release.json"
+    ],
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_awareness.overlaps",
+          "grant_agent.proofs_awareness.check_overlap"
+        ],
+        "claim": "Case-insensitive paths overlap only at complete folder/file boundaries; absolute and relative forms match at complete suffix/contained component boundaries.",
+        "id": "awareness.paths.overlap",
+        "impact": [
+          "work board claim collisions",
+          "filtered work observer"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_awareness.claim inside _FileLock",
+          "grant_agent.proofs_awareness.after"
+        ],
+        "claim": "A successful new claim persists exactly its agent/chat/intent and normalized unique paths, without changing unrelated claims or release history.",
+        "id": "awareness.claim.persisted",
+        "impact": [
+          ".neyvia/work-board.json",
+          "other agents' claimed files"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_awareness.claim inside _FileLock",
+          "grant_agent.proofs_awareness.after"
+        ],
+        "claim": "The same agent/chat/path set refreshes the existing id and original since/files while updating intent and activity timestamp; other claims stay untouched.",
+        "id": "awareness.claim.refresh",
+        "impact": [
+          "claim identity",
+          "advisory coordination",
+          "stale activity"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_awareness.claim inside _FileLock",
+          "grant_agent.proofs_awareness.after"
+        ],
+        "claim": "The claim receipt includes exactly other agents/chats whose persisted paths overlap the requested paths and includes exactly their shared paths.",
+        "id": "awareness.claim.overlaps",
+        "impact": [
+          "cross-agent coordination",
+          "overlap receipts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_awareness.release inside _FileLock",
+          "grant_agent.proofs_awareness.after"
+        ],
+        "claim": "Release removes exactly the selected active claim and archives it without changing other active entries or the last 29 archived claims; receipt returns removed paths.",
+        "id": "awareness.release.persisted",
+        "impact": [
+          "active claim visibility",
+          "recoverable claim history"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_awareness.board_list",
+          "grant_agent.proofs_awareness.check_list"
+        ],
+        "claim": "The observer returns exactly the persisted claims matching files/agent filters, sorted by since, with correct count, stale total and latest five releases.",
+        "id": "awareness.list.projection",
+        "impact": [
+          "work board UI",
+          "agent awareness"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_awareness.claim",
+          "grant_agent.neyvia_awareness.board_list",
+          "grant_agent.proofs_awareness._view_contract"
+        ],
+        "claim": "Age derives from the original since timestamp; stale derives from updatedAt (or since) at the 12-hour boundary. Refresh preserves age and makes an old active claim current.",
+        "id": "awareness.claim.staleness",
+        "impact": [
+          "stale work indicators",
+          "claim lineage"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_impact.find_gaps",
+          "grant_agent.proofs_awareness.check_gaps"
+        ],
+        "claim": "UI/handler/bridge/Tauri gap categories equal their exact set relations; handler caller review leads distinguish static scripts/tests from absent callers.",
+        "id": "awareness.impact.gaps",
+        "impact": [
+          "impact review",
+          "wiring omissions",
+          "dead-code decisions"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_impact._command_row",
+          "grant_agent.proofs_awareness.check_command"
+        ],
+        "claim": "Each command impact receipt exactly projects UI, handler, bridge, Tauri, tests, manuals and missing ends from the real parsed dependency graph.",
+        "id": "awareness.impact.command",
+        "impact": [
+          "changed-file dependency proof",
+          "desktop/UI wiring"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "src/grant_agent/runtime_capability_inventory.py:build_runtime_capability_inventory -> check_runtime_inventory"
+        ],
+        "claim": "Capability inventory exports safe readiness metadata, enabled instruction linkage and honest native activation without raw commands, URLs or environment values",
+        "id": "runtime.capability-metadata",
+        "impact": [
+          "awareness production observations"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.impact": {
+      "type": "object",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gaps": {
+          "type": "boolean"
+        }
+      },
+      "required": []
+    },
+    "neyvia.intent.checklist": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "text": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.prompt.amplify": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "context": {
+          "type": "object"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "review"
+          ]
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "raw",
+            "minimal",
+            "full"
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "requestId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "text": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "requestId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.prompt.edit": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "requestId",
+        "text"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "requestId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "text": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.prompt.get": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.work.claim": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "intent": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "chat": {
+          "type": "string"
+        },
+        "app": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "files",
+        "intent"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "intent": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.work.list": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "agent": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.work.release": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "realbugs_work_list": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent"
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Work board (who changes which files), impact map, intent checklist",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "claims": {
+                "type": "array"
+              },
+              "count": {
+                "type": "integer"
+              },
+              "stale": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "claims",
+              "count",
+              "stale"
+            ]
+          },
+          "tool": "neyvia.work.list"
+        }
+      },
+      "actions": {
+        "work.list": {
+          "effect": "Read active claims, overlap/staleness metadata; board grants no filesystem permission",
+          "pre": "Selected workspace board readable; optional files/agent filters",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "claims": {
+                "type": "array"
+              },
+              "count": {
+                "type": "integer"
+              },
+              "stale": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "claims",
+              "count",
+              "stale"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.work.list",
+          "tool": "neyvia.work.list"
+        },
+        "work.claim": {
+          "effect": "Persist advisory claim and return overlaps; same agent/chat/path set refreshes intent, no requestId field",
+          "pre": "1–100 nonblank normalized paths <400 chars; intent 1–300 chars; board capacity <=200; agent/chat identify ownership",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "claim": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "claim"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.work.claim",
+          "tool": "neyvia.work.claim"
+        },
+        "work.release": {
+          "effect": "Remove active claim, retain newest 30 release receipts; does not revert files or stop worker",
+          "pre": "ID from an active claim; already-released IDs are refused",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.work.release",
+          "tool": "neyvia.work.release"
+        },
+        "impact": {
+          "effect": "Return command/tool/UI/bridge/test/manual connections and missing wiring; no execution or repair",
+          "pre": "Named repository-relative paths; static repository index available",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.impact",
+          "tool": "neyvia.impact"
+        },
+        "intent.checklist": {
+          "effect": "Return prompt template and typed checklist schema; model must fill decisions, no hidden model call",
+          "pre": "Nonblank dictated text <=40000 chars",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.intent.checklist",
+          "tool": "neyvia.intent.checklist"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "claim-and-review": {
+          "goal": "Claim intended paths, inspect overlap and wiring, release immediately if ownership conflicts",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "maxItems": 100
+              },
+              "intent": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "files",
+              "intent"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "work.list",
+              "args": {},
+              "save": "board"
+            },
+            {
+              "action": "work.claim",
+              "args": {
+                "files": {
+                  "$input": "files"
+                },
+                "intent": {
+                  "$input": "intent"
+                }
+              },
+              "save": "claimed"
+            },
+            {
+              "action": "impact",
+              "args": {
+                "paths": {
+                  "$input": "files"
+                }
+              },
+              "save": "impact"
+            },
+            {
+              "judge": "overlap"
+            },
+            {
+              "action": "work.release",
+              "args": {
+                "id": {
+                  "$result": "claimed.claim.id"
+                }
+              },
+              "save": "released",
+              "when": {
+                "judge": "overlap",
+                "option": "release"
+              }
+            }
+          ]
+        },
+        "verify-effect-work-claim": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "maxItems": 100
+              },
+              "intent": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "files",
+              "intent"
+            ]
+          },
+          "steps": [
+            {
+              "action": "work.claim",
+              "args": {
+                "files": {
+                  "$input": "files"
+                },
+                "intent": {
+                  "$input": "intent"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-work-release": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "steps": [
+            {
+              "action": "work.release",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "overlap": {
+          "constraints": "Compare returned overlaps against exact file scope; claims are advisory and do not lock files. Coordinate conflicting ownership before proceed; released claim remains historical.",
+          "options": [
+            "proceed",
+            "release"
+          ],
+          "question": "Can this claimed work proceed without conflicting with existing owners?"
+        },
+        "intent": {
+          "constraints": "Read original text and preserve corrections; template is not a completed checklist. Resolve target/authority ambiguity before mutation; local formatting choices need no extra approval.",
+          "options": [
+            "ready",
+            "clarify"
+          ],
+          "question": "Does the generated checklist schema leave a decision-changing ambiguity?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Claim overlaps another worker",
+          "recovery": "Inspect overlap paths/intent and coordinate; board is not a lock or authorization"
+        },
+        {
+          "failure": "Claim looks old but worker may still be running",
+          "recovery": "Check owner evidence; staleness is advisory, never automatically release others"
+        },
+        {
+          "failure": "Impact map reports handler but no UI/bridge/manual",
+          "recovery": "Inspect named wiring before claiming complete; static matches do not prove runtime"
+        },
+        {
+          "failure": "Checklist returned prompt/schema only",
+          "recovery": "Have model fill schema from actual asks; do not display template as completed plan"
+        }
+      ],
+      "frontier": [
+        "Runtime-import/dynamic command wiring cannot be established from static impact matching",
+        "No scheduler or conflict-enforcement mechanism on the advisory board"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_awareness.py; src/grant_agent/neyvia_impact.py; tests/test_neyvia_awareness.py."
+      ]
+    },
+    "prompt-amplification": {
+      "title": "Preserve rough-prompt asks without model tokens",
+      "state": {
+        "saved": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.prompt.get"
+        }
+      },
+      "actions": {
+        "amplify": {
+          "effect": "Retain original, exact-span checklist and coverage in the card; selected default sends only reversible inline mishear/reference readings; zero model calls",
+          "pre": "Selected owner workspace; bounded text; edit requires current revision",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "amplification": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.prompt.amplify",
+          "tool": "neyvia.prompt.amplify"
+        },
+        "get": {
+          "effect": "Read saved prompt revision",
+          "pre": "Selected owner workspace; bounded text; edit requires current revision",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "amplification": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.prompt.get",
+          "tool": "neyvia.prompt.get"
+        },
+        "edit": {
+          "effect": "Save exact owner edit; retain evidence without automatic model drafting",
+          "pre": "Selected owner workspace; bounded text; edit requires current revision",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "amplification": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.prompt.edit",
+          "tool": "neyvia.prompt.edit"
+        }
+      },
+      "checks": {
+        "coverage": {
+          "args": {
+            "id": {
+              "$result": "prompt.amplification.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "amplification.coverage.ok",
+            "value": true
+          },
+          "tool": "neyvia.prompt.get"
+        }
+      },
+      "procedures": {
+        "prepare": {
+          "goal": "Prepare a lossless reading aid; refuse uncovered sentences",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "amplify",
+              "args": {
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "text": {
+                  "$input": "text"
+                }
+              },
+              "check": "coverage",
+              "save": "prompt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Original sentence has no exact-span item or proven chatter marker",
+          "recovery": "Coverage refuses preparation/submission; repair parser without dropping text"
+        },
+        {
+          "failure": "Costly reference has multiple or no candidates",
+          "recovery": "Review target before submission; context grants no permission"
+        }
+      ],
+      "frontier": [
+        "Conservative spans are reading aids, not proof of semantic interpretation.",
+        "Model extraction and automatic edit-learning are disabled.",
+        "Open files and recent work need bounded supplied context; chat comes from selected broker.",
+        "References outside the bounded chat projection can remain unresolved; a candidate is not an exact target."
+      ],
+      "guidance": [
+        "Original text remains saved verbatim; later corrections affect only named asks.",
+        "Offsets are Unicode code points. Unknown clauses remain visible context.",
+        "Minimal is the measured C14f default. Agent text contains only original wording with marked heard/ref readings; inlineEdits holds exact source spans and before/after text for reversal.",
+        "Checklist, checks, constraints, assumptions, questions and CL context pointers stay in the saved prompt.get record and Paul card; they are not appended on automatic sends.",
+        "Raw and full remain explicit variant options for audited comparison. Full uses the historical CL reading aid; raw emits the original unchanged.",
+        "A trailing not remains a visible card assumption and cannot cancel another explicit ask. Consequential ambiguous targets still block sends.",
+        "An owner card edit appends only fields Paul explicitly changed and answered questions; unchanged card fields never become prompt overhead.",
+        "C14f five tasks twice: strict intent minimal17/raw16/full14 of22; consumer tokens153139/181006/168734. Small reused panel with four unchanged task prompts is not population or causal gain evidence."
+      ]
+    },
+    "proofs-e-release": {
+      "title": "Release and capability observations (PROOFS-e)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Metadata readiness or a scoped proof is mistaken for external execution or a published release",
+          "recovery": "Inspect the observed boundary and use the owning real activation or publication procedure"
+        }
+      ],
+      "frontier": [
+        "No installer build, installation, publication, download or private signing-key provisioning is claimed.",
+        "Enabled plugin metadata and native instruction linkage do not prove external MCP/plugin execution.",
+        "The impact index proves static command wiring; it does not execute backend or desktop commands."
+      ],
+      "guidance": [
+        "Capability inventory exports safe readiness metadata, enabled instruction linkage and honest native activation without raw commands, URLs or environment values",
+        "Self-check: neyvia verify --area proofs-e-release; scoped actual signing, scanner, metadata and static impact actions."
+      ]
+    },
+    "realbugs-lifecycle": {
+      "title": "Run-scoped exclusive claims and terminal cleanup",
+      "state": {},
+      "actions": {
+        "work.list": {
+          "effect": "Read the owning lifecycle state from the selected workspace.",
+          "pre": "Owned proof session; observer does not launch or cancel any provider.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "realbugs_work_list",
+          "tool": "neyvia.work.list"
+        }
+      },
+      "checks": {
+        "live-claim-retained": {
+          "args": {
+            "agent": {
+              "$input": "agent"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": "",
+            "schema": {
+              "properties": {
+                "count": {
+                  "const": 1
+                },
+                "stale": {
+                  "const": 0
+                }
+              },
+              "required": [
+                "count",
+                "stale"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "neyvia.work.list"
+        },
+        "ended-claim-released": {
+          "args": {
+            "agent": {
+              "$input": "agent"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "count",
+            "value": 0
+          },
+          "tool": "neyvia.work.list"
+        }
+      },
+      "procedures": {
+        "live-claim-retained": {
+          "goal": "Run-scoped exclusive claims and terminal cleanup: live-claim-retained",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "agent": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "agent"
+            ]
+          },
+          "steps": [
+            {
+              "action": "work.list",
+              "args": {
+                "agent": {
+                  "$input": "agent"
+                }
+              },
+              "check": "live-claim-retained",
+              "save": "observed"
+            }
+          ]
+        },
+        "ended-claim-released": {
+          "goal": "Run-scoped exclusive claims and terminal cleanup: ended-claim-released",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "agent": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "agent"
+            ]
+          },
+          "steps": [
+            {
+              "action": "work.list",
+              "args": {
+                "agent": {
+                  "$input": "agent"
+                }
+              },
+              "check": "ended-claim-released",
+              "save": "observed"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [],
+      "guidance": [
+        "Run on one isolated real Claude Code terminal session: observe the claim while the parent waits for input, then observe after completed, failed, stopped or process-gone recovery. Live claims remain exclusive.",
+        "Mod and broker edit claims carry runId. Terminal cleanup releases only that run; persisted owner state and PID-start identity expire legacy/dead claims even after restart. Unknown owners retain the 12-hour lease.",
+        "A completed transport or a screenshot is not evidence that a claim was live and then released; retain both observer receipts and the actual provider event trail."
+      ]
+    }
+  }
+}

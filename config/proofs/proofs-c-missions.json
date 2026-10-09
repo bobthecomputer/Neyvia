@@ -1,0 +1,1026 @@
+{
+  "area": "proofs-c-missions",
+  "module": "grant_agent.proofs_c_missions",
+  "self_check": "self_check",
+  "manuals": [
+    "mission-plan"
+  ],
+  "contracts": [
+    {
+      "id": "proofs-c.missions.receipt-schema",
+      "phase": "invariant",
+      "claim": "Receipts use known schemas, producer phases, parseable timestamps, required fields and verification decisions; invalid input is rejected before append.",
+      "checkedAt": [
+        "mission_receipts.validate_mission_receipt -> proofs_c_missions.check_receipt",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.receipt-durable",
+      "phase": "invariant",
+      "claim": "Locked appends persist the exact serialized stream tail, preserve concurrent receipts and bound retention; invalid input creates no stream.",
+      "checkedAt": [
+        "mission_receipts.append_mission_receipt -> proofs_c_missions.check_receipt_write (inside file lock)",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.receipt-filter",
+      "phase": "invariant",
+      "claim": "Receipt reads skip malformed rows, filter by mission before limiting and preserve durable stream order.",
+      "checkedAt": [
+        "mission_receipts.load_mission_receipts -> proofs_c_missions.check_receipt_read",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.default-isolation",
+      "phase": "invariant",
+      "claim": "Mutable dataclass factories produce distinct containers; receipt validation and phase control reject shared default factories.",
+      "checkedAt": [
+        "mission_receipts.validate_mission_receipt / mission_phase_runner -> proofs_c_missions.check_default_factories",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.artifact-layout",
+      "phase": "invariant",
+      "claim": "File-safe mission IDs confine all layout paths to their canonical mission root; create builds the directories and create=false does not write.",
+      "checkedAt": [
+        "mission_artifacts.build_mission_run_artifact_layout -> proofs_c_missions.check_layout",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.executor-boundary",
+      "phase": "invariant",
+      "claim": "Executor handoff contains bounded goal/compact plan/selected skill IDs/file scope; wrong schemas and planner-only raw context are excluded.",
+      "checkedAt": [
+        "mission_phase_inputs.build_executor_phase_input -> proofs_c_missions.check_capsule",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.verifier-boundary",
+      "phase": "invariant",
+      "claim": "Verifier handoff contains compact goal/plan/execution and ordered deduplicated changed files/artifacts; runtime metadata is excluded.",
+      "checkedAt": [
+        "mission_phase_inputs.build_verifier_phase_input -> proofs_c_missions.check_capsule",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.skill-relevance",
+      "phase": "invariant",
+      "claim": "Empty skill selection blocks and irrelevant selected skills need review; counts exactly reflect inspected selection.",
+      "checkedAt": [
+        "mission_phase_inputs.check_selected_skill_relevance -> proofs_c_missions.check_relevance",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.run-envelope",
+      "phase": "invariant",
+      "claim": "Mission envelopes preserve lifecycle vocabulary, known schema, parseable timestamps and independently owned mutable state.",
+      "checkedAt": [
+        "mission_phase_runner.start_current_phase/complete_current_phase -> proofs_c_missions.check_run",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.phase-transition",
+      "phase": "invariant",
+      "claim": "Phase control follows accepted successors/status, preserves receipt references, bounds repair loops, blocks exhausted repair and refuses terminal/completed restarts.",
+      "checkedAt": [
+        "mission_phase_runner.complete_current_phase -> proofs_c_missions.check_transition",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission handoff",
+        "durable receipts",
+        "operator status"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.acceptance-receipt",
+      "phase": "invariant",
+      "claim": "The five simulated local harness journeys produce exact durable summaries and distinct attempt receipts; receipt flags clearly exclude real external/model execution.",
+      "checkedAt": [
+        "mission_acceptance_harness.MissionAcceptanceHarness.run -> proofs_c_missions.check_acceptance",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.continuity-durable",
+      "phase": "invariant",
+      "claim": "Continuity writes under the mission lock increment the current revision once, persist exact facts and preserve the preceding valid snapshot; corrupt state recovers previous facts without inventing progress.",
+      "checkedAt": [
+        "continuity_policy.MissionContinuityStore._create_or_update_unlocked/load -> proofs_c_missions.check_continuity_write/check_continuity_recovery",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.gpu-policy",
+      "phase": "invariant",
+      "claim": "GPU decisions preserve estimated session cost, policy blockers, and duration/idle release requirements.",
+      "checkedAt": [
+        "continuity_policy.MissionContinuityStore.evaluate_gpu_action -> proofs_c_missions.check_gpu",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.security-scope",
+      "phase": "invariant",
+      "claim": "Active security decisions require authorized owner/target/action scope and action-time approval where required; invalid budgets normalize safely and purple-team phases keep auditor/red/blue/defender separation.",
+      "checkedAt": [
+        "security_runtime_policy.evaluate_security_action/build_purple_team_plan -> proofs_c_missions.check_security/check_security_plan",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.security-coverage",
+      "phase": "invariant",
+      "claim": "Security phase readiness exactly matches executable candidates; planned/unavailable tools never satisfy missing defensive coverage.",
+      "checkedAt": [
+        "security_runtime_policy.audit_security_tool_coverage -> proofs_c_missions.check_security_coverage",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.turn-mode",
+      "phase": "invariant",
+      "claim": "Turn modes preserve the goal and checks: plan adds the written-plan gate, fast lowers effort and caps a selected budget, max-context raises effort and Deep Run budget, standard preserves semantics.",
+      "checkedAt": [
+        "mission_control.apply_agent_turn_mode_to_launch -> proofs_c_missions.check_turn_mode",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.control-durable",
+      "phase": "invariant",
+      "claim": "Successful control-room JSON writes equal the durable normalized payload before returning.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._write_json_if_changed -> proofs_c_missions.check_control_write",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.orchestration-durable",
+      "phase": "invariant",
+      "claim": "CLI orchestration returns only when the saved mission, runtime autonomy and receipt agree on concurrency/observation/merge/awareness policy.",
+      "checkedAt": [
+        "cli.cmd_mission_orchestration -> proofs_c_missions.check_orchestration",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.security-route",
+      "phase": "invariant",
+      "claim": "Matched red-team tasks use adversarial verification intent; matched blue-team tasks use defensive detection intent, with distinct mission types.",
+      "checkedAt": [
+        "fluxio_harness.infer_task_route_profile -> proofs_c_missions.check_security_route",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission runtime",
+        "durable receipts",
+        "authority admission"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-dialogue",
+      "phase": "invariant",
+      "claim": "Dialogue contains only eligible captured output or durable runtime-output text, preserving runtime/model/source/capture provenance and excluding control events.",
+      "checkedAt": [
+        "mission_control.mission_runtime_dialogue_turns -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-transcript",
+      "phase": "invariant",
+      "claim": "Transcript attachment requires concrete output or artifact evidence, retains rejected-session evidence, prefers the latest concrete session, and exposes missing evidence without synthetic messages.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_runtime_transcript_payload -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-messages",
+      "phase": "invariant",
+      "claim": "Agent-message projection preserves dialogue receipts and marks control-room planning, actions, heartbeats and integrity notes as trace-only bookkeeping.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_agent_messages_payload -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-read-model",
+      "phase": "invariant",
+      "claim": "Mission read models preserve identity, lifecycle and filtered ordered receipts without changing missions.json; foreign snapshots never replace the current mission.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._mission_run_read_model_payload -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-flight",
+      "phase": "invariant",
+      "claim": "Flight-recorder projection preserves written phase, process IDs and bounded event history; absent or invalid snapshots never invent events.",
+      "checkedAt": [
+        "mission_control.ControlRoomStore._compact_flight_recorder_payload -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-artifact-gate",
+      "phase": "invariant",
+      "claim": "Hard artifact completion requires both meaningful runtime output and concrete artifact evidence; either missing boundary stays failed.",
+      "checkedAt": [
+        "mission_control.mission_hard_artifact_gate -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-artifact-repair",
+      "phase": "invariant",
+      "claim": "Artifact repair completes only after the failed gate is actually ready and no unrelated failures remain; rejected repairs preserve mission state and successful repair is durable.",
+      "checkedAt": [
+        "mission_control._complete_repaired_hard_artifact_gate_from_detail -> proofs_c_missions.check_local_projection",
+        "mission_control._complete_repaired_planned_scope_artifact_gate_from_detail -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-public-launch",
+      "phase": "invariant",
+      "claim": "Public-launch digest selects the freshest saved evidence and preserves operator repair/publication fields; missing receipts cannot claim readiness.",
+      "checkedAt": [
+        "mission_control._public_launch_readiness_digest -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-storage",
+      "phase": "invariant",
+      "claim": "Storage launch admission blocks only from saved measured-capacity evidence; unknown or failed probe states never invent disk pressure.",
+      "checkedAt": [
+        "cli._mission_storage_pressure_blocker -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    },
+    {
+      "id": "proofs-c.missions.local-platform",
+      "phase": "invariant",
+      "claim": "Explicit platform parsing preserves Windows drive and tail when converting to POSIX mount form and preserves native paths; parsing does not probe or launch WSL.",
+      "checkedAt": [
+        "mission_control._platform_path_for_windows_drive -> proofs_c_missions.check_platform_path",
+        "proofs_c_missions.self_check"
+      ],
+      "impact": [
+        "mission evidence projection",
+        "truthful completion",
+        "operator repair"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_mission_artifacts.py",
+      "case": "MissionArtifactLayoutTests.test_build_layout_creates_one_mission_run_artifact_tree",
+      "case_id": "tests/test_mission_artifacts.py::MissionArtifactLayoutTests.test_build_layout_creates_one_mission_run_artifact_tree",
+      "contracts": [
+        "proofs-c.missions.artifact-layout"
+      ],
+      "checkedAt": [
+        "mission_artifacts.build_mission_run_artifact_layout -> proofs_c_missions.check_layout",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_artifacts.py",
+      "case": "MissionArtifactLayoutTests.test_layout_payload_can_be_built_without_creating_directories",
+      "case_id": "tests/test_mission_artifacts.py::MissionArtifactLayoutTests.test_layout_payload_can_be_built_without_creating_directories",
+      "contracts": [
+        "proofs-c.missions.artifact-layout"
+      ],
+      "checkedAt": [
+        "mission_artifacts.build_mission_run_artifact_layout -> proofs_c_missions.check_layout",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_artifacts.py",
+      "case": "MissionArtifactLayoutTests.test_layout_rejects_path_traversal_mission_ids",
+      "case_id": "tests/test_mission_artifacts.py::MissionArtifactLayoutTests.test_layout_rejects_path_traversal_mission_ids",
+      "contracts": [
+        "proofs-c.missions.artifact-layout"
+      ],
+      "checkedAt": [
+        "mission_artifacts.build_mission_run_artifact_layout -> proofs_c_missions.check_layout",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_artifacts.py",
+      "case": "MissionArtifactLayoutTests.test_receipt_store_can_write_to_layout_receipt_path",
+      "case_id": "tests/test_mission_artifacts.py::MissionArtifactLayoutTests.test_receipt_store_can_write_to_layout_receipt_path",
+      "contracts": [
+        "proofs-c.missions.receipt-durable",
+        "proofs-c.missions.artifact-layout"
+      ],
+      "checkedAt": [
+        "mission_artifacts.build_mission_run_artifact_layout -> proofs_c_missions.check_layout",
+        "mission_receipts.append_mission_receipt -> proofs_c_missions.check_receipt_write (inside file lock)",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_receipt_store.py",
+      "case": "MissionReceiptStoreTests.test_concurrent_appends_preserve_every_receipt",
+      "case_id": "tests/test_mission_receipt_store.py::MissionReceiptStoreTests.test_concurrent_appends_preserve_every_receipt",
+      "contracts": [
+        "proofs-c.missions.receipt-durable"
+      ],
+      "checkedAt": [
+        "mission_receipts.append_mission_receipt -> proofs_c_missions.check_receipt_write (inside file lock)",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_receipt_store.py",
+      "case": "MissionReceiptStoreTests.test_append_and_load_valid_receipts_with_bounded_retention",
+      "case_id": "tests/test_mission_receipt_store.py::MissionReceiptStoreTests.test_append_and_load_valid_receipts_with_bounded_retention",
+      "contracts": [
+        "proofs-c.missions.receipt-durable"
+      ],
+      "checkedAt": [
+        "mission_receipts.append_mission_receipt -> proofs_c_missions.check_receipt_write (inside file lock)",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_receipt_store.py",
+      "case": "MissionReceiptStoreTests.test_load_filters_by_mission_before_limit_and_skips_bad_rows",
+      "case_id": "tests/test_mission_receipt_store.py::MissionReceiptStoreTests.test_load_filters_by_mission_before_limit_and_skips_bad_rows",
+      "contracts": [
+        "proofs-c.missions.receipt-schema",
+        "proofs-c.missions.receipt-filter"
+      ],
+      "checkedAt": [
+        "mission_receipts.load_mission_receipts -> proofs_c_missions.check_receipt_read",
+        "mission_receipts.validate_mission_receipt -> proofs_c_missions.check_receipt",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_receipt_store.py",
+      "case": "MissionReceiptStoreTests.test_validate_rejects_unknown_schema_and_bad_verification_decision",
+      "case_id": "tests/test_mission_receipt_store.py::MissionReceiptStoreTests.test_validate_rejects_unknown_schema_and_bad_verification_decision",
+      "contracts": [
+        "proofs-c.missions.receipt-schema"
+      ],
+      "checkedAt": [
+        "mission_receipts.validate_mission_receipt -> proofs_c_missions.check_receipt",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_receipt_store.py",
+      "case": "MissionReceiptStoreTests.test_append_rejects_incomplete_payload_without_writing_fake_receipt",
+      "case_id": "tests/test_mission_receipt_store.py::MissionReceiptStoreTests.test_append_rejects_incomplete_payload_without_writing_fake_receipt",
+      "contracts": [
+        "proofs-c.missions.receipt-schema",
+        "proofs-c.missions.receipt-durable"
+      ],
+      "checkedAt": [
+        "mission_receipts.append_mission_receipt -> proofs_c_missions.check_receipt_write (inside file lock)",
+        "mission_receipts.validate_mission_receipt -> proofs_c_missions.check_receipt",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_receipt_schemas.py",
+      "case": "test_mission_receipt_schemas_cover_required_phase_contracts",
+      "case_id": "tests/test_mission_receipt_schemas.py::test_mission_receipt_schemas_cover_required_phase_contracts",
+      "contracts": [
+        "proofs-c.missions.receipt-schema"
+      ],
+      "checkedAt": [
+        "mission_receipts.validate_mission_receipt -> proofs_c_missions.check_receipt",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_receipt_schemas.py",
+      "case": "test_receipt_mutable_defaults_are_independent_per_instance",
+      "case_id": "tests/test_mission_receipt_schemas.py::test_receipt_mutable_defaults_are_independent_per_instance",
+      "contracts": [
+        "proofs-c.missions.default-isolation"
+      ],
+      "checkedAt": [
+        "mission_receipts.validate_mission_receipt / mission_phase_runner -> proofs_c_missions.check_default_factories",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_receipt_schemas.py",
+      "case": "test_verification_receipt_names_all_allowed_decisions",
+      "case_id": "tests/test_mission_receipt_schemas.py::test_verification_receipt_names_all_allowed_decisions",
+      "contracts": [
+        "proofs-c.missions.receipt-schema"
+      ],
+      "checkedAt": [
+        "mission_receipts.validate_mission_receipt -> proofs_c_missions.check_receipt",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_executor_phase_input_contains_only_goal_plan_skills_and_file_scope",
+      "case_id": "tests/test_mission_phase_inputs.py::test_executor_phase_input_contains_only_goal_plan_skills_and_file_scope",
+      "contracts": [
+        "proofs-c.missions.executor-boundary"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.build_executor_phase_input -> proofs_c_missions.check_capsule",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_executor_phase_input_caps_plan_lists_for_executor_context",
+      "case_id": "tests/test_mission_phase_inputs.py::test_executor_phase_input_caps_plan_lists_for_executor_context",
+      "contracts": [
+        "proofs-c.missions.executor-boundary"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.build_executor_phase_input -> proofs_c_missions.check_capsule",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_executor_phase_input_receives_only_selected_skill_ids_from_skill_brief_plan",
+      "case_id": "tests/test_mission_phase_inputs.py::test_executor_phase_input_receives_only_selected_skill_ids_from_skill_brief_plan",
+      "contracts": [
+        "proofs-c.missions.executor-boundary"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.build_executor_phase_input -> proofs_c_missions.check_capsule",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_executor_phase_input_rejects_non_plan_receipts",
+      "case_id": "tests/test_mission_phase_inputs.py::test_executor_phase_input_rejects_non_plan_receipts",
+      "contracts": [
+        "proofs-c.missions.executor-boundary"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.build_executor_phase_input -> proofs_c_missions.check_capsule",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_verifier_phase_input_contains_goal_plan_execution_changed_files_and_artifacts",
+      "case_id": "tests/test_mission_phase_inputs.py::test_verifier_phase_input_contains_goal_plan_execution_changed_files_and_artifacts",
+      "contracts": [
+        "proofs-c.missions.verifier-boundary"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.build_verifier_phase_input -> proofs_c_missions.check_capsule",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_verifier_phase_input_rejects_wrong_receipt_schemas",
+      "case_id": "tests/test_mission_phase_inputs.py::test_verifier_phase_input_rejects_wrong_receipt_schemas",
+      "contracts": [
+        "proofs-c.missions.verifier-boundary"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.build_verifier_phase_input -> proofs_c_missions.check_capsule",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_skill_relevance_check_accepts_selected_skill_with_brief_context",
+      "case_id": "tests/test_mission_phase_inputs.py::test_skill_relevance_check_accepts_selected_skill_with_brief_context",
+      "contracts": [
+        "proofs-c.missions.skill-relevance"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.check_selected_skill_relevance -> proofs_c_missions.check_relevance",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_skill_relevance_check_flags_irrelevant_selected_skill",
+      "case_id": "tests/test_mission_phase_inputs.py::test_skill_relevance_check_flags_irrelevant_selected_skill",
+      "contracts": [
+        "proofs-c.missions.skill-relevance"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.check_selected_skill_relevance -> proofs_c_missions.check_relevance",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_inputs.py",
+      "case": "test_skill_relevance_check_blocks_empty_selected_skills",
+      "case_id": "tests/test_mission_phase_inputs.py::test_skill_relevance_check_blocks_empty_selected_skills",
+      "contracts": [
+        "proofs-c.missions.skill-relevance"
+      ],
+      "checkedAt": [
+        "mission_phase_inputs.check_selected_skill_relevance -> proofs_c_missions.check_relevance",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_run_model.py",
+      "case": "test_mission_run_envelope_serializes_core_lifecycle_truth",
+      "case_id": "tests/test_mission_run_model.py::test_mission_run_envelope_serializes_core_lifecycle_truth",
+      "contracts": [
+        "proofs-c.missions.run-envelope"
+      ],
+      "checkedAt": [
+        "mission_phase_runner.start_current_phase/complete_current_phase -> proofs_c_missions.check_run",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_run_model.py",
+      "case": "test_mission_run_defaults_are_independent_per_instance",
+      "case_id": "tests/test_mission_run_model.py::test_mission_run_defaults_are_independent_per_instance",
+      "contracts": [
+        "proofs-c.missions.default-isolation",
+        "proofs-c.missions.run-envelope"
+      ],
+      "checkedAt": [
+        "mission_phase_runner.start_current_phase/complete_current_phase -> proofs_c_missions.check_run",
+        "mission_receipts.validate_mission_receipt / mission_phase_runner -> proofs_c_missions.check_default_factories",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_run_model.py",
+      "case": "test_mission_run_contract_names_expected_phases_and_statuses",
+      "case_id": "tests/test_mission_run_model.py::test_mission_run_contract_names_expected_phases_and_statuses",
+      "contracts": [
+        "proofs-c.missions.run-envelope"
+      ],
+      "checkedAt": [
+        "mission_phase_runner.start_current_phase/complete_current_phase -> proofs_c_missions.check_run",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_runner.py",
+      "case": "test_phase_runner_advances_normal_flow_without_executing_fake_work",
+      "case_id": "tests/test_mission_phase_runner.py::test_phase_runner_advances_normal_flow_without_executing_fake_work",
+      "contracts": [
+        "proofs-c.missions.phase-transition"
+      ],
+      "checkedAt": [
+        "mission_phase_runner.complete_current_phase -> proofs_c_missions.check_transition",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_runner.py",
+      "case": "test_verifier_repair_needed_routes_to_single_repair_phase_then_back_to_verifier",
+      "case_id": "tests/test_mission_phase_runner.py::test_verifier_repair_needed_routes_to_single_repair_phase_then_back_to_verifier",
+      "contracts": [
+        "proofs-c.missions.phase-transition"
+      ],
+      "checkedAt": [
+        "mission_phase_runner.complete_current_phase -> proofs_c_missions.check_transition",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_runner.py",
+      "case": "test_second_repair_needed_blocks_instead_of_looping_forever",
+      "case_id": "tests/test_mission_phase_runner.py::test_second_repair_needed_blocks_instead_of_looping_forever",
+      "contracts": [
+        "proofs-c.missions.phase-transition"
+      ],
+      "checkedAt": [
+        "mission_phase_runner.complete_current_phase -> proofs_c_missions.check_transition",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_runner.py",
+      "case": "test_blocked_phase_stops_without_advancing_or_claiming_completion",
+      "case_id": "tests/test_mission_phase_runner.py::test_blocked_phase_stops_without_advancing_or_claiming_completion",
+      "contracts": [
+        "proofs-c.missions.phase-transition"
+      ],
+      "checkedAt": [
+        "mission_phase_runner.complete_current_phase -> proofs_c_missions.check_transition",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_phase_runner.py",
+      "case": "test_runner_rejects_restarting_completed_or_terminal_runs",
+      "case_id": "tests/test_mission_phase_runner.py::test_runner_rejects_restarting_completed_or_terminal_runs",
+      "contracts": [
+        "proofs-c.missions.phase-transition"
+      ],
+      "checkedAt": [
+        "mission_phase_runner.complete_current_phase -> proofs_c_missions.check_transition",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_fast_acceptance_harness_completes_all_journeys_without_external_use",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_fast_acceptance_harness_completes_all_journeys_without_external_use",
+      "contracts": [
+        "proofs-c.missions.acceptance-receipt"
+      ],
+      "checkedAt": [
+        "mission_acceptance_harness.MissionAcceptanceHarness.run -> proofs_c_missions.check_acceptance",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_acceptance_harness_can_repeat_against_the_same_durable_root",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_acceptance_harness_can_repeat_against_the_same_durable_root",
+      "contracts": [
+        "proofs-c.missions.acceptance-receipt"
+      ],
+      "checkedAt": [
+        "mission_acceptance_harness.MissionAcceptanceHarness.run -> proofs_c_missions.check_acceptance",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_continuity_read_modify_write_is_safe_under_concurrent_tool_receipts",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_continuity_read_modify_write_is_safe_under_concurrent_tool_receipts",
+      "contracts": [
+        "proofs-c.missions.continuity-durable"
+      ],
+      "checkedAt": [
+        "continuity_policy.MissionContinuityStore._create_or_update_unlocked/load -> proofs_c_missions.check_continuity_write/check_continuity_recovery",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_corrupt_continuity_snapshot_recovers_previous_valid_revision",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_corrupt_continuity_snapshot_recovers_previous_valid_revision",
+      "contracts": [
+        "proofs-c.missions.continuity-durable"
+      ],
+      "checkedAt": [
+        "continuity_policy.MissionContinuityStore._create_or_update_unlocked/load -> proofs_c_missions.check_continuity_write/check_continuity_recovery",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_gpu_policy_enforces_session_cost_duration_and_idle_release",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_gpu_policy_enforces_session_cost_duration_and_idle_release",
+      "contracts": [
+        "proofs-c.missions.gpu-policy"
+      ],
+      "checkedAt": [
+        "continuity_policy.MissionContinuityStore.evaluate_gpu_action -> proofs_c_missions.check_gpu",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_security_scope_requires_authorization_and_separates_red_blue_retest",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_security_scope_requires_authorization_and_separates_red_blue_retest",
+      "contracts": [
+        "proofs-c.missions.security-scope"
+      ],
+      "checkedAt": [
+        "proofs_c_missions.self_check",
+        "security_runtime_policy.evaluate_security_action/build_purple_team_plan -> proofs_c_missions.check_security/check_security_plan"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_security_scope_invalid_attempt_budget_falls_back_without_crashing",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_security_scope_invalid_attempt_budget_falls_back_without_crashing",
+      "contracts": [
+        "proofs-c.missions.security-scope"
+      ],
+      "checkedAt": [
+        "proofs_c_missions.self_check",
+        "security_runtime_policy.evaluate_security_action/build_purple_team_plan -> proofs_c_missions.check_security/check_security_plan"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_security_tool_audit_names_missing_defensive_phase_honestly",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_security_tool_audit_names_missing_defensive_phase_honestly",
+      "contracts": [
+        "proofs-c.missions.security-coverage"
+      ],
+      "checkedAt": [
+        "proofs_c_missions.self_check",
+        "security_runtime_policy.audit_security_tool_coverage -> proofs_c_missions.check_security_coverage"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_security_tool_audit_does_not_count_a_planned_tool_as_executable",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_security_tool_audit_does_not_count_a_planned_tool_as_executable",
+      "contracts": [
+        "proofs-c.missions.security-coverage"
+      ],
+      "checkedAt": [
+        "proofs_c_missions.self_check",
+        "security_runtime_policy.audit_security_tool_coverage -> proofs_c_missions.check_security_coverage"
+      ]
+    },
+    {
+      "test": "tests/test_mission_acceptance_harness.py",
+      "case": "test_runtime_routes_red_and_blue_team_work_as_distinct_mission_types",
+      "case_id": "tests/test_mission_acceptance_harness.py::test_runtime_routes_red_and_blue_team_work_as_distinct_mission_types",
+      "contracts": [
+        "proofs-c.missions.security-route"
+      ],
+      "checkedAt": [
+        "fluxio_harness.infer_task_route_profile -> proofs_c_missions.check_security_route",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_normalize_agent_turn_mode_accepts_aliases_and_rejects_unknown",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_normalize_agent_turn_mode_accepts_aliases_and_rejects_unknown",
+      "contracts": [
+        "proofs-c.missions.turn-mode"
+      ],
+      "checkedAt": [
+        "mission_control.apply_agent_turn_mode_to_launch -> proofs_c_missions.check_turn_mode",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_apply_agent_turn_mode_plan_requires_written_plan_before_edits",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_apply_agent_turn_mode_plan_requires_written_plan_before_edits",
+      "contracts": [
+        "proofs-c.missions.turn-mode"
+      ],
+      "checkedAt": [
+        "mission_control.apply_agent_turn_mode_to_launch -> proofs_c_missions.check_turn_mode",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_apply_agent_turn_mode_fast_lowers_effort_and_caps_budget",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_apply_agent_turn_mode_fast_lowers_effort_and_caps_budget",
+      "contracts": [
+        "proofs-c.missions.turn-mode"
+      ],
+      "checkedAt": [
+        "mission_control.apply_agent_turn_mode_to_launch -> proofs_c_missions.check_turn_mode",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_apply_agent_turn_mode_max_context_deepens_run",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_apply_agent_turn_mode_max_context_deepens_run",
+      "contracts": [
+        "proofs-c.missions.turn-mode"
+      ],
+      "checkedAt": [
+        "mission_control.apply_agent_turn_mode_to_launch -> proofs_c_missions.check_turn_mode",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_apply_agent_turn_mode_standard_changes_nothing",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_apply_agent_turn_mode_standard_changes_nothing",
+      "contracts": [
+        "proofs-c.missions.turn-mode"
+      ],
+      "checkedAt": [
+        "mission_control.apply_agent_turn_mode_to_launch -> proofs_c_missions.check_turn_mode",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_orchestration.py",
+      "case": "MissionOrchestrationTests.test_cli_persists_orchestration_and_receipt",
+      "case_id": "tests/test_mission_orchestration.py::MissionOrchestrationTests.test_cli_persists_orchestration_and_receipt",
+      "contracts": [
+        "proofs-c.missions.control-durable",
+        "proofs-c.missions.orchestration-durable"
+      ],
+      "checkedAt": [
+        "cli.cmd_mission_orchestration -> proofs_c_missions.check_orchestration",
+        "mission_control.ControlRoomStore._write_json_if_changed -> proofs_c_missions.check_control_write",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_runtime_dialogue_turns_surface_real_model_output_as_conversation",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_runtime_dialogue_turns_surface_real_model_output_as_conversation",
+      "contracts": [
+        "proofs-c.missions.local-dialogue",
+        "proofs-c.missions.local-messages"
+      ],
+      "checkedAt": [
+        "mission_control.mission_runtime_dialogue_turns -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check",
+        "mission_control.ControlRoomStore._mission_agent_messages_payload -> proofs_c_missions.check_local_projection"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_public_launch_digest_prefers_fresher_readiness_file",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_public_launch_digest_prefers_fresher_readiness_file",
+      "contracts": [
+        "proofs-c.missions.local-public-launch"
+      ],
+      "checkedAt": [
+        "mission_control._public_launch_readiness_digest -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_storage_pressure_preflight_requires_measured_capacity_before_blocking",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_storage_pressure_preflight_requires_measured_capacity_before_blocking",
+      "contracts": [
+        "proofs-c.missions.local-storage"
+      ],
+      "checkedAt": [
+        "cli._mission_storage_pressure_blocker -> proofs_c_missions.check_local_projection",
+        "proofs_c_missions.self_check"
+      ]
+    },
+    {
+      "test": "tests/test_mission_control.py",
+      "case": "MissionControlTests.test_mission_evidence_windows_path_translates_for_wsl",
+      "case_id": "tests/test_mission_control.py::MissionControlTests.test_mission_evidence_windows_path_translates_for_wsl",
+      "contracts": [
+        "proofs-c.missions.local-platform"
+      ],
+      "checkedAt": [
+        "mission_control._platform_path_for_windows_drive -> proofs_c_missions.check_platform_path",
+        "proofs_c_missions.self_check"
+      ]
+    }
+  ],
+  "frontier": [
+    "Supervisor peer coordination remains outside authorized scope; its orchestration test remains.",
+    "Installed security audit requires honest execution/delegation observations; no fake connected-provider fixture is claimed.",
+    "Mission-control cases outside turn-mode mapping are owned by separate control workers.",
+    "Local transcript/read-model/flight/artifact-repair self-checks prove helper boundaries only; aggregate snapshot/detail tests remain until their collector-dependent assertions can be executed within authorization."
+  ],
+  "portRoles": []
+}

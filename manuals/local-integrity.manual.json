@@ -1,0 +1,143 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "local-integrity",
+  "kind": "environment",
+  "schemas": {
+    "semantic.proof.verify": {
+      "type": "object",
+      "properties": {
+        "proofId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "proofId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "proofId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "work.state": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "workId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Initialize local work and verify exact proof artifact bytes",
+      "state": {},
+      "actions": {
+        "state": {
+          "effect": "Exact owning state persists, freshly independently reread",
+          "pre": "Selected safe workspace identity and intact source bytes",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "work.state",
+          "tool": "work.state"
+        },
+        "verify": {
+          "effect": "Exact owning state persists, freshly independently reread",
+          "pre": "Selected safe workspace identity and intact source bytes",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "semantic.proof.verify",
+          "tool": "semantic.proof.verify"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "state": {
+          "goal": "Exact owning state persists, freshly independently reread",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "workId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "state",
+              "args": {
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify": {
+          "goal": "Exact owning state persists, freshly independently reread",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "proofId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "proofId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "verify",
+              "args": {
+                "proofId": {
+                  "$input": "proofId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [
+        "Artifact integrity does not establish a capsule semantic claim.",
+        "work.state initializes absent stores and cannot be used as a pure goal observer."
+      ],
+      "guidance": []
+    }
+  }
+}

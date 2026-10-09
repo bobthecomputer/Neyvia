@@ -1,0 +1,1592 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "workspace",
+  "kind": "environment",
+  "proofs": {
+    "area": "workspace",
+    "manifests": [
+      "config/proofs/proofs-e-frontend.json",
+      "config/proofs/proofs-e-host.json",
+      "config/proofs/workspace-journey.json"
+    ],
+    "startup": {
+      "procedures": [
+        "permissions.persist-transfer-and-isolate"
+      ],
+      "runner": "scripts/proofs-e-frontend.mjs",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.action_receipts._safe_result"
+        ],
+        "claim": "Native callback observations omit unapproved raw bodies and nested credential-bearing fields before persistence or replay",
+        "id": "proofs-e-host.action-sanitization",
+        "impact": [
+          "host state and observations"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.action_receipts.NativeActionStore.execute"
+        ],
+        "claim": "First and replayed action outcomes are bound to the durable request and exact saved result; replay never invokes the completed effect",
+        "id": "proofs-e-host.action-once",
+        "impact": [
+          "host state and observations"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend._save_conversation_state",
+          "grant_agent.proofs_e_wz.check_conversation_save",
+          "grant_agent.proofs_e_wz.self_check",
+          "grant_agent.web_backend._save_conversation_state_locked",
+          "grant_agent.proofs_e_wz.check_conversation_persistence"
+        ],
+        "claim": "A save preserves its selected normalized storage marker and active session identity and writes the exact returned state with chronologically ordered transcript turns while the save lock remains held. A receipt-only response reports persisted session/transcript counts without echoing transcripts; a full response returns normalized stored state.",
+        "id": "proofs-e-wz.conversation-save",
+        "impact": [
+          "cross-device chat state",
+          "save response size"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend._conversation_session_state",
+          "grant_agent.proofs_e_wz.check_conversation_session",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Session revisions bind only semantic session fields and the returned turn page. Equal revisions return compact notModified responses; changed or invalid revisions return the exact session/page with accurate counts.",
+        "id": "proofs-e-wz.conversation-revision",
+        "impact": [
+          "chat polling",
+          "lazy transcript loading",
+          "cross-device revisions"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.web_backend._conversation_state_bootstrap",
+          "grant_agent.proofs_e_wz.check_conversation_bootstrap",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Bootstrap returns the complete session/transcript index, only the selected bounded active turn tail, accurate projection counts and the existing lazy session-detail command.",
+        "id": "proofs-e-wz.conversation-bootstrap",
+        "impact": [
+          "index-first cross-device chat loading",
+          "bounded initial transfer"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:normalizeWorkspacePermissionMode -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.normalize",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.normalize",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.normalize"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.normalize",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:workspacePermissionAllowsTools -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.tools",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.tools",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.tools"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.tools",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:supportsNativeWorkspacePermissionModes -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.runtime",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.runtime",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.runtime"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.runtime",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:buildWorkspacePermissionScope -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.scope",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.scope",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.scope"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.scope",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:workspacePermissionGrantForScope -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.grant",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.grant",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.grant"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.grant",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:readWorkspacePermissionModes -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.read",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.read",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.read"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.read",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:writeWorkspacePermissionMode -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.write",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.write",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.write"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.write",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:workspacePermissionModeForScope -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.get",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.get",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.get"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.get",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/workspaceToolAccess.js:transferDraftWorkspacePermissionMode -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.transfer",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.transfer",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.permission.transfer"
+        ],
+        "claim": "Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "id": "permission.transfer",
+        "impact": [
+          "workspaceToolAccess"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.proofs_workspace_journey.self_check",
+          "grant_agent.native_tools.NativeToolRegistry._workspace_write",
+          "grant_agent.neyvia_workspace_tools.WorkspaceTools._call_unchecked",
+          "grant_agent.neyvia_outputs.publish",
+          "grant_agent.neyvia_outputs.listing",
+          "grant_agent.neyvia_outputs.get",
+          "grant_agent.neyvia_outputs.call",
+          "grant_agent.neyvia_panes.open_artifact",
+          "grant_agent.cl.renderer_effects.show",
+          "grant_agent.ui_command_bus.UICommandBus.since"
+        ],
+        "claim": "Writing a real workspace report and publishing it keeps the exact bytes and provenance, retries with the same request are idempotent, and a previous publication refuses to open after the report changes.",
+        "id": "p22.workspace.output-journey",
+        "impact": [
+          "workspace report delivery",
+          "Outputs list and preview",
+          "workspace compare-and-swap write"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.terminal.list": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "neyvia.terminal.read": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "chars": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "runtime.environment": {
+      "type": "object",
+      "properties": {}
+    },
+    "terminal.exec": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shell": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "powershell",
+            "python",
+            "bash",
+            "cmd"
+          ]
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120000
+        },
+        "maxOutputChars": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 50000
+        }
+      },
+      "required": [
+        "command"
+      ]
+    },
+    "workspace.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "startLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "workspace.search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "includeGlob": {
+          "type": "string"
+        },
+        "maxResults": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "query": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "workspace.write": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content": {
+          "type": "string"
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "content"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "content": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.artifact.publish": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "file",
+            "diff",
+            "image",
+            "report",
+            "receipt"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.artifact.get": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.artifact.list": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "file",
+            "diff",
+            "image",
+            "report",
+            "receipt"
+          ]
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": []
+    },
+    "neyvia.artifact.open": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "files": {
+      "title": "files",
+      "state": {
+        "current": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "workspace.read"
+        }
+      },
+      "actions": {
+        "workspace.read": {
+          "effect": "Return bounded decoded text and full-byte SHA-256; nextOffset paginates text",
+          "pre": "Nonblank existing text file resolves under root; no NUL in first 8192 bytes; offset >=0",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "content"
+            ]
+          },
+          "reversible": true,
+          "schema": "workspace.read",
+          "tool": "workspace.read"
+        },
+        "workspace.search": {
+          "effect": "Search actual workspace text; complete=false means deadline stopped traversal, not absence",
+          "pre": "Query string; includeGlob narrows workspace; bounded maxResults",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "workspace.search",
+          "tool": "workspace.search"
+        },
+        "workspace.write": {
+          "effect": "Atomically create or CAS-replace text, create parents and verify persisted bytes; refuses concurrent overwrite",
+          "pre": "Allowed write scope; root-confined path with no symlink/junction; UTF-8 <=1 MiB no NUL; existing file requires matching expectedSha256; absent file must omit it",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              }
+            },
+            "required": [
+              "sha256"
+            ]
+          },
+          "reversible": false,
+          "schema": "workspace.write",
+          "tool": "workspace.write"
+        },
+        "artifact.publish": {
+          "effect": "Publish the bytes already written in the selected workspace and record their hash and session provenance",
+          "pre": "An existing report beneath the selected workspace and a stable request id",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "artifact": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.publish",
+          "tool": "neyvia.artifact.publish"
+        },
+        "artifact.get": {
+          "effect": "Read the publication and check its exact current bytes",
+          "pre": "Known publication id",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.get",
+          "tool": "neyvia.artifact.get"
+        },
+        "artifact.list": {
+          "effect": "List published workspace outputs newest first with an optional session or run filter",
+          "pre": "Selected workspace and bounded page size",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.list",
+          "tool": "neyvia.artifact.list"
+        },
+        "artifact.open": {
+          "effect": "Refuse changed or missing bytes before requesting the existing artifact pane",
+          "pre": "Known publication whose saved bytes are unchanged",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.artifact.open",
+          "tool": "neyvia.artifact.open"
+        }
+      },
+      "checks": {
+        "has-text": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": {
+              "$input": "phrase"
+            }
+          },
+          "tool": "workspace.read"
+        },
+        "written-text": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "content",
+            "value": {
+              "$input": "content"
+            }
+          },
+          "tool": "workspace.read"
+        },
+        "artifact-available": {
+          "args": {
+            "id": {
+              "$result": "published.artifact.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "availability",
+            "value": "available"
+          },
+          "tool": "neyvia.artifact.get"
+        }
+      },
+      "procedures": {
+        "read-and-confirm": {
+          "goal": "Read a named text artifact and verify the required phrase",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "phrase": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "phrase"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "workspace.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "has-text",
+              "save": "file"
+            }
+          ]
+        },
+        "replace-and-read": {
+          "goal": "Review and CAS-replace a text edit up to 20000 characters, then verify the full bounded readback",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "path",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "workspace.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "replace"
+            },
+            {
+              "action": "workspace.write",
+              "args": {
+                "content": {
+                  "$input": "content"
+                },
+                "expectedSha256": {
+                  "$result": "before.sha256"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "written-text",
+              "save": "written",
+              "when": {
+                "judge": "replace",
+                "option": "replace"
+              }
+            }
+          ]
+        },
+        "find-source": {
+          "goal": "Search text under a targeted glob and decide whether match coverage is sufficient",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string"
+              },
+              "includeGlob": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query",
+              "includeGlob"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "workspace.search",
+              "args": {
+                "includeGlob": {
+                  "$input": "includeGlob"
+                },
+                "query": {
+                  "$input": "query"
+                }
+              },
+              "save": "matches"
+            },
+            {
+              "judge": "search-coverage"
+            }
+          ]
+        },
+        "verify-effect-workspace-write": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "content"
+            ]
+          },
+          "steps": [
+            {
+              "action": "workspace.write",
+              "args": {
+                "content": {
+                  "$input": "content"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "publish-and-open-workspace-report": {
+          "goal": "Publish, read back and request a guarded report preview",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "artifact.publish",
+              "args": {
+                "kind": "report",
+                "path": {
+                  "$input": "path"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "check": "artifact-available",
+              "save": "published"
+            },
+            {
+              "action": "artifact.get",
+              "args": {
+                "id": {
+                  "$result": "published.artifact.id"
+                }
+              },
+              "check": "artifact-available",
+              "save": "confirmed"
+            },
+            {
+              "action": "artifact.open",
+              "args": {
+                "id": {
+                  "$result": "published.artifact.id"
+                }
+              },
+              "save": "opened"
+            }
+          ]
+        },
+        "create-and-read": {
+          "goal": "Create a new bounded text artifact and verify its complete readback; existing files require a separately reviewed CAS edit",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "path",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "workspace.write",
+              "args": {
+                "content": {
+                  "$input": "content"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "written-text",
+              "save": "written"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "replace": {
+          "constraints": "Read full current bytes/hash first; expectedSha256 comes from that observation. Existing content is overwritten only after explicit review. Relative paths remain beneath root and no symlink/junction path is allowed.",
+          "options": [
+            "replace",
+            "leave"
+          ],
+          "question": "Does the replacement preserve the intended source and concurrent changes?"
+        },
+        "search-coverage": {
+          "constraints": "Only complete=true establishes coverage for searched glob; maxResults truncation and complete=false require narrower glob/query or direct known path. Do not paste entire files into context.",
+          "options": [
+            "use-matches",
+            "narrow"
+          ],
+          "question": "Is this bounded search enough to identify the intended file?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Existing file refused without expectedSha256",
+          "recovery": "Read full-byte SHA-256, review changes and retry matching intent"
+        },
+        {
+          "failure": "Hash mismatch during staging",
+          "recovery": "Reread and merge current source; do not reuse stale hash"
+        },
+        {
+          "failure": "Read truncated or search incomplete",
+          "recovery": "Continue nextOffset or narrow includeGlob; a bounded result cannot prove global absence. Local-only search runs in-process before any child launch; regex timeout returns complete=false. Literal queries work without optional dependencies; complex regex requires the cl dependency."
+        },
+        {
+          "failure": "Write traverses symlink/junction or escapes root",
+          "recovery": "Choose a plain root-confined path; no bypass"
+        },
+        {
+          "failure": "NUL/binary or >1 MiB content",
+          "recovery": "Use file-specific tools; workspace.write is bounded UTF-8 text"
+        },
+        {
+          "failure": "Mutation result differs between native HTTP and durable MCP gateway",
+          "recovery": "Gateway wraps operation data under toolResult; this procedure verifies fresh workspace.read bytes instead of assuming a mutation return shape."
+        }
+      ],
+      "frontier": [
+        "Atomic compare-and-swap is not general merge resolution",
+        "Binary writes and outside-root files are not mapped by workspace tools",
+        "Larger writes remain supported by workspace.write, but simple host goals and create-and-confirm are bounded to 20000 characters. Author an explicit observer G for larger writes; existing-file CAS and full-byte SHA-256 still apply."
+      ],
+      "guidance": [
+        "Source: src/grant_agent/native_tools.py (_workspace_read/_write/_search), native_commands.py and gateway permission guards; tests/test_native_tools.py.",
+        "Simple workspace.write calls up to 20000 characters receive host-authored persisted-hash G when no broader goal is authored. The host binds the requested UTF-8 hash; explicit done rereads it. Native grants, root confinement and existing-file CAS remain required. Author G for other mutations using the layer's read-only observer, then retry."
+      ]
+    },
+    "overview": {
+      "title": "Scoped files, hashes, diffs, terminal and receipts",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "runtime.environment"
+        }
+      },
+      "actions": {
+        "runtime.environment": {
+          "effect": "Read actual OS/workspace/executable environment; no command execution",
+          "pre": "Local runtime probe available",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "runtime.environment",
+          "tool": "runtime.environment"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "choose-present-runtime": {
+          "goal": "Read real environment before choosing an available shell/interpreter",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "runtime.environment",
+              "args": {},
+              "save": "environment"
+            },
+            {
+              "judge": "execution-environment"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "execution-environment": {
+          "constraints": "Read interpreter/shell availability; do not install tools or silently change runtime/provider. Selected root remains the write boundary.",
+          "options": [
+            "use-present",
+            "stop"
+          ],
+          "question": "Does the available local environment support the requested command?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Runtime name inferred without probing",
+          "recovery": "Read runtime.environment; use actual executable and report missing dependency"
+        }
+      ],
+      "frontier": [
+        "Network/remote runtime readiness and service health are separate from local environment probe"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/native_tools.py (_workspace_read/_write/_search), native_commands.py and gateway permission guards; tests/test_native_tools.py."
+      ]
+    },
+    "proofs-e-frontend": {
+      "title": "PROOFS-e frontend action contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Host/backend or rendered behavior has not been inspected.",
+          "recovery": "Run the matching feature proof before claiming that boundary; frontend helper receipts prove only the called production helpers."
+        }
+      ],
+      "frontier": [
+        "Covered helper receipts enforce only the production actions declared by these contracts. UI geometry, browser authority, service-worker lifecycle, backend dispatch and mutation are retained case by case until their own real action contracts and receipts exist."
+      ],
+      "guidance": [
+        "permission.normalize: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "permission.tools: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "permission.runtime: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "permission.scope: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "permission.grant: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "permission.read: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "permission.write: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "permission.get: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "permission.transfer: Permission aliases, scope identity, per-chat persistence and draft transfer preserve the documented permission policy.",
+        "Self-check: node scripts/proofs-e-frontend.mjs --root <scratch directory> --json",
+        "Startup procedures: permissions.persist-transfer-and-isolate"
+      ]
+    },
+    "proofs-e-host": {
+      "title": "Host behavior contracts and self-checks (PROOFS-e)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A recorded prior action is mistaken for a new observation",
+          "recovery": "Reconcile the target and inspect its durable receipt before a separately identified action"
+        }
+      ],
+      "frontier": [],
+      "guidance": [
+        "Native callback observations omit unapproved raw bodies and nested credential-bearing fields before persistence or replay",
+        "First and replayed action outcomes are bound to the durable request and exact saved result; replay never invokes the completed effect",
+        "Self-check: neyvia verify --area proofs-e-host; real OS ownership, status-line process refresh, transitive pack and durable scratch file action."
+      ]
+    },
+    "proofs-e-wz": {
+      "title": "PROOFS-e W-Z: live contracts and scratch self-checks",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A local fixture is mistaken for a real provider, signed desktop release or whole-suite replacement",
+          "recovery": "Read the source-bound receipt, per-case coverage map and unresolved frontier before retirement or promotion"
+        }
+      ],
+      "frontier": [
+        "Backend suite and paired-desktop controller scenarios remain pending unless every original predicate has a real action site and observed scratch procedure.",
+        "Hidden-process AST scanner self-tests protect test-only tooling and are retained pending lead retirement review; no source-text scan is relabeled as production proof.",
+        "Legacy desktop-ui/fluxioHelpers.js is absent; its workspace-selection tests remain pending impact/history review.",
+        "The original bootstrap test expected newest merged turn first; its coverage row explicitly supersedes that stale assertion with observed chronological ordering, preserving all other bootstrap/lazy-detail predicates."
+      ],
+      "guidance": [
+        "Self-check entry: grant_agent.proofs_e_wz.self_check; CLI: neyvia verify --root <workspace> --area proofs-e-wz",
+        "Manifest: config/proofs/proofs-e-wz.json; host sites enforce these contracts on every corresponding real action.",
+        "Fixtures use disposable SQLite stores, real owned Python child commands, localhost HTTP port 48503 and bounded source transport injection."
+      ]
+    },
+    "terminal": {
+      "title": "terminal",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "runtime.environment"
+        }
+      },
+      "actions": {
+        "runtime.environment": {
+          "effect": "Read actual OS/workspace/executable environment; no command execution",
+          "pre": "Local runtime probe available",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "runtime.environment",
+          "tool": "runtime.environment"
+        },
+        "terminal.exec": {
+          "effect": "Run local command with bounded timeout/output and return exit result; can mutate local files",
+          "pre": "External-action permission/approval; valid shell and cwd; nonempty command; timeoutMs 1–120000",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "terminal.exec",
+          "tool": "terminal.exec"
+        },
+        "terminal.list": {
+          "effect": "Read open terminal IDs, folders, shell, alive state and last output time",
+          "pre": "Selected workspace terminal store is readable",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.terminal.list",
+          "tool": "neyvia.terminal.list"
+        },
+        "terminal.read": {
+          "effect": "Read recent plain text output from that terminal without starting or typing into it",
+          "pre": "Existing terminal ID from terminal.list; chars bounds the requested tail",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.terminal.read",
+          "tool": "neyvia.terminal.read"
+        }
+      },
+      "checks": {
+        "terminal-bytes": {
+          "args": {
+            "path": "manual-terminal-proof.txt"
+          },
+          "expect": {
+            "op": "eq",
+            "path": "content",
+            "value": "manual terminal returned 739"
+          },
+          "tool": "workspace.read"
+        },
+        "uifix2-1": {
+          "args": {
+            "path": "scripts/evidence/UIFIX2-1.json"
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": "\"passed\": true"
+          },
+          "tool": "workspace.read"
+        },
+        "uifix2-2": {
+          "args": {
+            "path": "scripts/evidence/UIFIX2-2.json"
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": "\"passed\": true"
+          },
+          "tool": "workspace.read"
+        },
+        "uifix2-3": {
+          "args": {
+            "path": "scripts/evidence/UIFIX2-3.json"
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": "\"passed\": true"
+          },
+          "tool": "workspace.read"
+        },
+        "uifix2-4": {
+          "args": {
+            "path": "scripts/evidence/UIFIX2-4.json"
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": "\"passed\": true"
+          },
+          "tool": "workspace.read"
+        },
+        "uifix2-5": {
+          "args": {
+            "path": "scripts/evidence/UIFIX2-5.json"
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": "\"passed\": true"
+          },
+          "tool": "workspace.read"
+        },
+        "uifix2-6": {
+          "args": {
+            "path": "scripts/evidence/UIFIX2-6.json"
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": "\"passed\": true"
+          },
+          "tool": "workspace.read"
+        },
+        "uifix2-7": {
+          "args": {
+            "path": "scripts/evidence/UIFIX2-7.json"
+          },
+          "expect": {
+            "op": "contains",
+            "path": "content",
+            "value": "\"passed\": true"
+          },
+          "tool": "workspace.read"
+        }
+      },
+      "procedures": {
+        "prove-terminal": {
+          "goal": "Run fixed local Python in the selected scratch root and reread its artifact",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "runtime.environment",
+              "args": {},
+              "save": "environment"
+            },
+            {
+              "judge": "command-scope"
+            },
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": "from pathlib import Path; Path('manual-terminal-proof.txt').write_text('manual terminal returned 739', encoding='utf-8')",
+                "shell": "python"
+              },
+              "check": "terminal-bytes",
+              "save": "command",
+              "when": {
+                "judge": "command-scope",
+                "option": "run"
+              }
+            }
+          ]
+        },
+        "execute-scoped-command": {
+          "goal": "Execute one explicitly permitted bounded local command; fresh command completion and authored observer G must both pass",
+          "inputs": {
+            "properties": {
+              "command": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "cwd": {
+                "type": "string"
+              },
+              "maxOutputChars": {
+                "maximum": 50000,
+                "minimum": 128,
+                "type": "integer"
+              },
+              "shell": {
+                "enum": [
+                  "auto",
+                  "powershell",
+                  "python",
+                  "bash",
+                  "cmd"
+                ],
+                "type": "string"
+              },
+              "timeoutMs": {
+                "maximum": 120000,
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "command",
+              "shell",
+              "cwd",
+              "timeoutMs",
+              "maxOutputChars"
+            ],
+            "type": "object"
+          },
+          "steps": [
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": {
+                  "$input": "command"
+                },
+                "cwd": {
+                  "$input": "cwd"
+                },
+                "maxOutputChars": {
+                  "$input": "maxOutputChars"
+                },
+                "shell": {
+                  "$input": "shell"
+                },
+                "timeoutMs": {
+                  "$input": "timeoutMs"
+                }
+              },
+              "save": "execution"
+            }
+          ]
+        },
+        "uifix2-1": {
+          "goal": "PDFs open where module workers don't, and are named by their file, never an encoded route.",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": "import runpy; print(runpy.run_path('scripts/uifix2_contracts.py')['run'](1))",
+                "shell": "python",
+                "timeoutMs": 120000
+              },
+              "check": "uifix2-1",
+              "save": "receipt"
+            }
+          ]
+        },
+        "uifix2-2": {
+          "goal": "The screen-control helper is found in a shared per-user runtime, and its absence reads plainly.",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": "import runpy; print(runpy.run_path('scripts/uifix2_contracts.py')['run'](2))",
+                "shell": "python",
+                "timeoutMs": 120000
+              },
+              "check": "uifix2-2",
+              "save": "receipt"
+            }
+          ]
+        },
+        "uifix2-3": {
+          "goal": "A chat source that can't be read becomes one plain line; raw errors stay in the tooltip.",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": "import runpy; print(runpy.run_path('scripts/uifix2_contracts.py')['run'](3))",
+                "shell": "python",
+                "timeoutMs": 120000
+              },
+              "check": "uifix2-3",
+              "save": "receipt"
+            }
+          ]
+        },
+        "uifix2-4": {
+          "goal": "Game Dev sessions are named in words and a reloaded Browser 3D scene stays selected.",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": "import runpy; print(runpy.run_path('scripts/uifix2_contracts.py')['run'](4))",
+                "shell": "python",
+                "timeoutMs": 120000
+              },
+              "check": "uifix2-4",
+              "save": "receipt"
+            }
+          ]
+        },
+        "uifix2-5": {
+          "goal": "The tour proves state survives moves without typing fixture text into real fields.",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": "import runpy; print(runpy.run_path('scripts/uifix2_contracts.py')['run'](5))",
+                "shell": "python",
+                "timeoutMs": 120000
+              },
+              "check": "uifix2-5",
+              "save": "receipt"
+            }
+          ]
+        },
+        "uifix2-6": {
+          "goal": "No card over the App preview sample; prose fields wrap; CiteCraft hides internal ids.",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": "import runpy; print(runpy.run_path('scripts/uifix2_contracts.py')['run'](6))",
+                "shell": "python",
+                "timeoutMs": 120000
+              },
+              "check": "uifix2-6",
+              "save": "receipt"
+            }
+          ]
+        },
+        "uifix2-7": {
+          "goal": "Library and Marketplace \"Open here\" open a real surface in the single shell; the audit reads that shell.",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "terminal.exec",
+              "args": {
+                "command": "import runpy; print(runpy.run_path('scripts/uifix2_contracts.py')['run'](7))",
+                "shell": "python",
+                "timeoutMs": 120000
+              },
+              "check": "uifix2-7",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "command-scope": {
+          "constraints": "This command writes only manual-terminal-proof.txt beneath selected cwd; Full access/explicit terminal approval is required. It is an artifact proof, not arbitrary-command authorization.",
+          "options": [
+            "run",
+            "leave"
+          ],
+          "question": "Run the fixed scratch artifact command with existing external-action authority?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Command started but timed out or output was truncated",
+          "recovery": "Inspect returned exit status and actual artifact; a process start is not completion"
+        },
+        {
+          "failure": "External-action denied in workspace mode",
+          "recovery": "Request proper existing approval/scope; manual.run must not bypass gateway"
+        }
+      ],
+      "frontier": [
+        "Long-job orchestration beyond 120-second terminal call requires a job API",
+        "No guarantee arbitrary shells have matching environment/dependencies"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/native_tools.py (_workspace_read/_write/_search), native_commands.py and gateway permission guards; tests/test_native_tools.py."
+      ]
+    }
+  }
+}

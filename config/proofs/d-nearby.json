@@ -1,0 +1,247 @@
+{
+  "area": "d-nearby",
+  "module": "grant_agent.proofs_d_nearby",
+  "self_check": "self_check",
+  "manuals": [
+    "nearby-send-runtime"
+  ],
+  "contracts": [
+    {
+      "id": "d.nearby.hash-bound-plan",
+      "phase": "pre",
+      "claim": "Hash-bound previews cover every source byte with ordered content-addressed chunks, exact file/byte/part counts, and enforced part bounds before any network action. Sending verifies the preview hash and source bytes again.",
+      "checkedAt": [
+        "nearby_send.NearbySendService.build_plan -> proofs_d_nearby.check_plan",
+        "nearby_send.NearbySendService.send",
+        "nearby_send.NearbySendService._verify_planned_file",
+        "proofs_d_nearby.self_check"
+      ],
+      "impact": [
+        "source preview",
+        "network admission",
+        "transfer budget"
+      ]
+    },
+    {
+      "id": "d.nearby.legacy-migration",
+      "phase": "post",
+      "claim": "A pre-upgrade preview without chunk metadata is accepted only after its preview hash and actual unchanged source hash/size/mtime verify; it is enriched with the actual chunk manifest and marked migrated on wire and receipt.",
+      "checkedAt": [
+        "nearby_send.NearbySendService._verify_planned_file -> proofs_d_nearby.check_verified_file",
+        "proofs_d_nearby.self_check"
+      ],
+      "impact": [
+        "old persisted preview",
+        "prepare-upload manifest",
+        "receipt migration count"
+      ]
+    },
+    {
+      "id": "d.nearby.resume-integrity",
+      "phase": "pre",
+      "claim": "Resume begins only at a real chunk boundary with an exact contiguous prefix of part/offset/size/SHA256 receipts marked integrityVerified=true; invalid offsets or receipts fail without a whole-file remote integrity claim.",
+      "checkedAt": [
+        "nearby_send.NearbySendService._parse_upload_authorization -> proofs_d_nearby.check_resume_authorization",
+        "proofs_d_nearby.self_check"
+      ],
+      "impact": [
+        "receiver resume authorization",
+        "acknowledged prefix",
+        "resumed upload budget"
+      ]
+    },
+    {
+      "id": "d.nearby.chunk-ack-integrity",
+      "phase": "post",
+      "claim": "An upload ACK binds exact part, offset, size and content hash plus positive integrity evidence; only a complete verified prefix can justify remoteHashVerified=true. Invalid hash/nextOffset replies never become acknowledged parts.",
+      "checkedAt": [
+        "nearby_send.NearbySendService._validate_chunk_acknowledgement -> proofs_d_nearby.check_chunk_receipt",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result",
+        "proofs_d_nearby.self_check"
+      ],
+      "impact": [
+        "wire ACK",
+        "chunk upload state",
+        "remote hash evidence"
+      ]
+    },
+    {
+      "id": "d.nearby.durable-ack-prefix",
+      "phase": "post",
+      "claim": "Each accepted chunk prefix and exact byte offset are atomically persisted before the next chunk. A killed sender recovers as interrupted with its acknowledged prefix and a retry sends only receiver-unacknowledged chunks.",
+      "checkedAt": [
+        "nearby_send.NearbySendService._upload_chunked_file -> proofs_d_nearby.check_ack_progress",
+        "proofs_d_nearby.self_check"
+      ],
+      "impact": [
+        "durable active transfer",
+        "crash recovery",
+        "receiver ACK store"
+      ]
+    },
+    {
+      "id": "d.nearby.cancel-truth",
+      "phase": "invariant",
+      "claim": "A cancellation request reports accepted but cancelled=false/finalState=pending until the sender terminates. Shared durable requests stop streaming at the next sender poll. Remote acknowledgment is true only for real HTTP200/204; rejected cancellation stays false with its status/error.",
+      "checkedAt": [
+        "nearby_send.NearbySendService.request_cancel_active_transfer -> proofs_d_nearby.check_cancel_request",
+        "nearby_send.NearbySendService._cancel -> proofs_d_nearby.check_cancel_transport",
+        "nearby_send.NearbySendService._upload_file/_upload_chunked_file -> nearby_send.NearbySendService._raise_if_cancelled",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result",
+        "proofs_d_nearby.self_check"
+      ],
+      "impact": [
+        "cross-process cancellation",
+        "wire stream lifetime",
+        "remote cancellation evidence"
+      ]
+    },
+    {
+      "id": "d.nearby.terminal-receipt",
+      "phase": "post",
+      "claim": "Every completed/failed/cancelled sender result refers to its durable owned receipt; truth flags, byte/part summaries and source identities match real acknowledgment evidence. Failures carry stable causes; local transfer never claims physical-device or multi-recipient proof or retains tokens.",
+      "checkedAt": [
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result",
+        "proofs_d_nearby.self_check"
+      ],
+      "impact": [
+        "public transfer result",
+        "durable receipt",
+        "local proof boundary"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_nearby_send_resume.py",
+      "case": "test_chunk_plan_enforces_part_limit_before_network",
+      "contracts": [
+        "d.nearby.hash-bound-plan"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService.build_plan -> proofs_d_nearby.check_plan",
+        "nearby_send.NearbySendService.send",
+        "nearby_send.NearbySendService._verify_planned_file",
+        "proofs_d_nearby.self_check"
+      ],
+      "case_id": "tests/test_nearby_send_resume.py::test_chunk_plan_enforces_part_limit_before_network"
+    },
+    {
+      "test": "tests/test_nearby_send_resume.py",
+      "case": "test_pre_upgrade_plan_is_verified_then_enriched_with_chunks",
+      "contracts": [
+        "d.nearby.legacy-migration",
+        "d.nearby.hash-bound-plan",
+        "d.nearby.chunk-ack-integrity"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService._verify_planned_file -> proofs_d_nearby.check_verified_file",
+        "proofs_d_nearby.self_check",
+        "nearby_send.NearbySendService.build_plan -> proofs_d_nearby.check_plan",
+        "nearby_send.NearbySendService.send",
+        "nearby_send.NearbySendService._verify_planned_file",
+        "nearby_send.NearbySendService._validate_chunk_acknowledgement -> proofs_d_nearby.check_chunk_receipt",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result"
+      ],
+      "case_id": "tests/test_nearby_send_resume.py::test_pre_upgrade_plan_is_verified_then_enriched_with_chunks"
+    },
+    {
+      "test": "tests/test_nearby_send_resume.py",
+      "case": "test_mid_chunk_cross_process_cancel_stops_streaming",
+      "contracts": [
+        "d.nearby.cancel-truth",
+        "d.nearby.terminal-receipt",
+        "d.nearby.durable-ack-prefix"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService.request_cancel_active_transfer -> proofs_d_nearby.check_cancel_request",
+        "nearby_send.NearbySendService._cancel -> proofs_d_nearby.check_cancel_transport",
+        "nearby_send.NearbySendService._upload_file/_upload_chunked_file -> nearby_send.NearbySendService._raise_if_cancelled",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result",
+        "proofs_d_nearby.self_check",
+        "nearby_send.NearbySendService._upload_chunked_file -> proofs_d_nearby.check_ack_progress"
+      ],
+      "case_id": "tests/test_nearby_send_resume.py::test_mid_chunk_cross_process_cancel_stops_streaming"
+    },
+    {
+      "test": "tests/test_nearby_send_resume.py",
+      "case": "test_invalid_resume_or_integrity_ack_is_never_claimed",
+      "contracts": [
+        "d.nearby.resume-integrity",
+        "d.nearby.chunk-ack-integrity",
+        "d.nearby.terminal-receipt"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService._parse_upload_authorization -> proofs_d_nearby.check_resume_authorization",
+        "proofs_d_nearby.self_check",
+        "nearby_send.NearbySendService._validate_chunk_acknowledgement -> proofs_d_nearby.check_chunk_receipt",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result"
+      ],
+      "case_id": "tests/test_nearby_send_resume.py::test_invalid_resume_or_integrity_ack_is_never_claimed"
+    },
+    {
+      "test": "tests/test_nearby_send_resume.py",
+      "case": "test_killed_sender_persists_receipt_and_retry_resumes",
+      "contracts": [
+        "d.nearby.durable-ack-prefix",
+        "d.nearby.resume-integrity",
+        "d.nearby.terminal-receipt"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService._upload_chunked_file -> proofs_d_nearby.check_ack_progress",
+        "proofs_d_nearby.self_check",
+        "nearby_send.NearbySendService._parse_upload_authorization -> proofs_d_nearby.check_resume_authorization",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result"
+      ],
+      "case_id": "tests/test_nearby_send_resume.py::test_killed_sender_persists_receipt_and_retry_resumes"
+    },
+    {
+      "test": "tests/test_nearby_send_safety.py",
+      "case": "test_in_flight_cancel_is_shared_across_sdk_instances_and_truthful",
+      "contracts": [
+        "d.nearby.cancel-truth",
+        "d.nearby.terminal-receipt"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService.request_cancel_active_transfer -> proofs_d_nearby.check_cancel_request",
+        "nearby_send.NearbySendService._cancel -> proofs_d_nearby.check_cancel_transport",
+        "nearby_send.NearbySendService._upload_file/_upload_chunked_file -> nearby_send.NearbySendService._raise_if_cancelled",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result",
+        "proofs_d_nearby.self_check"
+      ],
+      "case_id": "tests/test_nearby_send_safety.py::test_in_flight_cancel_is_shared_across_sdk_instances_and_truthful"
+    },
+    {
+      "test": "tests/test_nearby_send_safety.py",
+      "case": "test_remote_upload_failure_returns_failed_receipt_and_cancel_ack",
+      "contracts": [
+        "d.nearby.cancel-truth",
+        "d.nearby.terminal-receipt"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService.request_cancel_active_transfer -> proofs_d_nearby.check_cancel_request",
+        "nearby_send.NearbySendService._cancel -> proofs_d_nearby.check_cancel_transport",
+        "nearby_send.NearbySendService._upload_file/_upload_chunked_file -> nearby_send.NearbySendService._raise_if_cancelled",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result",
+        "proofs_d_nearby.self_check"
+      ],
+      "case_id": "tests/test_nearby_send_safety.py::test_remote_upload_failure_returns_failed_receipt_and_cancel_ack"
+    },
+    {
+      "test": "tests/test_nearby_send_safety.py",
+      "case": "test_cancel_rejection_never_claims_remote_acknowledgement",
+      "contracts": [
+        "d.nearby.cancel-truth",
+        "d.nearby.terminal-receipt"
+      ],
+      "checkedAt": [
+        "nearby_send.NearbySendService.request_cancel_active_transfer -> proofs_d_nearby.check_cancel_request",
+        "nearby_send.NearbySendService._cancel -> proofs_d_nearby.check_cancel_transport",
+        "nearby_send.NearbySendService._upload_file/_upload_chunked_file -> nearby_send.NearbySendService._raise_if_cancelled",
+        "nearby_send.NearbySendService.send -> proofs_d_nearby.check_transfer_result",
+        "proofs_d_nearby.self_check"
+      ],
+      "case_id": "tests/test_nearby_send_safety.py::test_cancel_rejection_never_claims_remote_acknowledgement"
+    }
+  ]
+}

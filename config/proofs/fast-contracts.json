@@ -1,0 +1,197 @@
+{
+  "portRoles": [48461, 48462],
+  "area": "fast-contracts",
+  "module": "grant_agent.proofs_fast_contracts",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "p22.impact",
+      "phase": "post",
+      "claim": "Changed source selects its authored outcome contracts through real dependency edges",
+      "checkedAt": [
+        "grant_agent.contract_gate.select",
+        "scripts/gate.py",
+        "scripts/cl_compile_manuals.py"
+      ],
+      "impact": [
+        "Fast contract gate and configuration authority"
+      ]
+    },
+    {
+      "id": "p22.uncovered",
+      "phase": "post",
+      "claim": "A covered neighbour never hides an unmapped changed source",
+      "checkedAt": [
+        "grant_agent.contract_gate.select",
+        "scripts/p22_contract_audit.py"
+      ],
+      "impact": [
+        "Fast contract gate and configuration authority"
+      ]
+    },
+    {
+      "id": "p22.permission-validation",
+      "phase": "post",
+      "claim": "Repeated configuration validation never increases the callers mutation authority",
+      "checkedAt": [
+        "grant_agent.neyvia_agent.NeyviaAgentConfig.validated",
+        "grant_agent.proofs_fast_contracts.self_check"
+      ],
+      "impact": [
+        "Fast contract gate and configuration authority",
+        "tests/test_cl_config_validation.py",
+        "config/proofs/p22-python-coverage.json"
+      ]
+    },
+    {
+      "id": "p22.runtime-budget",
+      "phase": "post",
+      "claim": "Implicit budgets stay unlimited; explicit limits and authority roots remain enforced",
+      "checkedAt": [
+        "grant_agent.proofs_runtime_edges.budget",
+        "src/grant_agent/cli.py",
+        "src/grant_agent/mission_control.py"
+      ],
+      "impact": [
+        "tests/test_runtime_budget_contract.py",
+        "Migrated edge cases; no live provider is contacted"
+      ]
+    },
+    {
+      "id": "p22.release-parsing",
+      "phase": "post",
+      "claim": "Offline release responses select the newest semantic version with its truthful source",
+      "checkedAt": [
+        "grant_agent.proofs_runtime_edges.releases",
+        "src/grant_agent/runtime_updates.py"
+      ],
+      "impact": [
+        "tests/test_runtime_updates.py",
+        "Migrated edge cases; no live provider is contacted"
+      ]
+    },
+    {
+      "id": "p22.workspace-selection",
+      "phase": "post",
+      "claim": "Live refresh preserves explicit selection; launches keep its exact profile and missing selections never fall back",
+      "checkedAt": [
+        "grant_agent.proofs_runtime_edges.workspace",
+        "scripts/p22_workspace.mjs",
+        "web/src/neyvia/missionHelpers.js"
+      ],
+      "impact": [
+        "tests/test_workspace_selection_behavior.py"
+      ]
+    },
+    {
+      "id": "p22.codex-threads",
+      "phase": "post",
+      "claim": "Codex exec threads normalize extended Windows paths, retain public background status and match the selected project",
+      "checkedAt": [
+        "grant_agent.proofs_runtime_edges.codex_threads",
+        "src/grant_agent/connected_sessions/codex_items.py"
+      ],
+      "impact": [
+        "tests/test_connected_codex_exec_threads.py"
+      ]
+    },
+    {
+      "id": "p22.oauth-owner",
+      "phase": "post",
+      "claim": "One explicit refresh owner persists the supplied synthetic credential while public state and status disclose no token",
+      "checkedAt": [
+        "grant_agent.proofs_runtime_edges.oauth_owner",
+        "src/grant_agent/provider_auth_broker.py"
+      ],
+      "impact": [
+        "tests/test_provider_auth_broker.py"
+      ]
+    },
+    {
+      "id": "p22.plan-hold",
+      "phase": "post",
+      "claim": "Fresh plan usage holds new work at the configured threshold, schedules reset and releases expired windows",
+      "checkedAt": [
+        "grant_agent.proofs_runtime_edges.plan_hold",
+        "src/grant_agent/nightshift_resources.py",
+        "src/grant_agent/connected_sessions/plan_limits.py"
+      ],
+      "impact": [
+        "tests/test_nightshift_plan_hold.py"
+      ]
+    },
+    {
+      "id": "p22.coverage-model",
+      "phase": "post",
+      "claim": "Declared evidence exemptions preserve generator obligations; real module outcomes cover companions while sentinels and unknown code remain uncovered",
+      "checkedAt": [
+        "grant_agent.contract_coverage.model",
+        "grant_agent.contract_coverage.classify",
+        "grant_agent.contract_gate.select",
+        "config/contract_path_policy.json",
+        "scripts/p22_coverage_report.py",
+        "grant_agent.contract_gate.exact_renames"
+      ],
+      "impact": [
+        "Impact coverage and uncovered admission"
+      ]
+    },
+    {
+      "id": "p22.module-discovery",
+      "phase": "post",
+      "claim": "The current generated owner reaches exact module search and source lookup; another owners source is refused",
+      "checkedAt": [
+        "grant_agent.module_map.generate",
+        "grant_agent.neyvia_modules.call",
+        "scripts/generate_module_map.py"
+      ],
+      "impact": [
+        "Generated module registry and module documents"
+      ]
+    },
+    {
+      "id": "p22.asyncio-wakeup",
+      "phase": "post",
+      "claim": "Windows async observers receive cross-thread wakeups through assigned loopback ports; public wakeup ports are refused",
+      "checkedAt": [
+        "grant_agent.proof_ports.configure_asyncio",
+        "grant_agent.contract_gate.worker"
+      ],
+      "impact": [
+        "Isolated async DOM and Windows OCR observers"
+      ]
+    },
+    {
+      "id": "p22.glance-ports",
+      "phase": "invariant",
+      "claim": "The LAYA hook keeps the caller allocation for its real loopback observation and refuses conflicting, duplicate or public port authority.",
+      "checkedAt": [
+        "grant_agent.laya_glance_gate.request_ports",
+        "grant_agent.proofs_fast_contracts.glance_ports",
+        "grant_agent.browser_ports.parse_ports"
+      ],
+      "impact": [
+        "LAYA hook caller socket ownership"
+      ]
+    },
+    {
+      "checkedAt": [
+        "grant_agent.contract_gate.laya_admitted",
+        "grant_agent.contract_gate.run",
+        "grant_agent.proofs_fast_contracts.self_check"
+      ],
+      "claim": "Explicit advisory glance policy preserves unavailable, failed and uncertain findings without blocking release; strict defaults still refuse and string flags cannot silently enable advisory admission",
+      "id": "p22.laya-advisory",
+      "impact": [
+        "Release glance policy",
+        "scripts/gate.py"
+      ],
+      "phase": "post"
+    }
+  ],
+  "coverage": [],
+  "networkContracts": [
+    "p22.asyncio-wakeup",
+    "p22.glance-ports"
+  ]
+}

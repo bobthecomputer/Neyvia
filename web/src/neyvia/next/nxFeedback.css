@@ -1,0 +1,47 @@
+/* After-task feedback row under a finished run (plan 20 C9.2). Tokens only; motion respects reduced motion. */
+.nx .nx-feedback {
+  display: grid;
+  gap: var(--nx-space-8);
+  margin-top: var(--nx-space-4);
+  padding: var(--nx-space-10) var(--nx-space-12);
+  border-radius: var(--nx-r);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+  color: var(--nx-text-2);
+  font-size: var(--nx-fs-sm);
+}
+.nx .nx-feedback.is-saved {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-8);
+  padding: var(--nx-space-6) var(--nx-space-10);
+  color: var(--nx-muted);
+}
+.nx .nx-feedback.is-saved strong { color: var(--nx-text); font-weight: 600; }
+.nx .nx-feedback.is-saved .nx-btn { margin-left: auto; }
+.nx .nx-feedback-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-8) var(--nx-space-12); }
+.nx .nx-feedback-label { color: var(--nx-muted); }
+.nx .nx-feedback-choices { display: flex; flex-wrap: wrap; gap: var(--nx-space-6); }
+.nx .nx-feedback-reason { display: grid; gap: var(--nx-space-6); animation: nx-pop-in var(--nx-med) var(--nx-ease); }
+.nx .nx-feedback-sub { color: var(--nx-muted); }
+.nx .nx-feedback-field { position: relative; display: flex; align-items: flex-start; gap: var(--nx-space-6); }
+.nx .nx-feedback-field textarea {
+  flex: 1;
+  min-width: 0;
+  resize: vertical;
+  min-height: 52px;
+  padding: var(--nx-space-8) var(--nx-space-10);
+  border: 0;
+  border-radius: var(--nx-r-sm);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+  background: var(--nx-raised);
+  color: var(--nx-text);
+  font: inherit;
+  font-size: var(--nx-fs);
+  line-height: 1.45;
+}
+.nx .nx-feedback-field textarea::placeholder { color: var(--nx-faint); }
+.nx .nx-feedback-actions { display: flex; flex-wrap: wrap; gap: var(--nx-space-6); }
+.nx .nx-feedback-error { margin: 0; color: var(--nx-red); }
+@media (prefers-reduced-motion: reduce) {
+  .nx .nx-feedback-reason { animation: none; }
+}

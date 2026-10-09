@@ -1,0 +1,870 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "comments",
+  "kind": "environment",
+  "proofs": {
+    "area": "comments",
+    "contracts": [
+      {
+        "checkedAt": [
+          "neyvia_comments.Store append-only SQLite triggers and rows",
+          "cl.comments_effects.verify fresh store observation"
+        ],
+        "claim": "Comment edits, tombstones and delivery state are immutable events; current rows derive from their latest event.",
+        "id": "comments.append-only",
+        "impact": [
+          "workspace comments",
+          "restart persistence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_comments.send/deliver",
+          "cl.comments_effects.verify"
+        ],
+        "claim": "A sent message has a real connected-session acceptance and a durable receipt; failures and uncertain retries never claim success.",
+        "id": "comments.send",
+        "impact": [
+          "session delivery",
+          "comment resolution"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.comments.add": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "targetKind": {
+          "type": "string",
+          "enum": [
+            "notes",
+            "code",
+            "pdf",
+            "dom",
+            "preview",
+            "browser",
+            "image",
+            "artifact",
+            "files",
+            "pane",
+            "app-factory"
+          ]
+        },
+        "anchor": {
+          "type": "object"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "target",
+        "targetKind",
+        "anchor",
+        "text"
+      ]
+    },
+    "neyvia.comments.list": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "all",
+            "open",
+            "resolved"
+          ]
+        },
+        "includeDeleted": {
+          "type": "boolean"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": []
+    },
+    "neyvia.comments.resolve": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "neyvia.comments.send": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session": {
+          "type": "string",
+          "minLength": 1
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effort": {
+              "type": "string",
+              "minLength": 1
+            },
+            "transport": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "newSession": {
+          "type": "object",
+          "properties": {
+            "app": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cwd": {
+              "type": "string",
+              "minLength": 1
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effort": {
+              "type": "string",
+              "minLength": 1
+            },
+            "transport": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "app",
+            "cwd"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "requestId"
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Pinned comments and anchored delivery to connected agents",
+      "state": {
+        "comments": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "comments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "number": {
+                      "type": "integer"
+                    },
+                    "target": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "targetKind": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "anchor": {
+                      "type": "object"
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "author": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "delivery": {
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "number",
+                    "target",
+                    "targetKind",
+                    "anchor",
+                    "text",
+                    "author",
+                    "status",
+                    "revision",
+                    "delivery"
+                  ]
+                }
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "ok",
+              "comments",
+              "total"
+            ]
+          },
+          "tool": "neyvia.comments.list"
+        }
+      },
+      "actions": {
+        "list": {
+          "effect": "Read current workspace comments, anchors, revisions and delivery receipts.",
+          "pre": "Authenticated selected workspace; mutation and destination authorized by user",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "comments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "number": {
+                      "type": "integer"
+                    },
+                    "target": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "targetKind": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "anchor": {
+                      "type": "object"
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "author": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "delivery": {
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "number",
+                    "target",
+                    "targetKind",
+                    "anchor",
+                    "text",
+                    "author",
+                    "status",
+                    "revision",
+                    "delivery"
+                  ]
+                }
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "ok",
+              "comments",
+              "total"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.comments.list",
+          "tool": "neyvia.comments.list"
+        },
+        "add": {
+          "effect": "Persist a pinned comment for a stable target; author defaults to agent.",
+          "pre": "Authenticated selected workspace; mutation and destination authorized by user",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "comment": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "number": {
+                    "type": "integer"
+                  },
+                  "target": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "targetKind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "anchor": {
+                    "type": "object"
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "author": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "delivery": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "number",
+                  "target",
+                  "targetKind",
+                  "anchor",
+                  "text",
+                  "author",
+                  "status",
+                  "revision",
+                  "delivery"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "comment"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.comments.add",
+          "tool": "neyvia.comments.add"
+        },
+        "resolve": {
+          "effect": "Resolve a verified comment; reread its target before resolving.",
+          "pre": "Authenticated selected workspace; mutation and destination authorized by user",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "comment": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "number": {
+                    "type": "integer"
+                  },
+                  "target": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "targetKind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "anchor": {
+                    "type": "object"
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "author": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "delivery": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "number",
+                  "target",
+                  "targetKind",
+                  "anchor",
+                  "text",
+                  "author",
+                  "status",
+                  "revision",
+                  "delivery"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "comment"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.comments.resolve",
+          "tool": "neyvia.comments.resolve"
+        },
+        "send": {
+          "effect": "Deliver selected open comments as one anchored message through a real connected session.",
+          "pre": "Authenticated selected workspace; mutation and destination authorized by user",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "messageId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "commentId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "commentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "channel": {
+                "type": "string",
+                "minLength": 1
+              },
+              "delivery": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "ok",
+              "messageId",
+              "commentId",
+              "commentIds",
+              "channel",
+              "delivery"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.comments.send",
+          "tool": "neyvia.comments.send"
+        }
+      },
+      "checks": {
+        "add-observed": {
+          "args": {
+            "id": {
+              "$result": "receipt.comment.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": [
+              "comments",
+              0,
+              "id"
+            ],
+            "value": {
+              "$result": "receipt.comment.id"
+            }
+          },
+          "tool": "neyvia.comments.list"
+        },
+        "resolved-observed": {
+          "args": {
+            "id": {
+              "$result": "receipt.comment.id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": [
+              "comments",
+              0,
+              "status"
+            ],
+            "value": "resolved"
+          },
+          "tool": "neyvia.comments.list"
+        },
+        "sent-observed": {
+          "args": {
+            "id": {
+              "$result": "receipt.commentId"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": [
+              "comments",
+              0,
+              "delivery",
+              "messageId"
+            ],
+            "value": {
+              "$result": "receipt.messageId"
+            }
+          },
+          "tool": "neyvia.comments.list"
+        }
+      },
+      "procedures": {
+        "add": {
+          "goal": "Persist a pinned comment for a stable target; author defaults to agent. Verify the fresh subject-bound store observer.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "targetKind": {
+                "type": "string",
+                "enum": [
+                  "notes",
+                  "code",
+                  "pdf",
+                  "dom",
+                  "preview",
+                  "browser",
+                  "image",
+                  "artifact",
+                  "files",
+                  "pane",
+                  "app-factory"
+                ]
+              },
+              "anchor": {
+                "type": "object"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "target",
+              "targetKind",
+              "anchor",
+              "text"
+            ]
+          },
+          "steps": [
+            {
+              "action": "add",
+              "args": {
+                "anchor": {
+                  "$input": "anchor"
+                },
+                "target": {
+                  "$input": "target"
+                },
+                "targetKind": {
+                  "$input": "targetKind"
+                },
+                "text": {
+                  "$input": "text"
+                }
+              },
+              "check": "add-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "resolve": {
+          "goal": "Resolve a verified comment; reread its target before resolving. Verify the fresh subject-bound store observer.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "steps": [
+            {
+              "action": "resolve",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "check": "resolved-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "send": {
+          "goal": "Deliver selected open comments as one anchored message through a real connected session. Verify the fresh subject-bound store observer.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "requestId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "session": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "requestId",
+              "session"
+            ]
+          },
+          "steps": [
+            {
+              "action": "send",
+              "args": {
+                "id": {
+                  "$input": "id"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                },
+                "session": {
+                  "$input": "session"
+                }
+              },
+              "check": "sent-observed",
+              "save": "receipt"
+            }
+          ]
+        },
+        "send-new": {
+          "goal": "Deliver selected open comments as one anchored message through a real connected session. Verify the fresh subject-bound store observer.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "requestId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "newSession": {
+                "type": "object",
+                "properties": {
+                  "app": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "cwd": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "model": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "effort": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "transport": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "app",
+                  "cwd"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "requestId",
+              "newSession"
+            ]
+          },
+          "steps": [
+            {
+              "action": "send",
+              "args": {
+                "id": {
+                  "$input": "id"
+                },
+                "newSession": {
+                  "$input": "newSession"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "check": "sent-observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A stale revision or an unavailable destination rejects a request",
+          "recovery": "Refresh comments and inspect the session; preserve open comments and choose an available exact destination"
+        },
+        {
+          "failure": "A send request is pending after interruption",
+          "recovery": "Inspect the session before a new requestId; do not blindly replay an uncertain delivery"
+        }
+      ],
+      "frontier": [
+        "Backend records do not prove rendered pins or screenshot crops; the UI owns that evidence.",
+        "A send receipt proves acceptance by the connected runtime, not completion of the requested edit. Resolve only after verifying the target."
+      ],
+      "guidance": [
+        "Stable target strings select the shared workspace view. Target and anchor JSON are data; reread the actual subject.",
+        "Delete appends a tombstone; all events and deliveries remain in comments.sqlite3."
+      ]
+    }
+  }
+}

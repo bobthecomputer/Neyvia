@@ -1,0 +1,84 @@
+/* App preview: the built app running in a frame that fits its target (NeyviaAppFactoryCanvas),
+   its build truth under it, the taste review folded away. Colours: the window's web skin
+   (--af-* from neyviaAppFactoryStudio.css, which reads the --nx-* tokens). */
+.neyvia-app-preview {
+  box-sizing: border-box; height: 100%; min-height: 100%; display: flex; flex-direction: column; gap: 0; container-type: inline-size;
+  color: var(--af-text); background: var(--af-bg); font-family: var(--nx-font, "Segoe UI", system-ui, sans-serif); font-size: var(--nx-fs);
+}
+.neyvia-app-preview * { box-sizing: border-box; }
+.neyvia-app-preview :is(button, select, a):focus-visible { outline: 2px solid var(--af-accent-hi); outline-offset: 2px; }
+.neyvia-app-preview-head {
+  flex: none; display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-12); min-height: 56px; padding: var(--nx-space-8) var(--nx-space-14);
+  border-bottom: 1px solid var(--af-line); background: var(--af-side);
+}
+.neyvia-app-preview-title { display: flex; align-items: center; gap: var(--nx-space-10); min-width: 0; }
+.neyvia-app-preview-title > div { display: grid; gap: var(--nx-space-1); min-width: 0; }
+.neyvia-app-preview-title span { color: var(--af-accent-text); font-size: var(--nx-fs-2xs); font-weight: 700; letter-spacing: 0.14em; }
+.neyvia-app-preview-title h1 {
+  margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--af-text);
+  font: var(--nx-display-weight, 500) var(--nx-fs-xl)/1.15 var(--af-display); letter-spacing: var(--nx-display-tracking, -0.01em);
+}
+.neyvia-app-preview-title button, .neyvia-app-preview-actions :is(button, a) {
+  display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: var(--nx-r-sm); cursor: pointer;
+  background: transparent; color: var(--af-muted); text-decoration: none; transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.neyvia-app-preview-title button:hover, .neyvia-app-preview-actions :is(button, a):hover { background: var(--af-hover); color: var(--af-text); }
+.neyvia-app-preview-actions { display: flex; align-items: center; gap: var(--nx-space-4); flex: none; }
+.neyvia-app-preview-actions select {
+  width: 200px; max-width: 46cqw; height: 30px; padding: 0 var(--nx-space-10); border: 0; border-radius: var(--nx-r-sm); font: inherit;
+  background: var(--af-raised); color: var(--af-text); box-shadow: inset 0 0 0 var(--nx-stroke) var(--af-line-strong);
+}
+.neyvia-app-preview-actions select option { background: var(--af-raised); color: var(--af-text); }
+
+.neyvia-app-preview-canvas {
+  position: relative; flex: 1 1 auto; min-height: 320px; display: flex; flex-direction: column; gap: var(--nx-space-10); padding: var(--nx-space-14) var(--nx-space-20) var(--nx-space-16);
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--af-text) 9%, transparent) 1px, transparent 1.4px) 0 0 / 18px 18px,
+    radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--af-accent) 7%, transparent), transparent 62%),
+    var(--af-bg);
+}
+.neyvia-app-preview-frames { align-self: center; display: inline-flex; padding: var(--nx-space-2); border-radius: var(--nx-r); background: color-mix(in srgb, var(--af-text) 6%, transparent); box-shadow: inset 0 0 0 var(--nx-stroke) var(--af-line); }
+.neyvia-app-preview-frames button {
+  height: 26px; padding: 0 var(--nx-space-10); border: 0; border-radius: var(--nx-r-sm); cursor: pointer; background: transparent; color: var(--af-muted); font: inherit; font-size: var(--nx-fs-sm); font-weight: 600;
+  transition: background var(--nx-med) var(--af-snappy), color var(--nx-fast) var(--nx-ease);
+}
+.neyvia-app-preview-frames button.is-on { background: var(--af-raised-2); color: var(--af-text); box-shadow: 0 0 0 var(--nx-stroke) var(--af-line-strong); }
+.neyvia-app-preview-stage { position: relative; flex: 1 1 auto; min-height: 0; display: flex; padding-top: var(--nx-space-12); }
+.neyvia-app-preview-empty {
+  flex: none; align-self: center; display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-14); width: min(640px, 100%);
+  padding: var(--nx-space-10) var(--nx-space-12) var(--nx-space-10) var(--nx-space-16); border-radius: var(--nx-r-lg); background: var(--af-raised);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--af-line); animation: af-fade-in var(--nx-settle) var(--af-settle) both;
+}
+.neyvia-app-preview-empty > div { display: grid; gap: var(--nx-space-2); min-width: 0; }
+.neyvia-app-preview-empty strong { color: var(--af-text); font-size: var(--nx-fs-md); }
+.neyvia-app-preview-empty p { margin: 0; color: var(--af-muted); font-size: var(--nx-fs-sm); line-height: 1.45; }
+.neyvia-app-preview .neyvia-app-preview-empty button { flex: none; margin-top: 0; }
+.neyvia-app-preview button.is-accent, .neyvia-app-preview-empty button {
+  display: inline-flex; align-items: center; gap: var(--nx-space-6); height: 30px; margin-top: var(--nx-space-4); padding: 0 var(--nx-space-12); border: 0; border-radius: var(--nx-r-sm); cursor: pointer;
+  background: var(--af-accent); color: var(--af-on-accent); font: inherit; font-weight: 650; white-space: nowrap;
+}
+.neyvia-app-preview-truth {
+  flex: none; display: flex; align-items: center; flex-wrap: wrap; gap: var(--nx-space-6) var(--nx-space-14); padding: var(--nx-space-10) var(--nx-space-14); border-top: 1px solid var(--af-line);
+  background: var(--af-panel); color: var(--af-muted); font-size: var(--nx-fs-sm);
+}
+.neyvia-app-preview-truth > span { display: inline-flex; align-items: center; gap: var(--nx-space-7); }
+.neyvia-app-preview-truth > span > i { width: 7px; height: 7px; border-radius: 50%; background: var(--af-muted); }
+.neyvia-app-preview-truth [data-preview-static="passed"] > i, .neyvia-app-preview-truth [data-preview-runtime="passed"] > i, .neyvia-app-preview-truth [data-preview-native="ready"] > i { background: var(--af-ok); }
+.neyvia-app-preview-truth [data-preview-runtime="passed"] { color: var(--af-text-2); }
+.neyvia-app-preview-spacer { flex: 1 1 auto; }
+.neyvia-app-preview-truth button:not(.is-accent) {
+  height: 30px; padding: 0 var(--nx-space-11); border: 0; border-radius: var(--nx-r-sm); cursor: pointer; background: var(--af-raised); color: var(--af-text-2);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--af-line-strong); font: inherit; font-weight: 600;
+}
+.neyvia-app-preview-truth button.is-accent { margin-top: 0; }
+.neyvia-app-preview-error { margin: 0; padding: var(--nx-space-8) var(--nx-space-14); color: var(--af-bad); background: color-mix(in srgb, var(--af-bad) 10%, transparent); font-size: var(--nx-fs-sm); }
+.neyvia-app-preview-review { flex: none; max-height: 42%; overflow: auto; border-top: 1px solid var(--af-line); background: var(--af-panel); }
+.neyvia-app-preview-review > summary { padding: var(--nx-space-9) var(--nx-space-14); color: var(--af-muted); font-weight: 600; cursor: pointer; }
+@container (max-width: 560px) {
+  .neyvia-app-preview-empty { flex-direction: column; align-items: stretch; text-align: left; }
+  .neyvia-app-preview-empty button { align-self: flex-start; }
+  .neyvia-app-preview-canvas { padding: var(--nx-space-10) var(--nx-space-10) var(--nx-space-12); min-height: 380px; }
+  .neyvia-app-preview-actions select { width: 140px; }
+  .neyvia-app-preview-truth { gap: var(--nx-space-4) var(--nx-space-10); }
+  .neyvia-app-preview-spacer { display: none; }
+}

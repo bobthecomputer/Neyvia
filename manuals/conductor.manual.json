@@ -1,0 +1,1800 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "conductor",
+  "kind": "environment",
+  "proofs": {
+    "area": "a-cli, conductor, proofs-c-control",
+    "manifests": [
+      "config/proofs/a-cli.json",
+      "config/proofs/proofs-c-control.json",
+      "config/proofs/proofs-e-models.json"
+    ],
+    "startup": {
+      "procedures": [
+        "grant_agent.proofs_a_cli.self_check",
+        "workspace durable lifecycle/reanchoring",
+        "queued mission terminal-owner release and restart readback",
+        "event tail/cache readbacks",
+        "mode/title/edit-scope/deadline transformation",
+        "real PNG artifact evidence and byte-faithful confined verifier attachment",
+        "recorded goal/cadence audit and corruption refusal",
+        "actual owned process progress and notification output",
+        "route value closeout persistence and repair priority",
+        "pure overnight repair versus safely held queue",
+        "real Windows share-delete-denied replacement retry",
+        "mission-index session summary and completed lane reconciliation"
+      ],
+      "runner": "grant_agent.proof_verifier.run_verification",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.crashproof.CrashProofStore.submit_task",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Submission persists exactly one task per mission/idempotency key and preserves original payload on duplicate; local restart and 28-task batch preserve each queued row.",
+        "id": "a-cli.crash.submit",
+        "impact": [
+          "durable task admission"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.crashproof.CrashProofStore.claim_next",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Claimed tasks have working state, execution owner, lease and incremented attempts.",
+        "id": "a-cli.crash.claim",
+        "impact": [
+          "task ownership"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.crashproof.CrashProofStore.transition_task",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Transitions return the requested state, retain supplied checkpoint/result/error, clear non-working ownership and reject prohibited terminal rewrite.",
+        "id": "a-cli.crash.transition",
+        "impact": [
+          "task lifecycle"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.crashproof.CrashProofStore.recover_interrupted",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Recovered task IDs are unique with durable interrupted-recovery events; expired owned work requeues after restart.",
+        "id": "a-cli.crash.recover",
+        "impact": [
+          "coordinator recovery"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.crashproof.CrashProofStore.add_result_item",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Result-set items have a durable unique dedupe key preserving original identity and content.",
+        "id": "a-cli.crash.result",
+        "impact": [
+          "result deduplication"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.crashproof.CrashProofStore.summarize_result_set",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Result summary totals equal status counts and sample projection respects the bounded limit.",
+        "id": "a-cli.crash.summary",
+        "impact": [
+          "compact result observer"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.crashproof.CrashProofStore.time_snapshot",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Deadline decisions reserve verification time and skip optional work only when insufficient time remains; required work reports risk.",
+        "id": "a-cli.crash.time",
+        "impact": [
+          "deadline policy"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.crashproof.CrashProofStore.autonomy_allows",
+          "grant_agent.proofs_a_cli"
+        ],
+        "claim": "Allowed actions stay within active inherited lease action/root/spend/destructive/public limits; startup procedure exercises scope, expiry and revocation.",
+        "id": "a-cli.crash.autonomy",
+        "impact": [
+          "scoped autonomy"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.resolve_cluster_root",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Scheduler root follows configured cluster/control root; explicitly opting out preserves requested legacy root.",
+        "id": "a-cli.scheduler.root",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.build_local_worker_capabilities",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Efficient controller advertises self-repair but no frontend build; browser verification requires a passing dependency receipt and existing declared executable. Capacity zero means unlimited.",
+        "id": "a-cli.scheduler.capabilities",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.ClusterRegistry.upsert_job",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Canonical active job deduplication persists at most one active row per nonempty key.",
+        "id": "a-cli.scheduler.job",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.ClusterRegistry.claim_next_job",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Claims return exact job/lease/host affinity; serialized admission obeys capacity, and scans past incompatible jobs without a fixed queue cap.",
+        "id": "a-cli.scheduler.claim",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.ClusterRegistry.choose_host",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Selected hosts are online and provide declared required capabilities; startup validates preference for healthy workstation over controller storage.",
+        "id": "a-cli.scheduler.choose",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.ClusterRegistry._create_lease within transaction",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "New lease owns exactly the queued job on its selected host and cannot overlap another active writer in the same workspace.",
+        "id": "a-cli.scheduler.lease",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.ClusterRegistry._refresh_host_load_db",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Persisted host load equals durable active leases of leased/running jobs immediately after admission and completion.",
+        "id": "a-cli.scheduler.load",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.ClusterRegistry.mark_stale_hosts within transaction",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Every expired heartbeat marked stale removes advertised online availability and clears load.",
+        "id": "a-cli.scheduler.stale",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cluster.ClusterRegistry.expire_stale_leases within transaction",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Expired leases no longer own a running job; restart recovery requeues the job and clears lease affinity.",
+        "id": "a-cli.scheduler.expire",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.runtime_supervisor._cluster_required_capabilities",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Planner/browser capability authority follows declared route role and phase rather than prompt mentions of verification.",
+        "id": "a-cli.scheduler.roles",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.worker.run_local_worker_once",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Local workers advertise explicit capacity even when idle and persist terminal job state matching actual execution with a terminal event.",
+        "id": "a-cli.scheduler.worker",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.worker.execute_job before subprocess dispatch",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Actual child environment binds the job's authoritative control root without changing configured cluster root.",
+        "id": "a-cli.scheduler.environment",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.worker.execute_job",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Executable job success matches actual child return code; failed children cannot report completion.",
+        "id": "a-cli.scheduler.execute",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.worker._start_unlimited_worker_attempt",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Unlimited worker attempts create independent thread/admission/completion channels; startup admits twelve overlapping owned attempts without a fixed threadpool ceiling.",
+        "id": "a-cli.scheduler.threads",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.worker._write_worker_state",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Each worker lifecycle write persists its exact host/status/error; one-shot success/failure both stop and release the owned PID file.",
+        "id": "a-cli.scheduler.lifecycle",
+        "impact": [
+          "local managed runtime and durable coordination"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.continuity_policy.MissionContinuityStore.record_tool_attempt",
+          "grant_agent.proofs_a_cli_lifecycle"
+        ],
+        "claim": "Successful action identities and evidence persist before restart suppresses duplicate completed attempts.",
+        "id": "a-cli.continuity.attempt",
+        "impact": [
+          "Successful action identities and evidence persist before restart suppresses duplicate completed attempts."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.continuity_policy.MissionContinuityStore.recover",
+          "grant_agent.proofs_a_cli_lifecycle"
+        ],
+        "claim": "Restart recovery retains completed action identities for safe continuation.",
+        "id": "a-cli.continuity.recovery",
+        "impact": [
+          "Restart recovery retains completed action identities for safe continuation."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.continuity_policy.proportional_verification",
+          "grant_agent.proofs_a_cli_lifecycle"
+        ],
+        "claim": "Transfers require target existence and size or hash verification.",
+        "id": "a-cli.continuity.verification",
+        "impact": [
+          "Transfers require target existence and size or hash verification."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.continuity_policy.classify_gpu_control_action",
+          "grant_agent.proofs_a_cli_lifecycle"
+        ],
+        "claim": "GPU controls classify destructive, stop, resume and start labels before inspection.",
+        "id": "a-cli.continuity.gpu-label",
+        "impact": [
+          "GPU controls classify destructive, stop, resume and start labels before inspection."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.continuity_policy.MissionContinuityStore.evaluate_gpu_action",
+          "grant_agent.proofs_a_cli_lifecycle"
+        ],
+        "claim": "GPU decisions enforce cost and capacity, preserve checkpoint preference and paid or destructive approval, and bound unchanged observations with a state-change override.",
+        "id": "a-cli.continuity.gpu",
+        "impact": [
+          "GPU decisions enforce cost and capacity, preserve checkpoint preference and paid or destructive approval, and bound unchanged observations with a state-change override."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.runtime_supervisor.DelegatedRuntimeSupervisor._sync_cluster_state before assignment",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Shared queue recovery retains legacy lineage and leaves the mission-local database row unchanged.",
+        "id": "a-cli.scheduler.rehome",
+        "impact": [
+          "Shared queue recovery retains legacy lineage and leaves the mission-local database row unchanged."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.fluxio_harness.FluxioHarness._reconcile_delegated_sessions queued branch",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "A queued delegated session keeps its step in progress without consuming attempts or acknowledging unfinished work.",
+        "id": "a-cli.scheduler.queued",
+        "impact": [
+          "A queued delegated session keeps its step in progress without consuming attempts or acknowledging unfinished work."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.worker.main unlimited admission boundary",
+          "grant_agent.proofs_a_cli_scheduler"
+        ],
+        "claim": "Unlimited worker admission uses independent thread/claim channels without a fixed pool and preserves durable local completion.",
+        "id": "a-cli.scheduler.unlimited-loop",
+        "impact": [
+          "Unlimited worker admission uses independent thread/claim channels without a fixed pool and preserves durable local completion."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._mission_budget_settings",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Relative timers and objective deadlines override hour hints, persist a deadline and require continuous execution until blocked.",
+        "id": "a-cli.preferences.budget",
+        "impact": [
+          "Relative timers and objective deadlines override hour hints, persist a deadline and require continuous execution until blocked."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._mission_should_continue_after_result",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Delegated runtime activity pauses the mission loop to prevent repeated execution.",
+        "id": "a-cli.preferences.continue",
+        "impact": [
+          "Delegated runtime activity pauses the mission loop to prevent repeated execution."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._mission_poll_interval_seconds",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Continuous missions poll at a positive interval; pause mode uses no repeating interval.",
+        "id": "a-cli.preferences.poll",
+        "impact": [
+          "Continuous missions poll at a positive interval; pause mode uses no repeating interval."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._sync_mission_from_result",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Product missions completing with documentation-only changes become durably blocked with the specific missing-product-change reason.",
+        "id": "a-cli.preferences.docs",
+        "impact": [
+          "Product missions completing with documentation-only changes become durably blocked with the specific missing-product-change reason."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._queue_cluster_mission_resume",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Bundled worker resumes identify one active durable job with authoritative control root, workspace root and composer provenance.",
+        "id": "a-cli.preferences.queue",
+        "impact": [
+          "Bundled worker resumes identify one active durable job with authoritative control root, workspace root and composer provenance."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._launch_async_mission_resume",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Background dispatch suppresses duplicate owned active processes and queues cluster work from the authoritative mission store.",
+        "id": "a-cli.preferences.dispatch",
+        "impact": [
+          "Background dispatch suppresses duplicate owned active processes and queues cluster work from the authoritative mission store."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._tasklist_has_pid",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Windows process detection accepts only successful CSV output containing the requested PID; localized absence is not liveness.",
+        "id": "a-cli.preferences.pid",
+        "impact": [
+          "Windows process detection accepts only successful CSV output containing the requested PID; localized absence is not liveness."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._launch_async_mission_resume before subprocess.Popen",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Detached mission children receive no interactive input and get a new POSIX session when the selected platform requires it.",
+        "id": "a-cli.preferences.spawn",
+        "impact": [
+          "Detached mission children receive no interactive input and get a new POSIX session when the selected platform requires it."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli.cmd_mission_action stop branch",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Stopping a mission preserves terminal delegated history and stops only unfinished sessions.",
+        "id": "a-cli.preferences.stop",
+        "impact": [
+          "Stopping a mission preserves terminal delegated history and stops only unfinished sessions."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._run_mission_watchdog_pass before state write",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Scoped one-shot watchdog passes preserve active ongoing loop identity and counts; ongoing passes retain own liveness.",
+        "id": "a-cli.preferences.watchdog",
+        "impact": [
+          "Scoped one-shot watchdog passes preserve active ongoing loop identity and counts; ongoing passes retain own liveness."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli.cmd_mission_start",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Successful mission starts persist their mission and requested relative timer.",
+        "id": "a-cli.preferences.started",
+        "impact": [
+          "Successful mission starts persist their mission and requested relative timer."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._mark_mission_resume_dispatched",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Mission state becomes running after permitted dispatch and blocked after a blocked receipt.",
+        "id": "a-cli.preferences.mark-dispatch",
+        "impact": [
+          "Mission state becomes running after permitted dispatch and blocked after a blocked receipt."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._compact_mission_action_payload",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Compact mission action receipts preserve mission state and dispatch while omitting the full snapshot.",
+        "id": "a-cli.preferences.compact",
+        "impact": [
+          "Compact mission action receipts preserve mission state and dispatch while omitting the full snapshot."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.cli._run_mission_engine_cycles after engine dispatch",
+          "grant_agent.proofs_a_cli_preferences"
+        ],
+        "claim": "Mission engine cycles forward the remaining enforced budget, continuous-mode handoff policy and an existing safe checkpoint.",
+        "id": "a-cli.preferences.cycle",
+        "impact": [
+          "Mission engine cycles forward the remaining enforced budget, continuous-mode handoff policy and an existing safe checkpoint."
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore.load_workspaces -> proofs_c_control.checked(workspaces)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Empty or malformed stores create and persist the primary workspace. Existing release roots reanchor within their release family; unrelated project roots remain unchanged. The returned projection equals durable state.",
+        "id": "proofs-c.control.workspaces",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore.delete_workspace -> proofs_c_control.checked(delete)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Workspace removal preserves unrelated workspaces, missions and history, removes only the selected workspace mission projection/history, and returns the exact removal count. The last workspace and unknown IDs are rejected by the action.",
+        "id": "proofs-c.control.delete",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._rebalance_workspace_queue_in_place -> proofs_c_control.checked(queue)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Each workspace has exactly one eligible active slot, contiguous queued positions and actual blocker identities. Completed, blocked and exhausted owners release their queue position; newly promoted queued work receives its front-of-queue receipt.",
+        "id": "proofs-c.control.queue",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore.recent_events -> proofs_c_control.checked(events)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Event reads return only the requested durable tail in newest-first order, skip malformed rows and obey zero/negative bounds.",
+        "id": "proofs-c.control.events",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._load_json -> proofs_c_control.checked(cache)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Unchanged file metadata reuses the same cached parse object; new small parses enter the cache and durable writes invalidate stale cached values.",
+        "id": "proofs-c.control.cache",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.mission_mode_to_engine_mode -> proofs_c_control.checked(mode)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Desktop Focus/Autopilot/Deep Run/Research modes select fast/autopilot/deep_run/swarms engines, with autopilot for unknown vocabulary.",
+        "id": "proofs-c.control.mode",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._mission_title -> proofs_c_control.checked(title)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Mission titles remove prompt filler, preserve significant words in order, omit secondary stopwords, capitalize the opening token, bound length to six tokens and use New Mission for empty input.",
+        "id": "proofs-c.control.title",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.infer_planned_file_scope -> proofs_c_control.checked(scope)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "File scopes are bounded, deduplicated normalized paths. Explicit artifact destinations and fusion workspaces are retained, while separately labelled source projects and validation prose do not become edit targets.",
+        "id": "proofs-c.control.scope",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.mission_time_budget_window -> proofs_c_control.checked(budget)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Runtime budget values are nonnegative; an explicit persisted deadline determines maximum duration, elapsed and remaining time over the nominal duration, while recorded running continuation windows retain their established precedence.",
+        "id": "proofs-c.control.budget",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._verification_summary_for_mission -> proofs_c_control.checked(verification)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Failed verification labels structured checks by checkId/id/label/title/message/detail/status priority and reports at most two, rather than rendering mapping representations as user-facing failure names.",
+        "id": "proofs-c.control.verification",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._build_generated_image_artifacts_snapshot -> proofs_c_control.checked(images)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Image artifact summaries match retained items, direct files retain their stem identity, and previews bind to existing sufficiently sized artifact files.",
+        "id": "proofs-c.control.images",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.attach_verifier_proof_bundle -> proofs_c_control.checked(attachment)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Verifier screenshots/reports are confined to the supplied workspace, copied byte faithfully and stored beside a durable manifest with exact schema/count/size. External paths are rejected and cannot publish an attachment manifest.",
+        "id": "proofs-c.control.attachment",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._recover_evidence_path -> proofs_c_control.checked(evidence)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "An existing embedded Windows runtime evidence path is recovered to that actual file rather than retaining the malformed prefix.",
+        "id": "proofs-c.control.evidence",
+        "impact": [
+          "control-room state",
+          "mission lifecycle",
+          "operator evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._goal_completion_audit_summary -> proofs_c_control.checked(goal-audit)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Recorded first-view proof can satisfy interface evidence. Completed/real-output evidence and clean advancing cadence determine output/red-team requirements. Weighted counts, completion percentage and top blocker agree with actual requirement rows; missing mission output remains partial.",
+        "id": "proofs-c.control.goal-audit",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._system_loss_breakdown -> proofs_c_control.checked(loss-audit)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Quiet completed queues with an explicit healthy queue receipt are not a missing-live-work gap. Clean advancing red-team cadence stays visible as zero-loss maintenance; unhealthy cadence retains a positive product gap. Loss averages match recorded category scores.",
+        "id": "proofs-c.control.loss-audit",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._storage_triage_summary -> proofs_c_control.checked(storage-triage)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "An unmeasured connect/timeout failure produces a warning rather than a measured full-disk block. Triage executes no destructive action; this projection consumes recorded pressure input without probing NAS.",
+        "id": "proofs-c.control.storage-triage",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.mission_artifact_manifest_preview_url -> proofs_c_control.checked(preview)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "A mission preview uses its actual artifact manifest, explicit entrypoint or bare index.html; absent files provide no fabricated preview.",
+        "id": "proofs-c.control.preview",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._mission_proof_digest_payload -> proofs_c_control.checked(proof-digest)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "A current live-view URL takes precedence over a persisted artifact manifest. Without a live-view URL, the mission artifact binds into the proof digest with its correct source label. URL binding alone is not serving/browser proof.",
+        "id": "proofs-c.control.proof-digest",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Mission progress uses recorded actions/runtime lanes, treats failed work as bounded proof repair, queued work as four-percent queued state, and exhausted work as non-completion attention. Fresh/extended active windows preserve an activity floor and renewed denominator; planned artifact counts match measured local entries.",
+        "id": "proofs-c.control.progress",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._control_mission_counts_projection -> proofs_c_control.checked(mission-counts)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Pure mission lifecycle counters distinguish active, blocked, queued and runtime-budget attention from persisted mission facts. Startup checks do not prove full summary aggregate wiring; its two original cases remain retained.",
+        "id": "proofs-c.control.mission-counts",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._control_workspace_queue_projection -> proofs_c_control.checked(workspace-queue)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Every shell collector uses the same actual active/queued workspace ownership projection. Eligible queue owners exclude released, exhausted and reconcile-pending missions; queue IDs and counts match recorded rows.",
+        "id": "proofs-c.control.workspace-queue",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._build_route_trust_coverage_summary -> proofs_c_control.checked(route-trust)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Only useful operator-scored feedback reduces missing route-value samples. Low-value closeouts require prioritized artifact/browser/proof/value repair, with explicit model policy. Declared sample objectives outrank unrelated workspace route defaults.",
+        "id": "proofs-c.control.route-trust",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._release_quality_score -> proofs_c_control.checked(release-quality)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Release quality uses bounded completed-or-continuing and resume-completed-or-continuing components while preserving terminal completion statistics. This calculation does not collect release/supervisor state.",
+        "id": "proofs-c.control.release-quality",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._build_notification_feed -> proofs_c_control.checked(notifications)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Notification rows refer only to current mission IDs and are bounded. Completed concrete runtime output yields a source-labelled slice, while running output can hydrate from the mission’s local runtime ledger; no provider discovery is needed.",
+        "id": "proofs-c.control.notifications",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._overnight_progress_projection -> proofs_c_control.checked(overnight)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Mission-only overnight projection separates actionable repair from safely held overlap queues, preserving owner identity, repair/held counts and split-scope guidance. Delivery/channel collection remains outside the scratch projector.",
+        "id": "proofs-c.control.overnight",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._build_git_actions -> proofs_c_control.checked(git-actions)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Tracked branches expose fast-forward-only pull and scoped commit suggestions. Approval-gated pull remains gated and action order is inspect, pull, commit, push. Projection never executes git pull/push.",
+        "id": "proofs-c.control.git-actions",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._build_validation_actions -> proofs_c_control.checked(validation-actions)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "The workspace exposes one real validation action on validate.workspace, including the frontend build command detected from local package.json. Projection does not execute that declared command.",
+        "id": "proofs-c.control.validation-actions",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._write_json_if_changed -> proofs_c_control.checked(replace-lock)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Successful atomic writes equal the submitted JSON. The Windows startup procedure holds a real read lease denying delete-sharing, releases it while the production retry loop runs, verifies exact durable content, preserves an unrelated keeper and leaves no staging file.",
+        "id": "proofs-c.control.replace-lock",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.build_summary_harness_lab_snapshot -> proofs_c_control.checked(harness-summary)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Harness summary counts only mission-index sessions and explicitly defers unrelated runtime history. Terminal completion, live continuity and resumed completion/continuity rates retain distinct denominators.",
+        "id": "proofs-c.control.harness-summary",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.build_mission_loop_snapshot -> proofs_c_control.checked(mission-loop)",
+          "proofs_c_control.self_check"
+        ],
+        "claim": "Mission-loop projection preserves persisted enforced run-until behavior and budget state. An unacknowledged completed delegated lane becomes resume-available with reconciliation guidance instead of active-running continuity.",
+        "id": "proofs-c.control.mission-loop",
+        "impact": [
+          "mission state projection",
+          "operator decisions",
+          "durable evidence"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxConductorModel.js:turnKind -> checkedProofsEModel"
+        ],
+        "claim": "Only classify/plan suffixes identify planning turns; acceptance verifier remains a task",
+        "id": "conductor.turnKind",
+        "impact": [
+          "conductor frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxConductorModel.js:mergeJobs -> checkedProofsEModel"
+        ],
+        "claim": "Job paging upserts by id with later data and keeps newest-created first",
+        "id": "conductor.mergeJobs",
+        "impact": [
+          "conductor frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxConductorModel.js:planProblems -> checkedProofsEModel"
+        ],
+        "claim": "Goal, folder, acceptance checks and all required planner/executor/verifier routes are required",
+        "id": "conductor.planProblems",
+        "impact": [
+          "conductor frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxConductorModel.js:shapeJob -> checkedProofsEModel"
+        ],
+        "claim": "Worker terminal status overrides saved phase; dependency levels, totals, unknown usage and one-time start/pause/resume controls remain honest",
+        "id": "conductor.shapeJob",
+        "impact": [
+          "conductor frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.efficient_workflow.build_efficient_workflow",
+          "grant_agent.proofs_e_wz.check_workflow_budget",
+          "grant_agent.proofs_e_wz.self_check"
+        ],
+        "claim": "Prepared workflow runtime budgets default to 180 seconds, reject values outside 120-1800 and freeze the selected normalized value in the preset and every stage team contract.",
+        "id": "proofs-e-wz.workflow-budget",
+        "impact": [
+          "workflow graph preparation",
+          "bounded runtime stages"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.conductor.control": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "start",
+            "pause",
+            "resume",
+            "stop"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "action"
+      ]
+    },
+    "neyvia.conductor.get": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "neyvia.conductor.list": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": []
+    },
+    "neyvia.conductor.plan": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "folder": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptanceChecks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "maxRuntimeSeconds": {
+          "type": "integer",
+          "minimum": 30,
+          "maximum": 86400
+        }
+      },
+      "required": [
+        "requestId",
+        "goal",
+        "folder",
+        "acceptanceChecks"
+      ]
+    },
+    "proofs-e-models.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "fixcl4-real": {
+      "title": "Actual provider and manual completion",
+      "state": {},
+      "actions": {
+        "conductor.plan": {
+          "effect": "Plan a goal into a frozen routed task tree in a detached job; execution waits for Start.",
+          "pre": "Explicit selected provider, original caller tool scope and bounded owned workspace",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.conductor.plan",
+          "tool": "neyvia.conductor.plan"
+        },
+        "conductor.control": {
+          "effect": "Start the reviewed plan, pause after the current turn, resume pending work, or stop the owned worker tree.",
+          "pre": "Explicit selected provider, original caller tool scope and bounded owned workspace",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.conductor.control",
+          "tool": "neyvia.conductor.control"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "verify-conductor-plan": {
+          "goal": "Plan a goal into a frozen routed task tree in a detached job; execution waits for Start.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "goal": {
+                "type": "string",
+                "minLength": 1
+              },
+              "folder": {
+                "type": "string",
+                "minLength": 1
+              },
+              "acceptanceChecks": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "maxRuntimeSeconds": {
+                "type": "integer",
+                "minimum": 30,
+                "maximum": 86400
+              }
+            },
+            "required": [
+              "requestId",
+              "goal",
+              "folder",
+              "acceptanceChecks",
+              "maxRuntimeSeconds"
+            ]
+          },
+          "steps": [
+            {
+              "action": "conductor.plan",
+              "args": {
+                "acceptanceChecks": {
+                  "$input": "acceptanceChecks"
+                },
+                "folder": {
+                  "$input": "folder"
+                },
+                "goal": {
+                  "$input": "goal"
+                },
+                "maxRuntimeSeconds": {
+                  "$input": "maxRuntimeSeconds"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-conductor-control": {
+          "goal": "Start the reviewed plan, pause after the current turn, resume pending work, or stop the owned worker tree.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "start",
+                  "pause",
+                  "resume",
+                  "stop"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "action"
+            ]
+          },
+          "steps": [
+            {
+              "action": "conductor.control",
+              "args": {
+                "action": {
+                  "$input": "action"
+                },
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A queued admission or provider call is called completed",
+          "recovery": "Read the retained owner and require actual terminal provider/manual receipts and fresh acceptance."
+        }
+      ],
+      "frontier": [
+        "Selected provider unavailability or model refusal is retained as a failure; no provider substitution or fabricated output."
+      ],
+      "guidance": [
+        "Reuse the exact request identity and original scope. Completed resumes verify retained effects without replaying completed work."
+      ]
+    },
+    "jobs": {
+      "title": "Goals, frozen task routes and durable jobs",
+      "state": {
+        "jobs": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "required": [
+              "jobs",
+              "total",
+              "nextOffset"
+            ]
+          },
+          "tool": "neyvia.conductor.list"
+        }
+      },
+      "actions": {
+        "plan": {
+          "effect": "Plan a goal into a frozen routed task tree in a detached job; execution waits for Start.",
+          "pre": "PC owner scope; frozen configured routes; working folder exists",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "job": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "job"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.conductor.plan",
+          "tool": "neyvia.conductor.plan"
+        },
+        "get": {
+          "effect": "Read the saved task tree, active run IDs and verification receipts, including after app restart.",
+          "pre": "PC owner scope; frozen configured routes; working folder exists",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "job": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "job"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.conductor.get",
+          "tool": "neyvia.conductor.get"
+        },
+        "list": {
+          "effect": "Page durable conductor jobs, including interrupted jobs with saved evidence.",
+          "pre": "PC owner scope; frozen configured routes; working folder exists",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.conductor.list",
+          "tool": "neyvia.conductor.list"
+        },
+        "control": {
+          "effect": "Start the reviewed plan, pause after the current turn, resume pending work, or stop the owned worker tree.",
+          "pre": "PC owner scope; frozen configured routes; working folder exists",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "job": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "job"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.conductor.control",
+          "tool": "neyvia.conductor.control"
+        }
+      },
+      "checks": {
+        "saved-identity": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "job.id",
+            "value": {
+              "$input": "id"
+            }
+          },
+          "tool": "neyvia.conductor.get"
+        }
+      },
+      "procedures": {
+        "inspect-job": {
+          "goal": "Inspect the actual saved plan and receipts before deciding to start or resume",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "steps": [
+            {
+              "action": "get",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "check": "saved-identity",
+              "save": "job"
+            },
+            {
+              "judge": "execution"
+            }
+          ]
+        },
+        "plan-goal": {
+          "goal": "Convert a goal and acceptance checks to a real routed plan without starting its work",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "goal": {
+                "type": "string",
+                "minLength": 1
+              },
+              "folder": {
+                "type": "string",
+                "minLength": 1
+              },
+              "acceptanceChecks": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "maxRuntimeSeconds": {
+                "type": "integer",
+                "minimum": 30,
+                "maximum": 86400
+              }
+            },
+            "required": [
+              "requestId",
+              "goal",
+              "folder",
+              "acceptanceChecks"
+            ]
+          },
+          "steps": [
+            {
+              "action": "plan",
+              "args": {
+                "acceptanceChecks": {
+                  "$input": "acceptanceChecks"
+                },
+                "folder": {
+                  "$input": "folder"
+                },
+                "goal": {
+                  "$input": "goal"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "save": "planned"
+            },
+            {
+              "judge": "review-plan"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "execution": {
+          "constraints": "Start only phase ready, resume paused; interrupted worker is never blindly replayed. Inspect run IDs and receipts. Stop through conductor.control if needed.",
+          "options": [
+            "start",
+            "resume",
+            "observe"
+          ],
+          "question": "Does the saved plan and current worker state support continuing?"
+        },
+        "review-plan": {
+          "constraints": "Planning is asynchronous; poll conductor.get using planned.job.id until phase ready. Do not mistake a queued job for a completed task tree.",
+          "options": [
+            "wait",
+            "inspect"
+          ],
+          "question": "Is the finished saved plan ready for approval?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Missing planner/executor/verifier profile",
+          "recovery": "Choose explicit advertised runtime models and permission modes using runtime profiles; retry the same intent."
+        },
+        {
+          "failure": "Verifier failure or dead worker",
+          "recovery": "Inspect task receipt, session and files. No automatic rerun of possibly completed effects."
+        }
+      ],
+      "frontier": [
+        "LAYA fast judgement requires an explicitly configured and reachable runtime; isolated T9 proof uses GPT-6 Luna, not LAYA.",
+        "Native UI rendering and public release are outside backend receipts."
+      ],
+      "guidance": [
+        "Detached leased worker owns all model turns; backend restart only reattaches.",
+        "Pause finishes the current turn and holds dependent tasks. Resume skips completed tasks.",
+        "Model receipts report observed tokens and run IDs; final verifier must prove every acceptance check."
+      ]
+    },
+    "proofs-c-control": {
+      "title": "PROOFS-c local control-room behavior",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A local queue/store proof is mistaken for authenticated/runtime snapshot proof.",
+          "recovery": "Retain the corresponding unmapped cases until their real production observer/action and adverse path have their own contract and scratch evidence."
+        }
+      ],
+      "frontier": [
+        "Only exact coverage rows are retirement eligible. Original five turn-mode cases belong to proofs-c-missions; actual transient replace-lock proof now belongs to this control area.",
+        "Local audit/progress/trust/notification/loop projections consume explicit recorded facts and actual owned-process receipts. They do not certify live provider authentication, browser rendering, release or supervisor readiness.",
+        "Two exhausted-budget aggregate cases remain retained: their local helper checks do not establish final summary.counts/liveControlState assembly.",
+        "Other retained rows distinguish specific unimplemented projections/collectors from explicit auth, NAS/sync and supervisor restrictions.",
+        "Workspace deletion removes mission projection/history; retained autonomous workflows may recover a legacy mission. Live preview URLs are transient view-state properties and are not persisted MissionStateSnapshot fields."
+      ],
+      "guidance": [
+        "proofs-c.control.workspaces: Empty or malformed stores create and persist the primary workspace. Existing release roots reanchor within their release family; unrelated project roots remain unchanged. The returned projection equals durable state. Checked by mission_control.ControlRoomStore.load_workspaces -> proofs_c_control.checked(workspaces). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.delete: Workspace removal preserves unrelated workspaces, missions and history, removes only the selected workspace mission projection/history, and returns the exact removal count. The last workspace and unknown IDs are rejected by the action. Checked by mission_control.ControlRoomStore.delete_workspace -> proofs_c_control.checked(delete). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.queue: Each workspace has exactly one eligible active slot, contiguous queued positions and actual blocker identities. Completed, blocked and exhausted owners release their queue position; newly promoted queued work receives its front-of-queue receipt. Checked by mission_control.ControlRoomStore._rebalance_workspace_queue_in_place -> proofs_c_control.checked(queue). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.events: Event reads return only the requested durable tail in newest-first order, skip malformed rows and obey zero/negative bounds. Checked by mission_control.ControlRoomStore.recent_events -> proofs_c_control.checked(events). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.cache: Unchanged file metadata reuses the same cached parse object; new small parses enter the cache and durable writes invalidate stale cached values. Checked by mission_control.ControlRoomStore._load_json -> proofs_c_control.checked(cache). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.mode: Desktop Focus/Autopilot/Deep Run/Research modes select fast/autopilot/deep_run/swarms engines, with autopilot for unknown vocabulary. Checked by mission_control.mission_mode_to_engine_mode -> proofs_c_control.checked(mode). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.title: Mission titles remove prompt filler, preserve significant words in order, omit secondary stopwords, capitalize the opening token, bound length to six tokens and use New Mission for empty input. Checked by mission_control._mission_title -> proofs_c_control.checked(title). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.scope: File scopes are bounded, deduplicated normalized paths. Explicit artifact destinations and fusion workspaces are retained, while separately labelled source projects and validation prose do not become edit targets. Checked by mission_control.infer_planned_file_scope -> proofs_c_control.checked(scope). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.budget: Runtime budget values are nonnegative; an explicit persisted deadline determines maximum duration, elapsed and remaining time over the nominal duration, while recorded running continuation windows retain their established precedence. Checked by mission_control.mission_time_budget_window -> proofs_c_control.checked(budget). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.verification: Failed verification labels structured checks by checkId/id/label/title/message/detail/status priority and reports at most two, rather than rendering mapping representations as user-facing failure names. Checked by mission_control._verification_summary_for_mission -> proofs_c_control.checked(verification). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.images: Image artifact summaries match retained items, direct files retain their stem identity, and previews bind to existing sufficiently sized artifact files. Checked by mission_control._build_generated_image_artifacts_snapshot -> proofs_c_control.checked(images). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.attachment: Verifier screenshots/reports are confined to the supplied workspace, copied byte faithfully and stored beside a durable manifest with exact schema/count/size. External paths are rejected and cannot publish an attachment manifest. Checked by mission_control.attach_verifier_proof_bundle -> proofs_c_control.checked(attachment). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.evidence: An existing embedded Windows runtime evidence path is recovered to that actual file rather than retaining the malformed prefix. Checked by mission_control._recover_evidence_path -> proofs_c_control.checked(evidence). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.goal-audit: Recorded first-view proof can satisfy interface evidence. Completed/real-output evidence and clean advancing cadence determine output/red-team requirements. Weighted counts, completion percentage and top blocker agree with actual requirement rows; missing mission output remains partial. Checked by mission_control._goal_completion_audit_summary -> proofs_c_control.checked(goal-audit). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.loss-audit: Quiet completed queues with an explicit healthy queue receipt are not a missing-live-work gap. Clean advancing red-team cadence stays visible as zero-loss maintenance; unhealthy cadence retains a positive product gap. Loss averages match recorded category scores. Checked by mission_control._system_loss_breakdown -> proofs_c_control.checked(loss-audit). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.storage-triage: An unmeasured connect/timeout failure produces a warning rather than a measured full-disk block. Triage executes no destructive action; this projection consumes recorded pressure input without probing NAS. Checked by mission_control._storage_triage_summary -> proofs_c_control.checked(storage-triage). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.preview: A mission preview uses its actual artifact manifest, explicit entrypoint or bare index.html; absent files provide no fabricated preview. Checked by mission_control.mission_artifact_manifest_preview_url -> proofs_c_control.checked(preview). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.proof-digest: A current live-view URL takes precedence over a persisted artifact manifest. Without a live-view URL, the mission artifact binds into the proof digest with its correct source label. URL binding alone is not serving/browser proof. Checked by mission_control.ControlRoomStore._mission_proof_digest_payload -> proofs_c_control.checked(proof-digest). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.progress: Mission progress uses recorded actions/runtime lanes, treats failed work as bounded proof repair, queued work as four-percent queued state, and exhausted work as non-completion attention. Fresh/extended active windows preserve an activity floor and renewed denominator; planned artifact counts match measured local entries. Checked by mission_control.ControlRoomStore._mission_summary_payload -> proofs_c_control.checked(progress). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.mission-counts: Pure mission lifecycle counters distinguish active, blocked, queued and runtime-budget attention from persisted mission facts. Startup checks do not prove full summary aggregate wiring; its two original cases remain retained. Checked by mission_control._control_mission_counts_projection -> proofs_c_control.checked(mission-counts). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.workspace-queue: Every shell collector uses the same actual active/queued workspace ownership projection. Eligible queue owners exclude released, exhausted and reconcile-pending missions; queue IDs and counts match recorded rows. Checked by mission_control._control_workspace_queue_projection -> proofs_c_control.checked(workspace-queue). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.route-trust: Only useful operator-scored feedback reduces missing route-value samples. Low-value closeouts require prioritized artifact/browser/proof/value repair, with explicit model policy. Declared sample objectives outrank unrelated workspace route defaults. Checked by mission_control._build_route_trust_coverage_summary -> proofs_c_control.checked(route-trust). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.release-quality: Release quality uses bounded completed-or-continuing and resume-completed-or-continuing components while preserving terminal completion statistics. This calculation does not collect release/supervisor state. Checked by mission_control._release_quality_score -> proofs_c_control.checked(release-quality). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.notifications: Notification rows refer only to current mission IDs and are bounded. Completed concrete runtime output yields a source-labelled slice, while running output can hydrate from the mission’s local runtime ledger; no provider discovery is needed. Checked by mission_control.ControlRoomStore._build_notification_feed -> proofs_c_control.checked(notifications). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.overnight: Mission-only overnight projection separates actionable repair from safely held overlap queues, preserving owner identity, repair/held counts and split-scope guidance. Delivery/channel collection remains outside the scratch projector. Checked by mission_control.ControlRoomStore._overnight_progress_projection -> proofs_c_control.checked(overnight). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.git-actions: Tracked branches expose fast-forward-only pull and scoped commit suggestions. Approval-gated pull remains gated and action order is inspect, pull, commit, push. Projection never executes git pull/push. Checked by mission_control._build_git_actions -> proofs_c_control.checked(git-actions). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.validation-actions: The workspace exposes one real validation action on validate.workspace, including the frontend build command detected from local package.json. Projection does not execute that declared command. Checked by mission_control._build_validation_actions -> proofs_c_control.checked(validation-actions). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.replace-lock: Successful atomic writes equal the submitted JSON. The Windows startup procedure holds a real read lease denying delete-sharing, releases it while the production retry loop runs, verifies exact durable content, preserves an unrelated keeper and leaves no staging file. Checked by mission_control.ControlRoomStore._write_json_if_changed -> proofs_c_control.checked(replace-lock). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.harness-summary: Harness summary counts only mission-index sessions and explicitly defers unrelated runtime history. Terminal completion, live continuity and resumed completion/continuity rates retain distinct denominators. Checked by mission_control.build_summary_harness_lab_snapshot -> proofs_c_control.checked(harness-summary). Startup: proofs_c_control.self_check.",
+        "proofs-c.control.mission-loop: Mission-loop projection preserves persisted enforced run-until behavior and budget state. An unacknowledged completed delegated lane becomes resume-available with reconciliation guidance instead of active-running continuity. Checked by mission_control.build_mission_loop_snapshot -> proofs_c_control.checked(mission-loop). Startup: proofs_c_control.self_check."
+      ]
+    },
+    "proofs-e-models": {
+      "title": "PROOFS-e: production model contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the most recent verification receipt without invoking production actions again",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-models.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-model-proof-receipt": {
+          "goal": "Read the latest receipt after the production model self-check runner",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Model transforms are reported as proof of a native app/provider/device effect",
+          "recovery": "Use the real owning feature procedure and its observed runtime"
+        }
+      ],
+      "frontier": [
+        "Rendered browser/desktop journeys are separate from pure model proof",
+        "Remote device, game editor and provider behavior require their real runtimes"
+      ],
+      "guidance": [
+        "conductor.turnKind: Only classify/plan suffixes identify planning turns; acceptance verifier remains a task",
+        "conductor.mergeJobs: Job paging upserts by id with later data and keeps newest-created first",
+        "conductor.planProblems: Goal, folder, acceptance checks and all required planner/executor/verifier routes are required",
+        "conductor.shapeJob: Worker terminal status overrides saved phase; dependency levels, totals, unknown usage and one-time start/pause/resume controls remain honest",
+        "Startup runner: scripts/proofs-e-models.mjs --root <owned-scratch>; area proofs-e-models checks real model actions and corrupted output refusals"
+      ]
+    },
+    "proofs-e-wz": {
+      "title": "PROOFS-e W-Z: live contracts and scratch self-checks",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A local fixture is mistaken for a real provider, signed desktop release or whole-suite replacement",
+          "recovery": "Read the source-bound receipt, per-case coverage map and unresolved frontier before retirement or promotion"
+        }
+      ],
+      "frontier": [
+        "Backend suite and paired-desktop controller scenarios remain pending unless every original predicate has a real action site and observed scratch procedure.",
+        "Hidden-process AST scanner self-tests protect test-only tooling and are retained pending lead retirement review; no source-text scan is relabeled as production proof.",
+        "Legacy desktop-ui/fluxioHelpers.js is absent; its workspace-selection tests remain pending impact/history review.",
+        "The original bootstrap test expected newest merged turn first; its coverage row explicitly supersedes that stale assertion with observed chronological ordering, preserving all other bootstrap/lazy-detail predicates."
+      ],
+      "guidance": [
+        "Self-check entry: grant_agent.proofs_e_wz.self_check; CLI: neyvia verify --root <workspace> --area proofs-e-wz",
+        "Manifest: config/proofs/proofs-e-wz.json; host sites enforce these contracts on every corresponding real action.",
+        "Fixtures use disposable SQLite stores, real owned Python child commands, localhost HTTP port 48503 and bounded source transport injection."
+      ]
+    },
+    "proofs_a_cli": {
+      "title": "PROOFS-a CLI and durable coordination contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Provider runtime absent in scratch",
+          "recovery": "Require separate provider journey; local parser and database proofs remain valid within scratch."
+        }
+      ],
+      "frontier": [
+        "tests/test_codex_completion_contracts.py::RuntimeUiContractTests.test_managed_cli_surface_uses_the_durable_runtime_turn: Original source-string checks for the classic managed CLI surface require a rendered durable runtime turn and awaited action journey before deletion; no rendered legacy UI proof is claimed in this area.",
+        "Controlled provider/installer transports prove orchestration and durable state, not authenticated provider service execution.",
+        "POSIX detach option is exercised through production dispatch with an inert child transport on Windows; native POSIX session semantics are outside this receipt."
+      ],
+      "guidance": [
+        "Contracts listed in this chapter execute at the real production boundaries named in checkedAt.",
+        "Startup uses isolated scratch state and finite controlled transport boundaries; examine the receipt before claiming external provider readiness.",
+        "a-cli.crash.submit: Submission persists exactly one task per mission/idempotency key and preserves original payload on duplicate; local restart and 28-task batch preserve each queued row.",
+        "a-cli.crash.claim: Claimed tasks have working state, execution owner, lease and incremented attempts.",
+        "a-cli.crash.transition: Transitions return the requested state, retain supplied checkpoint/result/error, clear non-working ownership and reject prohibited terminal rewrite.",
+        "a-cli.crash.recover: Recovered task IDs are unique with durable interrupted-recovery events; expired owned work requeues after restart.",
+        "a-cli.crash.result: Result-set items have a durable unique dedupe key preserving original identity and content.",
+        "a-cli.crash.summary: Result summary totals equal status counts and sample projection respects the bounded limit.",
+        "a-cli.crash.time: Deadline decisions reserve verification time and skip optional work only when insufficient time remains; required work reports risk.",
+        "a-cli.crash.autonomy: Allowed actions stay within active inherited lease action/root/spend/destructive/public limits; startup procedure exercises scope, expiry and revocation.",
+        "a-cli.scheduler.root: Scheduler root follows configured cluster/control root; explicitly opting out preserves requested legacy root.",
+        "a-cli.scheduler.capabilities: Efficient controller advertises self-repair but no frontend build; browser verification requires a passing dependency receipt and existing declared executable. Capacity zero means unlimited.",
+        "a-cli.scheduler.job: Canonical active job deduplication persists at most one active row per nonempty key.",
+        "a-cli.scheduler.claim: Claims return exact job/lease/host affinity; serialized admission obeys capacity, and scans past incompatible jobs without a fixed queue cap.",
+        "a-cli.scheduler.choose: Selected hosts are online and provide declared required capabilities; startup validates preference for healthy workstation over controller storage.",
+        "a-cli.scheduler.lease: New lease owns exactly the queued job on its selected host and cannot overlap another active writer in the same workspace.",
+        "a-cli.scheduler.load: Persisted host load equals durable active leases of leased/running jobs immediately after admission and completion.",
+        "a-cli.scheduler.stale: Every expired heartbeat marked stale removes advertised online availability and clears load.",
+        "a-cli.scheduler.expire: Expired leases no longer own a running job; restart recovery requeues the job and clears lease affinity.",
+        "a-cli.scheduler.roles: Planner/browser capability authority follows declared route role and phase rather than prompt mentions of verification.",
+        "a-cli.scheduler.worker: Local workers advertise explicit capacity even when idle and persist terminal job state matching actual execution with a terminal event.",
+        "a-cli.scheduler.environment: Actual child environment binds the job's authoritative control root without changing configured cluster root.",
+        "a-cli.scheduler.execute: Executable job success matches actual child return code; failed children cannot report completion.",
+        "a-cli.scheduler.threads: Unlimited worker attempts create independent thread/admission/completion channels; startup admits twelve overlapping owned attempts without a fixed threadpool ceiling.",
+        "a-cli.scheduler.lifecycle: Each worker lifecycle write persists its exact host/status/error; one-shot success/failure both stop and release the owned PID file.",
+        "a-cli.continuity.attempt: Successful action identities and evidence persist before restart suppresses duplicate completed attempts.",
+        "a-cli.continuity.recovery: Restart recovery retains completed action identities for safe continuation.",
+        "a-cli.continuity.verification: Transfers require target existence and size or hash verification.",
+        "a-cli.continuity.gpu-label: GPU controls classify destructive, stop, resume and start labels before inspection.",
+        "a-cli.continuity.gpu: GPU decisions enforce cost and capacity, preserve checkpoint preference and paid or destructive approval, and bound unchanged observations with a state-change override.",
+        "a-cli.scheduler.rehome: Shared queue recovery retains legacy lineage and leaves the mission-local database row unchanged.",
+        "a-cli.scheduler.queued: A queued delegated session keeps its step in progress without consuming attempts or acknowledging unfinished work.",
+        "a-cli.scheduler.unlimited-loop: Unlimited worker admission uses independent thread/claim channels without a fixed pool and preserves durable local completion.",
+        "a-cli.preferences.budget: Relative timers and objective deadlines override hour hints, persist a deadline and require continuous execution until blocked.",
+        "a-cli.preferences.continue: Delegated runtime activity pauses the mission loop to prevent repeated execution.",
+        "a-cli.preferences.poll: Continuous missions poll at a positive interval; pause mode uses no repeating interval.",
+        "a-cli.preferences.docs: Product missions completing with documentation-only changes become durably blocked with the specific missing-product-change reason.",
+        "a-cli.preferences.queue: Bundled worker resumes identify one active durable job with authoritative control root, workspace root and composer provenance.",
+        "a-cli.preferences.dispatch: Background dispatch suppresses duplicate owned active processes and queues cluster work from the authoritative mission store.",
+        "a-cli.preferences.pid: Windows process detection accepts only successful CSV output containing the requested PID; localized absence is not liveness.",
+        "a-cli.preferences.spawn: Detached mission children receive no interactive input and get a new POSIX session when the selected platform requires it.",
+        "a-cli.preferences.stop: Stopping a mission preserves terminal delegated history and stops only unfinished sessions.",
+        "a-cli.preferences.watchdog: Scoped one-shot watchdog passes preserve active ongoing loop identity and counts; ongoing passes retain own liveness.",
+        "a-cli.preferences.started: Successful mission starts persist their mission and requested relative timer.",
+        "a-cli.preferences.mark-dispatch: Mission state becomes running after permitted dispatch and blocked after a blocked receipt.",
+        "a-cli.preferences.compact: Compact mission action receipts preserve mission state and dispatch while omitting the full snapshot.",
+        "a-cli.preferences.cycle: Mission engine cycles forward the remaining enforced budget, continuous-mode handoff policy and an existing safe checkpoint."
+      ]
+    }
+  }
+}

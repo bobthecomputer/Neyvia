@@ -1,0 +1,134 @@
+{
+  "manuals": [
+    {
+      "manual": "agents",
+      "chapterId": "proofs_a_livecontrol",
+      "chapter": {
+        "title": "Authenticated-control report truth (PROOFS-a)",
+        "state": {},
+        "actions": {},
+        "checks": {},
+        "procedures": {},
+        "judge": {},
+        "pitfalls": [
+          {
+            "failure": "An API report is mistaken for a rendered browser journey",
+            "recovery": "Require actual DOM observations and no skipped claims before admitting browser completeness"
+          }
+        ],
+        "frontier": [
+          "One original case remains: full authenticated Builder navigation/actions/screenshot journey against the running product. Controlled composition and DOM classifier documents do not prove that product journey or live provider execution."
+        ],
+        "guidance": [
+          "Pure startup composition exercises live route projection, redacted diagnostics and refusal of forged completeness.",
+          "An explicit username/password skips credential file fallback; startup never loads saved credentials."
+        ]
+      },
+      "contracts": [
+        {
+          "id": "livecontrol.builder-url",
+          "phase": "post",
+          "claim": "Live Builder URLs retain origin and mission parameters, force Builder mode, remove fixture/preview flags and discard fragments.",
+          "checkedAt": [
+            "scripts/verify_authenticated_live_control.py:_builder_url",
+            "grant_agent.proofs_a_livecontrol"
+          ],
+          "impact": [
+            "authenticated proof report truth",
+            "diagnostic credential boundary"
+          ]
+        },
+        {
+          "id": "livecontrol.redaction",
+          "phase": "post",
+          "claim": "Every emitted diagnostic removes explicit and labeled credentials, collapses whitespace and bounds text to 1200 characters.",
+          "checkedAt": [
+            "scripts/verify_authenticated_live_control.py:_redact_text",
+            "grant_agent.proofs_a_livecontrol"
+          ],
+          "impact": [
+            "authenticated proof report truth",
+            "diagnostic credential boundary"
+          ]
+        },
+        {
+          "id": "livecontrol.report-truth",
+          "phase": "invariant",
+          "claim": "Report status and counters equal measured, failed and skipped observations; missing or duplicate browser claim identities are refused.",
+          "checkedAt": [
+            "scripts/verify_authenticated_live_control.py:_assemble_report",
+            "grant_agent.proofs_a_livecontrol"
+          ],
+          "impact": [
+            "authenticated proof report truth",
+            "diagnostic credential boundary"
+          ]
+        },
+        {
+          "id": "livecontrol.api-not-dom",
+          "phase": "invariant",
+          "claim": "API-only reports emit every DOM claim as skipped, unmeasured and without a pass; they never claim complete browser proof.",
+          "checkedAt": [
+            "scripts/verify_authenticated_live_control.py:build_report",
+            "grant_agent.proofs_a_livecontrol"
+          ],
+          "impact": [
+            "authenticated proof report truth",
+            "diagnostic credential boundary"
+          ]
+        },
+        {
+          "id": "livecontrol.provider-dom",
+          "phase": "post",
+          "claim": "Every provider DOM measurement distinguishes visible admission/quota semantics and explicit admitted/blocked lanes from explanatory prose.",
+          "checkedAt": [
+            "scripts/verify_authenticated_live_control.py:_measure_provider_admission",
+            "grant_agent.proofs_a_livecontrol"
+          ],
+          "impact": [
+            "rendered verifier classification",
+            "no synthetic provider proof"
+          ]
+        },
+        {
+          "id": "livecontrol.hermes-dom",
+          "phase": "post",
+          "claim": "Every Hermes DOM measurement requires a visible strip, literal verified marker and explicit proven receipt text; pending or absent strips never pass.",
+          "checkedAt": [
+            "scripts/verify_authenticated_live_control.py:_measure_hermes_runtime_proof",
+            "grant_agent.proofs_a_livecontrol"
+          ],
+          "impact": [
+            "rendered verifier classification",
+            "no synthetic provider proof"
+          ]
+        },
+        {
+          "id": "livecontrol.cli-browser-option",
+          "phase": "goal",
+          "claim": "The production CLI parses and exposes an explicit --with-browser option; DOM classification uses actual installed Chromium observations.",
+          "checkedAt": [
+            "scripts/verify_authenticated_live_control.py:main",
+            "grant_agent.proofs_a_livecontrol.self_check"
+          ],
+          "impact": [
+            "verifier executable interface"
+          ]
+        },
+        {
+          "id": "livecontrol.browser-failure-truth",
+          "phase": "invariant",
+          "claim": "A failed browser measurement preserves completed login observations and leaves all unobserved DOM claims skipped; partial screenshots never become positive DOM proof.",
+          "checkedAt": [
+            "scripts/verify_authenticated_live_control.py:_run_browser_checks",
+            "grant_agent.proofs_a_livecontrol.check_browser_failure"
+          ],
+          "impact": [
+            "truthful partial browser evidence",
+            "retention of completed authentication observations"
+          ]
+        }
+      ]
+    }
+  ]
+}

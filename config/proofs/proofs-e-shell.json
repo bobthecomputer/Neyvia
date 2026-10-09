@@ -1,0 +1,433 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "proofs-e-shell",
+  "runner": "scripts/proofs-e-shell.mjs",
+  "state": {
+    "observers": "Real bus reducers, sidebar tree, launcher search, PDF inbox and Outputs signals"
+  },
+  "actions": [
+    "kindOf",
+    "placeSession",
+    "agentSummary",
+    "buildTree",
+    "staleCandidates",
+    "shouldOfferTidy",
+    "initial",
+    "overrides",
+    "reducer",
+    "parseNewChat",
+    "searchLauncher"
+  ],
+  "contracts": [
+    {
+      "id": "proofs-e.shell.kindOf",
+      "action": "kindOf",
+      "phase": "post",
+      "claim": "No-folder lanes reflect observed transcript kind; unknown observations remain Other",
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:kindOf -> checkSidebar",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.placeSession",
+      "action": "placeSession",
+      "phase": "post",
+      "claim": "Only observed projects or explicit overrides enter a project; scratch folders remain No folder",
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:placeSession -> checkSidebar",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.agentSummary",
+      "action": "agentSummary",
+      "phase": "post",
+      "claim": "Nested agents count exactly once with observed running and failed states",
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:agentSummary -> checkSidebar",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.buildTree",
+      "action": "buildTree",
+      "phase": "post",
+      "claim": "Visible sessions partition into needs-you, pinned, project and transcript lanes; child chats fold and empty projects survive",
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:buildTree -> checkSidebar",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.staleCandidates",
+      "action": "staleCandidates",
+      "phase": "post",
+      "claim": "Archive candidates exceed per-placement age thresholds and require observed safety; protected or dirty sessions survive Default cleanup never authorizes automatic archival.",
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:staleCandidates -> checkSidebar",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.shouldOfferTidy",
+      "action": "shouldOfferTidy",
+      "phase": "post",
+      "claim": "Tidy offers require candidates and the configured size or candidate threshold",
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:shouldOfferTidy -> checkSidebar",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.initial",
+      "action": "initial",
+      "phase": "post",
+      "claim": "Stored themes and floating chats normalize safely before shell state reaches subscribers",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:initialOsState -> checkInitial",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.overrides",
+      "action": "overrides",
+      "phase": "post",
+      "claim": "Bus overrides reach displayed title, pin, archive and named folder without exposing subject ids",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:withOverrides -> checkOverrides",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.reducer",
+      "action": "reducer",
+      "phase": "post",
+      "claim": "Every successful bus action preserves its state transition: override undo, app command ordering, scenes, bubbles, output refresh and shell signals",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.parseNewChat",
+      "action": "parseNewChat",
+      "phase": "post",
+      "claim": "Recognized new-chat phrases resolve supported harness aliases and the requested project",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLauncherModel.js:parseNewChat -> checkNewChat",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    },
+    {
+      "id": "proofs-e.shell.searchLauncher",
+      "action": "searchLauncher",
+      "phase": "post",
+      "claim": "Every matching app/action/project/chat remains ranked; coming apps disable; new chats resolve the best matching folder",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLauncherModel.js:searchLauncher -> checkLauncher",
+        "scripts/proofs-e-shell.mjs:runProofsEShell"
+      ],
+      "impact": [
+        "Shell bus and rendered sidebar/launcher consumers"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "shell.classify-group-protect",
+      "goal": "Compose actual shell actions and inspect state consumer consequences; rejected malformed commands retain bus error semantics"
+    },
+    {
+      "id": "shell.bus-to-sidebar-undo",
+      "goal": "Compose actual shell actions and inspect state consumer consequences; rejected malformed commands retain bus error semantics"
+    },
+    {
+      "id": "shell.launcher-to-voice",
+      "goal": "Compose actual shell actions and inspect state consumer consequences; rejected malformed commands retain bus error semantics"
+    },
+    {
+      "id": "shell.pdf-queue-output-refresh",
+      "goal": "Compose actual shell actions and inspect state consumer consequences; rejected malformed commands retain bus error semantics"
+    },
+    {
+      "id": "shell.scene-bubble-theme",
+      "goal": "Compose actual shell actions and inspect state consumer consequences; rejected malformed commands retain bus error semantics"
+    }
+  ],
+  "coverage": [
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "Codex dated folders, generated images and temp dirs go to No folder",
+      "contracts": [
+        "proofs-e.shell.placeSession"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:placeSession -> checkSidebar"
+      ],
+      "procedure": "shell.classify-group-protect",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "No folder lanes come from the transcript observation, never the title or folder",
+      "contracts": [
+        "proofs-e.shell.kindOf"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:kindOf -> checkSidebar"
+      ],
+      "procedure": "shell.classify-group-protect",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "an observed child chat folds under the chat that started it; agent counts walk the tree",
+      "contracts": [
+        "proofs-e.shell.agentSummary",
+        "proofs-e.shell.buildTree"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:agentSummary -> checkSidebar",
+        "web/src/neyvia/next/nxSidebarModel.js:buildTree -> checkSidebar"
+      ],
+      "procedure": "shell.classify-group-protect",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "sidebar.undo's clearOverride removes the folder override instead of setting No folder",
+      "contracts": [
+        "proofs-e.shell.overrides",
+        "proofs-e.shell.reducer"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:withOverrides -> checkOverrides",
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.bus-to-sidebar-undo",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "the tree puts needs-you first, pinned next, empty new projects as branches, and hides archived",
+      "contracts": [
+        "proofs-e.shell.buildTree"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:buildTree -> checkSidebar"
+      ],
+      "procedure": "shell.classify-group-protect",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "cleanup: 7 days for No folder, 30 for projects; never pinned, needs you or running",
+      "contracts": [
+        "proofs-e.shell.staleCandidates",
+        "proofs-e.shell.shouldOfferTidy"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:staleCandidates -> checkSidebar",
+        "web/src/neyvia/next/nxSidebarModel.js:shouldOfferTidy -> checkSidebar"
+      ],
+      "procedure": "shell.classify-group-protect",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "every contract action reduces; malformed payloads throw so the ack reports them",
+      "contracts": [
+        "proofs-e.shell.reducer",
+        "proofs-e.shell.overrides"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:withOverrides -> checkOverrides",
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.bus-to-sidebar-undo",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "launcher: new-chat phrases, apps, coming apps and chats rank sensibly",
+      "contracts": [
+        "proofs-e.shell.searchLauncher",
+        "proofs-e.shell.parseNewChat"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxLauncherModel.js:parseNewChat -> checkNewChat",
+        "web/src/neyvia/next/nxLauncherModel.js:searchLauncher -> checkLauncher"
+      ],
+      "procedure": "shell.launcher-to-voice",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "pdf commands: open starts the app, the rest need it open, bad payloads are refused",
+      "contracts": [
+        "proofs-e.shell.reducer"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.pdf-queue-output-refresh",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxShellModels.test.js",
+      "case": "voice control actions: apps open in their suite, shell signals carry the payload, bad payloads are refused",
+      "contracts": [
+        "proofs-e.shell.reducer"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.launcher-to-voice",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "the model can rearrange the interface over the bus, validated like stored layouts",
+      "contracts": [
+        "proofs-e.shell.reducer",
+        "proofs-e.shell.initial"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:initialOsState -> checkInitial",
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.scene-bubble-theme",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "scenes switch the whole setup in one step, and saved scenes keep the user's arrangement",
+      "contracts": [
+        "proofs-e.shell.reducer",
+        "proofs-e.shell.initial"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:initialOsState -> checkInitial",
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.scene-bubble-theme",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "bubbles: a chat floats once, opens, lines up on the right, and comes back",
+      "contracts": [
+        "proofs-e.shell.reducer",
+        "proofs-e.shell.initial"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:initialOsState -> checkInitial",
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.scene-bubble-theme",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "themes: Forest, Morning and Sunset, nothing else",
+      "contracts": [
+        "proofs-e.shell.reducer",
+        "proofs-e.shell.initial"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:initialOsState -> checkInitial",
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.scene-bubble-theme",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOutputsModel.test.js",
+      "case": "artifact.published signals the Outputs panel and toasts only when it is not on screen",
+      "contracts": [
+        "proofs-e.shell.reducer"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOsStore.js:reduceUiAction -> checkUiAction"
+      ],
+      "procedure": "shell.pdf-queue-output-refresh",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "tests/fixwave-sidebar-cleanup.test.mjs",
+      "case": "folder names alone are not project evidence; markers and explicit moves are",
+      "contracts": [
+        "proofs-e.shell.placeSession"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:placeSession -> checkSidebar"
+      ],
+      "procedure": "shell.classify-group-protect",
+      "classification": "real-current"
+    },
+    {
+      "test": "tests/fixwave-sidebar-cleanup.test.mjs",
+      "case": "missing or failed safety observations cannot silently authorize tidy",
+      "contracts": [
+        "proofs-e.shell.staleCandidates"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxSidebarModel.js:staleCandidates -> checkSidebar"
+      ],
+      "procedure": "shell.classify-group-protect",
+      "classification": "real-current"
+    }
+  ],
+  "frontier": [
+    "Rendered shell journeys and PDF loading require owned UI proof",
+    "Provider execution and actual artifact publishing are separate proof boundaries"
+  ],
+  "portRoles": [],
+  "traceMode": "parent"
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "neyvia.folder-sync-config/v1",
+  "transport": {
+    "name": "Syncthing REST API",
+    "upstream": "syncthing/syncthing",
+    "version": "2.1.2",
+    "endpoint": "http://127.0.0.1:8384",
+    "apiKeyRef": "env:NEYVIA_SYNCTHING_API_KEY",
+    "timeoutSeconds": 5
+  },
+  "binary": {
+    "version": "2.1.2",
+    "installPath": "D:\\Neyvia\\apps\\syncthing\\2.1.2\\syncthing-windows-amd64-v2.1.2\\syncthing.exe",
+    "executableSha256": "6bff9bbf005ea28f103da7a6508f2677bdd15bd344faf4b7f908872c83d76e3e",
+    "installerSha256": "4626c13012e9620ece2393bfc3300aeafead654695d5dc096a873c27a7543c96",
+    "signature": "windows-valid",
+    "malwareScan": "windows-defender-clean",
+    "serviceState": "staged-not-started"
+  },
+  "policy": {
+    "allowedRoots": [
+      "${workspace}",
+      "D:\\Neyvia\\sync"
+    ],
+    "folderTypes": [
+      "sendonly",
+      "receiveonly",
+      "sendreceive"
+    ],
+    "inboundVersioningRequiredFor": [
+      "receiveonly",
+      "sendreceive"
+    ],
+    "versioningTypes": [
+      "trashcan",
+      "simple",
+      "staggered"
+    ],
+    "defaultVersioning": {
+      "type": "staggered",
+      "params": {
+        "maxAge": "31536000"
+      },
+      "cleanupIntervalS": 3600,
+      "fsPath": "",
+      "fsType": "basic"
+    },
+    "createPaused": true,
+    "requireDeletionPropagationApproval": true,
+    "maxFolders": 50,
+    "maxDevicesPerFolder": 32,
+    "maxIgnorePatterns": 256,
+    "maxEvents": 100,
+    "healthCacheSeconds": 3
+  }
+}

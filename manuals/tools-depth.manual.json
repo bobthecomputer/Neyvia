@@ -1,0 +1,3066 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "tools-depth",
+  "kind": "environment",
+  "proofs": {
+    "area": "a-capabilities, capability-config-journey, mixed-host, proofs-c-runtime",
+    "manifests": [
+      "config/proofs/a-capabilities.json",
+      "config/proofs/capability-config-journey.json",
+      "config/proofs/proofs-c-runtime.json",
+      "config/proofs/proofs-e-release.json",
+      "config/proofs/proofs-e-sv.json"
+    ],
+    "startup": {
+      "procedures": [
+        "grant_agent.proofs_a_capabilities.self_check",
+        "grant_agent.proofs_capability_config_journey.self_check",
+        "catalog/recommended/private-cloud/cyclic dependency rejection",
+        "memory add/search/ingest/reopen",
+        "OpenClaw ranges and resolved PATH",
+        "hash-pinned48488 HTTP child start/reuse/stop plus foreign PID/tampering refusal",
+        "toolchain streamed bytes and tampering",
+        "real MCP stdio read/approved mutation/refusal/progressive/Neyvia host/close"
+      ],
+      "runner": "grant_agent.proof_verifier.run_verification",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.challenge_presets.ChallengePresetRegistry.list_names -> check_challenges",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Challenge catalog names equal loaded configured presets.",
+        "id": "a.challenge-catalog",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.challenge_presets.ChallengePreset.pick_selectors -> check_selectors",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Selectors rank objective token matches and fall back to configured order within top_k.",
+        "id": "a.challenge-selection",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.app_factory.AppFactory.create/resume -> grant_agent.proofs_a_capabilities.check_factory_job",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "A ready factory job has five completed stages, passed static verification, a matching registered application and draft-only activation/publication boundaries.",
+        "id": "a.factory-draft",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "goal"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.app_factory.AppFactory.create/resume -> grant_agent.proofs_a_capabilities.check_factory_job",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Generated archives match their recorded SHA256 bytes; desktop drafts retain real Tauri scaffolds and inactive bundling.",
+        "id": "a.factory-package",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.app_factory._safe_child; grant_agent.app_factory.AppFactory.create/resolve_preview_asset -> grant_agent.proofs_a_capabilities.check_preview_asset",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Creation stays inside the selected workspace and refuses occupied destinations; preview serves only generated dist assets.",
+        "id": "a.factory-paths",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.application_surface.validate_application_surface_manifest -> grant_agent.proofs_a_capabilities.check_surface_validation",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Optional application surfaces remain undeclared when absent; unproven mobile builds are rejected and declared surfaces obey the persisted schema.",
+        "id": "a.surface-manifest",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.application_surface.ApplicationSurfaceService.__init__/_target_status -> grant_agent.proofs_a_capabilities.check_surface_target",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Ready targets require host-injected receipt authority outside the editable workspace and verified bound readiness evidence; desktop readiness requires an actual platform signature.",
+        "id": "a.surface-authority",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.application_surface.ApplicationSurfaceService.plan_launch -> grant_agent.proofs_a_capabilities.check_launch_plan",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Launch planning never executes/builds/installs/publishes; ready plans require bound single-use approval and current target evidence.",
+        "id": "a.surface-plan",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.application_surface.ExternalReceiptAuthority.verify_receipt/_verify_path -> grant_agent.proofs_a_capabilities.check_authority_receipt",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Trusted external receipts bind signature, expected kind, identity and raw byte hash; consumed or tampered approvals fail closed.",
+        "id": "a.surface-receipt",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.application_surface.ExternalReceiptAuthority.verify_lifecycle_stream -> grant_agent.proofs_a_capabilities.check_lifecycle_stream; grant_agent.application_surface.ApplicationSurfaceService._lifecycle_status -> grant_agent.proofs_a_capabilities.check_lifecycle_status",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Trusted lifecycle is a monotonic signed receipt hash chain; editable reports never become trusted and verified state binds current process/listener evidence.",
+        "id": "a.surface-lifecycle",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.application_surface.ApplicationSurfaceService._read_log -> grant_agent.proofs_a_capabilities.check_log_observer",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Log observation redacts secrets, drops partial tail lines and returns no lines for blocked or missing hooks.",
+        "id": "a.surface-log",
+        "impact": [
+          "local application drafts",
+          "authority receipts",
+          "protected workspace state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_runtime.CapabilityPermissionEngine.decide -> check_permissions",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Read/review/local/high-risk decisions obey explicit approvals and workspace scope.",
+        "id": "a.permission-modes",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_catalog.CapabilityRegistry.reload",
+          "grant_agent.capability_catalog.CapabilityRegistry.search",
+          "grant_agent.capability_catalog.CapabilityRegistry.describe",
+          "grant_agent.capability_catalog.CapabilityPlanner.plan",
+          "grant_agent.capability_service.CapabilityService.search",
+          "grant_agent.capability_service.CapabilityService.describe",
+          "grant_agent.capability_service.CapabilityService.plan",
+          "grant_agent.capability_service.CapabilityService.get_plan",
+          "grant_agent.proofs_capability_config_journey.self_check"
+        ],
+        "claim": "A unique token added to a configured capability description changes real search, describe and persisted plan selection; removing it and reloading removes the discovery result.",
+        "id": "p22.capability-config.search-plan",
+        "impact": [
+          "capability discovery",
+          "persisted capability plan"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_catalog.CapabilityRegistry.describe",
+          "grant_agent.capability_catalog.CapabilityPlanner.plan",
+          "grant_agent.capability_adapters.CapabilityAdapterRegistry.descriptor",
+          "grant_agent.capability_service.CapabilityService.get_plan",
+          "grant_agent.proofs_capability_config_journey.self_check"
+        ],
+        "claim": "An unregistered adapter selected from the catalog is described as unavailable and remains adapter_required in the persisted plan; it cannot be executed immediately.",
+        "id": "p22.capability-config.adapter-refusal",
+        "impact": [
+          "capability availability",
+          "plan execution boundary"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_catalog.CapabilityRegistry.snapshot -> check_catalog",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Catalog summaries equal loaded packs and capabilities; schemas expand only when requested.",
+        "id": "a.catalog-observer",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_catalog.CapabilityRegistry.search -> check_search",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Search returns bounded unique real capabilities without eager input schemas.",
+        "id": "a.catalog-routing",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_catalog.CapabilityRegistry.describe -> check_description",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Capability descriptions bind their selected adapter and its detected availability.",
+        "id": "a.catalog-adapter",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.artifact_graph.ArtifactGraph.register -> check_graph_registration",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Artifact graph persists the returned record and its hash and size bind actual file bytes.",
+        "id": "a.artifact-durable",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.artifact_graph.ArtifactGraph.relate -> check_graph_relation",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Persisted artifact relations reference distinct registered endpoints.",
+        "id": "a.artifact-relations",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.artifact_graph.ArtifactGraph.lineage -> check_graph_lineage",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Lineage retains the selected artifact and coherent counts and relation endpoints.",
+        "id": "a.artifact-lineage",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.legacy_asset_treasury.CapabilityTreasury.snapshot -> check_treasury",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Typed recovery remains review-required without file bodies, transcripts, activation, trust elevation or publication.",
+        "id": "a.treasury-boundary",
+        "impact": [
+          "bounded local capability actions",
+          "agent/operator evidence",
+          "recoverable scratch state"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_catalog.CapabilityPlanner.plan -> grant_agent.proofs_a_capabilities.check_capability_plan",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Compiled plans bind canonical stages and selected capability IDs to their hash, defer schemas, and derive readiness from modeled authority and actual adapter availability.",
+        "id": "a.capability-plan",
+        "impact": [
+          "local capability action semantics",
+          "durable scratch plans and runs",
+          "deferred schemas and authority admission"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_runtime.CapabilityRunStore.create/append_preview/finish -> grant_agent.proofs_a_capabilities.check_run_record",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Every preview mutation persists the exact ordered run record; terminal runs end with a completed result event.",
+        "id": "a.capability-preview",
+        "impact": [
+          "local capability action semantics",
+          "durable scratch plans and runs",
+          "deferred schemas and authority admission"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_service.CapabilityService.save_pack -> grant_agent.proofs_a_capabilities.check_pack_save",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Custom packs require explicit approval, stay inside scoped storage, and reload only valid durable definitions.",
+        "id": "a.capability-pack",
+        "impact": [
+          "local capability action semantics",
+          "durable scratch plans and runs",
+          "deferred schemas and authority admission"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_service.CapabilityService.execute_capability -> grant_agent.proofs_a_capabilities.check_capability_execution",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Execution reports delegation or approval requirements without synthesizing successful agent work.",
+        "id": "a.capability-admission",
+        "impact": [
+          "local capability action semantics",
+          "durable scratch plans and runs",
+          "deferred schemas and authority admission"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_adapters.CapabilityAdapterRegistry.descriptor/execute -> grant_agent.proofs_a_capabilities.check_adapter_execution",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Adapter execution support requires a registered real handler; success requires that detected handler.",
+        "id": "a.adapter-execution",
+        "impact": [
+          "local capability action semantics",
+          "durable scratch plans and runs",
+          "deferred schemas and authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> grant_agent.proofs_a_capabilities.check_adapter_execution",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "Built-in inspection size and SHA256 bind the actual selected file bytes.",
+        "id": "a.adapter-file-inspection",
+        "impact": [
+          "local capability action semantics",
+          "durable scratch plans and runs",
+          "deferred schemas and authority admission"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_service.CapabilityService.ui_contract -> grant_agent.proofs_a_capabilities.check_ui_contract",
+          "grant_agent.proofs_a_capabilities.self_check"
+        ],
+        "claim": "The UI contract retains behavioral command and lifecycle declarations and the declared visual implementation owner.",
+        "id": "a.capability-ui-schema",
+        "impact": [
+          "local capability action semantics",
+          "durable scratch plans and runs",
+          "deferred schemas and authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.app_capability_standard._save_session_state -> grant_agent.proofs_a_app_standard.checked_state_save",
+          "grant_agent.proofs_a_app_standard.self_check"
+        ],
+        "claim": "Session writes persist exact nonvolatile state and preserve file bytes and modification time when unchanged.",
+        "id": "a.app-state",
+        "impact": [
+          "connected observation only",
+          "local storage and rendered generated app actions",
+          "explicit review and inactive boundary"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.app_capability_standard.build_connected_apps_snapshot -> grant_agent.proofs_a_app_standard.check_snapshot",
+          "grant_agent.proofs_a_app_standard.self_check"
+        ],
+        "claim": "Connected snapshots retain one session and handshake per manifest and grant only declared capabilities.",
+        "id": "a.app-observation",
+        "impact": [
+          "connected observation only",
+          "local storage and rendered generated app actions",
+          "explicit review and inactive boundary"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.app_capability_standard._synology_bridge_plan/_build_synology_fast_sync_session -> grant_agent.proofs_a_app_standard.check_storage_plan/check_storage_session",
+          "grant_agent.proofs_a_app_standard.self_check"
+        ],
+        "claim": "Read-only storage plans retain explicit approval/automatic policy, bounded ready directions, control metadata and activation guidance even when mapped roots are absent.",
+        "id": "a.app-storage",
+        "impact": [
+          "connected observation only",
+          "local storage and rendered generated app actions",
+          "explicit review and inactive boundary"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.app_capability_standard._cloud_drive_bridge_plan -> grant_agent.proofs_a_app_standard.check_cloud_plan",
+          "grant_agent.proofs_a_app_standard.self_check"
+        ],
+        "claim": "Cloud discovery keeps writes approval-gated and derives target readiness from declared login or mounted-root presence, with no raw credential content.",
+        "id": "a.app-cloud",
+        "impact": [
+          "Optional bridge.discovery_roots selects at most 32 absolute directory paths; an empty list disables ambient mount discovery. Omission retains environment/default metadata discovery. No selected-root file contents or credentials are read.",
+          "connected observation only",
+          "local storage and rendered generated app actions",
+          "explicit review and inactive boundary"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.tool_factory.AuthoredToolStore.save -> check_authored_save",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Valid authored tools require approval and exact scoped durable manifests; delegated drafts never imply an available executor.",
+        "id": "a.authored-tool",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_service.CapabilityService._execute_command_tool -> check_authored_command",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Actual authored command results preserve scalar argv count, scoped working directory and exit/parse truth; shell characters remain literal input.",
+        "id": "a.authored-argv",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.computer_use_twin.summarize_cu_receipts -> check_metrics",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Computer Use metrics bind receipt repetition, classified flow success, deterministic agreement, declared URL-source counts, bounded direct latency percentiles and compact receipt bytes.",
+        "id": "a.cu-metrics",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.computer_use_twin.ComputerUseTwinService.run -> check_twin_run",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Persisted replay runs cannot earn live proof or comparative claims and returned receipts match their durable records.",
+        "id": "a.cu-replay",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.computer_use_twin.ComputerUseTwinService.dispatch/execute_cluster_twin_job -> check_dispatch/check_worker",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Queued isolated workers carry portable specs/receipts with NAS fallback forbidden and write resulting artifacts beneath the worker root.",
+        "id": "a.cu-portable",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.computer_use_verifier.ComputerUseVerifierService.verify -> check_verification",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Verification requires approval and functional-change claims require passed live evidence; replay cannot earn change or comparison claims.",
+        "id": "a.cu-verifier",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.tool_manifest_registry.ToolManifest.from_payload/ToolManifestRegistry.snapshot/search -> check_tool_manifest/check_tool_snapshot/check_tool_search",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Typed tool readiness binds healthy verified pins and operations; snapshots keep exact counts and defer operations while execution readiness requires evaluated runtime identity.",
+        "id": "a.tool-readiness",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.tool_manifest_registry.ToolManifest.from_payload -> check_tool_manifest",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Each loaded pinned Pandoc reference binds actual repository bytes to its SHA256 and retains explicit Letter page geometry, one-inch margins, heading/table/compact styles and keep-lines formatting.",
+        "id": "a.tool-reference",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_service.CapabilityService.execute_tool_operation -> check_operation",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Successful tool operations validate input/output schemas and bind their receipt to the pinned package identity.",
+        "id": "a.tool-typed",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_service.CapabilityService.execute_tool_operation -> check_operation",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Chat, secret broker and P2P compatibility projections exclude private token/path/endpoint/ticket fields and explicit exposure flags.",
+        "id": "a.tool-private",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> check_pdf",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Installed Poppler output preserves its selected PDF source, bounded text size and correct truncation declaration.",
+        "id": "a.pdf-bounded",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_adapters.CapabilityAdapterRegistry.execute -> check_pdf",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Available Android mutation handlers reject unapproved actions before launching any device command.",
+        "id": "a.android-approval",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_adapters.CapabilityAdapterRegistry.register_session/heartbeat_session/disconnect_session -> check_adapter_private",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "External session registration/heartbeat/disconnect projections never expose the stored heartbeat verifier hash; session presence does not imply an in-process executor.",
+        "id": "a.adapter-session",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_adapters.CapabilityAdapterRegistry._resolve_existing_workspace_path -> check_direct_path",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Direct marketplace tool paths must remain within the selected active workspace before an executable can be invoked.",
+        "id": "a.tool-workspace",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.capability_service.CapabilityService.benchmark -> check_benchmark",
+          "grant_agent.proofs_a_capability_tools.self_check"
+        ],
+        "claim": "Benchmark budget status follows measured p95 and declared budget; ten-times claims require a retained baseline.",
+        "id": "a.capability-benchmark",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.app_factory.AppFactory.create_from_capability_handoff -> grant_agent.proofs_a_capabilities.check_factory_lineage",
+          "grant_agent.proofs_a_capability_evolution.self_check"
+        ],
+        "claim": "A reviewed guided app copies the exact sealed skill/metadata, has no new application permissions, retains inactive digest-bound lineage and a ready durable handoff receipt.",
+        "id": "a.factory-lineage",
+        "impact": [
+          "authored and pinned tool execution",
+          "private typed operation boundaries",
+          "honest replay and worker receipts",
+          "reviewed local app lineage"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.memory.MemoryStore.save",
+          "grant_agent.proofs_c_runtime.check_memory_saved",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Saving and adding memory persist exact content, tags, kind, unique identity and session/objective provenance in order; reopening preserves the same items.",
+        "id": "runtime.memory.durable",
+        "impact": [
+          "scratch workspace memory store",
+          "resume provenance"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.memory.MemoryStore.search",
+          "grant_agent.proofs_c_runtime.check_memory_search",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Search returns positive lexical overlaps ranked by overlap and tag count; empty or absent matches fall back to recent entries and honor the limit.",
+        "id": "runtime.memory.search",
+        "impact": [
+          "memory retrieval"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.memory.ingest_state_into_memory",
+          "grant_agent.proofs_c_runtime.check_ingested",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Ingestion adds last3 decisions, last2 risks and first2 next actions with exact kinds/tags/session/objective; preserve previous items and return inserted ids in order.",
+        "id": "runtime.memory.ingest",
+        "impact": [
+          "bounded session memory"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.mcp_broker.McpServerState.compact",
+          "grant_agent.mcp_broker.McpOutboundBroker.search",
+          "grant_agent.mcp_broker.McpOutboundBroker.describe",
+          "grant_agent.proofs_c_runtime.check_mcp_compact",
+          "grant_agent.proofs_c_runtime.check_mcp_search",
+          "grant_agent.proofs_c_runtime.check_mcp_described",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Server/search observers omit schemas; describe preserves qualified identity, cached schema and mutability. Codex command-index maps to stdio; SSE remains unavailable with an explicit frontier.",
+        "id": "runtime.mcp.discovery",
+        "impact": [
+          "progressive discovery",
+          "remote schema context",
+          "availability"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.mcp_broker.McpOutboundBroker.call",
+          "grant_agent.proofs_c_runtime.check_mcp_receipt",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Unauthenticated and unapproved mutating actions cannot dispatch transport calls; success requires dispatch, authenticated state, approval when required and no invalid schema result.",
+        "id": "runtime.mcp.authorization",
+        "impact": [
+          "remote read/write authority",
+          "operator approvals"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.mcp_broker.McpOutboundBroker.call",
+          "grant_agent.proofs_c_runtime.check_mcp_receipt",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Every broker action persists its exact returned schema/provider/tool/auth/result/mission receipt under the selected root, including refusal receipts.",
+        "id": "runtime.mcp.receipt",
+        "impact": [
+          "action proof receipts",
+          "mission artifacts"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.mcp_broker.register_with_progressive_surface",
+          "grant_agent.mcp_broker.McpOutboundBroker.call",
+          "grant_agent.mcp_broker.StubTransport.call_tool",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Register exactly mcp.servers/search/describe/call; progressive calls use the broker authorization/receipt path. Explicit StubTransport handlers remain simulation.",
+        "id": "runtime.mcp.progressive",
+        "impact": [
+          "model progressive interface",
+          "broker tool dispatch"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_mcp.NeyviaMCPServer.handle",
+          "grant_agent.mcp_broker.McpOutboundBroker.call",
+          "grant_agent.proofs_c_runtime.check_mcp_receipt",
+          "grant_agent.proofs_c_runtime.self_check"
+        ],
+        "claim": "Neyvia MCP JSON-RPC host lists progressive tools without schemas, forwards qualified calls into the broker and marks approval refusals as MCP errors.",
+        "id": "runtime.mcp.host",
+        "impact": [
+          "incoming MCP host",
+          "outbound broker authority",
+          "progressive model action"
+        ],
+        "phase": "goal"
+      },
+      {
+        "checkedAt": [
+          "src/grant_agent/neyvia_impact.py:_imported_sets -> check_imported_registries"
+        ],
+        "claim": "Imported command aliases resolve only the named source registry in the selected repository",
+        "id": "impact.import-provenance",
+        "impact": [
+          "tools-depth production observations"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "src/grant_agent/neyvia_impact.py:_compares -> check_dispatch_membership"
+        ],
+        "claim": "Backend handler evidence requires actual equality or membership branches, including resolved aliases and unions",
+        "id": "impact.dispatch-membership",
+        "impact": [
+          "tools-depth production observations"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "src/grant_agent/neyvia_impact.py:_ui_commands -> check_ui_command_evidence"
+        ],
+        "claim": "UI command evidence comes from recognized gateways, command slots and typed command registries; display strings and comments stay excluded",
+        "id": "impact.ui-call-evidence",
+        "impact": [
+          "tools-depth production observations"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "src/grant_agent/neyvia_impact.py:index -> check_impact_index"
+        ],
+        "claim": "The impact graph keeps handled commands, branch locations and UI caller provenance consistent",
+        "id": "impact.index-provenance",
+        "impact": [
+          "tools-depth production observations"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.vibe_suggestions.build_vibe_next_steps -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "A pending plan step remains the first bounded continuation suggestion and generated suggestions contain no duplicates.",
+        "id": "sv.suggestions.priority",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.vibe_suggestions.collect_repo_signals -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Repository metadata projects nonnegative file counts and Boolean project/readme presence with no extra fields.",
+        "id": "sv.suggestions.signals",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.verification.VerificationRunner.run -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Every requested verification command has one explicit outcome; high-risk commands return blocked/126 and actual child timeouts return timeout/124 with diagnostics.",
+        "id": "sv.verification.result",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.verification._normalize_verification_command -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Pytest command spelling uses the selected Python executable; unrelated command text remains intact.",
+        "id": "sv.verification.normalize",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.verification.detect_default_verification_commands -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Default verification command declarations reflect project/source/test/package metadata and actual interpreter availability, with an explicit fallback when unavailable. Discovery never executes the declared verification commands.",
+        "id": "sv.verification.discovery",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.verification_ladder.build_verification_capacity_policy -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Heavy builds require gateway and time; browser verification additionally requires an operator. Absence cannot silently grant capacity.",
+        "id": "sv.ladder.capacity",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.verification_ladder.build_verification_ladder -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Changed-file lists are bounded and unique, required/gated counts match real steps and capacity-gated work remains skipped.",
+        "id": "sv.ladder.plan",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.verification_ladder.build_syntax_import_receipt -> grant_agent.proofs_e_sv.check",
+          "grant_agent.verification_ladder.build_changed_file_targeted_receipt -> grant_agent.proofs_e_sv.check",
+          "grant_agent.verification_ladder.build_backend_command_smoke_receipt -> grant_agent.proofs_e_sv.check",
+          "grant_agent.verification_ladder.build_ui_button_smoke_receipt -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Syntax, targeted, backend and UI receipt statuses reflect observed exits/missing files or supplied interaction outcomes. Backend commands stop on first failure; absent evidence stays skipped.",
+        "id": "sv.ladder.receipt",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.support_bundle.build_redacted_support_bundle -> grant_agent.proofs_e_sv.check_support_payload/check",
+          "grant_agent.support_bundle._resolve_jobs_root",
+          "grant_agent.support_bundle._read_json",
+          "grant_agent.support_bundle._log_index",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Support archives preserve exact published hashes and the five-member allowlist; exclude raw prompts/logs/credentials, refuse hostile secret-shaped metadata and bound job/log inspection. External linked roots disclose no bytes.",
+        "id": "sv.support.bundle",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "scripts/verify_performance_budget.py:evaluate -> grant_agent.proofs_e_sv.check",
+          "scripts/verify_performance_budget.py:measure_build",
+          "scripts/verify_performance_budget.py:_validated_runtime_metric",
+          "scripts/verify_performance_budget.py:_redact_diagnostic",
+          "scripts/verify_performance_budget.py:main",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Performance evidence validates configuration, source assets, age, build/config/digest binding, measured provenance, sample limits and recomputed finite nonnegative metrics. Aggregate status remains fail-closed and local passing evidence cannot grant promotion; diagnostics hide private paths.",
+        "id": "sv.performance.fail-closed",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.sdk_codegen.generated_bindings -> grant_agent.proofs_e_sv.check",
+          "grant_agent.sdk_codegen.render_python",
+          "grant_agent.sdk_codegen.render_typescript",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Generated Python/TypeScript bindings have canonical LF bytes, deterministic schema ordering and resolvable language types; Git autocrlf checkout preserves committed generated bytes.",
+        "id": "sv.sdk.bindings",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.sdk_codegen.generate_sdk_bindings -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Generator receipts faithfully report compared/written on-disk bytes and hashes for both language outputs.",
+        "id": "sv.sdk.generation",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.sdk_codegen.validate_portable_schema",
+          "grant_agent.sdk_codegen._assert_supported",
+          "grant_agent.sdk_codegen.render_python",
+          "grant_agent.sdk_codegen.render_typescript",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Schema generation rejects lossy keywords/literals with precise pointers and keeps closed empty, open JSON, unconstrained JSON and scalar literal types distinct.",
+        "id": "sv.sdk.portable-schema",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.sdk.build_app_manifest -> grant_agent.proofs_e_sv.check",
+          "grant_agent.sdk.build_solantir_manifest",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "SDK manifest builders preserve bridge identity, requested task/context/action semantics and declared approval requirements.",
+        "id": "sv.sdk.manifest",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.sdk.plan_application_surface_launch -> grant_agent.proofs_e_sv.check",
+          "grant_agent.sdk.plan_module_install -> grant_agent.proofs_e_sv.check",
+          "grant_agent.sdk.plan_install_profile -> grant_agent.proofs_e_sv.check",
+          "grant_agent.sdk_cli._load_json_object",
+          "grant_agent.sdk_cli.run_sdk_cli",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "SDK launch/install/profile planning never acquires execution or activation authority. CLI JSON inputs must be objects; untrusted publisher packages remain blocked and declared surfaces remain unavailable without live readiness.",
+        "id": "sv.sdk.plan-only",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.sdk.FluxioClient._post -> grant_agent.proofs_e_sv.check_sdk_request/check",
+          "grant_agent.sdk.FluxioClient.runtime_lane_cycle",
+          "grant_agent.sdk.FluxioClient.solantir_intelligence_cycle",
+          "grant_agent.sdk.FluxioClient.record_delivery_receipt",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Every SDK HTTP request preserves its explicit destination/POST/payload and includes a session cookie only when requested. Responses must be JSON objects. Local protocol proof preserves runtime routes, application context and delivery attribution.",
+        "id": "sv.sdk.transport",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "scripts/stage_neyvia_wip_snapshot.py:_is_excluded -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Every staging path decision rejects private memory/browser-profile candidates while preserving redacted evidence candidates. This proof only evaluates path metadata, never performs snapshot or NAS transfer.",
+        "id": "sv.snapshot.private-filter",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.runtime_auto_update.npm_package_of -> grant_agent.proofs_e_sv.check",
+          "grant_agent.proofs_e_sv.self_check"
+        ],
+        "claim": "Runtime-update metadata parsing only reports the package literally named in a global npm @latest command; it never performs the update.",
+        "id": "sv.update.package-parse",
+        "impact": [
+          "tools-depth",
+          "PROOFS-e s-v behavior"
+        ],
+        "phase": "invariant"
+      }
+    ]
+  },
+  "schemas": {
+    "semantic.application.register": {
+      "type": "object",
+      "properties": {
+        "applicationId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object"
+        },
+        "buildRecipe": {
+          "type": "object"
+        },
+        "health": {
+          "type": "object"
+        },
+        "rollback": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "applicationId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "applicationId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "semantic.autonomy.admit": {
+      "type": "object",
+      "properties": {
+        "policyId": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "cost": {
+          "type": "number"
+        },
+        "evidenceCount": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "policyId",
+        "action"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "policyId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "action": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "semantic.autonomy.revoke": {
+      "type": "object",
+      "properties": {
+        "policyId": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "policyId"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "policyId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "semantic.changeset.create": {
+      "type": "object",
+      "properties": {
+        "intended_behavior": {
+          "type": "string"
+        },
+        "source_modifications": {
+          "type": "array"
+        },
+        "generated_artifacts": {
+          "type": "array"
+        },
+        "rollback_boundary": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "intended_behavior",
+        "source_modifications",
+        "rollback_boundary"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "intended_behavior": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "semantic.mission.create": {
+      "type": "object",
+      "properties": {
+        "missionId": {
+          "type": "string"
+        },
+        "desiredOutcome": {
+          "type": "string"
+        },
+        "acceptanceGates": {
+          "type": "array"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "turnId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "missionId",
+        "desiredOutcome"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "missionId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "desiredOutcome": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "semantic.proof.create": {
+      "type": "object",
+      "properties": {},
+      "required": [
+        "claim",
+        "build",
+        "environment",
+        "startingState",
+        "journey",
+        "actions",
+        "artifacts",
+        "result",
+        "reproduction"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "claim": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "build": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "environment": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "startingState": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "journey": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "actions": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "artifacts": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "result": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            },
+            "reproduction": {
+              "not": {
+                "enum": [
+                  null,
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "semantic.recovery.create": {
+      "type": "object",
+      "properties": {
+        "failedOperation": {
+          "type": "object"
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "recoveryId": {
+          "type": "string"
+        },
+        "confirmedSteps": {
+          "type": "array"
+        },
+        "uncertainEffects": {
+          "type": "array"
+        },
+        "retrySafety": {
+          "type": "string"
+        },
+        "availableRecoveryPaths": {
+          "type": "array"
+        },
+        "requiredAuthority": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "failedOperation"
+      ]
+    },
+    "web.cite": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string",
+          "pattern": "^doc_[a-f0-9]{64}$"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedText": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "document",
+        "start",
+        "end"
+      ],
+      "additionalProperties": false
+    },
+    "web.dedupe": {
+      "type": "object",
+      "properties": {
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^doc_[a-f0-9]{64}$"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "documents"
+      ],
+      "additionalProperties": false
+    },
+    "web.fetch": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 100000
+        },
+        "refresh": {
+          "type": "boolean"
+        },
+        "maxAgeSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "url": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "web.passages": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string",
+          "pattern": "^doc_[a-f0-9]{64}$"
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "contextChars": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        }
+      },
+      "required": [
+        "document",
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "web.read": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string",
+          "pattern": "^doc_[a-f0-9]{64}$"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        }
+      },
+      "required": [
+        "document"
+      ],
+      "additionalProperties": false
+    },
+    "workspace.patch": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "edits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "text": {
+                "type": "string"
+              },
+              "expectedText": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "start",
+              "end",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "path",
+        "expectedSha256",
+        "edits"
+      ],
+      "additionalProperties": false
+    },
+    "workspace.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "startLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "workspace.search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "includeGlob": {
+          "type": "string"
+        },
+        "maxResults": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "query": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "capability_config_journey": {
+      "title": "Capability catalog changes alter real search and plans",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A changed catalog file or digest is treated as proof even though search and planning still use different behavior",
+          "recovery": "Run the bound capability config journey; require live search/describe/plan output and a persisted plan to reflect the changed field."
+        }
+      ],
+      "frontier": [
+        "Selected capability plans are not evidence that adapter work ran; execution remains owned by a separate contract."
+      ],
+      "guidance": [
+        "In disposable state, the journey changes a real capability description, observes search/describe/planner results and plan persistence, then removes the term and reloads the catalog. A second case configures an unregistered adapter and requires an unavailable description and adapter_required plan without executing it.",
+        "Run the registered capability-config-journey adapter in isolated scratch state. The contract covers local discovery and planning only; it does not prove external adapter execution, rendered UI, provider work or publication."
+      ]
+    },
+    "proofs-c-runtime": {
+      "title": "PROOFS-c runtime contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A successful response or existing receipt alone does not prove a managed action.",
+          "recovery": "Run the proofs-c-runtime startup adapter in a fresh isolated root; it verifies bytes, persistence, real subprocesses and refusal paths."
+        }
+      ],
+      "frontier": [
+        "OCI authenticated evidence, trust removal, tampering, activation/rollback and interrupted-transaction recovery: retain all8 OCI cases until full real verifier journeys are migrated.",
+        "Upstream GitHub availability is not claimed: declared metadata is served on owned loopback48487, then production parser and persisted cache run; no package downloads."
+      ],
+      "guidance": [
+        "runtime.memory.durable: Saving and adding memory persist exact content, tags, kind, unique identity and session/objective provenance in order; reopening preserves the same items.",
+        "runtime.memory.search: Search returns positive lexical overlaps ranked by overlap and tag count; empty or absent matches fall back to recent entries and honor the limit.",
+        "runtime.memory.ingest: Ingestion adds last3 decisions, last2 risks and first2 next actions with exact kinds/tags/session/objective; preserve previous items and return inserted ids in order.",
+        "runtime.mcp.discovery: Server/search observers omit schemas; describe preserves qualified identity, cached schema and mutability. Codex command-index maps to stdio; SSE remains unavailable with an explicit frontier.",
+        "runtime.mcp.authorization: Unauthenticated and unapproved mutating actions cannot dispatch transport calls; success requires dispatch, authenticated state, approval when required and no invalid schema result.",
+        "runtime.mcp.receipt: Every broker action persists its exact returned schema/provider/tool/auth/result/mission receipt under the selected root, including refusal receipts.",
+        "runtime.mcp.progressive: Register exactly mcp.servers/search/describe/call; progressive calls use the broker authorization/receipt path. Explicit StubTransport handlers remain simulation.",
+        "runtime.mcp.host: Neyvia MCP JSON-RPC host lists progressive tools without schemas, forwards qualified calls into the broker and marks approval refusals as MCP errors."
+      ]
+    },
+    "proofs-e-release": {
+      "title": "Release and capability observations (PROOFS-e)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Metadata readiness or a scoped proof is mistaken for external execution or a published release",
+          "recovery": "Inspect the observed boundary and use the owning real activation or publication procedure"
+        }
+      ],
+      "frontier": [
+        "No installer build, installation, publication, download or private signing-key provisioning is claimed.",
+        "Enabled plugin metadata and native instruction linkage do not prove external MCP/plugin execution.",
+        "The impact index proves static command wiring; it does not execute backend or desktop commands."
+      ],
+      "guidance": [
+        "Imported command aliases resolve only the named source registry in the selected repository",
+        "Backend handler evidence requires actual equality or membership branches, including resolved aliases and unions",
+        "UI command evidence comes from recognized gateways, command slots and typed command registries; display strings and comments stay excluded",
+        "The impact graph keeps handled commands, branch locations and UI caller provenance consistent",
+        "Self-check: neyvia verify --area proofs-e-release; scoped actual signing, scanner, metadata and static impact actions."
+      ]
+    },
+    "proofs-e-sv": {
+      "title": "PROOFS-e s-v host contracts and confined startup receipts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A passed scratch validator or receipt reducer is mistaken for provider, native release, NAS or rendered UI proof",
+          "recovery": "Read the adapter boundary and retain every unmapped case in the migration frontier"
+        }
+      ],
+      "frontier": [
+        "config/proofs/proofs-e-sv.json lists exact retained cases and the missing host/journey receipt; pending cases are never deletion authority."
+      ],
+      "guidance": [
+        "Production calls enforce these semantic contracts before returning. Startup entry: grant_agent.proofs_e_sv.self_check with a fresh confined root.",
+        "Run the registered proofs-e-sv area through neyvia.verify to obtain real scratch process, file, archive, language-compiler and local HTTP receipts.",
+        "This chapter is separate from other area additions; sv.* contract IDs identify its host-owned guarantees."
+      ]
+    },
+    "proofs_a_capabilities": {
+      "title": "Capability action contracts (PROOFS-a)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Scratch receipt is mistaken for external runtime or rendered UI evidence",
+          "recovery": "Use a real rendered or authorized external journey before claiming those boundaries"
+        }
+      ],
+      "frontier": [
+        "Unmapped original cases remain protected until complete equivalent contracts and startup receipts exist"
+      ],
+      "guidance": [
+        "Behavior plans preserve selected capsule gates and bounded learned vectors; compiler cache remains observable.",
+        "Challenge selection follows configured token relevance; checkpoint saving verifies the durable full record.",
+        "Capability descriptions bind actual adapter state; artifact lineage binds local file hashes and persistent relation endpoints.",
+        "Typed recovery remains review-only and does not retain narrative file bodies.",
+        "Run neyvia verify --areas a-capabilities in isolated scratch state.",
+        "App Factory static verification admits an inactive local draft; native compilation and rendered notes behavior require separate receipts.",
+        "External application surfaces accept only hash-bound signed host authority; approval planning never launches a process.",
+        "Startup authority documents are lab fixtures; their readiness status is not proof of a real listening server.",
+        "Capability initialization uses an explicit empty vault configuration under disposable proof state. Saved broker/account configurations are never read; these procedures make no vault/account execution claim."
+      ]
+    },
+    "proofs_a_capability_catalog": {
+      "title": "Capability action contracts (PROOFS-a)",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Scratch receipt is mistaken for external runtime or rendered UI evidence",
+          "recovery": "Use a real rendered or authorized external journey before claiming those boundaries"
+        }
+      ],
+      "frontier": [
+        "Unmapped original cases remain protected until complete equivalent contracts and startup receipts exist"
+      ],
+      "guidance": [
+        "Behavior plans preserve selected capsule gates and bounded learned vectors; compiler cache remains observable.",
+        "Challenge selection follows configured token relevance; checkpoint saving verifies the durable full record.",
+        "Capability descriptions bind actual adapter state; artifact lineage binds local file hashes and persistent relation endpoints.",
+        "Typed recovery remains review-only and does not retain narrative file bodies.",
+        "Run neyvia verify --areas a-capabilities in isolated scratch state.",
+        "Capability initialization uses an explicit empty vault configuration under disposable proof state. Saved broker/account configurations are never read; these procedures make no vault/account execution claim."
+      ]
+    },
+    "proofs_a_capability_execution": {
+      "title": "PROOFS-a capability plans, execution admission and durable previews",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Discovery alone never proves an execution handler. Agent delegation remains an explicit handoff.",
+          "recovery": "Require the admitted executable handler or report the explicit delegation handoff."
+        }
+      ],
+      "frontier": [
+        "No live external runtime or hardware proof is claimed by the local catalog workflow."
+      ],
+      "guidance": [
+        "Every compiled plan binds its canonical content and final verification stage. Persisted preview phases survive service restart. Approved custom packs reload from scoped storage. Startup uses real local files, production backend dispatch and MCP calls with no eager schemas.",
+        "Capability initialization uses an explicit empty vault configuration under disposable proof state. Saved broker/account configurations are never read; these procedures make no vault/account execution claim."
+      ]
+    },
+    "proofs_a_connected_observation": {
+      "title": "PROOFS-a connected app observation and scoped session state",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Status and policy observations do not execute transfers or grant new authority. Generated local receipts do not activate or publish an app.",
+          "recovery": "Inspect policy and authority receipts; separately authorize any transfer."
+        }
+      ],
+      "frontier": [
+        "No NAS, real cloud credential, external provider or native desktop build proof is claimed."
+      ],
+      "guidance": [
+        "Startup observes a finite read-only HTTP bridge on owned port48462 and closes it. Installed Chromium operates actual production-generated drafts: add, search, complete, reload, and export notes; then reject incomplete/proof-free guided runs, seal a reviewed workflow receipt, independently hash its exported bytes, reload and explicitly return outcomes.",
+        "Capability initialization uses an explicit empty vault configuration under disposable proof state. Saved broker/account configurations are never read; these procedures make no vault/account execution claim."
+      ]
+    },
+    "proofs_a_typed_tools_and_replay": {
+      "title": "PROOFS-a typed tools, authored argv and honest browser replay",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Declared contract readiness is distinct from actual executable/version/hash readiness. Replay metrics cannot prove a live change. No unapproved device command may start.",
+          "recovery": "Validate actual version, hash and authority before starting an executable command."
+        }
+      ],
+      "frontier": [
+        "Pandoc, LibreOffice, Wasmtime, Syft/Grype and Defender real execution journeys remain unproven because their configured managed installations are absent. Two planned game capability declarations lack catalog ownership."
+      ],
+      "guidance": [
+        "Load validated pinned metadata and Word reference bytes. Startup runs actual local Python argv and installed Poppler two-page extraction, checks typed private compatibility projections, rejects unapproved Android/outside-workspace calls before invoking a fixture executor, records approval/heartbeat/disconnect metadata, and executes replay on a separate scratch worker with no NAS fallback. Reviewed renewed guided apps preserve exact inactive lineage through copy/replay/rebind refusal and actual Chromium exports.",
+        "Capability initialization uses an explicit empty vault configuration under disposable proof state. Saved broker/account configurations are never read; these procedures make no vault/account execution claim."
+      ]
+    },
+    "semantic": {
+      "title": "Durable semantic objects and supervised policy decisions",
+      "state": {},
+      "actions": {
+        "semantic.recovery.create": {
+          "effect": "Persist an explicit failed-operation recovery record with uncertainty and authority boundaries",
+          "pre": "Authenticated owner mutation grant for the selected workspace; exact requested subject and source hashes where supplied",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "recoveryId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "recoveryId"
+            ]
+          },
+          "reversible": false,
+          "schema": "semantic.recovery.create",
+          "tool": "semantic.recovery.create"
+        },
+        "semantic.proof.create": {
+          "effect": "Persist an evidence capsule; artifact integrity does not prove its claim",
+          "pre": "Authenticated owner mutation grant for the selected workspace; exact requested subject and source hashes where supplied",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "proofId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "proofId"
+            ]
+          },
+          "reversible": false,
+          "schema": "semantic.proof.create",
+          "tool": "semantic.proof.create"
+        },
+        "semantic.changeset.create": {
+          "effect": "Persist a change set bound to unchanged local source and generated artifact hashes",
+          "pre": "Authenticated owner mutation grant for the selected workspace; exact requested subject and source hashes where supplied",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "changeId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "changeId"
+            ]
+          },
+          "reversible": false,
+          "schema": "semantic.changeset.create",
+          "tool": "semantic.changeset.create"
+        },
+        "semantic.mission.create": {
+          "effect": "Persist a pending mission agreement with explicit acceptance gates",
+          "pre": "Authenticated owner mutation grant for the selected workspace; exact requested subject and source hashes where supplied",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "missionId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "missionId"
+            ]
+          },
+          "reversible": false,
+          "schema": "semantic.mission.create",
+          "tool": "semantic.mission.create"
+        },
+        "semantic.application.register": {
+          "effect": "Register a local Living Application record without claiming deployment or health",
+          "pre": "Authenticated owner mutation grant for the selected workspace; exact requested subject and source hashes where supplied",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "applicationId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "applicationId"
+            ]
+          },
+          "reversible": false,
+          "schema": "semantic.application.register",
+          "tool": "semantic.application.register"
+        },
+        "semantic.autonomy.admit": {
+          "effect": "Record a permitted, budgeted nonexecuting decision under an existing trusted operator policy",
+          "pre": "Authenticated owner mutation grant for the selected workspace; exact requested subject and source hashes where supplied",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "policyId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "policyId"
+            ]
+          },
+          "reversible": false,
+          "schema": "semantic.autonomy.admit",
+          "tool": "semantic.autonomy.admit"
+        },
+        "semantic.autonomy.revoke": {
+          "effect": "Persist revocation of an existing trusted operator policy",
+          "pre": "Authenticated owner mutation grant for the selected workspace; exact requested subject and source hashes where supplied",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "policyId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "policyId"
+            ]
+          },
+          "reversible": false,
+          "schema": "semantic.autonomy.revoke",
+          "tool": "semantic.autonomy.revoke"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "verify-effect-semantic-recovery-create": {
+          "goal": "Persist and observe the exact semantic.recovery.create effect",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "failedOperation": {
+                "type": "object"
+              },
+              "recoveryId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "operationId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "confirmedSteps": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "uncertainEffects": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "retrySafety": {
+                "type": "string",
+                "minLength": 1
+              },
+              "availableRecoveryPaths": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "requiredAuthority": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "failedOperation",
+              "recoveryId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "semantic.recovery.create",
+              "args": {
+                "failedOperation": {
+                  "$input": "failedOperation"
+                },
+                "recoveryId": {
+                  "$input": "recoveryId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-semantic-proof-create": {
+          "goal": "Persist and observe the exact semantic.proof.create effect",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "claim": {
+                "type": "string",
+                "minLength": 1
+              },
+              "build": {
+                "type": "object"
+              },
+              "environment": {
+                "type": "object"
+              },
+              "startingState": {
+                "type": "object"
+              },
+              "journey": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "artifacts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ]
+                },
+                "minItems": 1
+              },
+              "result": {
+                "type": "object"
+              },
+              "reproduction": {
+                "type": "object"
+              },
+              "capsuleId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "claim",
+              "build",
+              "environment",
+              "startingState",
+              "journey",
+              "actions",
+              "artifacts",
+              "result",
+              "reproduction",
+              "capsuleId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "semantic.proof.create",
+              "args": {
+                "actions": {
+                  "$input": "actions"
+                },
+                "artifacts": {
+                  "$input": "artifacts"
+                },
+                "build": {
+                  "$input": "build"
+                },
+                "capsuleId": {
+                  "$input": "capsuleId"
+                },
+                "claim": {
+                  "$input": "claim"
+                },
+                "environment": {
+                  "$input": "environment"
+                },
+                "journey": {
+                  "$input": "journey"
+                },
+                "reproduction": {
+                  "$input": "reproduction"
+                },
+                "result": {
+                  "$input": "result"
+                },
+                "startingState": {
+                  "$input": "startingState"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-semantic-changeset-create": {
+          "goal": "Persist and observe the exact semantic.changeset.create effect",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "intended_behavior": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_modifications": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ]
+                },
+                "minItems": 1
+              },
+              "generated_artifacts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ]
+                },
+                "minItems": 1
+              },
+              "rollback_boundary": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "intended_behavior",
+              "source_modifications",
+              "generated_artifacts",
+              "rollback_boundary"
+            ]
+          },
+          "steps": [
+            {
+              "action": "semantic.changeset.create",
+              "args": {
+                "generated_artifacts": {
+                  "$input": "generated_artifacts"
+                },
+                "intended_behavior": {
+                  "$input": "intended_behavior"
+                },
+                "rollback_boundary": {
+                  "$input": "rollback_boundary"
+                },
+                "source_modifications": {
+                  "$input": "source_modifications"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-semantic-mission-create": {
+          "goal": "Persist and observe the exact semantic.mission.create effect",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "missionId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "desiredOutcome": {
+                "type": "string",
+                "minLength": 1
+              },
+              "acceptanceGates": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "conversationId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "turnId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "missionId",
+              "desiredOutcome",
+              "acceptanceGates"
+            ]
+          },
+          "steps": [
+            {
+              "action": "semantic.mission.create",
+              "args": {
+                "acceptanceGates": {
+                  "$input": "acceptanceGates"
+                },
+                "desiredOutcome": {
+                  "$input": "desiredOutcome"
+                },
+                "missionId": {
+                  "$input": "missionId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-semantic-application-register": {
+          "goal": "Persist and observe the exact semantic.application.register effect",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "applicationId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source": {
+                "type": "object"
+              },
+              "buildRecipe": {
+                "type": "object"
+              },
+              "health": {
+                "type": "object"
+              },
+              "rollback": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "applicationId",
+              "source"
+            ]
+          },
+          "steps": [
+            {
+              "action": "semantic.application.register",
+              "args": {
+                "applicationId": {
+                  "$input": "applicationId"
+                },
+                "source": {
+                  "$input": "source"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-semantic-autonomy-admit": {
+          "goal": "Persist and observe the exact semantic.autonomy.admit effect",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "policyId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1
+              },
+              "cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "evidenceCount": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "policyId",
+              "action"
+            ]
+          },
+          "steps": [
+            {
+              "action": "semantic.autonomy.admit",
+              "args": {
+                "action": {
+                  "$input": "action"
+                },
+                "policyId": {
+                  "$input": "policyId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-semantic-autonomy-revoke": {
+          "goal": "Persist and observe the exact semantic.autonomy.revoke effect",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "policyId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "policyId"
+            ]
+          },
+          "steps": [
+            {
+              "action": "semantic.autonomy.revoke",
+              "args": {
+                "policyId": {
+                  "$input": "policyId"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [],
+      "guidance": [
+        "These actions persist workspace-local semantic records. A proof capsule records evidence, not a proven claim. Autonomy admission authorizes but never executes an action; only an existing trusted persisted operator policy can admit or revoke."
+      ]
+    },
+    "tools": {
+      "title": "Hash-bound edits and cited cached research",
+      "state": {
+        "file": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "content"
+            ]
+          },
+          "tool": "workspace.read"
+        },
+        "document": {
+          "args": {
+            "document": {
+              "$input": "document"
+            },
+            "maxChars": 512
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "document": {
+                "type": "string",
+                "pattern": "^doc_[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "document"
+            ]
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "document": {
+                "type": "string",
+                "pattern": "^doc_[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "document"
+            ]
+          },
+          "tool": "web.read"
+        }
+      },
+      "actions": {
+        "workspace.read": {
+          "effect": "Read bounded character or inclusive line ranges with the original-byte hash; optional expectedSha256 refuses mixed snapshots",
+          "pre": "Selected workspace; use returned hashes/handles for later observations",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "content"
+            ]
+          },
+          "reversible": true,
+          "schema": "workspace.read",
+          "tool": "workspace.read"
+        },
+        "workspace.search": {
+          "effect": "Search confined eligible text with ripgrep, or reported Python fallback; incomplete results stay marked incomplete",
+          "pre": "Selected workspace; use returned hashes/handles for later observations",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "workspace.search",
+          "tool": "workspace.search"
+        },
+        "workspace.patch": {
+          "effect": "Apply all ranges against one hash-checked snapshot; serialize cooperative writers, atomically persist and verify bytes",
+          "pre": "Workspace write grant and stable actionId through the model gateway",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "workspace.patch",
+          "tool": "workspace.patch"
+        },
+        "web.fetch": {
+          "effect": "Fetch at most 2 MiB and write or refresh a workspace cache entry with an immutable document handle; reuse a recent URL observation unless refresh=true",
+          "pre": "Selected workspace and network fetch authority; use returned hashes/handles for later observations",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "document": {
+                "type": "string",
+                "pattern": "^doc_[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "document"
+            ]
+          },
+          "reversible": true,
+          "schema": "web.fetch",
+          "tool": "web.fetch"
+        },
+        "web.read": {
+          "effect": "Continue cached text by character offset without a network call",
+          "pre": "Selected workspace; use returned hashes/handles for later observations",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "document": {
+                "type": "string",
+                "pattern": "^doc_[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "document"
+            ]
+          },
+          "reversible": true,
+          "schema": "web.read",
+          "tool": "web.read"
+        },
+        "web.passages": {
+          "effect": "Search literal text, returning bounded quote ranges, source URLs, hashes and continuation",
+          "pre": "Selected workspace; use returned hashes/handles for later observations",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "web.passages",
+          "tool": "web.passages"
+        },
+        "web.cite": {
+          "effect": "Return an exact observed source quote; expectedText mismatch fails",
+          "pre": "Selected workspace; use returned hashes/handles for later observations",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "web.cite",
+          "tool": "web.cite"
+        },
+        "web.dedupe": {
+          "effect": "Group identical observed text while keeping every URL and content hash; no semantic deduplication",
+          "pre": "Selected workspace; use returned immutable document handles",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "groups": {
+                "type": "array"
+              },
+              "inputCount": {
+                "type": "integer"
+              },
+              "uniqueCount": {
+                "type": "integer"
+              },
+              "method": {
+                "const": "exact-observed-text-sha256"
+              }
+            },
+            "required": [
+              "groups",
+              "inputCount",
+              "uniqueCount",
+              "method"
+            ]
+          },
+          "reversible": true,
+          "schema": "web.dedupe",
+          "tool": "web.dedupe"
+        }
+      },
+      "checks": {
+        "persisted-text": {
+          "args": {
+            "maxChars": 100000,
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "schema",
+            "path": "",
+            "schema": {
+              "properties": {
+                "content": {
+                  "const": {
+                    "$input": "expectedContent"
+                  }
+                },
+                "truncated": {
+                  "const": false
+                }
+              },
+              "required": [
+                "content",
+                "truncated"
+              ],
+              "type": "object"
+            }
+          },
+          "tool": "workspace.read"
+        },
+        "cached-document": {
+          "args": {
+            "document": {
+              "$result": "fetched.document"
+            },
+            "maxChars": 512
+          },
+          "expect": {
+            "op": "eq",
+            "path": "document",
+            "value": {
+              "$result": "fetched.document"
+            }
+          },
+          "tool": "web.read"
+        }
+      },
+      "procedures": {
+        "guarded-edit": {
+          "goal": "Observe a file, approve the supplied snapshot ranges, patch and verify fresh persisted text (up to 100000 characters)",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "edits": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "end": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "expectedText": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "start",
+                    "end",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 1,
+                "maxItems": 100
+              },
+              "expectedContent": {
+                "type": "string",
+                "maxLength": 100000
+              }
+            },
+            "required": [
+              "path",
+              "edits",
+              "expectedContent"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "workspace.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "observed"
+            },
+            {
+              "judge": "review-edit"
+            },
+            {
+              "action": "workspace.patch",
+              "args": {
+                "edits": {
+                  "$input": "edits"
+                },
+                "expectedSha256": {
+                  "$result": "observed.sha256"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "persisted-text",
+              "save": "patched",
+              "when": {
+                "judge": "review-edit",
+                "option": "apply"
+              }
+            }
+          ]
+        },
+        "cited-research": {
+          "goal": "Fetch a source, verify its cached identity and find quote-backed passages",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "query": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "required": [
+              "url",
+              "query"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "web.fetch",
+              "args": {
+                "maxChars": 512,
+                "url": {
+                  "$input": "url"
+                }
+              },
+              "check": "cached-document",
+              "save": "fetched"
+            },
+            {
+              "action": "web.passages",
+              "args": {
+                "document": {
+                  "$result": "fetched.document"
+                },
+                "limit": 3,
+                "query": {
+                  "$input": "query"
+                }
+              },
+              "save": "passages"
+            },
+            {
+              "judge": "source-relevance"
+            }
+          ]
+        },
+        "verify-effect-workspace-patch": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expectedSha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "edits": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "end": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "expectedText": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "start",
+                    "end",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 1,
+                "maxItems": 100
+              }
+            },
+            "required": [
+              "path",
+              "expectedSha256",
+              "edits"
+            ]
+          },
+          "steps": [
+            {
+              "action": "workspace.patch",
+              "args": {
+                "edits": {
+                  "$input": "edits"
+                },
+                "expectedSha256": {
+                  "$input": "expectedSha256"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "fetch-owned-http-body": {
+          "goal": "Fetch the exact HTTP response and verify retained original bytes and parsed document",
+          "inputs": {
+            "properties": {
+              "maxAgeSeconds": {
+                "maximum": 86400,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxChars": {
+                "maximum": 100000,
+                "minimum": 200,
+                "type": "integer"
+              },
+              "refresh": {
+                "type": "boolean"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url",
+              "maxAgeSeconds",
+              "maxChars",
+              "refresh"
+            ],
+            "type": "object"
+          },
+          "steps": [
+            {
+              "action": "web.fetch",
+              "args": {
+                "maxAgeSeconds": {
+                  "$input": "maxAgeSeconds"
+                },
+                "maxChars": {
+                  "$input": "maxChars"
+                },
+                "refresh": {
+                  "$input": "refresh"
+                },
+                "url": {
+                  "$input": "url"
+                }
+              },
+              "save": "observed"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "review-edit": {
+          "constraints": "Ranges refer to Unicode characters in this exact snapshot. A hash conflict requires a fresh read; judge decisions grant no additional permission.",
+          "options": [
+            "apply",
+            "leave"
+          ],
+          "question": "Do the proposed character ranges match the observed file and intended edit?"
+        },
+        "source-relevance": {
+          "constraints": "Use the returned URL and quote ranges; partial responseTruncated sources are not complete documents. Cite only a nonempty returned range.",
+          "options": [
+            "use",
+            "search-more"
+          ],
+          "question": "Do these exact passages support the answer?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "File changed or range overlaps",
+          "recovery": "Read the new snapshot and recompute ranges; never reuse the old hash"
+        },
+        {
+          "failure": "Search incomplete or fallback reported",
+          "recovery": "Narrow includeGlob and inspect engine, skipped and fallbackReason"
+        },
+        {
+          "failure": "Source changed after refresh",
+          "recovery": "Old handles retain their old quotes; use the new handle for current claims"
+        }
+      ],
+      "frontier": [
+        "Arbitrary external file writers cannot participate in the cooperative edit lock",
+        "HTTP text extraction does not execute JavaScript or extract PDF bytes",
+        "MCP verification proves one validated call, not every tool or external-provider certification"
+      ],
+      "guidance": [
+        "Coordinates count Unicode characters, including original CRLF; workspace.read returns absolute offset for selected line ranges.",
+        "MCP readiness comes from existing mcp.servers/search/describe/call; configured, connected, discovered, verified, failing. Simulation never verifies.",
+        "Existing model.tools.feedback and model.tools.feedback.record use incremental SQLite aggregates; recorded success is evidence of a tool call, not task completion."
+      ]
+    }
+  }
+}

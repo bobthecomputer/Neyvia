@@ -1,0 +1,51 @@
+/* The growing tree: Neyvia's "working" animation (07 §2: agents are growth).
+   Trunk rises, branches spread, leaves pop in one by one, the tree sways in
+   the sun, then fades and grows again. Transform and opacity only, so it runs
+   on the compositor. Unscoped (.ny-tree) because the startup splash uses it
+   before any app code loads. Colours: --ny-tree-ink, --ny-tree-leaf, --ny-tree-sun. */
+
+.ny-tree { display: inline-block; flex: none; overflow: visible; vertical-align: middle; }
+.ny-tree-sun { fill: var(--nx-tree-sun); opacity: 0.85; }
+.ny-tree-ground { fill: none; stroke: var(--ny-tree-ink, currentColor); stroke-width: 1.4; stroke-linecap: round; opacity: 0.45; }
+.ny-tree-trunk { fill: var(--ny-tree-ink, currentColor); }
+.ny-tree-branch { fill: none; stroke: var(--ny-tree-ink, currentColor); stroke-width: 1.5; stroke-linecap: round; }
+.ny-tree-leaf { fill: var(--nx-tree-leaf); }
+.ny-tree-trunk, .ny-tree-branch, .ny-tree-leaf { transform-box: fill-box; }
+.ny-tree-trunk { transform-origin: 50% 100%; }
+.ny-tree-branch.is-left { transform-origin: 100% 100%; }
+.ny-tree-branch.is-right { transform-origin: 0% 100%; }
+.ny-tree-branch.is-mid { transform-origin: 50% 100%; }
+.ny-tree-leaf { transform-origin: 50% 50%; }
+.ny-tree-crown { transform-origin: 16px 28px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .ny-tree.is-growing .ny-tree-crown { animation: ny-tree-cycle var(--nx-breathe) var(--ny-tree-ease, ease-in-out) infinite; }
+  .ny-tree.is-growing .ny-tree-sun { animation: ny-tree-sun var(--nx-breathe) var(--nx-ease-loop) infinite; }
+  .ny-tree.is-growing .ny-tree-trunk { animation: ny-tree-trunk var(--nx-breathe) var(--nx-ease) infinite; }
+  .ny-tree.is-growing .ny-tree-branch.is-left,
+  .ny-tree.is-growing .ny-tree-branch.is-right { animation: ny-tree-branch var(--nx-breathe) var(--nx-ease) infinite; }
+  .ny-tree.is-growing .ny-tree-branch.is-mid { animation: ny-tree-branch-mid var(--nx-breathe) var(--nx-ease) infinite; }
+  .ny-tree.is-growing .ny-tree-leaf:nth-of-type(1) { animation: ny-tree-leaf-1 var(--nx-breathe) var(--nx-ease-loop) infinite; }
+  .ny-tree.is-growing .ny-tree-leaf:nth-of-type(2) { animation: ny-tree-leaf-2 var(--nx-breathe) var(--nx-ease-loop) infinite; }
+  .ny-tree.is-growing .ny-tree-leaf:nth-of-type(3) { animation: ny-tree-leaf-3 var(--nx-breathe) var(--nx-ease-loop) infinite; }
+  .ny-tree.is-growing .ny-tree-leaf:nth-of-type(4) { animation: ny-tree-leaf-4 var(--nx-breathe) var(--nx-ease-loop) infinite; }
+  .ny-tree.is-growing .ny-tree-leaf:nth-of-type(5) { animation: ny-tree-leaf-5 var(--nx-breathe) var(--nx-ease-loop) infinite; }
+}
+
+@keyframes ny-tree-cycle {
+  0% { opacity: 0; transform: rotate(0deg); }
+  3%, 54% { opacity: 1; transform: rotate(0deg); }
+  66% { transform: rotate(-2deg); }
+  78% { transform: rotate(1.4deg); }
+  86% { opacity: 1; transform: rotate(0deg); }
+  97%, 100% { opacity: 0; transform: rotate(0deg); }
+}
+@keyframes ny-tree-sun { 0%, 24% { opacity: 0.25; transform: translateY(1px); } 56%, 86% { opacity: 0.9; transform: none; } 100% { opacity: 0.25; transform: translateY(1px); } }
+@keyframes ny-tree-trunk { 0% { transform: scaleY(0); } 16%, 100% { transform: scaleY(1); } }
+@keyframes ny-tree-branch { 0%, 12% { transform: scale(0); } 26%, 100% { transform: scale(1); } }
+@keyframes ny-tree-branch-mid { 0%, 16% { transform: scale(0); } 30%, 100% { transform: scale(1); } }
+@keyframes ny-tree-leaf-1 { 0%, 28% { transform: scale(0); } 36% { transform: scale(1.12); } 40%, 100% { transform: scale(1); } }
+@keyframes ny-tree-leaf-2 { 0%, 31% { transform: scale(0); } 39% { transform: scale(1.12); } 43%, 100% { transform: scale(1); } }
+@keyframes ny-tree-leaf-3 { 0%, 34% { transform: scale(0); } 42% { transform: scale(1.12); } 46%, 100% { transform: scale(1); } }
+@keyframes ny-tree-leaf-4 { 0%, 37% { transform: scale(0); } 45% { transform: scale(1.12); } 49%, 100% { transform: scale(1); } }
+@keyframes ny-tree-leaf-5 { 0%, 40% { transform: scale(0); } 48% { transform: scale(1.12); } 52%, 100% { transform: scale(1); } }

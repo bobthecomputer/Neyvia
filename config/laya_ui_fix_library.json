@@ -1,0 +1,22 @@
+{
+  "schema": "neyvia.laya-ui-fix-library.v1",
+  "note": "Recorded source patches LAYA may select for a UI predicate. LAYA does not author these; improve() applies one to a source tree, re-renders, and keeps it only when findings strictly shrink with no guard regression.",
+  "fixes": [
+    {
+      "id": "pdf-module-worker-fallback",
+      "action": "ui.patch.pdf-module-worker-fallback",
+      "predicates": ["blank-render", "encoded-path"],
+      "states": ["pdf"],
+      "patch": "config/laya-ui-fixes/pdf-module-worker-fallback.patch",
+      "origin": {"commit": "12f0c69e5", "subject": "PDF: open and draw documents in engines without module workers, name files plainly", "scope": "web/src only"}
+    },
+    {
+      "id": "pdf-plain-skeleton",
+      "action": "ui.patch.pdf-plain-skeleton",
+      "predicates": ["blank-render"],
+      "states": ["pdf"],
+      "patch": "config/laya-ui-fixes/pdf-plain-skeleton.patch",
+      "origin": {"commit": "12f0c69e5", "subject": "Only the loading-sheet styling from the same commit: a cosmetic candidate that does not make the document load", "scope": "web/src/neyvia/next/nxPdf.css"}
+    }
+  ]
+}

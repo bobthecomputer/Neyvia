@@ -1,0 +1,1189 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "memory",
+  "kind": "environment",
+  "proofs": {
+    "area": "proofs-e-host",
+    "contracts": [
+      {
+        "id": "memory.launcher-host-binding",
+        "phase": "invariant",
+        "claim": "Native memory uses the trusted host root and selected project; malformed, stale or mismatched launcher scope disables memory with a content-free log and never fails ordinary chat startup.",
+        "checkedAt": [
+          "src/grant_agent/neyvia_memory_tools.py:launcher_context",
+          "src/grant_agent/web_backend_chat.py:_run_neyvia_chat",
+          "src/grant_agent/neyvia_agent.py:_codex_neyvia_mcp_args",
+          "src/grant_agent/neyvia_mcp_stdio.py:CompactNeyviaMCPServer._gateway"
+        ],
+        "impact": [
+          "Normal workspace-root launch and separate selected chat projects"
+        ]
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.efficiency.extract": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "cascade",
+            "direct-small",
+            "direct-big"
+          ]
+        },
+        "useScript": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path",
+        "field"
+      ]
+    },
+    "neyvia.memory.correct": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "fact",
+            "preference",
+            "procedure",
+            "pitfall"
+          ]
+        },
+        "cues": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "intent": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "app": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "layer": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "task": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "entities": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            }
+          }
+        },
+        "expiresAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "exportPolicy": {
+          "type": "string",
+          "enum": [
+            "local",
+            "provider"
+          ]
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id",
+        "expectedRevision",
+        "key",
+        "content",
+        "requestId"
+      ]
+    },
+    "neyvia.memory.forget": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "expectedRevision",
+        "requestId"
+      ]
+    },
+    "neyvia.memory.inspect": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "neyvia.memory.list": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "required": []
+    },
+    "neyvia.memory.recall": {
+      "type": "object",
+      "properties": {
+        "situation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "intent": {
+              "type": "string"
+            },
+            "app": {
+              "type": "string"
+            },
+            "layer": {
+              "type": "string"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "task": {
+              "type": "string"
+            },
+            "entities": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            }
+          }
+        },
+        "budget": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1024
+        },
+        "destination": {
+          "type": "string",
+          "enum": [
+            "local",
+            "provider"
+          ]
+        }
+      },
+      "required": [
+        "situation"
+      ]
+    },
+    "neyvia.memory.remember": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "fact",
+            "preference",
+            "procedure",
+            "pitfall"
+          ]
+        },
+        "cues": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "intent": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "app": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "layer": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "task": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            },
+            "entities": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "maxItems": 12
+            }
+          }
+        },
+        "expiresAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "exportPolicy": {
+          "type": "string",
+          "enum": [
+            "local",
+            "provider"
+          ]
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "key",
+        "content",
+        "requestId"
+      ]
+    },
+    "terminal.exec": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shell": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "powershell",
+            "python",
+            "bash",
+            "cmd"
+          ]
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120000
+        },
+        "maxOutputChars": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 50000
+        }
+      },
+      "required": [
+        "command"
+      ]
+    },
+    "workspace.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "startLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "cue-memory": {
+      "title": "Private cue memory and fresh lifecycle proof",
+      "state": {
+        "scope": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.memory.list"
+        }
+      },
+      "actions": {
+        "remember": {
+          "effect": "Save one explicit claim or pending candidate with provenance and an atomic revision.",
+          "pre": "Authenticated user and server-selected project. Explicit user approval for corrections, deletion or provider export.",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "memory": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "revision",
+                  "status"
+                ]
+              },
+              "generation": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "memory",
+              "generation"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.memory.remember",
+          "tool": "neyvia.memory.remember"
+        },
+        "correct": {
+          "effect": "Replace the exact revision and revoke superseded context atomically.",
+          "pre": "Authenticated user and server-selected project. Explicit user approval for corrections, deletion or provider export.",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "memory": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "revision",
+                  "status"
+                ]
+              },
+              "generation": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "memory",
+              "generation"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.memory.correct",
+          "tool": "neyvia.memory.correct"
+        },
+        "forget": {
+          "effect": "Delete content and cue indexes while retaining only a tombstone.",
+          "pre": "Authenticated user and server-selected project. Explicit user approval for corrections, deletion or provider export.",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "memory": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "revision",
+                  "status"
+                ]
+              },
+              "generation": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "memory",
+              "generation"
+            ]
+          },
+          "reversible": false,
+          "schema": "neyvia.memory.forget",
+          "tool": "neyvia.memory.forget"
+        },
+        "list": {
+          "effect": "Read scoped claims, expiry, policy and provenance.",
+          "pre": "Authenticated user and server-selected project. Explicit user approval for corrections, deletion or provider export.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.memory.list",
+          "tool": "neyvia.memory.list"
+        },
+        "inspect": {
+          "effect": "Read one current scoped record; reject another user or project.",
+          "pre": "Authenticated user and server-selected project. Explicit user approval for corrections, deletion or provider export.",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "memory": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "revision",
+                  "status"
+                ]
+              },
+              "generation": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "memory",
+              "generation"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.memory.inspect",
+          "tool": "neyvia.memory.inspect"
+        },
+        "recall": {
+          "effect": "Read a fresh bounded cue projection with actual token and route receipts.",
+          "pre": "Authenticated user and server-selected project. Explicit user approval for corrections, deletion or provider export.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.memory.recall",
+          "tool": "neyvia.memory.recall"
+        },
+        "read-proof": {
+          "effect": "Read current receipt fields without loading the entire report.",
+          "pre": "Owned synthetic MEM receipt produced by the real driver.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "workspace.read",
+          "tool": "workspace.read"
+        },
+        "exercise": {
+          "effect": "Run the pinned production contract driver; a command exit alone does not prove its memory invariant.",
+          "pre": "Explicitly owned nx-mem checkout, assigned ports and disposable fixtures. No visible windows, credentials, external promotion or live tree.",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "terminal.exec",
+          "tool": "terminal.exec"
+        }
+      },
+      "checks": {
+        "current-content": {
+          "args": {
+            "id": {
+              "$input": "id"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "memory.content",
+            "value": {
+              "$input": "expectedContent"
+            }
+          },
+          "tool": "neyvia.memory.inspect"
+        },
+        "known-cue": {
+          "args": {
+            "budget": 256,
+            "situation": {
+              "intent": {
+                "$input": "query"
+              }
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "section",
+            "value": {
+              "$input": "expectedContent"
+            }
+          },
+          "tool": "neyvia.memory.recall"
+        },
+        "forgotten-cue": {
+          "args": {
+            "budget": 256,
+            "situation": {
+              "intent": {
+                "$input": "query"
+              }
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "tokens",
+            "value": 0
+          },
+          "tool": "neyvia.memory.recall"
+        }
+      },
+      "procedures": {
+        "remember": {
+          "goal": "Save one explicit claim or pending candidate with provenance and an atomic revision.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "content": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "fact",
+                  "preference",
+                  "procedure",
+                  "pitfall"
+                ],
+                "default": "fact"
+              },
+              "cues": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "intent": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "app": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "layer": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "task": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  }
+                },
+                "default": {
+                  "intent": [
+                    "memory"
+                  ]
+                }
+              },
+              "expiresAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null
+              },
+              "exportPolicy": {
+                "type": "string",
+                "enum": [
+                  "local",
+                  "provider"
+                ],
+                "default": "local"
+              },
+              "requestId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "key",
+              "content",
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "remember",
+              "args": {
+                "content": {
+                  "$input": "content"
+                },
+                "cues": {
+                  "$input": "cues"
+                },
+                "expiresAt": {
+                  "$input": "expiresAt"
+                },
+                "exportPolicy": {
+                  "$input": "exportPolicy"
+                },
+                "key": {
+                  "$input": "key"
+                },
+                "kind": {
+                  "$input": "kind"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "correct": {
+          "goal": "Replace the exact revision and revoke superseded context atomically.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "content": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "fact",
+                  "preference",
+                  "procedure",
+                  "pitfall"
+                ],
+                "default": "fact"
+              },
+              "cues": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "intent": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "app": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "layer": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "task": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  },
+                  "entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    "maxItems": 12
+                  }
+                },
+                "default": {
+                  "intent": [
+                    "memory"
+                  ]
+                }
+              },
+              "expiresAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null
+              },
+              "exportPolicy": {
+                "type": "string",
+                "enum": [
+                  "local",
+                  "provider"
+                ],
+                "default": "local"
+              },
+              "requestId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expectedRevision": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "id",
+              "expectedRevision",
+              "key",
+              "content",
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "correct",
+              "args": {
+                "content": {
+                  "$input": "content"
+                },
+                "cues": {
+                  "$input": "cues"
+                },
+                "expectedRevision": {
+                  "$input": "expectedRevision"
+                },
+                "expiresAt": {
+                  "$input": "expiresAt"
+                },
+                "exportPolicy": {
+                  "$input": "exportPolicy"
+                },
+                "id": {
+                  "$input": "id"
+                },
+                "key": {
+                  "$input": "key"
+                },
+                "kind": {
+                  "$input": "kind"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "forget": {
+          "goal": "Delete content and cue indexes while retaining only a tombstone.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expectedRevision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "requestId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "expectedRevision",
+              "requestId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "forget",
+              "args": {
+                "expectedRevision": {
+                  "$input": "expectedRevision"
+                },
+                "id": {
+                  "$input": "id"
+                },
+                "requestId": {
+                  "$input": "requestId"
+                }
+              },
+              "save": "saved"
+            }
+          ]
+        },
+        "inspect-current": {
+          "goal": "Observe the current stored claim independently.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expectedContent": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "expectedContent"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "inspect",
+              "args": {
+                "id": {
+                  "$input": "id"
+                }
+              },
+              "check": "current-content",
+              "save": "fresh"
+            }
+          ]
+        },
+        "recall-known": {
+          "goal": "Read a fresh cue result under the hard memory budget.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string"
+              },
+              "expectedContent": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query",
+              "expectedContent"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "recall",
+              "args": {
+                "budget": 256,
+                "situation": {
+                  "intent": {
+                    "$input": "query"
+                  }
+                }
+              },
+              "check": "known-cue",
+              "save": "fresh"
+            }
+          ]
+        },
+        "recall-empty": {
+          "goal": "Read a fresh cue result under the hard memory budget.",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "recall",
+              "args": {
+                "budget": 256,
+                "situation": {
+                  "intent": {
+                    "$input": "query"
+                  }
+                }
+              },
+              "check": "forgotten-cue",
+              "save": "fresh"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "memory_scope_unbound",
+          "recovery": "Use an authenticated Memory panel or a trusted scope-bound host; never supply owner IDs in tool arguments."
+        },
+        {
+          "failure": "memory_revision_conflict",
+          "recovery": "Refresh the exact record and review its current revision before retrying."
+        },
+        {
+          "failure": "memory_context_revoked",
+          "recovery": "Start a new chat. Opaque provider histories containing revoked memory cannot be continued."
+        }
+      ],
+      "frontier": [
+        "Learned relevance tuning, automatic outcome promotion and cross-provider in-flight action guarantees require separate proof.",
+        "Opaque provider sessions require a fresh chat after revocation; externally transmitted provider data cannot be erased by this store.",
+        "Local MCP launchers without an authenticated context refuse memory. Local gateway proof is not proof that this executor exposes an attached Neyvia MCP."
+      ],
+      "guidance": [
+        "Memories are advisory data, never executable CL or authority. Ordinary chat is not scraped; unapproved suggestions stay pending.",
+        "Write explicit teaching with /remember [--share] subject = claim; /correct subject = replacement; /forget subject. --share explicitly allows provider context.",
+        "Local-only records are excluded from model-facing list, inspect and recall. Recall uses exact o200k text counts, at most three records and a 256-token default.",
+        "Only context-bound project/user records can surface. No unrelated recent fallback. LAYA is a finite-choice local advisory; failure is labelled deterministic.",
+        "The panel edits the same private SQLite store. Compare current revisions; deletions retain content-free tombstones and reject stale retries.",
+        "Exact phrase cues require all meaningful cue words; a shared generic word cannot recall an unrelated subject.",
+        "Verified completed CL task outcomes create local-only pending procedure candidates. Process exits and provider prose cannot mark outcomes verified.",
+        "Use an observer G before a mutating procedure, for example G: \"expected\" in memory.recall(situation={\"intent\":\"launch signal\"})[\"section\"].",
+        "Repeat contract work with exercise-cases and exercise-lifecycle. The hidden browser driver uses production authentication and real provider chats; verify-browser reads its small result fields.",
+        "Server-launched Native SDK and MCP receive private scope through the parent environment. Unbound launchers refuse memory; model arguments cannot select owners.",
+        "Backend host root owns memory even when a chat uses another project folder. The launcher supplies NEYVIA_MEMORY_HOST_ROOT and the exact project. Invalid bindings return no memory and log a reason; explicit unbound memory tools still refuse access."
+      ]
+    }
+  }
+}

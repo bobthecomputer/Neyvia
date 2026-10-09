@@ -1,0 +1,25 @@
+{
+  "schema": "neyvia.proofs.outcomes.v1",
+  "area": "pack-generator-outcomes",
+  "module": "grant_agent.proofs_pack_generator",
+  "self_check": "self_check",
+  "manuals": ["slim-installer"],
+  "contracts": [
+    {
+      "id": "p22.pack-generator.local-components",
+      "phase": "post",
+      "claim": "The actual local pack generator builds each declared local-component package in owned scratch; opening each descriptor, manifest, and entrypoint source confirms package meaning, source size/hash bindings, and portable unique paths; an out-of-scope source path is refused without repository writes.",
+      "checkedAt": [
+        "scripts/package_onboarding_packs.py:build",
+        "scripts/package_onboarding_packs.py:import_closure",
+        "grant_agent.proofs_pack_generator.check_local_build",
+        "grant_agent.proofs_pack_generator.self_check"
+      ],
+      "impact": [
+        "local add-on package contents",
+        "portable manifest paths",
+        "generator path containment"
+      ]
+    }
+  ]
+}

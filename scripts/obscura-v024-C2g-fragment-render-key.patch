@@ -1,0 +1,19 @@
+diff --git a/crates/obscura-js/src/runtime.rs b/crates/obscura-js/src/runtime.rs
+index 1a1a8957..57353831 100644
+--- a/crates/obscura-js/src/runtime.rs
++++ b/crates/obscura-js/src/runtime.rs
+@@ -1665,7 +1665,13 @@ impl ObscuraJsRuntime {
+     ) -> Option<Vec<u8>> {
+         let mut state = self.state.borrow_mut();
+         let effective_base = document_base_url(&state);
+-        if viewport != state.viewport || base_url != effective_base.as_deref() {
++        // A same-document fragment changes Page's visible URL, but cannot
++        // change relative resource resolution. Preserve the prepared CSSOM
++        // media/font state instead of falling back to a light raw-DOM paint.
++        fn resource_base(value: Option<&str>) -> Option<&str> {
++            value.map(|url| url.split('#').next().unwrap_or(url))
++        }
++        if viewport != state.viewport || resource_base(base_url) != resource_base(effective_base.as_deref()) {
+             return None;
+         }
+         with_sync_render_loading_disabled(&mut state, |state| {

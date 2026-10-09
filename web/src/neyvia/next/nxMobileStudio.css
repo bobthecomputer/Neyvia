@@ -1,0 +1,220 @@
+/* Mobile Studio (Studio suite). The phone is hardware: it keeps its own dark
+   body in every theme; everything around it uses the shell's tokens. */
+
+.nx .nx-ms { flex: 1 1 auto; min-height: 0; display: flex; flex-wrap: wrap; align-content: flex-start; overflow: auto; container-type: inline-size; }
+.nx .nx-ms-main { flex: 1 1 360px; min-width: 0; height: 100%; display: flex; flex-direction: column; }
+.nx .nx-ms-bar {
+  flex: none; display: flex; align-items: center; gap: var(--nx-space-4); min-height: 40px; padding: var(--nx-space-4) var(--nx-space-10);
+  border-bottom: 1px solid var(--nx-line); color: var(--nx-muted);
+}
+.nx .nx-ms-select {
+  height: 28px; max-width: 100%; padding: 0 var(--nx-space-24) 0 var(--nx-space-10); border-radius: var(--nx-r-sm); color: var(--nx-text);
+  font: inherit; font-size: var(--nx-fs); background: color-mix(in srgb, var(--nx-text) 5%, transparent);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); border: 0; appearance: none; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--nx-muted) 50%), linear-gradient(135deg, var(--nx-muted) 50%, transparent 50%);
+  background-position: calc(100% - 13px) 12px, calc(100% - 9px) 12px; background-size: 4px 4px; background-repeat: no-repeat;
+}
+.nx .nx-ms-select:focus-visible { outline: none; box-shadow: var(--nx-focus); }
+.nx .nx-ms-select option, .nx .nx-ms-select optgroup { background: var(--nx-raised); color: var(--nx-text); }
+.nx .nx-ms-link { display: inline-flex; align-items: center; gap: var(--nx-space-5); font-size: var(--nx-fs-sm); color: var(--nx-accent-text, var(--nx-accent)); text-decoration: none; padding: 0 var(--nx-space-6); }
+.nx .nx-ms-link:hover { text-decoration: underline; }
+
+.nx .nx-ms-mac-title { position: absolute; inset: 0 0 auto; height: 30px; display: flex; align-items: center; gap: var(--nx-space-12); padding: 0 var(--nx-space-12); background: var(--nx-panel); color: var(--nx-text); font-size: 12px; }
+.nx .nx-ms-mac-title span { color: var(--nx-accent); letter-spacing: 3px; }
+.nx .nx-ms-keyboard { position: absolute; inset: auto 0 0; height: 244px; padding: var(--nx-space-12); background: var(--nx-panel); color: var(--nx-text); display: flex; flex-direction: column; justify-content: space-around; gap: var(--nx-space-4); }
+.nx .nx-ms-keyboard > div { display: flex; justify-content: center; gap: var(--nx-space-4); }
+.nx .nx-ms-keyboard button { flex: 1; min-height: 34px; border: 0; border-radius: 5px; background: var(--nx-bg); color: var(--nx-text); font: inherit; font-size: 22px; }
+.nx .nx-ms-keyboard small { text-align: center; color: var(--nx-muted); }
+.nx .nx-ms-stage {
+  flex: 1 1 auto; min-height: 0; position: relative; display: grid; place-items: center; padding: var(--nx-space-12) var(--nx-space-16); overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--nx-accent) 7%, transparent), transparent 60%), color-mix(in srgb, var(--nx-bg) 86%, var(--nx-bg));
+}
+.nx .nx-ms-caption {
+  flex: none; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--nx-space-4) var(--nx-space-14); padding: var(--nx-space-6) var(--nx-space-12) var(--nx-space-8);
+  font-size: var(--nx-fs-xs); color: var(--nx-faint); font-variant-numeric: tabular-nums;
+}
+.nx .nx-ms-caption span { display: inline-flex; align-items: center; gap: var(--nx-space-5); }
+.nx .nx-ms-apperror {
+  flex: none; display: flex; align-items: center; gap: var(--nx-space-6); margin: 0 var(--nx-space-12) var(--nx-space-10); padding: var(--nx-space-6) var(--nx-space-10); border-radius: var(--nx-r-sm);
+  font-size: var(--nx-fs-sm); color: var(--nx-text); background: var(--nx-red-soft); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-red) 40%, transparent);
+}
+.nx .nx-ms-apperror .nx-icon { color: var(--nx-red); flex: none; }
+.nx .nx-ms-apperror span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-ms-apperror code { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ms-nopreview {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 240px; display: grid; gap: var(--nx-space-10); justify-items: center;
+  text-align: center; font-size: var(--nx-fs-sm); line-height: 1.5; color: var(--nx-device-text); z-index: 4;
+}
+
+/* --- the phone ------------------------------------------------------------ */
+.nx .nx-ms-phone-box { position: relative; flex: none; transition: width var(--nx-settle) var(--nx-spring-settle), height var(--nx-settle) var(--nx-spring-settle); }
+.nx .nx-ms-phone {
+  position: absolute; top: 0; left: 0; transform-origin: 0 0; box-sizing: border-box;
+  background: var(--nx-device-metal);
+  box-shadow: var(--nx-device-shadow);
+}
+.nx .nx-ms-phone.is-android { background: var(--nx-device-metal-android); }
+.nx .nx-ms-screen { position: relative; overflow: hidden; isolation: isolate; transition: background var(--nx-med); }
+.nx .nx-ms-screen iframe { position: absolute; border: 0; background: transparent; display: block; }
+.nx .nx-ms-screen iframe.nx-ms-frame { opacity: 0; transition: opacity var(--nx-settle) var(--nx-ease); }
+.nx .nx-ms-screen iframe.nx-ms-frame.is-ready { opacity: 1; }
+.nx .nx-ms-screen-content { position: absolute; overflow: hidden; display: flex; flex-direction: column; }
+
+.nx .nx-ms-statusbar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--nx-space-20); pointer-events: none; font-variant-numeric: tabular-nums;
+}
+.nx .nx-ms-statusbar.is-ios { font: 600 var(--nx-fs-lg)/1 -apple-system, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", sans-serif; letter-spacing: -0.01em; padding: 0 var(--nx-space-28); }
+.nx .nx-ms-statusbar.is-ios.has-island { display: grid; grid-template-columns: 1fr 126px 1fr; padding: 0 var(--nx-space-8); }
+.nx .nx-ms-statusbar.is-ios.has-island .nx-ms-time { justify-self: center; padding-left: var(--nx-space-10); }
+.nx .nx-ms-statusbar.is-ios.has-island .nx-ms-sysicons { grid-column: 3; justify-self: center; }
+.nx .nx-ms-statusbar.is-android { font: 500 var(--nx-fs-md)/1 Roboto, "Segoe UI Variable Text", "Segoe UI", sans-serif; padding: 0 var(--nx-space-18); }
+.nx .nx-ms-sysicons { display: inline-flex; align-items: center; gap: var(--nx-space-5); }
+.nx .nx-ms-statusbar.is-android .nx-ms-sysicons { gap: var(--nx-space-4); }
+
+.nx .nx-ms-island {
+  position: absolute; z-index: 3; top: 11px; left: 50%; width: 126px; height: 37px; transform: translateX(-50%);
+  border-radius: var(--nx-r-xl); background: var(--nx-device-black); pointer-events: none;
+}
+.nx .nx-ms-phone[data-orientation="landscape"] .nx-ms-island { top: 50%; left: 11px; width: 37px; height: 126px; transform: translateY(-50%); }
+.nx .nx-ms-punch {
+  position: absolute; z-index: 3; top: 12px; left: 50%; width: 22px; height: 22px; transform: translateX(-50%);
+  border-radius: 50%; background: var(--nx-device-camera); pointer-events: none;
+}
+.nx .nx-ms-phone[data-orientation="landscape"] .nx-ms-punch { top: 50%; left: 12px; transform: translateY(-50%); }
+.nx .nx-ms-homebar { position: absolute; z-index: 3; bottom: 8px; left: 50%; transform: translateX(-50%); pointer-events: none; border-radius: var(--nx-r-xxs); }
+.nx .nx-ms-homebar.is-indicator { width: 134px; height: 5px; }
+.nx .nx-ms-homebar.is-gesture { width: 108px; height: 4px; bottom: 9px; }
+.nx .nx-ms-phone[data-orientation="landscape"] .nx-ms-homebar.is-indicator { width: 210px; }
+.nx .nx-ms-homebutton {
+  position: absolute; left: 50%; bottom: 8px; width: 56px; height: 56px; transform: translateX(-50%); border-radius: 50%;
+  box-shadow: var(--nx-device-key-shadow); background: var(--nx-device-key);
+}
+.nx .nx-ms-earpiece { position: absolute; left: 50%; top: 33px; width: 64px; height: 6px; transform: translateX(-50%); border-radius: var(--nx-r-xxs); background: var(--nx-device-earpiece); box-shadow: var(--nx-device-earpiece-shadow); }
+.nx .nx-ms-phone.is-se[data-orientation="landscape"] .nx-ms-homebutton { left: auto; right: 8px; top: 50%; bottom: auto; transform: translateY(-50%); }
+.nx .nx-ms-phone.is-se[data-orientation="landscape"] .nx-ms-earpiece { left: 33px; top: 50%; width: 6px; height: 64px; transform: translateY(-50%); }
+
+/* --- side panel ------------------------------------------------------------ */
+.nx .nx-ms-side {
+  flex: none; width: 312px; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: var(--nx-space-10); padding: var(--nx-space-12);
+  border-left: 1px solid var(--nx-line); background: var(--nx-panel);
+}
+.nx .nx-ms-card {
+  display: grid; gap: var(--nx-space-8); padding: var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-raised); box-shadow: var(--nx-card-shadow);
+  font-size: var(--nx-fs-sm); color: var(--nx-text-2);
+}
+.nx .nx-ms-card > header { display: flex; align-items: center; gap: var(--nx-space-7); min-width: 0; }
+.nx .nx-ms-card > header strong { color: var(--nx-text); font-size: var(--nx-fs-md); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-ms-card > header span { margin-left: auto; flex: none; font-size: var(--nx-fs-xs); color: var(--nx-faint); }
+.nx .nx-ms-card > header .nx-icon { color: var(--nx-muted); flex: none; }
+.nx .nx-ms-card .nx-btn { justify-self: start; }
+.nx .nx-ms-card.is-app .nx-folder-trigger { width: 100%; }
+.nx .nx-ms-copy { margin: 0; line-height: 1.5; color: var(--nx-muted); }
+.nx .nx-ms-copy code, .nx .nx-ms-path code { font-family: var(--nx-mono); font-size: var(--nx-fs-xs); color: var(--nx-text-2); overflow-wrap: anywhere; }
+.nx .nx-ms-note { display: flex; gap: var(--nx-space-6); margin: 0; line-height: 1.45; color: var(--nx-text-2); }
+.nx .nx-ms-note .nx-icon { flex: none; margin-top: var(--nx-space-2); color: var(--nx-state-caution); }
+.nx .nx-ms-row { display: flex; align-items: center; gap: var(--nx-space-6); min-width: 0; }
+.nx .nx-ms-row .nx-ms-select { flex: 1 1 auto; min-width: 0; }
+
+.nx .nx-ms-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--nx-space-3); }
+.nx .nx-ms-check { display: flex; align-items: center; gap: var(--nx-space-7); min-width: 0; }
+.nx .nx-ms-check .nx-icon { flex: none; color: var(--nx-state-caution); }
+.nx .nx-ms-check.is-ok .nx-icon { color: var(--nx-state-ok); }
+.nx .nx-ms-check em { margin-left: auto; font-style: normal; color: var(--nx-faint); font-size: var(--nx-fs-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.nx .nx-ms-missing { display: grid; gap: var(--nx-space-4); }
+.nx .nx-ms-missing-title { margin: var(--nx-space-2) 0 0; font-weight: 600; color: var(--nx-text-2); }
+.nx .nx-ms-missing ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--nx-space-4); }
+.nx .nx-ms-missing li {
+  display: grid; grid-template-columns: 1fr auto; gap: var(--nx-space-1) var(--nx-space-8); padding: var(--nx-space-6) var(--nx-space-8); border-radius: var(--nx-r-sm);
+  background: color-mix(in srgb, var(--nx-text) 4%, transparent);
+}
+.nx .nx-ms-missing li em { font-style: normal; color: var(--nx-faint); }
+.nx .nx-ms-missing li strong { font-variant-numeric: tabular-nums; color: var(--nx-text); font-weight: 600; }
+.nx .nx-ms-missing li code { grid-column: 1 / -1; font-family: var(--nx-mono); font-size: var(--nx-fs-2xs); color: var(--nx-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.nx .nx-ms-confirm { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-6); padding: var(--nx-space-8); border-radius: var(--nx-r-sm); background: var(--nx-caution-soft); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-caution-line); color: var(--nx-text); line-height: 1.45; }
+.nx .nx-ms-confirm span { flex: 1 1 100%; }
+.nx .nx-ms-job { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nx-space-6); color: var(--nx-text-2); }
+.nx .nx-ms-job em { margin-left: auto; font-style: normal; color: var(--nx-faint); font-size: var(--nx-fs-xs); }
+.nx .nx-ms-job pre {
+  flex: 1 1 100%; max-height: 120px; overflow: auto; margin: var(--nx-space-2) 0 0; padding: var(--nx-space-6) var(--nx-space-8); border-radius: var(--nx-r-xs); white-space: pre-wrap;
+  font-family: var(--nx-mono); font-size: var(--nx-fs-2xs); line-height: 1.45; color: var(--nx-text-2); background: var(--nx-red-soft);
+}
+.nx .nx-ms-artifact { display: grid; gap: var(--nx-space-2); }
+.nx .nx-ms-artifact > span { color: var(--nx-faint); font-size: var(--nx-fs-xs); }
+.nx .nx-ms-path { display: flex; align-items: center; gap: var(--nx-space-4); min-width: 0; }
+.nx .nx-ms-path code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-ms-disclosure { display: inline-flex; align-items: center; gap: var(--nx-space-5); justify-self: start; padding: var(--nx-space-2) 0; color: var(--nx-accent-text, var(--nx-accent)); font-size: var(--nx-fs-sm); }
+.nx .nx-ms-disclosure[aria-expanded="true"] .nx-icon { transform: rotate(180deg); }
+.nx .nx-ms-steps { margin: 0; padding-left: var(--nx-space-18); display: grid; gap: var(--nx-space-6); line-height: 1.5; color: var(--nx-text-2); }
+
+/* --- start ----------------------------------------------------------------- */
+.nx .nx-ms-start {
+  flex: 1; display: grid; grid-template-columns: auto minmax(0, 420px); justify-content: center; align-items: center; gap: var(--nx-space-32); padding: var(--nx-space-24) var(--nx-space-16); overflow: auto;
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--nx-text) 9%, transparent) 1px, transparent 1.4px) 0 0 / 18px 18px,
+    radial-gradient(120% 70% at 30% 0%, color-mix(in srgb, var(--nx-accent) 8%, transparent), transparent 62%), var(--nx-bg);
+}
+.nx .nx-ms-start-phone { margin: 0; display: grid; justify-items: center; gap: var(--nx-space-10); }
+.nx .nx-ms-start-phone figcaption { font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ms-start-phone .nx-ms-screen-content .af-sketch { height: 100%; }
+@container (max-width: 720px) { .nx .nx-ms-start { grid-template-columns: minmax(0, 420px); } .nx .nx-ms-start-phone { display: none; } }
+.nx .nx-ms-start-card {
+  width: min(440px, 100%); display: grid; gap: var(--nx-space-12); justify-items: start; padding: var(--nx-space-20); border-radius: var(--nx-r-lg);
+  background: var(--nx-raised); box-shadow: var(--nx-card-shadow); color: var(--nx-text-2);
+}
+.nx .nx-ms-start-card > .nx-icon { color: var(--nx-accent); }
+.nx .nx-ms-start-card > strong { font-size: var(--nx-fs-xl); color: var(--nx-text); font-family: var(--nx-display); font-weight: var(--nx-display-weight); }
+.nx .nx-ms-start-card > p { margin: 0; line-height: 1.55; color: var(--nx-muted); }
+.nx .nx-ms-start-card > p.nx-ms-what { padding: var(--nx-space-8) var(--nx-space-10); border-radius: var(--nx-r-sm); background: color-mix(in srgb, var(--nx-text) 4%, transparent); font-size: var(--nx-fs-sm); color: var(--nx-text-2); }
+.nx .nx-ms-start-row, .nx .nx-ms-start-create { width: 100%; display: grid; gap: var(--nx-space-8); }
+.nx .nx-ms-start-create label { display: grid; gap: var(--nx-space-4); font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx .nx-ms-start-create input {
+  height: 32px; padding: 0 var(--nx-space-10); border-radius: var(--nx-r-sm); color: var(--nx-text); font: inherit; font-size: var(--nx-fs);
+  background: color-mix(in srgb, var(--nx-text) 5%, transparent); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); border: 0;
+}
+.nx .nx-ms-start-create input:focus-visible { outline: none; box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-accent-hi); }
+.nx .nx-ms-start-where { font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+.nx .nx-ms-start .nx-folder-trigger { width: 100%; }
+.nx .nx-ms-or { justify-self: center; font-size: var(--nx-fs-xs); color: var(--nx-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+.nx .nx-ms-error { margin: 0; color: var(--nx-red); font-size: var(--nx-fs-sm); }
+
+@container (max-width: 760px) {
+  .nx .nx-ms-main { flex: 0 0 100%; height: 560px; }
+  .nx .nx-ms-side { width: 100%; border-left: 0; border-top: 1px solid var(--nx-line); overflow: visible; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx .nx-ms-phone-box { transition: none; }
+}
+.nx .nx-ms-save-in { display: grid; gap: var(--nx-space-4); font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+
+/* ---------- Roomy: full-screen Mobile Studio reads at 14px with a wider side panel ---------- */
+@container (min-width: 1300px) {
+  .nx .nx-ms-bar { min-height: 52px; padding: var(--nx-space-8) var(--nx-space-16); gap: var(--nx-space-8); font-size: var(--nx-fs-md); }
+  .nx .nx-ms-select { height: 34px; font-size: var(--nx-fs-md); }
+  .nx .nx-ms-link { font-size: var(--nx-fs-md); }
+  .nx .nx-ms-caption { font-size: var(--nx-fs-sm); color: var(--nx-muted); padding: var(--nx-space-10) var(--nx-space-16) var(--nx-space-12); }
+  .nx .nx-ms-side { width: 420px; gap: var(--nx-space-14); padding: var(--nx-space-16); }
+  .nx .nx-ms-card { gap: var(--nx-space-10); padding: var(--nx-space-16); border-radius: var(--nx-r-lg); font-size: var(--nx-fs-md); }
+  .nx .nx-ms-card > header strong { font-family: var(--nx-display); font-size: var(--nx-fs-lg); font-weight: var(--nx-display-weight); }
+  .nx .nx-ms-card > header span { font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+  .nx .nx-ms-copy code, .nx .nx-ms-path code { font-size: var(--nx-fs-sm); }
+  .nx .nx-ms-check em, .nx .nx-ms-job em, .nx .nx-ms-artifact > span, .nx .nx-ms-missing li em { font-size: var(--nx-fs-sm); color: var(--nx-muted); }
+  .nx .nx-ms-missing li code { font-size: var(--nx-fs-xs); }
+  .nx .nx-ms-disclosure { font-size: var(--nx-fs-md); }
+  .nx .nx-ms-start { grid-template-columns: auto minmax(0, 560px); gap: var(--nx-space-56, 56px); }
+  .nx .nx-ms-start-card { width: min(560px, 100%); padding: var(--nx-space-28); gap: var(--nx-space-16); }
+  .nx .nx-ms-start-card > strong { font-size: var(--nx-fs-title); }
+  .nx .nx-ms-start-card > p { font-size: var(--nx-fs-md); }
+  .nx .nx-ms-start-card > p.nx-ms-what { font-size: var(--nx-fs-md); padding: var(--nx-space-10) var(--nx-space-14); }
+  .nx .nx-ms-start-create label, .nx .nx-ms-start-where, .nx .nx-ms-save-in { font-size: var(--nx-fs-md); }
+  .nx .nx-ms-start-create input { height: 40px; font-size: var(--nx-fs-md); }
+  .nx .nx-ms-start-phone figcaption { font-size: var(--nx-fs-sm); }
+}
+/* The start screen fills the pane instead of hugging its top edge. */
+.nx .nx-ms:has(> .nx-ms-start) { align-content: stretch; }
+.nx .nx-ms > .nx-ms-start { flex: 1 1 100%; min-height: 100%; align-self: stretch; }
+@container (min-width: 1300px) {
+  .nx .nx-ms-start-phone .nx-ms-phone-box { transform-origin: top center; }
+}

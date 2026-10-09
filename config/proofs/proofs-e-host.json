@@ -1,0 +1,132 @@
+{
+  "schema": "neyvia.proofs.host.v1",
+  "area": "proofs-e-host",
+  "adapter": "grant_agent.proofs_e_host",
+  "contracts": [
+    {
+      "id": "proofs-e-host.writer",
+      "phase": "invariant",
+      "claim": "Writer results follow observed OS lock ownership and rollout home, including aged, abandoned and invalid-id cases",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_writer.active_writer",
+        "grant_agent.connected_sessions.codex_writer._windows_locked"
+      ],
+      "impact": [
+        "host state and observations"
+      ]
+    },
+    {
+      "id": "proofs-e-host.limits",
+      "phase": "invariant",
+      "claim": "Only documented usage windows persist; last-known rows survive missing data and second-process updates refresh the live cache",
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan_limits.record_claude_statusline"
+      ],
+      "impact": [
+        "host state and observations"
+      ]
+    },
+    {
+      "id": "proofs-e-host.pack-closure",
+      "phase": "invariant",
+      "claim": "Local add-on import closures include transitive module dependencies with unique portable sorted paths",
+      "checkedAt": [
+        "scripts/package_onboarding_packs.py:import_closure"
+      ],
+      "impact": [
+        "host state and observations"
+      ]
+    },
+    {
+      "id": "proofs-e-host.action-sanitization",
+      "phase": "invariant",
+      "claim": "Native callback observations omit unapproved raw bodies and nested credential-bearing fields before persistence or replay",
+      "checkedAt": [
+        "grant_agent.action_receipts._safe_result"
+      ],
+      "impact": [
+        "host state and observations"
+      ]
+    },
+    {
+      "id": "proofs-e-host.action-once",
+      "phase": "invariant",
+      "claim": "First and replayed action outcomes are bound to the durable request and exact saved result; replay never invokes the completed effect",
+      "checkedAt": [
+        "grant_agent.action_receipts.NativeActionStore.execute"
+      ],
+      "impact": [
+        "host state and observations"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/codex-writer-detection.test.mjs",
+      "case": "Codex writer detection follows OS ownership, including old and abandoned lock files",
+      "case_id": "tests/codex-writer-detection.test.mjs::Codex writer detection follows OS ownership, including old and abandoned lock files",
+      "contracts": [
+        "proofs-e-host.writer"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_writer._windows_locked",
+        "grant_agent.connected_sessions.codex_writer.active_writer"
+      ],
+      "procedure": "host.real-cross-process-writer"
+    },
+    {
+      "test": "tests/fixwave-plan-limits.mjs",
+      "case": "Claude status-line collector persists only windows and retains last-known time",
+      "case_id": "tests/fixwave-plan-limits.mjs::Claude status-line collector persists only windows and retains last-known time",
+      "contracts": [
+        "proofs-e-host.limits"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.plan_limits.record_claude_statusline"
+      ],
+      "procedure": "host.statusline-durable-refresh"
+    },
+    {
+      "test": "tests/neyvia_browser_authority_contract.test.mjs",
+      "case": "action receipts deduplicate across reload",
+      "case_id": "tests/neyvia_browser_authority_contract.test.mjs::action receipts deduplicate across reload",
+      "contracts": [
+        "proofs-e-host.action-once"
+      ],
+      "checkedAt": [
+        "grant_agent.action_receipts.NativeActionStore.execute"
+      ],
+      "procedure": "host.durable-file-action-replay"
+    },
+    {
+      "test": "tests/neyvia_browser_authority_contract.test.mjs",
+      "case": "native action receipts sanitize durable and replayed results",
+      "case_id": "tests/neyvia_browser_authority_contract.test.mjs::native action receipts sanitize durable and replayed results",
+      "contracts": [
+        "proofs-e-host.action-sanitization",
+        "proofs-e-host.action-once"
+      ],
+      "checkedAt": [
+        "grant_agent.action_receipts.NativeActionStore.execute",
+        "grant_agent.action_receipts._safe_result"
+      ],
+      "procedure": "host.durable-file-action-replay"
+    },
+    {
+      "test": "tests/onboarding-packaging.test.mjs",
+      "case": "local pack dependency closure uses portable unique paths on Windows",
+      "case_id": "tests/onboarding-packaging.test.mjs::local pack dependency closure uses portable unique paths on Windows",
+      "contracts": [
+        "proofs-e-host.pack-closure"
+      ],
+      "checkedAt": [
+        "scripts/package_onboarding_packs.py:import_closure"
+      ],
+      "procedure": "host.portable-transitive-pack"
+    }
+  ],
+  "frontier": [
+    "Browser execution on legacy approved origins is outside the assigned port range; no live browser authority claim."
+  ],
+  "portRoles": []
+}

@@ -1,0 +1,924 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "frontend-models",
+  "runner": "scripts/proofs-frontend-models.mjs",
+  "state": {
+    "observers": "initials/avatarHue/lastSeen/deviceKind and PDF text geometry"
+  },
+  "actions": [
+    "initials",
+    "avatarHue",
+    "lastSeen",
+    "passwordStrength",
+    "generatePassword",
+    "newAccountProblem",
+    "deviceKind",
+    "itemRect",
+    "searchTexts",
+    "stepZoom",
+    "clampPage",
+    "displayName"
+  ],
+  "contracts": [
+    {
+      "id": "accounts.initials",
+      "phase": "post",
+      "claim": "Display first/last Unicode initials and an unknown fallback",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:initials -> checkedModelAction"
+      ],
+      "impact": [
+        "Accounts screen/sign-in display and validation"
+      ]
+    },
+    {
+      "id": "accounts.avatar",
+      "phase": "post",
+      "claim": "Case-insensitive FNV identity selects only the established sun/leaf arcs",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:avatarHue -> checkedModelAction"
+      ],
+      "impact": [
+        "Accounts screen/sign-in display and validation"
+      ]
+    },
+    {
+      "id": "accounts.last-seen",
+      "phase": "post",
+      "claim": "Elapsed time maps to the correct rounded minutes/hours/days label; invalid dates are blank",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:lastSeen -> checkedModelAction"
+      ],
+      "impact": [
+        "Accounts screen/sign-in display and validation"
+      ]
+    },
+    {
+      "id": "accounts.strength",
+      "phase": "post",
+      "claim": "Hints reflect minimum length, length bonuses and character diversity",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:passwordStrength -> checkedModelAction"
+      ],
+      "impact": [
+        "Accounts screen/sign-in display and validation"
+      ]
+    },
+    {
+      "id": "accounts.generated-password",
+      "phase": "post",
+      "claim": "Every password consumes thirteen fresh random draws; those draws determine three pronounceable parts and a 10–99 number",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:generatePassword -> checkedModelAction"
+      ],
+      "impact": [
+        "Accounts screen/sign-in display and validation"
+      ]
+    },
+    {
+      "id": "accounts.form",
+      "phase": "post",
+      "claim": "First actionable account error wins; usernames are unique ignoring case and passwords have >=8 characters",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:newAccountProblem -> checkedModelAction"
+      ],
+      "impact": [
+        "Accounts screen/sign-in display and validation"
+      ]
+    },
+    {
+      "id": "accounts.device",
+      "phase": "post",
+      "claim": "Recognized phone/tablet/desktop app names select their icons; other devices use computer",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:deviceKind -> checkedModelAction"
+      ],
+      "impact": [
+        "Accounts screen/sign-in display and validation"
+      ]
+    },
+    {
+      "id": "pdf.text-geometry",
+      "phase": "post",
+      "claim": "Character highlights preserve PDF baseline, proportional x range and descender bounds",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPdfModel.js:itemRect -> checkedModelAction"
+      ],
+      "impact": [
+        "PDF highlights/search/navigation"
+      ]
+    },
+    {
+      "id": "pdf.search",
+      "phase": "post",
+      "claim": "Return every bounded nonoverlapping case-insensitive occurrence in page/run order with actual text geometry",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPdfModel.js:searchTexts -> checkedModelAction"
+      ],
+      "impact": [
+        "PDF highlights/search/navigation"
+      ]
+    },
+    {
+      "id": "pdf.zoom",
+      "phase": "post",
+      "claim": "Zoom moves to nearest supported step in the requested direction and clamps at endpoints",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPdfModel.js:stepZoom -> checkedModelAction"
+      ],
+      "impact": [
+        "PDF highlights/search/navigation"
+      ]
+    },
+    {
+      "id": "pdf.page",
+      "phase": "post",
+      "claim": "Page navigation rounds/coerces input and stays within 1..page count",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPdfModel.js:clampPage -> checkedModelAction"
+      ],
+      "impact": [
+        "PDF highlights/search/navigation"
+      ]
+    },
+    {
+      "id": "pdf.display-name",
+      "phase": "post",
+      "claim": "A PDF is named by its file name, never an encoded route, query or internal path",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPdfModel.js:displayName -> checkedModelAction"
+      ],
+      "impact": [
+        "PDF loading text, toolbar name and reported state"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "accounts.identity",
+      "actions": [
+        {
+          "module": "accounts",
+          "function": "initials",
+          "args": [
+            "Paul Martin"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "PM"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "initials",
+          "args": [
+            "maya"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "initials",
+          "args": [
+            "jean-luc.picard"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "JP"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "initials",
+          "args": [
+            ""
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "?"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "avatarHue",
+          "args": [
+            "Paul"
+          ],
+          "goals": [],
+          "saveAs": "avatarHue"
+        },
+        {
+          "module": "accounts",
+          "function": "avatarHue",
+          "args": [
+            "paul"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "equalsRef": "avatarHue"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "accounts.elapsed-observer",
+      "actions": [
+        {
+          "module": "accounts",
+          "function": "lastSeen",
+          "args": [
+            "2026-10-02T11:58:00Z",
+            1790942400000
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "active now"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "lastSeen",
+          "args": [
+            "2026-10-02T11:30:00Z",
+            1790942400000
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "30 min ago"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "lastSeen",
+          "args": [
+            "2026-10-02T07:00:00Z",
+            1790942400000
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "5 h ago"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "lastSeen",
+          "args": [
+            "2026-10-01T10:00:00Z",
+            1790942400000
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "yesterday"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "lastSeen",
+          "args": [
+            "2026-09-20T12:00:00Z",
+            1790942400000
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "12 days ago"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "lastSeen",
+          "args": [
+            null,
+            1790942400000
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "accounts.password-hints",
+      "actions": [
+        {
+          "module": "accounts",
+          "function": "passwordStrength",
+          "args": [
+            "short"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "passwordStrength",
+          "args": [
+            "abcdefgh"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "passwordStrength",
+          "args": [
+            "Abcdefgh12"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "passwordStrength",
+          "args": [
+            "Correct-Horse-9-Battery"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "generatePassword",
+          "args": [],
+          "goals": [
+            {
+              "path": "",
+              "match": "^[a-z]{4}-[a-z]{4}-\\d{2}-[a-z]{4}$"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "generatePassword",
+          "args": [],
+          "randomSeed": 7,
+          "goals": [
+            {
+              "path": "",
+              "match": "^[a-z]{4}-[a-z]{4}-\\d{2}-[a-z]{4}$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "accounts.form-validation",
+      "actions": [
+        {
+          "module": "accounts",
+          "function": "newAccountProblem",
+          "args": [
+            {
+              "username": "",
+              "password": ""
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "Choose a username."
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "newAccountProblem",
+          "args": [
+            {
+              "username": "two words",
+              "password": "longenough"
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "match": "no spaces"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "newAccountProblem",
+          "args": [
+            {
+              "username": "Maya",
+              "password": "longenough"
+            },
+            [
+              "maya"
+            ]
+          ],
+          "goals": [
+            {
+              "path": "",
+              "match": "already"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "newAccountProblem",
+          "args": [
+            {
+              "username": "maya",
+              "password": "short"
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "match": "8 characters"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "newAccountProblem",
+          "args": [
+            {
+              "username": "maya",
+              "password": "longenough"
+            },
+            [
+              "paul"
+            ]
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "accounts.device-observer",
+      "actions": [
+        {
+          "module": "accounts",
+          "function": "deviceKind",
+          "args": [
+            "Safari on iPhone"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "phone"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "deviceKind",
+          "args": [
+            "Chrome on Android"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "phone"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "deviceKind",
+          "args": [
+            "Safari on iPad"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "tablet"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "deviceKind",
+          "args": [
+            "Neyvia desktop app"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "app"
+            }
+          ]
+        },
+        {
+          "module": "accounts",
+          "function": "deviceKind",
+          "args": [
+            "Edge on Windows"
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "computer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pdf.read-highlight-navigate",
+      "actions": [
+        {
+          "module": "pdf",
+          "function": "itemRect",
+          "args": [
+            {
+              "str": "Hello manual world",
+              "transform": [
+                12,
+                0,
+                0,
+                12,
+                100,
+                700
+              ],
+              "width": 180,
+              "height": 12
+            },
+            6,
+            6
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": [
+                160,
+                697.36,
+                220,
+                710.56
+              ]
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "searchTexts",
+          "args": [
+            [
+              {
+                "page": 2,
+                "items": [
+                  {
+                    "str": "Hello manual world",
+                    "transform": [
+                      12,
+                      0,
+                      0,
+                      12,
+                      100,
+                      700
+                    ],
+                    "width": 180,
+                    "height": 12
+                  },
+                  {
+                    "str": "MANUAL again manual",
+                    "transform": [
+                      12,
+                      0,
+                      0,
+                      12,
+                      100,
+                      700
+                    ],
+                    "width": 180,
+                    "height": 12
+                  }
+                ]
+              }
+            ],
+            "manual"
+          ],
+          "goals": [
+            {
+              "path": "length",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "searchTexts",
+          "args": [
+            [
+              {
+                "page": 2,
+                "items": [
+                  {
+                    "str": "Hello manual world",
+                    "transform": [
+                      12,
+                      0,
+                      0,
+                      12,
+                      100,
+                      700
+                    ],
+                    "width": 180,
+                    "height": 12
+                  },
+                  {
+                    "str": "MANUAL again manual",
+                    "transform": [
+                      12,
+                      0,
+                      0,
+                      12,
+                      100,
+                      700
+                    ],
+                    "width": 180,
+                    "height": 12
+                  }
+                ]
+              }
+            ],
+            "manual"
+          ],
+          "goals": [
+            {
+              "path": "0.page",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "stepZoom",
+          "args": [
+            1,
+            1
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 1.25
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "stepZoom",
+          "args": [
+            1,
+            -1
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 0.8
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "stepZoom",
+          "args": [
+            3,
+            1
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "clampPage",
+          "args": [
+            9,
+            3
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "clampPage",
+          "args": [
+            0,
+            3
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "displayName",
+          "args": [
+            {
+              "value": "http://127.0.0.1:49071/api/ui/files/raw?path=D%3A%5CNeyviaRuns%5Ctour%5Chome%5Ctour-fixtures%5CINTN.pdf"
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "INTN.pdf"
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "displayName",
+          "args": [
+            {
+              "value": "raw?path=D%3A%5C"
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "document.pdf"
+            }
+          ]
+        },
+        {
+          "module": "pdf",
+          "function": "displayName",
+          "args": [
+            {
+              "file": {
+                "name": "Field notes.pdf"
+              }
+            }
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "Field notes.pdf"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "web/src/neyvia/next/nxAccountsModel.test.js",
+      "case": "initials and avatar hues are stable",
+      "contracts": [
+        "accounts.initials",
+        "accounts.avatar"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:initials -> checkedModelAction",
+        "web/src/neyvia/next/nxAccountsModel.js:avatarHue -> checkedModelAction"
+      ],
+      "procedure": "accounts.identity",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxAccountsModel.test.js",
+      "case": "last use reads like a person would say it",
+      "contracts": [
+        "accounts.last-seen"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:lastSeen -> checkedModelAction"
+      ],
+      "procedure": "accounts.elapsed-observer",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxAccountsModel.test.js",
+      "case": "password strength and generated passwords",
+      "contracts": [
+        "accounts.strength",
+        "accounts.generated-password"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:passwordStrength -> checkedModelAction",
+        "web/src/neyvia/next/nxAccountsModel.js:generatePassword -> checkedModelAction"
+      ],
+      "procedure": "accounts.password-hints",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "assertionRefinements": [
+        {
+          "claim": "Two random passwords must differ",
+          "replacement": "Every password must consume 13 fresh draws from its chosen random source and be exactly determined by those draws; legitimate random collisions are accepted",
+          "contracts": [
+            "accounts.generated-password"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "web/src/neyvia/next/nxAccountsModel.test.js",
+      "case": "the add-someone form explains what is missing",
+      "contracts": [
+        "accounts.form"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:newAccountProblem -> checkedModelAction"
+      ],
+      "procedure": "accounts.form-validation",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxAccountsModel.test.js",
+      "case": "device kinds",
+      "contracts": [
+        "accounts.device"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAccountsModel.js:deviceKind -> checkedModelAction"
+      ],
+      "procedure": "accounts.device-observer",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxPdfModel.test.js",
+      "case": "pdf geometry, search, zoom steps and page clamping",
+      "contracts": [
+        "pdf.text-geometry",
+        "pdf.search",
+        "pdf.zoom",
+        "pdf.page"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxPdfModel.js:itemRect -> checkedModelAction",
+        "web/src/neyvia/next/nxPdfModel.js:searchTexts -> checkedModelAction",
+        "web/src/neyvia/next/nxPdfModel.js:stepZoom -> checkedModelAction",
+        "web/src/neyvia/next/nxPdfModel.js:clampPage -> checkedModelAction"
+      ],
+      "procedure": "pdf.read-highlight-navigate",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    }
+  ],
+  "sourceHashes": {
+    "web/src/neyvia/next/nxAccountsModel.test.js": "0b53a6e05f59e66c97a7753245f24199621b49c78c2a1f6f890734ef502e5aff",
+    "web/src/neyvia/next/nxPdfModel.test.js": "daea8b58945ffef5212adbb89d86579ed54c9f10e833edf4e83a4ab735a83338"
+  },
+  "frontier": [
+    "Rendered PDF canvas/viewport and real file loading",
+    "Authentication backend and Account persistence"
+  ],
+  "pitfalls": [
+    "Proof receipts never contain generated passwords",
+    "Independent crypto calls can legitimately generate the same password"
+  ]
+}

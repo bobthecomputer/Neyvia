@@ -1,0 +1,220 @@
+/* Look and motion (07 §2, 15 · T2): the ambient light layer and the
+   shared-element morph. Durations come from nxTokens.css (180-320 ms). */
+
+/* ---------- ambient light ----------
+   One layer behind the main surface (NxShell puts .nx-ambient first in
+   .nx-main). Idle: only the still leaf light (and, in Sunset / Night Green,
+   the stars or specks, which carry no sun). While something runs: the low
+   sun warms the top-left and its dapple drifts like leaves in a slow wind.
+   Off (Settings > Look): nothing. Root attribute data-nx-ambient =
+   off | still | active, set by NxShell from os.ambient and the chats. */
+
+.nx .nx-main > .nx-work { position: relative; }
+.nx .nx-ambient {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  background: var(--nx-ambient, none);
+}
+.nx .nx-ambient::before,
+.nx .nx-ambient::after {
+  content: ""; position: absolute; pointer-events: none;
+  transition: opacity var(--nx-drift) var(--nx-spring-drift);
+}
+.nx .nx-ambient::before { inset: 0; background: var(--nx-ambient-sun, none); opacity: 0; }
+/* Dapple: transform only, so the drift stays on the compositor. */
+.nx .nx-ambient::after { inset: -4%; background: var(--nx-dapple, none); opacity: var(--nx-dapple-still, 0); }
+.nx[data-nx-ambient="active"] .nx-ambient::before,
+.nx[data-nx-ambient="active"] .nx-ambient::after { opacity: 1; }
+/* Idle, the sun layers paint nothing at all (not just opacity 0), so no engine or capture can show them;
+   Sunset's stars and Night Green's specks stay, they carry no sun. */
+.nx:not([data-nx-ambient="active"]) .nx-ambient::before,
+.nx:is([data-nx-theme="dark"], [data-nx-theme="light"]):not([data-nx-ambient="active"]) .nx-ambient::after { background: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-ambient="active"] .nx-ambient::after { animation: nx-dapple var(--nx-ambient-cycle) var(--nx-ease-loop) infinite alternate; }
+}
+@keyframes nx-dapple { from { transform: translate3d(0, 0, 0) rotate(0deg); } to { transform: translate3d(1.6%, 1.2%, 0) rotate(0.6deg); } }
+.nx[data-nx-ambient="off"] .nx-ambient { display: none; }
+
+/* ---------- shared-element morph (nxMorph.js) ----------
+   The pseudo-elements live on <html>, outside .nx; root tokens keep them in
+   the same motion system as the controls. */
+
+html {
+  --nx-morph-ms: var(--nx-settle);
+  --nx-morph-ease: var(--nx-spring-settle);
+}
+/* Only the pressed thing moves; the rest of the page swaps in place. */
+html[data-nx-morph]::view-transition-old(root),
+html[data-nx-morph]::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-group(nx-morph) {
+  animation-duration: var(--nx-morph-ms);
+  animation-timing-function: var(--nx-morph-ease);
+  border-radius: var(--nx-r); overflow: hidden;
+}
+/* Both images keep their real size, pinned top-left, and the moving box is a
+   window over them: the leaf's text stays crisp while it fades, and the thread
+   is revealed as the box opens instead of being stretched. */
+::view-transition-old(nx-morph),
+::view-transition-new(nx-morph) {
+  width: 100%; height: 100%; object-fit: none; object-position: left top;
+  animation-duration: var(--nx-morph-ms);
+  animation-timing-function: var(--nx-ease);
+}
+::view-transition-old(nx-morph) { animation-duration: var(--nx-fast); }
+/* The stage's own slide-in would fight the morph; the morph is the motion. */
+html[data-nx-morph] .nx .nx-work-app,
+html[data-nx-morph] .nx .nx-work-chat,
+html[data-nx-morph] .nx .nx-stage-body { transition: none; animation: none; }
+
+/* ---------- the tree's sun ----------
+   A still tree (an empty Missions page, a paused replay) is not running, so
+   its sun is ink, not amber; the sun rises only on a growing tree. The
+   startup splash is outside .nx and keeps the brand sun. */
+.nx .ny-tree:not(.is-growing) .ny-tree-sun { fill: var(--nx-faint); opacity: 0.6; }
+
+/* ---------- theme change (nxMorph.js fadeTheme) ----------
+   Switching theme cross-fades the whole page once, on the settle token, where
+   View Transitions exist; elsewhere the change is instant. */
+html:not([data-nx-morph])::view-transition-old(root),
+html:not([data-nx-morph])::view-transition-new(root) {
+  animation-duration: var(--nx-settle);
+  animation-timing-function: var(--nx-ease);
+}
+
+/* ---------- reduced motion, every route ----------
+   The OS setting (media query) and Settings > Motion > Reduce (data-nx-motion)
+   both stop the ambient drift, the rain and every view transition; fades stay. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
+.nx[data-nx-motion="reduce"] .nx-ambient::after,
+.nx[data-nx-motion="reduce"] .nx-ambient::before { animation: none; }
+.nx[data-nx-motion="reduce"] *,
+.nx[data-nx-motion="reduce"] *::before,
+.nx[data-nx-motion="reduce"] *::after {
+  animation-duration: var(--nx-reduced) !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: var(--nx-reduced) !important;
+}
+
+/* ---------- Ember: sparks rise while something runs ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-theme="ember"][data-nx-ambient="active"] .nx-ambient::after { animation: nx-embers calc(var(--nx-ambient-cycle) * 0.5) var(--nx-ease-loop) infinite alternate; }
+}
+@keyframes nx-embers { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0.8%, -7%, 0); } }
+
+/* ---------- entrance stagger ----------
+   Lists that appear together arrive one after another on --nx-stagger (45 ms in
+   most themes, 0 in Paper, stepped in Terminal), capped at eight so a long list
+   never waits. Opacity and a 4px rise only: compositor properties. */
+@media (prefers-reduced-motion: no-preference) {
+  .nx .nx-themepick-card,
+  .nx .nx-launcher .nx-result:nth-child(-n+9) {
+    animation: nx-rise var(--nx-settle) var(--nx-ease) both;
+    animation-delay: calc(var(--i, 0) * var(--nx-stagger));
+  }
+  .nx .nx-themepick-card:nth-child(2) { --i: 1; } .nx .nx-themepick-card:nth-child(3) { --i: 2; } .nx .nx-themepick-card:nth-child(4) { --i: 3; }
+  .nx .nx-themepick-card:nth-child(5) { --i: 4; } .nx .nx-themepick-card:nth-child(6) { --i: 5; } .nx .nx-themepick-card:nth-child(7) { --i: 6; }
+  .nx .nx-launcher .nx-result:nth-child(2) { --i: 1; } .nx .nx-launcher .nx-result:nth-child(3) { --i: 2; } .nx .nx-launcher .nx-result:nth-child(4) { --i: 3; }
+  .nx .nx-launcher .nx-result:nth-child(5) { --i: 4; } .nx .nx-launcher .nx-result:nth-child(6) { --i: 5; } .nx .nx-launcher .nx-result:nth-child(7) { --i: 6; }
+  .nx .nx-launcher .nx-result:nth-child(8) { --i: 7; } .nx .nx-launcher .nx-result:nth-child(9) { --i: 8; }
+}
+@keyframes nx-rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Forest canopy (NxKomorebi.jsx, plan 29 FOREST "Komorebi") ----------
+   Four small canvases, drawn once and stretched: far leaf shadow, the pools of light
+   that get through (with their round pinhole patches), the coin's warm light in the
+   two gaps nearest the low sun while an agent works, and the nearest leaves along
+   the top. Every frame is a transform on the compositor;
+   the near leaves sway faster than the far ones, so the light under them shimmers
+   the way it does when wind moves a canopy. The patches stay out of the reading
+   column (NxKomorebi places them), and the shade only darkens, so text never loses
+   contrast. Paused while the page is hidden; still under reduced motion. */
+.nx[data-nx-theme="dark"] .nx-ambient::after { display: none; }
+.nx .nx-komorebi { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.nx .nx-komorebi > canvas { position: absolute; display: block; left: -8%; top: -8%; width: 116%; height: 116%; will-change: transform; }
+.nx .nx-komorebi-far { opacity: 0.5; }
+.nx .nx-komorebi-near { left: -12%; top: -14%; width: 124%; height: 124%; opacity: 0.62; }
+.nx .nx-komorebi-flecks,
+.nx .nx-komorebi-sun { mix-blend-mode: screen; }
+.nx .nx-komorebi-flecks { opacity: 0.2; }
+.nx .nx-komorebi-sun { opacity: 0; transition: opacity var(--nx-drift) var(--nx-ease); }
+.nx[data-nx-ambient="active"] .nx-komorebi-sun { opacity: 0.24; }
+.nx .nx-komorebi::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+/* Phone: the whole screen is the reading column, so the canopy keeps its own shape (a 16:9
+   slice, not stretched into streaks) and its light is softer. */
+.nx.is-phone .nx-komorebi > canvas { width: auto; aspect-ratio: 16 / 9; left: -30%; }
+.nx.is-phone .nx-komorebi-flecks { opacity: 0.12; }
+/* Time of day: dusk warms the horizon a little, night turns the patches to moonlight,
+   and while Night Shift runs the forest goes deeper still. */
+.nx .nx-komorebi[data-light="dusk"] { --nx-fleck: #ecd6ae; }
+.nx .nx-komorebi[data-light="dusk"]::after { background: radial-gradient(1300px 560px at 0% 112%, color-mix(in srgb, var(--nx-sunlit) 7%, transparent), transparent 70%); }
+.nx .nx-komorebi[data-light="night"] { --nx-fleck: #bcd8d0; }
+.nx .nx-komorebi[data-light="night"] .nx-komorebi-flecks { opacity: 0.15; }
+.nx .nx-komorebi[data-light="deep"] { --nx-fleck: #b2cfd2; }
+.nx .nx-komorebi[data-light="deep"] .nx-komorebi-far { opacity: 0.72; }
+.nx .nx-komorebi[data-light="deep"] .nx-komorebi-near { opacity: 0.8; }
+.nx .nx-komorebi[data-light="deep"] .nx-komorebi-flecks { opacity: 0.11; }
+.nx .nx-komorebi[data-light="deep"]::after { background: linear-gradient(180deg, color-mix(in srgb, var(--nx-undergrowth) 45%, transparent), color-mix(in srgb, var(--nx-undergrowth) 20%, transparent)); }
+.nx[data-nx-theme="dark"] {
+  --nx-canopy-far: 32s;
+  --nx-canopy-near: 11s;
+  --nx-canopy-light: 7s;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nx .nx-komorebi-far { animation: nx-kb-far var(--nx-canopy-far) var(--nx-ease-loop) infinite alternate; }
+  .nx .nx-komorebi-near { animation: nx-kb-near var(--nx-canopy-near) var(--nx-ease-loop) infinite alternate; }
+  .nx .nx-komorebi-flecks,
+  .nx .nx-komorebi-sun { animation: nx-kb-light var(--nx-canopy-light) var(--nx-ease-loop) infinite alternate; }
+}
+.nx .nx-komorebi[data-paused] > canvas { animation-play-state: paused; }
+.nx[data-nx-motion="reduce"] .nx-komorebi > canvas { animation: none; }
+@keyframes nx-kb-far { from { transform: translate3d(0, 0, 0) rotate(0deg); } to { transform: translate3d(-2%, 1%, 0) rotate(0.6deg); } }
+@keyframes nx-kb-near {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  30% { transform: translate3d(1.5%, -0.4%, 0) rotate(-0.6deg); }
+  55% { transform: translate3d(0.8%, 0.2%, 0) rotate(-0.2deg); }
+  80% { transform: translate3d(2.2%, -0.3%, 0) rotate(-0.9deg); }
+  100% { transform: translate3d(2.6%, -0.6%, 0) rotate(-1deg); }
+}
+@keyframes nx-kb-light { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(1%, 0.6%, 0); } }
+
+/* ---------- Forest motion language: things settle like leaves ----------
+   Soft ease-out, no overshoot, at most a tiny sway. New items sprout (grow up from
+   their stem at the lower left), a step that gets checked catches a short sweep of
+   leaf light, panels open like the canopy parting. 340 / 420 / 380 ms (Forest
+   tokens in nxThemes.css); reduced motion keeps only the end state. */
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-theme="dark"] :is(.nx-checklist-item, .nx-ss-tile, .nx-ns-card, .nx-canopy-card, .nx-side .nx-leaf:nth-child(-n+8)) {
+    transform-origin: 14px 100%;
+    animation: nx-sprout var(--nx-sprout) var(--nx-ease) both;
+    animation-delay: calc(var(--i, 0) * var(--nx-stagger));
+  }
+  .nx[data-nx-theme="dark"] :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(2) { --i: 1; }
+  .nx[data-nx-theme="dark"] :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(3) { --i: 2; }
+  .nx[data-nx-theme="dark"] :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(4) { --i: 3; }
+  .nx[data-nx-theme="dark"] :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(5) { --i: 4; }
+  .nx[data-nx-theme="dark"] :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(6) { --i: 5; }
+  .nx[data-nx-theme="dark"] :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(7) { --i: 6; }
+  .nx[data-nx-theme="dark"] :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(8) { --i: 7; }
+  .nx[data-nx-theme="dark"] .nx-checklist-item.is-done { position: relative; overflow: hidden; }
+  .nx[data-nx-theme="dark"] .nx-checklist-item.is-done::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    background: linear-gradient(100deg, transparent 22%, color-mix(in srgb, var(--nx-fleck) 15%, transparent) 50%, transparent 78%);
+    animation: nx-sweep var(--nx-sweep) var(--nx-ease) var(--nx-fast) both;
+  }
+  .nx[data-nx-theme="dark"] :is(.nx-stage-body, .nx-ns-side, .nx-panel-overlay) { transform-origin: 50% 0; animation: nx-part var(--nx-part) var(--nx-ease) backwards; }
+}
+@keyframes nx-sprout {
+  from { opacity: 0; transform: translateY(6px) scaleY(0.92) rotate(-0.6deg); }
+  70% { opacity: 1; transform: translateY(0) scaleY(1) rotate(0.12deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes nx-sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+/* The parting is drawn with transform and opacity only (no clip-path), so nothing in the
+   panel is ever outside its own hit area while it opens: a fast click still lands. */
+@keyframes nx-part {
+  from { opacity: 0; transform: translateY(4px) scaleX(0.965); }
+  to { opacity: 1; transform: none; }
+}

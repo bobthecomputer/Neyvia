@@ -1,0 +1,27 @@
+{
+  "area": "installed-preflight-journey",
+  "module": "grant_agent.proofs_installed_preflight_journey",
+  "self_check": "self_check",
+  "manuals": [
+    "local-host"
+  ],
+  "contracts": [
+    {
+      "id": "runtime.program.local-python-preflight",
+      "phase": "invariant",
+      "claim": "Installed program discovery identifies the current Python executable and resolves an owned scratch script to it without starting the script; an outside-root path is refused, dependency readiness remains unverified, and no delegated provider route or worker process is invented.",
+      "checkedAt": [
+        "grant_agent.proofs_installed_preflight_journey.self_check",
+        "grant_agent.proofs_installed_preflight_journey._journey",
+        "grant_agent.installed_programs.InstalledPrograms.discover",
+        "grant_agent.installed_programs.InstalledPrograms.prepare_file",
+        "grant_agent.runtimes.runtime_adapter_map"
+      ],
+      "impact": [
+        "local program availability and command resolution",
+        "managed workspace root refusal",
+        "truthful readiness without provider execution"
+      ]
+    }
+  ]
+}

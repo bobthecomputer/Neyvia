@@ -1,0 +1,100 @@
+/* Accounts (NxAccounts): you, your devices, and the people on this PC. */
+
+.nx .nx-ac { flex: 1 1 auto; min-height: 0; overflow: auto; background: var(--nx-panel); }
+.nx .nx-ac.is-center { display: grid; place-content: center; justify-items: center; gap: var(--nx-space-12); }
+.nx .nx-ac-inner { width: min(720px, 100%); margin: 0 auto; padding: var(--nx-space-20) var(--nx-space-18) var(--nx-space-40); display: grid; gap: var(--nx-space-14); }
+
+.nx .nx-ac-card {
+  display: grid; gap: var(--nx-space-12); padding: var(--nx-space-16); border-radius: var(--nx-r-lg);
+  background: var(--nx-raised); box-shadow: var(--nx-card-shadow);
+}
+.nx .nx-ac-head { display: flex; align-items: flex-start; gap: var(--nx-space-12); flex-wrap: wrap; }
+.nx .nx-ac-head > div { flex: 1 1 260px; display: grid; gap: var(--nx-space-3); }
+.nx .nx-ac-head h3 { font-family: var(--nx-display); font-size: var(--nx-fs-xl); font-weight: var(--nx-display-weight); color: var(--nx-text); }
+.nx .nx-ac-head p { font-size: var(--nx-fs-sm); color: var(--nx-muted); line-height: 1.45; }
+
+/* You */
+.nx .nx-ac-you { background: var(--nx-ambient), var(--nx-raised); }
+.nx .nx-ac-you-head { display: flex; align-items: center; gap: var(--nx-space-14); flex-wrap: wrap; }
+.nx .nx-ac-you-name { flex: 1 1 200px; min-width: 0; display: grid; gap: var(--nx-space-4); }
+.nx .nx-ac-you-name h2 { display: flex; align-items: center; gap: var(--nx-space-6); font-family: var(--nx-display); font-size: var(--nx-fs-title); font-weight: var(--nx-display-weight); line-height: 1.15; color: var(--nx-text); }
+.nx .nx-ac-you-name p { display: flex; align-items: center; gap: var(--nx-space-8); color: var(--nx-muted); font-size: var(--nx-fs-sm); }
+.nx .nx-ac-edit { display: grid; place-items: center; width: 26px; height: 26px; border-radius: var(--nx-r-sm); color: var(--nx-faint); }
+.nx .nx-ac-edit:hover { color: var(--nx-text); background: var(--nx-hover); }
+.nx .nx-ac-inline { display: flex; gap: var(--nx-space-6); align-items: center; flex-wrap: wrap; }
+.nx .nx-ac-inline input { flex: 1 1 180px; height: 34px; font-size: var(--nx-fs-lg); }
+
+.nx .nx-ac-role {
+  display: inline-flex; align-items: center; padding: 0 var(--nx-space-8); line-height: 19px; border-radius: var(--nx-r-pill);
+  font-size: var(--nx-fs-xs); font-weight: 600; letter-spacing: 0.02em;
+  color: var(--nx-text-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+}
+.nx .nx-ac-role.is-owner { color: var(--nx-accent-text); background: var(--nx-accent-soft); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-accent) 40%, transparent); }
+
+/* Forms */
+.nx .nx-ac-form { display: grid; gap: var(--nx-space-10); padding-top: var(--nx-space-4); }
+.nx .nx-ac-add { padding: var(--nx-space-14); border-radius: var(--nx-r); background: var(--nx-panel); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line); }
+.nx .nx-ac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--nx-space-10); }
+.nx .nx-ac-field { display: grid; gap: var(--nx-space-5); }
+.nx .nx-ac-field > span:first-child { font-size: var(--nx-fs-sm); color: var(--nx-text-2); font-weight: 500; }
+.nx .nx-ac-field input, .nx .nx-ac-inline input {
+  width: 100%; height: 38px; padding: 0 var(--nx-space-12); border-radius: var(--nx-r);
+  border: 1px solid var(--nx-line-strong); background: var(--nx-bg); color: var(--nx-text);
+}
+.nx .nx-ac-field input:focus, .nx .nx-ac-inline input:focus { outline: none; border-color: var(--nx-accent-hi); box-shadow: 0 0 0 var(--nx-ring) var(--nx-accent-soft); }
+.nx .nx-ac-password { position: relative; display: block; }
+.nx .nx-ac-password input { padding-right: var(--nx-space-40); font-family: var(--nx-mono); }
+.nx .nx-ac-password button {
+  position: absolute; top: 50%; right: 5px; transform: translateY(-50%);
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--nx-r-sm); color: var(--nx-muted);
+}
+.nx .nx-ac-password button:hover { color: var(--nx-text); background: var(--nx-hover); }
+
+.nx .nx-ac-strength { display: inline-flex; align-items: center; gap: var(--nx-space-8); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-ac-strength-bar { position: relative; width: 90px; height: 4px; border-radius: var(--nx-r-xxs); background: var(--nx-line-strong); overflow: hidden; }
+.nx .nx-ac-strength-bar > span { position: absolute; inset: 0; transform-origin: 0 50%; background: var(--nx-red); transition: transform var(--nx-snappy) var(--nx-ease); }
+.nx .nx-ac-strength.is-2 .nx-ac-strength-bar > span { background: var(--nx-state-caution); }
+.nx .nx-ac-strength.is-3 .nx-ac-strength-bar > span { background: var(--nx-green); }
+
+.nx .nx-ac-actions, .nx .nx-ac-row-actions { display: flex; align-items: center; gap: var(--nx-space-8); flex-wrap: wrap; }
+.nx .nx-ac-row-actions { justify-content: space-between; }
+.nx .nx-ac-you .nx-ac-row-actions { justify-content: flex-start; }
+.nx .nx-ac-note { font-size: var(--nx-fs-sm); color: var(--nx-muted); line-height: 1.5; }
+.nx .nx-ac-note.is-quiet { text-align: center; color: var(--nx-faint); }
+.nx .nx-ac-error { padding: var(--nx-space-8) var(--nx-space-11); border-radius: var(--nx-r); background: var(--nx-red-soft); color: var(--nx-red); font-size: var(--nx-fs-sm); }
+
+.nx .nx-ac-copy {
+  display: inline-flex; align-items: center; gap: var(--nx-space-8); padding: var(--nx-space-6) var(--nx-space-10); border-radius: var(--nx-r);
+  background: var(--nx-bg); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); color: var(--nx-text);
+}
+.nx .nx-ac-copy code { font-family: var(--nx-mono); font-size: var(--nx-fs-md); letter-spacing: 0.02em; }
+.nx .nx-ac-copy:hover { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-accent-hi); }
+
+/* Lists: devices and people */
+.nx .nx-ac-list { display: grid; gap: var(--nx-space-2); margin: 0 calc(-1 * var(--nx-space-6)); padding: 0; list-style: none; }
+.nx .nx-ac-device, .nx .nx-ac-person-row { display: flex; align-items: center; gap: var(--nx-space-12); padding: var(--nx-space-8) var(--nx-space-6); border-radius: var(--nx-r); }
+.nx .nx-ac-device:hover, .nx .nx-ac-person-row:hover { background: var(--nx-hover); }
+.nx .nx-ac-device-icon {
+  flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--nx-r);
+  color: var(--nx-accent-text); background: var(--nx-accent-soft);
+}
+.nx .nx-ac-device-text { flex: 1 1 auto; min-width: 0; display: grid; gap: var(--nx-space-2); }
+.nx .nx-ac-device-text strong { display: flex; align-items: center; gap: var(--nx-space-8); font-weight: 550; color: var(--nx-text); }
+.nx .nx-ac-device-text > span { font-size: var(--nx-fs-sm); color: var(--nx-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-ac-here {
+  padding: 0 var(--nx-space-7); line-height: 18px; border-radius: var(--nx-r-pill); font-size: var(--nx-fs-xs); font-weight: 600;
+  color: var(--nx-green); background: var(--nx-green-soft);
+}
+.nx .nx-ac-person-tools { display: inline-flex; gap: var(--nx-space-2); opacity: 0.75; transition: opacity var(--nx-fast) var(--nx-ease); }
+.nx .nx-ac-person:hover .nx-ac-person-tools, .nx .nx-ac-person-tools:focus-within { opacity: 1; }
+
+.nx .nx-ac-confirm { display: grid; gap: var(--nx-space-10); margin: var(--nx-space-2) var(--nx-space-6) var(--nx-space-8) var(--nx-space-48); padding: var(--nx-space-12); border-radius: var(--nx-r); background: var(--nx-panel); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong); font-size: var(--nx-fs-sm); line-height: 1.5; }
+.nx .nx-ac-card > .nx-ac-confirm { margin: 0; }
+.nx .nx-ac-confirm.is-danger { background: var(--nx-red-soft); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-red) 40%, transparent); }
+.nx .nx-ac-confirm.is-success { background: var(--nx-green-soft); box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-green) 40%, transparent); }
+.nx .nx-ac-person > .nx-ac-error { margin: 0 var(--nx-space-6) var(--nx-space-8) var(--nx-space-48); }
+
+.nx.is-phone .nx-ac-inner { padding: var(--nx-space-14) var(--nx-space-12) var(--nx-space-32); }
+.nx.is-phone .nx-ac-confirm, .nx.is-phone .nx-ac-person > .nx-ac-error { margin-left: var(--nx-space-6); }
+.nx.is-phone .nx-ac-person-tools { opacity: 1; }
+.nx.is-phone .nx-ac-person-row { flex-wrap: wrap; }

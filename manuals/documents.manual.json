@@ -1,0 +1,648 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "documents",
+  "kind": "workflow",
+  "proofs": {
+    "area": "documents",
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_documents.run",
+          "grant_agent.study_docs.create",
+          "grant_agent.study_docs.build",
+          "grant_agent.proofs_documents.self_check"
+        ],
+        "claim": "documents.create writes a course document with one concept per chapter; documents.build compiles it with Tectonic and the PDF shows the six labelled blocks and every chapter.",
+        "id": "documents.create.course",
+        "impact": [
+          "templates/latex/neyvia-study/neyvia-study.cls",
+          "documents.create",
+          "documents.build"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.study_docs.check",
+          "grant_agent.proofs_documents.self_check"
+        ],
+        "claim": "On a clean document every outcome check passes from the produced files: no TeX errors, no undefined references, no overfull box over 1 pt, Inter embedded, blocks in order with tags, page count within the limit.",
+        "id": "documents.checks.pass",
+        "impact": [
+          "documents.check"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.study_docs.check",
+          "grant_agent.study_docs.concepts",
+          "grant_agent.proofs_documents.self_check"
+        ],
+        "claim": "A document with blocks out of order, an untagged concept, an undefined reference and an overfull line still compiles but fails the blocks, references and overfull checks, each naming the fault.",
+        "id": "documents.checks.catch",
+        "impact": [
+          "documents.check",
+          "neyvia-study.cls aux records"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.study_docs.build",
+          "grant_agent.proofs_documents.self_check"
+        ],
+        "claim": "The sheet variant builds from the same source, prints method and reflex and drops traps and practice.",
+        "id": "documents.sheet.variant",
+        "impact": [
+          "templates/latex/neyvia-study/neyvia-study.cls"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.study_docs.render",
+          "grant_agent.proofs_documents.self_check"
+        ],
+        "claim": "documents.render writes the requested page as a non-blank PNG under D:/NeyviaRuns/docs.",
+        "id": "documents.render.pages",
+        "impact": [
+          "documents.render"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.study_docs.glance",
+          "grant_agent.proofs_documents.self_check"
+        ],
+        "claim": "Without an attached LAYA judge documents.glance reports not available and never passes.",
+        "id": "documents.glance.pending",
+        "impact": [
+          "documents.glance",
+          "LAYA page glance"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "grant_agent.neyvia_workspace_tools.tool_specs",
+          "grant_agent.study_docs.toolchain",
+          "grant_agent.proofs_documents.self_check"
+        ],
+        "claim": "The five documents tools are workspace tools and the toolchain (Tectonic binary and bundled Inter) is present.",
+        "id": "documents.tools.registered",
+        "impact": [
+          "neyvia.documents.*"
+        ],
+        "phase": "invariant"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.documents.build": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "path"
+      ]
+    },
+    "neyvia.documents.check": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maxPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2000
+        },
+        "require": {
+          "type": "string",
+          "pattern": "^[1-6]{1,6}$"
+        }
+      },
+      "required": [
+        "path"
+      ]
+    },
+    "neyvia.documents.create": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "course",
+            "sheet"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chapters": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 40
+        },
+        "subtitle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourcePrefix": {
+          "type": "string"
+        },
+        "overwrite": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path",
+        "variant",
+        "title",
+        "chapters"
+      ]
+    },
+    "neyvia.documents.glance": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pages": {
+          "type": "string",
+          "pattern": "^(all|[0-9]+(-[0-9]+)?(,[0-9]+(-[0-9]+)?)*)$"
+        }
+      },
+      "required": [
+        "path"
+      ]
+    },
+    "neyvia.documents.render": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pages": {
+          "type": "string",
+          "pattern": "^(all|[0-9]+(-[0-9]+)?(,[0-9]+(-[0-9]+)?)*)$"
+        },
+        "dpi": {
+          "type": "integer",
+          "minimum": 40,
+          "maximum": 300
+        }
+      },
+      "required": [
+        "path"
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Study documents: Paul's six-block template, Tectonic build, outcome checks and page renders",
+      "state": {
+        "document": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "passed": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "ok",
+              "passed",
+              "total"
+            ]
+          },
+          "tool": "neyvia.documents.check"
+        }
+      },
+      "actions": {
+        "documents.create": {
+          "effect": "Create a study document on Paul's neyvia-study template: course (six blocks per concept) or sheet (formula, method, reflex); one chapter per title.",
+          "pre": "A workspace path for a new .tex file; overwrite only when asked",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.documents.create",
+          "tool": "neyvia.documents.create"
+        },
+        "documents.build": {
+          "effect": "Compile a study document with Tectonic (XeTeX, Inter bundled); returns the PDF, log, seconds and page count.",
+          "pre": "An existing .tex on the neyvia-study class; Tectonic installed (study_docs.py setup)",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.documents.build",
+          "tool": "neyvia.documents.build"
+        },
+        "documents.check": {
+          "effect": "Run the outcome checks on a built study document: compiles, references, overfull boxes, Inter embedded, block order and source tags, page count.",
+          "pre": "The document was built by documents.build",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.documents.check",
+          "tool": "neyvia.documents.check"
+        },
+        "documents.render": {
+          "effect": "Render pages of a built study document to PNG files on D:/NeyviaRuns/docs.",
+          "pre": "The document was built by documents.build",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.documents.render",
+          "tool": "neyvia.documents.render"
+        },
+        "documents.glance": {
+          "effect": "Ask the attached LAYA page-glance judge whether rendered pages look broken; reports not available until a judge is attached.",
+          "pre": "The document was built; a LAYA judge attached through NEYVIA_LAYA_GLANCE",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.documents.glance",
+          "tool": "neyvia.documents.glance"
+        }
+      },
+      "checks": {
+        "compiles": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "compiles",
+            "value": true
+          },
+          "tool": "neyvia.documents.check"
+        },
+        "references": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "references",
+            "value": true
+          },
+          "tool": "neyvia.documents.check"
+        },
+        "overfull": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "overfull",
+            "value": true
+          },
+          "tool": "neyvia.documents.check"
+        },
+        "inter-embedded": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "interEmbedded",
+            "value": true
+          },
+          "tool": "neyvia.documents.check"
+        },
+        "blocks": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "blocks",
+            "value": true
+          },
+          "tool": "neyvia.documents.check"
+        },
+        "pages": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "pages",
+            "value": true
+          },
+          "tool": "neyvia.documents.check"
+        }
+      },
+      "procedures": {
+        "new-document": {
+          "goal": "Create a document from Paul's template, build it, check every outcome and render pages to look at",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "variant": {
+                "type": "string",
+                "enum": [
+                  "course",
+                  "sheet"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "chapters": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "maxItems": 40
+              }
+            },
+            "required": [
+              "path",
+              "variant",
+              "title",
+              "chapters"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "documents.create",
+              "args": {
+                "chapters": {
+                  "$input": "chapters"
+                },
+                "path": {
+                  "$input": "path"
+                },
+                "title": {
+                  "$input": "title"
+                },
+                "variant": {
+                  "$input": "variant"
+                }
+              },
+              "save": "created"
+            },
+            {
+              "action": "documents.build",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "compiles",
+              "save": "built"
+            },
+            {
+              "action": "documents.check",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "blocks",
+              "save": "checked"
+            },
+            {
+              "action": "documents.render",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "pages"
+            },
+            {
+              "action": "documents.glance",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "glance"
+            },
+            {
+              "judge": "pages-look-right"
+            }
+          ]
+        },
+        "build-and-check": {
+          "goal": "Rebuild an edited document and prove it still compiles cleanly with every concept in block order",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "documents.build",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "compiles",
+              "save": "built"
+            },
+            {
+              "action": "documents.check",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "references",
+              "save": "checked"
+            },
+            {
+              "action": "documents.check",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "overfull",
+              "save": "layout"
+            },
+            {
+              "action": "documents.check",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "inter-embedded",
+              "save": "fonts"
+            },
+            {
+              "action": "documents.check",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "blocks",
+              "save": "concepts"
+            },
+            {
+              "action": "documents.check",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "pages",
+              "save": "length"
+            },
+            {
+              "action": "documents.render",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "pages"
+            },
+            {
+              "action": "documents.glance",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "glance"
+            },
+            {
+              "judge": "pages-look-right"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "pages-look-right": {
+          "constraints": "The pluggable LAYA page glance (documents.glance) answers this once attached; until then a person looks at the PNGs from documents.render. A missing judge is never a pass.",
+          "kind": "human",
+          "options": [
+            "looks-fine",
+            "looks-broken"
+          ],
+          "question": "Do the rendered pages look right: no clipped boxes, overlapping text, empty or half-empty pages?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Tectonic is missing",
+          "recovery": "Run python scripts/study_docs.py setup --install: it fetches the official GitHub release (about 21 MB) to D:/NeyviaRuns/tectonic/bin."
+        },
+        {
+          "failure": "A package is not in the cache",
+          "recovery": "documents.build retries online once and Tectonic fetches only that package into D:/NeyviaRuns/tectonic/cache; later builds run offline."
+        },
+        {
+          "failure": "Inter is not embedded",
+          "recovery": "The class loads Inter by file name from templates/latex/neyvia-study/fonts, which the build puts on the search path; elsewhere set \\studyfontpath{dir/}."
+        },
+        {
+          "failure": "Overfull box over 1 pt",
+          "recovery": "Split the long formula over several \\step or \\dline lines, one transformation per line; never shrink the font."
+        },
+        {
+          "failure": "Blocks out of order or a concept without a tag",
+          "recovery": "Reorder to definition, method, reflex, worked, traps, practice and give \\begin{concept}{title}{tag} the source page and column."
+        },
+        {
+          "failure": "Undefined reference",
+          "recovery": "Fix the \\ref label; a second build pass never hides a missing label."
+        }
+      ],
+      "frontier": [
+        "The LAYA page glance is a pluggable step: documents.glance hands the page PNGs to the command in NEYVIA_LAYA_GLANCE and reports not available until another component attaches it.",
+        "The six-part format is the same structure Scroll Study card packs use (paul-seven-part.v1): definition = FORMULA with WHEN?, method = WHAT DO I WRITE?, reflex = PATTERN, worked = COURSE EXAMPLE, practice = YOUR EXERCISE, traps = VARIATIONS/TRAPS. One source can feed both; the converter is not built yet.",
+        "Paul's own Complete Course has concepts with no method (19 of 199) or no worked example (41 of 199), so the block check requires definition and reflex and reports the others; require 1234 makes it strict.",
+        "Ports of chapter 1 of the Complete Course and the Formula & Method Sheet onto the class place all 58 concept headings at the original page and position; scripts/study_docs.py port and compare reproduce it."
+      ],
+      "guidance": [
+        "Template: templates/latex/neyvia-study/neyvia-study.cls, \\documentclass[course] or [sheet]; examples in examples/. Writing rules: plugins/neyvia/skills/neyvia-study-docs/SKILL.md.",
+        "A concept is \\begin{concept}{title}{source tag} with blocks definition, method{caption}, reflex, worked{caption}, traps, practice in that order. The sheet keeps 1-3 and drops 4-6, so one source builds both.",
+        "Lines: \\step{...} one transformation per line (a leading Let, Assume, Then, Take, Check, We look for is coloured), \\dline{maths}, \\result{maths}, \\trap{...}, \\try{...} with \\answer{...}. Quantifiers \\forall \\exists \\exists! colour themselves.",
+        "Builds and renders go to D:/NeyviaRuns/docs; never put PDFs or PNGs in the workspace."
+      ]
+    }
+  }
+}

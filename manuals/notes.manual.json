@@ -1,0 +1,716 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "notes",
+  "kind": "environment",
+  "proofs": {
+    "area": "notes-files",
+    "contracts": [
+      {
+        "checkedAt": [
+          "neyvia_notes_tools.call_notes -> proofs_notes_files.before",
+          "proofs_notes_files.self_check"
+        ],
+        "claim": "Every explicit note path resolves under the selected notes folder with .md, .markdown or .txt extension.",
+        "id": "notes.path-jail",
+        "impact": [
+          "notes bytes",
+          "Notes UI",
+          "note tools"
+        ],
+        "phase": "pre"
+      },
+      {
+        "checkedAt": [
+          "neyvia_notes_tools.tags_of/title_of -> proofs_notes_files.check_tags/check_title",
+          "proofs_notes_files.self_check"
+        ],
+        "claim": "Tags are unique ordered case-folded prose tags excluding code, anchors and digit-containing hex colours; title uses first-six-line heading or filename stem.",
+        "id": "notes.prose-metadata",
+        "impact": [
+          "Notes list/read/write/search summaries"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "neyvia_notes_tools.call_notes -> proofs_notes_files.after",
+          "proofs_notes_files.self_check"
+        ],
+        "claim": "Creation, replacement and append persist the exact requested UTF-8 body and return its filesystem modification stamp.",
+        "id": "notes.body-durable",
+        "impact": [
+          "Notes bytes",
+          "Notes editor",
+          "downstream readers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "neyvia_notes_tools.call_notes -> proofs_notes_files.before/after",
+          "proofs_notes_files.self_check"
+        ],
+        "claim": "A stale expectedModified write returns conflict and preserves the original bytes.",
+        "id": "notes.stale-preserves",
+        "impact": [
+          "Concurrent note writers",
+          "Notes editor"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "neyvia_notes_tools.call_notes -> proofs_notes_files.after",
+          "proofs_notes_files.self_check"
+        ],
+        "claim": "Pin result equals the requested state and persisted .neyvia-notes.json membership.",
+        "id": "notes.pin-durable",
+        "impact": [
+          "Notes ordering",
+          "metadata"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.notes.folder": {
+      "type": "object",
+      "properties": {
+        "folder": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "neyvia.notes.list": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        }
+      },
+      "required": []
+    },
+    "neyvia.notes.open": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notes.pin": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "pinned": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notes.read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notes.search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "query": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.notes.write": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "replace",
+            "append"
+          ]
+        },
+        "expectedModified": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "body": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Markdown notes folder: list, search, tags, pins, safe writes",
+      "state": {
+        "current": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "folder": {
+                "type": "string"
+              },
+              "exists": {
+                "type": "boolean"
+              },
+              "notes": {
+                "type": "array"
+              },
+              "tags": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "folder",
+              "exists",
+              "notes",
+              "tags"
+            ]
+          },
+          "tool": "neyvia.notes.list"
+        }
+      },
+      "actions": {
+        "notes.list": {
+          "effect": "Read up to 3000 eligible notes, pinned then recent; return filtered notes and tag counts",
+          "pre": "Configured notes folder; query words and tags are conjunctive; limit 1–500",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "folder": {
+                "type": "string"
+              },
+              "exists": {
+                "type": "boolean"
+              },
+              "notes": {
+                "type": "array"
+              },
+              "tags": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "folder",
+              "exists",
+              "notes",
+              "tags"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.list",
+          "tool": "neyvia.notes.list"
+        },
+        "notes.folder": {
+          "effect": "Persist selected folder and create it if needed; existing notes are not moved",
+          "pre": "No folder reads current choice; supplied folder resolves outside protected live tree and is a directory or missing",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.folder",
+          "tool": "neyvia.notes.folder"
+        },
+        "notes.open": {
+          "effect": "Emit notes.open to user app; receipt alone has uiVerified=false",
+          "pre": "Existing readable note beneath configured notes folder",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.open",
+          "tool": "neyvia.notes.open"
+        },
+        "notes.pin": {
+          "effect": "Atomically update .neyvia-notes.json pin list; note bytes unchanged",
+          "pre": "Existing note beneath notes folder; pinned defaults true",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.pin",
+          "tool": "neyvia.notes.pin"
+        },
+        "notes.read": {
+          "effect": "Return body, relative path, tags, pinned and nanosecond modified stamp",
+          "pre": "Existing .md/.markdown/.txt resolved beneath notes folder, at most 2 MiB",
+          "returns": {
+            "type": "object",
+            "properties": {
+              "modified": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "modified",
+              "body"
+            ]
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.read",
+          "tool": "neyvia.notes.read"
+        },
+        "notes.search": {
+          "effect": "Read matching note snippets ranked by title match then recency; no model call",
+          "pre": "Nonblank query; every word and #tag must match; limit 1–500",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.notes.search",
+          "tool": "neyvia.notes.search"
+        },
+        "notes.write": {
+          "effect": "Atomically create or replace Markdown; append adds newline-separated text; no path chooses a unique title filename",
+          "pre": "UTF-8 body <=2 MiB; explicit path stays beneath notes folder with note extension; supplied expectedModified must match an existing note",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "neyvia.notes.write",
+          "tool": "neyvia.notes.write"
+        }
+      },
+      "checks": {
+        "captured": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "body",
+            "value": {
+              "$input": "idea"
+            }
+          },
+          "tool": "neyvia.notes.read"
+        },
+        "tagged": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "contains",
+            "path": "tags",
+            "value": {
+              "$input": "tag"
+            }
+          },
+          "tool": "neyvia.notes.read"
+        },
+        "body-saved": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "body",
+            "value": {
+              "$input": "body"
+            }
+          },
+          "tool": "neyvia.notes.read"
+        },
+        "pin-saved": {
+          "args": {
+            "path": {
+              "$input": "path"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "pinned",
+            "value": true
+          },
+          "tool": "neyvia.notes.read"
+        }
+      },
+      "procedures": {
+        "capture-tagged-idea": {
+          "goal": "Read a note, choose append, save the dictated idea with its prose tag and verify both",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "idea": {
+                "type": "string"
+              },
+              "tag": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "idea",
+              "tag"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "notes.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "before"
+            },
+            {
+              "judge": "capture"
+            },
+            {
+              "action": "notes.write",
+              "args": {
+                "body": {
+                  "$input": "idea"
+                },
+                "expectedModified": {
+                  "$result": "before.modified"
+                },
+                "mode": "append",
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "captured",
+              "save": "written",
+              "when": {
+                "judge": "capture",
+                "option": "append"
+              }
+            },
+            {
+              "action": "notes.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "tagged",
+              "save": "after",
+              "when": {
+                "judge": "capture",
+                "option": "append"
+              }
+            }
+          ]
+        },
+        "write-and-pin": {
+          "goal": "Review replacement of an existing note, CAS-write the body and pin it",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "expectedModified": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "body",
+              "expectedModified"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "notes.read",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "current"
+            },
+            {
+              "judge": "replace-note"
+            },
+            {
+              "action": "notes.write",
+              "args": {
+                "body": {
+                  "$input": "body"
+                },
+                "expectedModified": {
+                  "$input": "expectedModified"
+                },
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "check": "body-saved",
+              "save": "written",
+              "when": {
+                "judge": "replace-note",
+                "option": "replace"
+              }
+            },
+            {
+              "action": "notes.pin",
+              "args": {
+                "path": {
+                  "$input": "path"
+                },
+                "pinned": true
+              },
+              "check": "pin-saved",
+              "save": "pinned",
+              "when": {
+                "judge": "replace-note",
+                "option": "replace"
+              }
+            }
+          ]
+        },
+        "verify-effect-notes-pin": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "steps": [
+            {
+              "action": "notes.pin",
+              "args": {
+                "path": {
+                  "$input": "path"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-notes-write": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "body": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "body"
+            ]
+          },
+          "steps": [
+            {
+              "action": "notes.write",
+              "args": {
+                "body": {
+                  "$input": "body"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        },
+        "verify-effect-notes-folder": {
+          "goal": "Verify the actual effect through fresh owning observers",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "folder": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "folder"
+            ]
+          },
+          "steps": [
+            {
+              "action": "notes.folder",
+              "args": {
+                "folder": {
+                  "$input": "folder"
+                }
+              },
+              "save": "effect"
+            }
+          ]
+        }
+      },
+      "judge": {
+        "capture": {
+          "constraints": "Input idea is already transcribed and includes a prose #tag; confirm destination/topic before append. Re-read after conflicts; no automatic replacement of concurrent text.",
+          "options": [
+            "append",
+            "leave"
+          ],
+          "question": "Add this dictated idea to the selected note or keep the note unchanged?"
+        },
+        "replace-note": {
+          "constraints": "Compare current body before replacing; expectedModified comes from that observation. There is no automatic undo for note bytes.",
+          "options": [
+            "replace",
+            "leave"
+          ],
+          "question": "Does the proposed body preserve what matters in this existing note?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "status=conflict from expectedModified",
+          "recovery": "Read new modified/body and merge the idea; do not retry stale stamp or remove guard"
+        },
+        {
+          "failure": "Tag absent from tags[]",
+          "recovery": "Put #tag in prose outside backticks/fences; numeric/hex-looking tags and link anchors do not count"
+        },
+        {
+          "failure": "Changing notes.folder appears to lose notes",
+          "recovery": "Folder selection does not move files; switch back or explicitly migrate chosen files"
+        },
+        {
+          "failure": "A note is absent from list",
+          "recovery": "Check extension, hidden/_ directories, 2 MiB limit and 3000-file scan bound; read known path directly"
+        }
+      ],
+      "frontier": [
+        "Mic recording, language routing and transcription quality are outside notes.write; use dictation manual when present",
+        "No version history, note-delete or multi-writer merge tool; preserve body before replacement"
+      ],
+      "guidance": [
+        "Source: src/grant_agent/neyvia_notes_tools.py (_note_path, write_note, tags_of, _all); tests/test_neyvia_notes_files.py."
+      ]
+    }
+  }
+}

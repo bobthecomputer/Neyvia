@@ -1,0 +1,404 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "proofs-c-frontend",
+  "runner": "scripts/proofs-c-frontend.mjs",
+  "contracts": [
+    {
+      "id": "image.payload.geometry",
+      "phase": "post",
+      "claim": "Provider payload preserves canvas, selection, prompt intent, layer roles and rounded geometry; only visible layers are counted",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:projectToProviderPayload -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.layers.selection",
+      "phase": "post",
+      "claim": "Selection becomes one editable selected shape with rounded geometry, positive extent and nonnegative feather",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:createLayerFromSelection -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.layers.update",
+      "phase": "post",
+      "claim": "A patch affects only its addressed layer and preserves the other layers",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:updateLayerInProject -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.layers.delete",
+      "phase": "post",
+      "claim": "Deletion preserves at least one layer and selects the last survivor when removing the selected layer",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:removeLayerFromProject -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.history.focus",
+      "phase": "post",
+      "claim": "Only an existing retained session can become focused; its annotations replace the overlay",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:setFocusedHistoryItem -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.history.annotations",
+      "phase": "post",
+      "claim": "Overlay changes persist on the focused history session and preserve other sessions",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:updateFocusedHistoryAnnotations -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.history.thread",
+      "phase": "post",
+      "claim": "History, overlay and one idempotent issue thread share the receipt/request proof handle",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:createOpsThreadForFocusedHistory -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.keyboard.announcement",
+      "phase": "post",
+      "claim": "Scope/edge jumps announce both scoped positions; focus announces the destination",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:buildKeyboardTraversalAnnouncement -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.keyboard.trail",
+      "phase": "post",
+      "claim": "Recent traversal trail is bounded, retains newest records, and carries scope/reason/time",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:appendKeyboardJumpTrail -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.keyboard.entry",
+      "phase": "post",
+      "claim": "Trail entry shows its traversal text with a local clock, or an explicit recent fallback for invalid time",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:formatKeyboardJumpTrailEntry -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.keyboard.tooltip",
+      "phase": "post",
+      "claim": "Traversal tooltip preserves scope/reason, full local time when valid, and announcement",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:formatKeyboardJumpTrailTooltip -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.provider.adapter",
+      "phase": "post",
+      "claim": "Registered adapter has its trimmed unique identity and callable transport",
+      "checkedAt": [
+        "web/src/neyvia/imageProviderAdapters.js:registerImageProviderAdapter -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.provider.receipt",
+      "phase": "post",
+      "claim": "Every available, blocked or draft operation has a traceable request, timing, handoff and prompt receipt; nonavailable operations preserve failure evidence",
+      "checkedAt": [
+        "web/src/neyvia/imageProviderAdapters.js:requestProviderOperation -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.provider.history",
+      "phase": "post",
+      "claim": "Provider application preserves receipt/artifact/timing/handoff and annotation proof links, while draft results never masquerade as persisted sessions",
+      "checkedAt": [
+        "web/src/neyvia/imageProviderAdapters.js:applyProviderResult -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "impact": [
+        "Image composition, provider dispatch, receipts, annotations and keyboard review"
+      ]
+    },
+    {
+      "id": "image.prompt.presets",
+      "phase": "invariant",
+      "claim": "Stable disciplined UI presets retain their composition guidance and bounded strengths",
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:module initialization -> checkImagePromptPresets",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkImagePromptPresets"
+      ],
+      "impact": [
+        "Image prompt presets"
+      ]
+    },
+    {
+      "id": "mission.review.projection",
+      "claim": "Live review preserves every event domain, annotation recovery handles, screenshot/replay links, planner and supervisor route/feedback fields",
+      "phase": "post",
+      "checkedAt": [
+        "web/src/neyvia/missionControlModel.js:buildMissionControlModel -> checkedLiveReviewProjection",
+        "web/src/neyvia/missionReviewContracts.js:checkedLiveReviewProjection"
+      ],
+      "impact": [
+        "Live review projection, replay and planner proof handles"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_custom_image_provider_adapter_can_be_registered_and_invoked",
+      "contracts": [
+        "image.provider.adapter",
+        "image.provider.receipt",
+        "image.payload.geometry"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imageProviderAdapters.js:registerImageProviderAdapter -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction",
+        "web/src/neyvia/imageProviderAdapters.js:requestProviderOperation -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundState.js:projectToProviderPayload -> checkedImageAction"
+      ],
+      "procedure": "image.local-adapter-and-receipts",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_custom_image_provider_adapter_can_be_registered_and_invoked"
+    },
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_project_provider_payload_preserves_layer_geometry_and_selection_intent",
+      "contracts": [
+        "image.payload.geometry"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:projectToProviderPayload -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "procedure": "image.compose-select-edit",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_project_provider_payload_preserves_layer_geometry_and_selection_intent"
+    },
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_image_prompt_presets_keep_disciplined_ui_inspiration",
+      "contracts": [
+        "image.prompt.presets"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:module initialization -> checkImagePromptPresets",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkImagePromptPresets"
+      ],
+      "procedure": "image.keyboard-review",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_image_prompt_presets_keep_disciplined_ui_inspiration"
+    },
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_layer_state_helpers_support_selection_layers_and_safe_deletion",
+      "contracts": [
+        "image.layers.selection",
+        "image.layers.update",
+        "image.layers.delete"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:createLayerFromSelection -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction",
+        "web/src/neyvia/imagePlaygroundState.js:updateLayerInProject -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundState.js:removeLayerFromProject -> checkedImageAction"
+      ],
+      "procedure": "image.compose-select-edit",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_layer_state_helpers_support_selection_layers_and_safe_deletion"
+    },
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_provider_result_history_contains_receipt_and_artifact_fields",
+      "contracts": [
+        "image.provider.history",
+        "image.provider.receipt"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imageProviderAdapters.js:applyProviderResult -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction",
+        "web/src/neyvia/imageProviderAdapters.js:requestProviderOperation -> checkedImageAction"
+      ],
+      "procedure": "image.local-adapter-and-receipts",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_provider_result_history_contains_receipt_and_artifact_fields"
+    },
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_focused_history_annotation_editing_and_ops_thread_sync",
+      "contracts": [
+        "image.history.focus",
+        "image.history.annotations",
+        "image.history.thread"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:setFocusedHistoryItem -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction",
+        "web/src/neyvia/imagePlaygroundState.js:updateFocusedHistoryAnnotations -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundState.js:createOpsThreadForFocusedHistory -> checkedImageAction"
+      ],
+      "procedure": "image.annotate-history-thread",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_focused_history_annotation_editing_and_ops_thread_sync"
+    },
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_request_operation_attaches_request_metadata_even_on_fallback",
+      "contracts": [
+        "image.provider.receipt"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imageProviderAdapters.js:requestProviderOperation -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "procedure": "image.local-adapter-and-receipts",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_request_operation_attaches_request_metadata_even_on_fallback"
+    },
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_keyboard_traversal_announcement_includes_both_scoped_counts_for_group_jump",
+      "contracts": [
+        "image.keyboard.announcement"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:buildKeyboardTraversalAnnouncement -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction"
+      ],
+      "procedure": "image.keyboard-review",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_keyboard_traversal_announcement_includes_both_scoped_counts_for_group_jump"
+    },
+    {
+      "test": "tests/test_image_playground_frontend.py",
+      "case": "ImagePlaygroundFrontendTests.test_keyboard_jump_trail_caps_entries_and_formats_cross_scope_rows",
+      "contracts": [
+        "image.keyboard.trail",
+        "image.keyboard.entry",
+        "image.keyboard.tooltip"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/imagePlaygroundState.js:appendKeyboardJumpTrail -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundContracts.js:checkedImageAction",
+        "web/src/neyvia/imagePlaygroundState.js:formatKeyboardJumpTrailEntry -> checkedImageAction",
+        "web/src/neyvia/imagePlaygroundState.js:formatKeyboardJumpTrailTooltip -> checkedImageAction"
+      ],
+      "procedure": "image.keyboard-review",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "case_id": "tests/test_image_playground_frontend.py::ImagePlaygroundFrontendTests.test_keyboard_jump_trail_caps_entries_and_formats_cross_scope_rows"
+    },
+    {
+      "test": "tests/test_live_review_panel_frontend.py",
+      "case": "LiveReviewPanelFrontendTests.test_live_review_model_includes_required_event_domains",
+      "contracts": [
+        "mission.review.projection"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/missionControlModel.js:buildMissionControlModel -> checkedLiveReviewProjection",
+        "web/src/neyvia/missionReviewContracts.js:checkedLiveReviewProjection"
+      ],
+      "procedure": "mission.review-projection",
+      "classification": "real-current",
+      "assertionsPreserved": true,
+      "assertionRefinements": [
+        {
+          "claim": "Historical desktop-ui model source contains event fields",
+          "replacement": "Current web model emits all required event projections on every construction; source path moved",
+          "contracts": [
+            "mission.review.projection"
+          ]
+        }
+      ],
+      "case_id": "tests/test_live_review_panel_frontend.py::LiveReviewPanelFrontendTests.test_live_review_model_includes_required_event_domains"
+    }
+  ],
+  "procedures": [
+    {
+      "id": "image.compose-select-edit"
+    },
+    {
+      "id": "image.local-adapter-and-receipts"
+    },
+    {
+      "id": "image.annotate-history-thread"
+    },
+    {
+      "id": "image.keyboard-review"
+    },
+    {
+      "id": "mission.review-projection"
+    }
+  ],
+  "frontier": [
+    "Image UI route/default runtime wiring and rendered browser controls still need their actual user journeys",
+    "Historical Codex May-11 reference manifest was replaced by current May-13 imagegen reference; missing history alone does not establish dead code",
+    "Live review connected bridge, planner panels, proof-copy links, replay controls and project switcher remain rendered UI boundaries",
+    "Mobile authenticated lazy loading, bootstrap refresh, empty phone indexes and one-session transcript hydration remain integration/UI boundaries",
+    "SVG compositor is a real local registered provider; external remote image generation is not exercised"
+  ],
+  "portRoles": [],
+  "traceMode": "parent"
+}

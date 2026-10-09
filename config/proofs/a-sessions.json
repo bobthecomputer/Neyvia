@@ -1,0 +1,2619 @@
+{
+  "portRoles": [48469],
+  "traceMode": "children",
+  "area": "a-sessions",
+  "manual": "agents",
+  "module": "grant_agent.proofs_a_sessions",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "sessions.workspace.state",
+      "phase": "post",
+      "claim": "Git status, branch, detached/upstream identity, line counts, rename/stage metadata, bounded changes and current worktree exactly project observed repository data.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.workspace.cache",
+      "phase": "invariant",
+      "claim": "The workspace observer returns a detached JSON copy of its cached observation within TTL; invalidate(cwd) drops that workspace and PR cache.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace.invalidate"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.workspace.diff",
+      "phase": "post",
+      "claim": "The file observer resolves paths inside the real repository and bounds patch bytes with a visible truncation marker; nonexistent workspaces and escapes are refused before diff.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._safe_relpath",
+        "grant_agent.connected_sessions.workspace.file_diff",
+        "grant_agent.proofs_a_sessions.check_diff"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.workspace.confirm",
+      "phase": "pre",
+      "claim": "Repository mutations accept literal True confirmation only; refusals happen before any repository command or mutation.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.git_action"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.workspace.action",
+      "phase": "post",
+      "claim": "Repository actions project actual command exit status, stdout/stderr, visible timeout and bounded output; commit messages are literal arguments and invalid empty/oversized messages are refused.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.connected_sessions.workspace._action_result",
+        "grant_agent.proofs_a_sessions.check_action"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.workspace.remote",
+      "phase": "invariant",
+      "claim": "GitHub identities use supported canonical GitHub URLs and userinfo is removed before remote state reaches clients.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._github_from_remote",
+        "grant_agent.connected_sessions.workspace._strip_credentials",
+        "grant_agent.proofs_a_sessions.check_remote"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.workspace.checks",
+      "phase": "post",
+      "claim": "GitHub checks preserve unknown for absent rollups; failure outranks pending, which outranks passing.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._checks_summary",
+        "grant_agent.proofs_a_sessions.check_rollup"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.folders.catalogue",
+      "phase": "post",
+      "claim": "Project and linked-worktree branch/remote identity matches Git HEAD/config/commondir observations; ordinary folders remain nonrepositories.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders._git_info",
+        "grant_agent.connected_sessions.folders.local_projects",
+        "grant_agent.proofs_a_sessions.check_folder_info"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.folders.filter",
+      "phase": "post",
+      "claim": "Recent/local folders preserve input order and apply exact query projection and respective 8/30 limits.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders.candidates",
+        "grant_agent.proofs_a_sessions.check_candidates"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.folders.availability",
+      "phase": "pre",
+      "claim": "Absent GitHub CLI is reported unavailable and repositories stay empty without any account access.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders.github_status",
+        "grant_agent.connected_sessions.folders.github_repos",
+        "grant_agent.connected_sessions.folders.github_candidates"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.folders.confirm",
+      "phase": "pre",
+      "claim": "Clone and worktree require confirmation, constrained repository and branch names, and an actual Git repository; unsafe requests fail before processes or directories are created.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders.clone",
+        "grant_agent.connected_sessions.folders.create_worktree"
+      ],
+      "impact": [
+        "connected session workspace/folder receipts",
+        "local repository boundaries"
+      ]
+    },
+    {
+      "id": "sessions.events.stamp",
+      "phase": "post",
+      "claim": "Each broker event retains causal order and session identity with one increasing cursor and the actual host device identity.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer.publish",
+        "grant_agent.proofs_a_sessions.check_event_publish"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.events.bounds",
+      "phase": "invariant",
+      "claim": "Published events and the cursor ring obey event/count/byte budgets; evicted bytes exactly reduce the recorded ring total and oversized strings expose truncation while short metadata survives.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer.publish",
+        "grant_agent.proofs_a_sessions.check_event_publish"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.events.cursor",
+      "phase": "post",
+      "claim": "An observer returns exactly the ordered retained events after its cursor, or resync outside retained range; initial/new subscribers receive no past events.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer._since",
+        "grant_agent.proofs_a_sessions.check_event_buffer"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.events.wait",
+      "phase": "post",
+      "claim": "Blocking observers wake on publish/close or timeout; new subscribers return at once, and each result passes the same locked cursor contract.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer.wait",
+        "grant_agent.connected_sessions.events.EventBuffer._since"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.run.lifecycle",
+      "phase": "invariant",
+      "claim": "Provider state transitions preserve state, pending request, error and control flags; terminal states expose no active controls or requests. Approval identity is consumed once only after a successful adapter answer; stopping a retired run does not interrupt again.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.run.request",
+      "phase": "pre",
+      "claim": "Successful send/new returns the requested durable run and session identity; request fingerprints reject conflicting replay and one active run owns each session. Refused messages/host/session/adapter requests fail before a provider turn starts.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker.send",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.new",
+        "grant_agent.connected_sessions.runs.RunStore.has_request",
+        "grant_agent.connected_sessions.runs.RunStore.claim",
+        "grant_agent.proofs_a_sessions.check_broker_request"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.codex.sequence",
+      "phase": "post",
+      "claim": "A Codex sequence is its stable turn ordinal times 8192 plus bounded position times four plus subslot, retaining exact JSON integer ordering.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.make_seq",
+        "grant_agent.proofs_a_sessions.check_seq",
+        "grant_agent.connected_sessions.codex_items.uuid7_ms",
+        "grant_agent.connected_sessions.codex_items.ordinal_from_seq",
+        "grant_agent.connected_sessions.codex_items.map_turns",
+        "grant_agent.proofs_a_sessions.check_uuid_clock",
+        "grant_agent.proofs_a_sessions.check_codex_turns"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.codex.text",
+      "phase": "post",
+      "claim": "Codex text preserves short input verbatim and clips long UTF-8 input on complete characters, with the exact omitted-character marker.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.clip",
+        "grant_agent.proofs_a_sessions.check_clip",
+        "grant_agent.connected_sessions.codex_items.map_thread_item",
+        "grant_agent.connected_sessions.codex_items.public_request",
+        "grant_agent.proofs_a_sessions.check_codex_item",
+        "grant_agent.proofs_a_sessions.check_public_request"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.neyvia.category",
+      "phase": "post",
+      "claim": "Unlabeled/native runtime aliases are native; external or mixed routes are hybrid, with no invented single runtime for mixed routes.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.classify",
+        "grant_agent.proofs_a_sessions.check_native_category",
+        "grant_agent.connected_sessions.neyvia.conversation_runtime",
+        "grant_agent.proofs_a_sessions.check_native_runtime"
+      ],
+      "impact": [
+        "connected session stream/store/protocol receipts"
+      ]
+    },
+    {
+      "id": "sessions.api.authority",
+      "phase": "pre",
+      "claim": "Connected reads require an authenticated session and provider/file mutations require the host owner; an anonymous/guest refusal happens before stream subscription or dispatch.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.serve_connected_get",
+        "grant_agent.connected_sessions.api.respond_connected_command"
+      ],
+      "impact": [
+        "connected session TCP HTTP SSE authority and event transport"
+      ]
+    },
+    {
+      "id": "sessions.api.response",
+      "phase": "post",
+      "claim": "Connected command success envelopes retain the exact dispatch result; coded refusals retain HTTP status/code/owner details, and unexpected failures use bounded internal_error envelopes.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response"
+      ],
+      "impact": [
+        "connected session TCP HTTP SSE authority and event transport"
+      ]
+    },
+    {
+      "id": "sessions.api.state_root",
+      "phase": "pre",
+      "claim": "A supplied expected state folder must resolve to the active backend root before connected command dispatch.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._check_state_root"
+      ],
+      "impact": [
+        "connected session TCP HTTP SSE authority and event transport"
+      ]
+    },
+    {
+      "id": "sessions.api.media",
+      "phase": "post",
+      "claim": "Authenticated media preserves actual bytes and allowed MIME, falls back to octet-stream for unknown MIME, sends no-store/nosniff/sandbox, and forces nonimage downloads with quoted filename.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_media"
+      ],
+      "impact": [
+        "connected session TCP HTTP SSE authority and event transport"
+      ]
+    },
+    {
+      "id": "sessions.api.sse",
+      "phase": "post",
+      "claim": "Every streamed frame preserves its exact broker event and cursor; Last-Event-ID takes precedence over query cursor, resync is explicit, and subscription lifetime follows the live socket.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_events",
+        "grant_agent.proofs_a_sessions.check_sse"
+      ],
+      "impact": [
+        "connected session TCP HTTP SSE authority and event transport"
+      ]
+    },
+    {
+      "id": "sessions.workspace.github",
+      "phase": "post",
+      "claim": "Only the finite/public gh CLI interface is used: authenticated GitHub repositories project PR identity/state/checks from exact JSON, absent PR is not an error, and unavailable/signed-out CLI prevents PR reads/creation. PR create uses literal title/body and projects only its actual command output.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._gh_state",
+        "grant_agent.connected_sessions.workspace._pull_request",
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.proofs_a_sessions.check_github_result",
+        "grant_agent.proofs_a_sessions.check_cli_invocation"
+      ],
+      "impact": [
+        "Git workspace observations and explicit confirmed command boundaries"
+      ]
+    },
+    {
+      "id": "sessions.workspace.cli",
+      "phase": "pre",
+      "claim": "Workspace children disable credential prompts and token extraction; hidden Windows options apply to every actual child launch, confirmed over real Git and finite CLI processes in the scratch procedure.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._run",
+        "grant_agent.connected_sessions.workspace._run_capped",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.proofs_a_sessions.check_cli_invocation"
+      ],
+      "impact": [
+        "Git workspace observations and explicit confirmed command boundaries"
+      ]
+    },
+    {
+      "id": "sessions.codex.diff",
+      "phase": "post",
+      "claim": "Full-source change counts and relative paths survive bounded unified patch projection.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.diff_from_changes",
+        "grant_agent.proofs_a_sessions.check_codex_diff"
+      ],
+      "impact": [
+        "Codex session transcript and approval protocol"
+      ]
+    },
+    {
+      "id": "sessions.codex.permissions",
+      "phase": "post",
+      "claim": "Advertised permission modes map exactly to read-only, workspace-write or full access; unknown modes grant no authority.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.permission_modes",
+        "grant_agent.connected_sessions.codex_items.permission_mode_for",
+        "grant_agent.connected_sessions.codex_items.turn_permission_params",
+        "grant_agent.connected_sessions.codex_items.thread_permission_params",
+        "grant_agent.proofs_a_sessions.check_permission"
+      ],
+      "impact": [
+        "Codex session transcript and approval protocol"
+      ]
+    },
+    {
+      "id": "sessions.codex.requests",
+      "phase": "post",
+      "claim": "Approval replies grant only the requested action or turn; question and elicitation replies preserve their exact wire shape.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.public_request",
+        "grant_agent.connected_sessions.codex_items.server_request_result",
+        "grant_agent.proofs_a_sessions.check_request_wire",
+        "grant_agent.proofs_a_sessions.check_public_request"
+      ],
+      "impact": [
+        "Codex session transcript and approval protocol"
+      ]
+    },
+    {
+      "id": "sessions.codex.media",
+      "phase": "post",
+      "claim": "Connected media tokens equal SHA-256 of the reference and agree with chat-media descriptors.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.media_token",
+        "grant_agent.proofs_a_sessions.check_media_token"
+      ],
+      "impact": [
+        "Codex session transcript and approval protocol"
+      ]
+    },
+    {
+      "id": "sessions.neyvia.summary",
+      "phase": "post",
+      "claim": "Native, hybrid, unlabeled, archived, waiting and orchestration conversations preserve store identity and project/workspace metadata; controls reflect native goal and read-only orchestration boundaries.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia._summary",
+        "grant_agent.proofs_a_sessions.check_native_summary"
+      ],
+      "impact": [
+        "Neyvia connected conversation listing and transcript paging"
+      ]
+    },
+    {
+      "id": "sessions.neyvia.page",
+      "phase": "post",
+      "claim": "Native history pages preserve stable ordered distinct sequence numbers, exclusive cursor windows, delivered cursor and earlier-history flags.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.read",
+        "grant_agent.proofs_a_sessions.check_native_page"
+      ],
+      "impact": [
+        "Neyvia connected conversation listing and transcript paging"
+      ]
+    },
+    {
+      "id": "sessions.broker.read",
+      "phase": "post",
+      "claim": "Every page and live item bounds observed tool output, rewrites host attachment paths to served identities, preserves safe served URLs, and retains session/current-run identity; full output is separately bounded on demand.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.read",
+        "grant_agent.connected_sessions.broker.tool_output",
+        "grant_agent.connected_sessions.broker._tidy_item",
+        "grant_agent.proofs_a_sessions.check_tidy_item",
+        "grant_agent.proofs_a_sessions.check_full_output",
+        "grant_agent.proofs_a_sessions.check_broker_page"
+      ],
+      "impact": [
+        "Connected transcript pages and attachment retrieval"
+      ]
+    },
+    {
+      "id": "sessions.broker.media",
+      "phase": "post",
+      "claim": "Media chooses the adapter media or read_media hook, retains its bytes/MIME/name receipt, and reports missing or coded refusals with 404.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.media",
+        "grant_agent.proofs_a_sessions.check_media_result"
+      ],
+      "impact": [
+        "Connected transcript pages and attachment retrieval"
+      ]
+    },
+    {
+      "id": "sessions.broker.options",
+      "phase": "post",
+      "claim": "Turn options preserve bounded model, effort, permission, fork and image selections; only print/terminal transports are admitted.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker._turn_options",
+        "grant_agent.proofs_a_sessions.check_turn_options"
+      ],
+      "impact": [
+        "Connected turn transport and option boundary"
+      ]
+    },
+    {
+      "id": "sessions.api.poll",
+      "phase": "post",
+      "claim": "HTTP long poll clamps the requested wait and returns exactly the observed event list, cursor and optional resync flag; temporary subscribers are always released.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.handle_connected_command",
+        "grant_agent.proofs_a_sessions.check_poll"
+      ],
+      "impact": [
+        "HTTP events and subscriber lifecycle"
+      ]
+    },
+    {
+      "id": "sessions.events.subscription",
+      "phase": "post",
+      "claim": "Every HTTP or command subscription owns a unique token within the configured cap and releases it on success, refusal, disconnect or broker closure.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.subscription",
+        "grant_agent.proofs_a_sessions.check_subscription"
+      ],
+      "impact": [
+        "HTTP events and subscriber lifecycle"
+      ]
+    },
+    {
+      "id": "sessions.codex.origin",
+      "phase": "post",
+      "claim": "Automation/proof/temp path patterns are classified as harness origin while ordinary and missing workspace paths remain user origin.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.classify_origin",
+        "grant_agent.proofs_a_sessions.check_origin"
+      ],
+      "impact": [
+        "Persisted Codex activity and automation classification"
+      ]
+    },
+    {
+      "id": "sessions.codex.rollout",
+      "phase": "post",
+      "claim": "Only complete JSON dictionary rows from the bounded rollout tail are read; recent start/terminal markers and staleness deadlines determine active-turn attribution without reading full histories.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.read_tail_rows",
+        "grant_agent.connected_sessions.codex_items.rollout_activity",
+        "grant_agent.proofs_a_sessions.check_tail_read",
+        "grant_agent.proofs_a_sessions.check_rollout_activity"
+      ],
+      "impact": [
+        "Persisted Codex activity and automation classification"
+      ]
+    },
+    {
+      "id": "sessions.neyvia.tools",
+      "phase": "post",
+      "claim": "Tool classification follows ordered category rules; readable nested command/file output, exit codes, durations and unresolved finished calls preserve recorded outcomes within 8 KB.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia_items.tool_category",
+        "grant_agent.connected_sessions.neyvia_items.tool_item",
+        "grant_agent.proofs_a_sessions.check_native_tool_category",
+        "grant_agent.proofs_a_sessions.check_native_tool"
+      ],
+      "impact": [
+        "Native connected transcript tool, reasoning and activity receipts"
+      ]
+    },
+    {
+      "id": "sessions.neyvia.items",
+      "phase": "post",
+      "claim": "Every persisted native turn uses stable ordered distinct slots, preserves its main text and failure/cancel outcome, and exposes only bounded public/provider-labelled reasoning; excess activity has an explicit omission receipt.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia_items.turn_items",
+        "grant_agent.connected_sessions.neyvia_items.activity_segments",
+        "grant_agent.proofs_a_sessions.check_native_turn",
+        "grant_agent.proofs_a_sessions.check_native_segments"
+      ],
+      "impact": [
+        "Native connected transcript tool, reasoning and activity receipts"
+      ]
+    },
+    {
+      "id": "sessions.api.forward",
+      "phase": "post",
+      "claim": "Desktop commands call only the configured loopback service with the expected state root; HTTP failures retain machine codes in the Tauri data envelope.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.forward.forward_connected_command",
+        "grant_agent.proofs_a_sessions.check_forward_request",
+        "grant_agent.proofs_a_sessions.check_forward_result"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.api.allowlist",
+      "phase": "post",
+      "claim": "Every current connected command is eligible for desktop dispatch; the parity contract is checked before each connected command.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.handle_connected_command",
+        "grant_agent.proofs_a_sessions.check_connected_allowlist"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.broker.catalogue",
+      "phase": "post",
+      "claim": "Catalogue projects observed adapter rows exactly through archive, harness, normalized app, category and case-insensitive query filters, stable newest-first sorting, bounded pagination and truthful sources.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.broker.unread",
+      "phase": "post",
+      "claim": "Unread is true only for an observed sequence beyond the persisted seen sequence or an activity timestamp beyond the persisted seen timestamp; first inventory observation baselines existing history.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.seen.SeenStore.unread",
+        "grant_agent.proofs_a_sessions.check_unread"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.broker.controls",
+      "phase": "post",
+      "claim": "Goal and provider options retain the exact JSON projection of the adapter hook; compact, answer, stop and steer preserve session/run identity and terminal control safety.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection",
+        "grant_agent.proofs_a_sessions.check_run_record"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.broker.refusals",
+      "phase": "post",
+      "claim": "Coded adapter exceptions retain their code, status, message and owner detail; uncoded failures receive the documented fallback without burning retryable pending requests.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.broker.registry",
+      "phase": "post",
+      "claim": "An accepted adapter has all required methods and the selected app identity; incomplete, absent or failing modules/factories become unavailable sources with a reason.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.registry.Registry._check",
+        "grant_agent.proofs_a_sessions.check_registry_adapter"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.run.watchdog",
+      "phase": "post",
+      "claim": "Only queued/running runs with no stop request and output older than the selected limit enter watchdog interruption; waiting approvals and questions are exempt.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker._watchdog",
+        "grant_agent.proofs_a_sessions.check_watchdog_selection"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.run.recovery",
+      "phase": "post",
+      "claim": "Recovered dead or recycled owners become durable interrupted runs with no pending request and an explicit no-resend error; replay cannot send a recovered request again.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.recover",
+        "grant_agent.proofs_a_sessions.check_recovered_runs"
+      ],
+      "impact": [
+        "Connected sessions service state, authority, ownership and client receipts"
+      ]
+    },
+    {
+      "id": "sessions.opencode.inventory",
+      "phase": "post",
+      "claim": "Saved native OpenCode history keeps messages and truthful missing-reasoning notices in stable exclusive pages; observed native CLI presence selects capability/billing/reason fields without claiming provider execution.",
+      "checkedAt": [
+        "grant_agent.connected_sessions.opencode.OpenCodeAdapter.capabilities",
+        "grant_agent.connected_sessions.opencode.OpenCodeAdapter.read",
+        "grant_agent.proofs_a_sessions.check_opencode_capabilities",
+        "grant_agent.proofs_a_sessions.check_opencode_page",
+        "grant_agent.connected_sessions.opencode_acp.command",
+        "grant_agent.connected_sessions.model.Capabilities",
+        "grant_agent.connected_sessions.model.ItemsPage"
+      ],
+      "impact": [
+        "OpenCode local history and conditional control capability catalogue"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_connected_sessions_folders.py",
+      "case": "test_local_projects_read_branch_and_github_remote_from_git_files",
+      "contracts": [
+        "sessions.folders.catalogue"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders._git_info",
+        "grant_agent.connected_sessions.folders.local_projects",
+        "grant_agent.proofs_a_sessions.check_folder_info"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_folders.py::test_local_projects_read_branch_and_github_remote_from_git_files"
+    },
+    {
+      "test": "tests/test_connected_sessions_folders.py",
+      "case": "test_worktree_git_file_resolves_to_its_git_dir",
+      "contracts": [
+        "sessions.folders.catalogue"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders._git_info",
+        "grant_agent.connected_sessions.folders.local_projects",
+        "grant_agent.proofs_a_sessions.check_folder_info"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_folders.py::test_worktree_git_file_resolves_to_its_git_dir"
+    },
+    {
+      "test": "tests/test_connected_sessions_folders.py",
+      "case": "test_candidates_filter_by_query",
+      "contracts": [
+        "sessions.folders.filter"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders.candidates",
+        "grant_agent.proofs_a_sessions.check_candidates"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_folders.py::test_candidates_filter_by_query"
+    },
+    {
+      "test": "tests/test_connected_sessions_folders.py",
+      "case": "test_github_is_reported_unavailable_without_gh",
+      "contracts": [
+        "sessions.folders.availability"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders.github_status",
+        "grant_agent.connected_sessions.folders.github_repos",
+        "grant_agent.connected_sessions.folders.github_candidates"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_folders.py::test_github_is_reported_unavailable_without_gh"
+    },
+    {
+      "test": "tests/test_connected_sessions_folders.py",
+      "case": "test_clone_and_worktree_require_confirmation_and_valid_names",
+      "contracts": [
+        "sessions.folders.confirm"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.folders.clone",
+        "grant_agent.connected_sessions.folders.create_worktree"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_folders.py::test_clone_and_worktree_require_confirmation_and_valid_names"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_changes_with_line_counts",
+      "contracts": [
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_changes_with_line_counts"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_a_subfolder_reports_the_repository_root",
+      "contracts": [
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_a_subfolder_reports_the_repository_root"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_folders_that_are_not_repositories",
+      "contracts": [
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_folders_that_are_not_repositories"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_state_is_cached_for_a_few_seconds",
+      "contracts": [
+        "sessions.workspace.cache",
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace.invalidate",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_state_is_cached_for_a_few_seconds"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_github_remotes",
+      "contracts": [
+        "sessions.workspace.remote"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._github_from_remote",
+        "grant_agent.connected_sessions.workspace._strip_credentials",
+        "grant_agent.proofs_a_sessions.check_remote"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_github_remotes"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_remote_url_never_carries_credentials",
+      "contracts": [
+        "sessions.workspace.remote"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._github_from_remote",
+        "grant_agent.connected_sessions.workspace._strip_credentials",
+        "grant_agent.proofs_a_sessions.check_remote"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_remote_url_never_carries_credentials"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_check_rollup_summary",
+      "contracts": [
+        "sessions.workspace.checks"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._checks_summary",
+        "grant_agent.proofs_a_sessions.check_rollup"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_check_rollup_summary"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_file_diff_of_tracked_untracked_and_renamed_files",
+      "contracts": [
+        "sessions.workspace.diff"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._safe_relpath",
+        "grant_agent.connected_sessions.workspace.file_diff",
+        "grant_agent.proofs_a_sessions.check_diff"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_file_diff_of_tracked_untracked_and_renamed_files"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_file_diff_paths_stay_inside_the_repository",
+      "contracts": [
+        "sessions.workspace.diff"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._safe_relpath",
+        "grant_agent.connected_sessions.workspace.file_diff",
+        "grant_agent.proofs_a_sessions.check_diff"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_file_diff_paths_stay_inside_the_repository"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_actions_need_an_explicit_confirm",
+      "contracts": [
+        "sessions.workspace.confirm"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.git_action"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_actions_need_an_explicit_confirm"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_commit_message_starting_with_a_dash_is_a_message_not_an_option",
+      "contracts": [
+        "sessions.workspace.action"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.connected_sessions.workspace._action_result",
+        "grant_agent.proofs_a_sessions.check_action"
+      ],
+      "procedure": "workspace-folders",
+      "case_id": "tests/test_connected_sessions_workspace.py::test_commit_message_starting_with_a_dash_is_a_message_not_an_option"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_send_streams_events_in_order_and_stamps_cursors",
+      "contracts": [
+        "sessions.events.stamp",
+        "sessions.run.lifecycle",
+        "sessions.run.request"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer.publish",
+        "grant_agent.proofs_a_sessions.check_event_publish",
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.send",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.new",
+        "grant_agent.connected_sessions.runs.RunStore.has_request",
+        "grant_agent.connected_sessions.runs.RunStore.claim",
+        "grant_agent.proofs_a_sessions.check_broker_request"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_send_streams_events_in_order_and_stamps_cursors"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_send_is_idempotent_by_request_id",
+      "contracts": [
+        "sessions.run.request"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker.send",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.new",
+        "grant_agent.connected_sessions.runs.RunStore.has_request",
+        "grant_agent.connected_sessions.runs.RunStore.claim",
+        "grant_agent.proofs_a_sessions.check_broker_request"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_send_is_idempotent_by_request_id"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_only_one_active_run_per_session",
+      "contracts": [
+        "sessions.run.request",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker.send",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.new",
+        "grant_agent.connected_sessions.runs.RunStore.has_request",
+        "grant_agent.connected_sessions.runs.RunStore.claim",
+        "grant_agent.proofs_a_sessions.check_broker_request",
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_only_one_active_run_per_session"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_failed_turn_reports_the_error_and_frees_the_session",
+      "contracts": [
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_failed_turn_reports_the_error_and_frees_the_session"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_stop_interrupts_the_adapter_and_cancels_the_run",
+      "contracts": [
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_stop_interrupts_the_adapter_and_cancels_the_run"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_answer_reaches_the_adapter_once",
+      "contracts": [
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_answer_reaches_the_adapter_once"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_cursors_resync_when_older_than_the_buffer",
+      "contracts": [
+        "sessions.events.cursor"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer._since",
+        "grant_agent.proofs_a_sessions.check_event_buffer"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_cursors_resync_when_older_than_the_buffer"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_wait_events_wakes_on_publish_and_times_out",
+      "contracts": [
+        "sessions.events.wait",
+        "sessions.events.cursor"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer.wait",
+        "grant_agent.connected_sessions.events.EventBuffer._since",
+        "grant_agent.proofs_a_sessions.check_event_buffer"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_wait_events_wakes_on_publish_and_times_out"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_cursors_survive_a_restart_as_resync",
+      "contracts": [
+        "sessions.events.cursor"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer._since",
+        "grant_agent.proofs_a_sessions.check_event_buffer"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_cursors_survive_a_restart_as_resync"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_oversized_events_are_trimmed_to_the_limit",
+      "contracts": [
+        "sessions.events.bounds"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer.publish",
+        "grant_agent.proofs_a_sessions.check_event_publish"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_oversized_events_are_trimmed_to_the_limit"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_ring_is_bounded_by_bytes_too",
+      "contracts": [
+        "sessions.events.bounds"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.events.EventBuffer.publish",
+        "grant_agent.proofs_a_sessions.check_event_publish"
+      ],
+      "procedure": "broker-protocol",
+      "case_id": "tests/test_connected_sessions_broker.py::test_ring_is_bounded_by_bytes_too"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_only_the_pc_owner_can_run_agents_or_change_files",
+      "contracts": [
+        "sessions.api.authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.serve_connected_get",
+        "grant_agent.connected_sessions.api.respond_connected_command"
+      ],
+      "procedure": "http-sse",
+      "case_id": "tests/test_connected_sessions_api.py::test_only_the_pc_owner_can_run_agents_or_change_files"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_the_desktop_controller_header_does_not_divert_connected_commands",
+      "contracts": [
+        "sessions.api.response"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response"
+      ],
+      "procedure": "http-sse",
+      "case_id": "tests/test_connected_sessions_api.py::test_the_desktop_controller_header_does_not_divert_connected_commands"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_an_unexpected_failure_is_a_500_with_a_code_not_a_traceback",
+      "contracts": [
+        "sessions.api.response"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response"
+      ],
+      "procedure": "http-sse",
+      "case_id": "tests/test_connected_sessions_api.py::test_an_unexpected_failure_is_a_500_with_a_code_not_a_traceback"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_handle_connected_command_checks_the_state_root_and_unknown_commands",
+      "contracts": [
+        "sessions.api.state_root",
+        "sessions.api.response"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._check_state_root",
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response"
+      ],
+      "procedure": "http-sse",
+      "case_id": "tests/test_connected_sessions_api.py::test_handle_connected_command_checks_the_state_root_and_unknown_commands"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_state_of_a_clean_repository",
+      "contracts": [
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_changes_are_truncated_at_the_limit",
+      "contracts": [
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_state_of_the_first_commit_less_repository_and_detached_head",
+      "contracts": [
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_ahead_and_behind_against_a_local_remote",
+      "contracts": [
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_worktrees_are_listed_with_the_current_one_marked",
+      "contracts": [
+        "sessions.workspace.state"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.workspace_state",
+        "grant_agent.connected_sessions.workspace._compute_state",
+        "grant_agent.proofs_a_sessions.check_state"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_pull_request_and_checks_come_from_gh",
+      "contracts": [
+        "sessions.workspace.github",
+        "sessions.workspace.cli"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._gh_state",
+        "grant_agent.connected_sessions.workspace._pull_request",
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.proofs_a_sessions.check_github_result",
+        "grant_agent.proofs_a_sessions.check_cli_invocation",
+        "grant_agent.connected_sessions.workspace._run",
+        "grant_agent.connected_sessions.workspace._run_capped",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_no_pull_request_for_the_branch_is_not_an_error",
+      "contracts": [
+        "sessions.workspace.github"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._gh_state",
+        "grant_agent.connected_sessions.workspace._pull_request",
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.proofs_a_sessions.check_github_result",
+        "grant_agent.proofs_a_sessions.check_cli_invocation"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_gh_not_signed_in_is_reported_and_skips_the_pull_request",
+      "contracts": [
+        "sessions.workspace.github"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._gh_state",
+        "grant_agent.connected_sessions.workspace._pull_request",
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.proofs_a_sessions.check_github_result",
+        "grant_agent.proofs_a_sessions.check_cli_invocation"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_gh_is_only_asked_about_pull_requests_for_github_repos",
+      "contracts": [
+        "sessions.workspace.github"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._gh_state",
+        "grant_agent.connected_sessions.workspace._pull_request",
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.proofs_a_sessions.check_github_result",
+        "grant_agent.proofs_a_sessions.check_cli_invocation"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_file_diff_is_bounded",
+      "contracts": [
+        "sessions.workspace.diff"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._safe_relpath",
+        "grant_agent.connected_sessions.workspace.file_diff",
+        "grant_agent.proofs_a_sessions.check_diff"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_file_diff_refuses_folders_that_are_not_repositories",
+      "contracts": [
+        "sessions.workspace.diff"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._safe_relpath",
+        "grant_agent.connected_sessions.workspace.file_diff",
+        "grant_agent.proofs_a_sessions.check_diff"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_unknown_actions_and_missing_folders_are_refused",
+      "contracts": [
+        "sessions.workspace.confirm"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.git_action"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_create_pr_runs_gh_with_title_and_body",
+      "contracts": [
+        "sessions.workspace.github",
+        "sessions.workspace.action"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._gh_state",
+        "grant_agent.connected_sessions.workspace._pull_request",
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.proofs_a_sessions.check_github_result",
+        "grant_agent.proofs_a_sessions.check_cli_invocation",
+        "grant_agent.connected_sessions.workspace._action_result",
+        "grant_agent.proofs_a_sessions.check_action"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_create_pr_failure_and_signed_out_gh",
+      "contracts": [
+        "sessions.workspace.github"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._gh_state",
+        "grant_agent.connected_sessions.workspace._pull_request",
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.proofs_a_sessions.check_github_result",
+        "grant_agent.proofs_a_sessions.check_cli_invocation"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_every_child_process_is_started_hidden",
+      "contracts": [
+        "sessions.workspace.cli"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace._run",
+        "grant_agent.connected_sessions.workspace._run_capped",
+        "grant_agent.subprocess_utils.hidden_windows_subprocess_kwargs",
+        "grant_agent.proofs_a_sessions.check_cli_invocation"
+      ],
+      "procedure": "workspace-observers-gh-transport"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_seq_is_the_turn_ordinal_plus_position",
+      "contracts": [
+        "sessions.codex.sequence"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.make_seq",
+        "grant_agent.proofs_a_sessions.check_seq",
+        "grant_agent.connected_sessions.codex_items.uuid7_ms",
+        "grant_agent.connected_sessions.codex_items.ordinal_from_seq",
+        "grant_agent.connected_sessions.codex_items.map_turns",
+        "grant_agent.proofs_a_sessions.check_uuid_clock",
+        "grant_agent.proofs_a_sessions.check_codex_turns"
+      ],
+      "procedure": "codex-mapping-wire-shapes"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_text_is_bounded_in_bytes_so_events_stay_small",
+      "contracts": [
+        "sessions.codex.text",
+        "sessions.codex.requests"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.clip",
+        "grant_agent.proofs_a_sessions.check_clip",
+        "grant_agent.connected_sessions.codex_items.map_thread_item",
+        "grant_agent.connected_sessions.codex_items.public_request",
+        "grant_agent.proofs_a_sessions.check_codex_item",
+        "grant_agent.proofs_a_sessions.check_public_request",
+        "grant_agent.connected_sessions.codex_items.server_request_result",
+        "grant_agent.proofs_a_sessions.check_request_wire"
+      ],
+      "procedure": "codex-mapping-wire-shapes"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_diff_counts_and_bounds",
+      "contracts": [
+        "sessions.codex.diff"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.diff_from_changes",
+        "grant_agent.proofs_a_sessions.check_codex_diff"
+      ],
+      "procedure": "codex-mapping-wire-shapes"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_server_request_results_use_exact_wire_shapes",
+      "contracts": [
+        "sessions.codex.requests"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.public_request",
+        "grant_agent.connected_sessions.codex_items.server_request_result",
+        "grant_agent.proofs_a_sessions.check_request_wire",
+        "grant_agent.proofs_a_sessions.check_public_request"
+      ],
+      "procedure": "codex-mapping-wire-shapes"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_permission_modes_map_to_policy_and_sandbox",
+      "contracts": [
+        "sessions.codex.permissions"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.permission_modes",
+        "grant_agent.connected_sessions.codex_items.permission_mode_for",
+        "grant_agent.connected_sessions.codex_items.turn_permission_params",
+        "grant_agent.connected_sessions.codex_items.thread_permission_params",
+        "grant_agent.proofs_a_sessions.check_permission"
+      ],
+      "procedure": "codex-mapping-wire-shapes"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_media_token_matches_chat_media_descriptors",
+      "contracts": [
+        "sessions.codex.media"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.media_token",
+        "grant_agent.proofs_a_sessions.check_media_token"
+      ],
+      "procedure": "codex-mapping-wire-shapes"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_category_rule",
+      "contracts": [
+        "sessions.neyvia.category"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.classify",
+        "grant_agent.proofs_a_sessions.check_native_category",
+        "grant_agent.connected_sessions.neyvia.conversation_runtime",
+        "grant_agent.proofs_a_sessions.check_native_runtime"
+      ],
+      "procedure": "native-conversation-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_list_classifies_native_hybrid_and_unlabeled_chats",
+      "contracts": [
+        "sessions.neyvia.summary",
+        "sessions.neyvia.category"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia._summary",
+        "grant_agent.proofs_a_sessions.check_native_summary",
+        "grant_agent.connected_sessions.neyvia.classify",
+        "grant_agent.proofs_a_sessions.check_native_category",
+        "grant_agent.connected_sessions.neyvia.conversation_runtime",
+        "grant_agent.proofs_a_sessions.check_native_runtime"
+      ],
+      "procedure": "native-conversation-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_list_uses_the_workspace_registry_for_project_and_cwd",
+      "contracts": [
+        "sessions.neyvia.summary"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia._summary",
+        "grant_agent.proofs_a_sessions.check_native_summary"
+      ],
+      "procedure": "native-conversation-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_list_status_archive_and_orchestrations",
+      "contracts": [
+        "sessions.neyvia.summary"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia._summary",
+        "grant_agent.proofs_a_sessions.check_native_summary"
+      ],
+      "procedure": "native-conversation-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_read_pages_from_the_tail_and_reads_incrementally",
+      "contracts": [
+        "sessions.neyvia.page"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia.read",
+        "grant_agent.proofs_a_sessions.check_native_page"
+      ],
+      "procedure": "native-conversation-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_commit_takes_tracked_changes_only_and_returns_real_output",
+      "contracts": [
+        "sessions.workspace.action",
+        "sessions.workspace.confirm"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.git_action",
+        "grant_agent.connected_sessions.workspace._action_result",
+        "grant_agent.proofs_a_sessions.check_action"
+      ],
+      "procedure": "workspace-observers-real-git"
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_push_needs_a_branch_and_a_remote",
+      "contracts": [
+        "sessions.workspace.confirm"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.workspace.git_action"
+      ],
+      "procedure": "workspace-observers-real-git-refusal-no-push"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_send_input_validation_and_refusals",
+      "contracts": [
+        "sessions.run.request"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker.send",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.new",
+        "grant_agent.connected_sessions.runs.RunStore.has_request",
+        "grant_agent.connected_sessions.runs.RunStore.claim",
+        "grant_agent.proofs_a_sessions.check_broker_request"
+      ],
+      "procedure": "broker-finite-transport-control-and-read"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_send_is_refused_while_the_app_runs_the_session",
+      "contracts": [
+        "sessions.run.request"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker.send",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.new",
+        "grant_agent.connected_sessions.runs.RunStore.has_request",
+        "grant_agent.connected_sessions.runs.RunStore.claim",
+        "grant_agent.proofs_a_sessions.check_broker_request"
+      ],
+      "procedure": "broker-finite-transport-control-and-read"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_new_session_waits_for_its_id",
+      "contracts": [
+        "sessions.run.request"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker.send",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.new",
+        "grant_agent.connected_sessions.runs.RunStore.has_request",
+        "grant_agent.connected_sessions.runs.RunStore.claim",
+        "grant_agent.proofs_a_sessions.check_broker_request"
+      ],
+      "procedure": "broker-finite-transport-control-and-read"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_read_bounds_tool_output_and_never_exposes_host_paths",
+      "contracts": [
+        "sessions.broker.read"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.read",
+        "grant_agent.connected_sessions.broker.tool_output",
+        "grant_agent.connected_sessions.broker._tidy_item",
+        "grant_agent.proofs_a_sessions.check_tidy_item",
+        "grant_agent.proofs_a_sessions.check_full_output",
+        "grant_agent.proofs_a_sessions.check_broker_page"
+      ],
+      "procedure": "broker-finite-transport-control-and-read"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_read_includes_the_current_run",
+      "contracts": [
+        "sessions.broker.read",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.read",
+        "grant_agent.connected_sessions.broker.tool_output",
+        "grant_agent.connected_sessions.broker._tidy_item",
+        "grant_agent.proofs_a_sessions.check_tidy_item",
+        "grant_agent.proofs_a_sessions.check_full_output",
+        "grant_agent.proofs_a_sessions.check_broker_page",
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record"
+      ],
+      "procedure": "broker-finite-transport-control-and-read"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_media_uses_the_adapter_hook",
+      "contracts": [
+        "sessions.broker.media"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.media",
+        "grant_agent.proofs_a_sessions.check_media_result"
+      ],
+      "procedure": "broker-finite-transport-control-and-read"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_media_hook_may_be_called_read_media",
+      "contracts": [
+        "sessions.broker.media"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.media",
+        "grant_agent.proofs_a_sessions.check_media_result"
+      ],
+      "procedure": "broker-finite-transport-control-and-read"
+    },
+    {
+      "test": "tests/test_connected_sessions_claude_terminal.py",
+      "case": "test_broker_accepts_only_known_transports",
+      "contracts": [
+        "sessions.broker.options"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker._turn_options",
+        "grant_agent.proofs_a_sessions.check_turn_options"
+      ],
+      "procedure": "broker-finite-transport-control-and-read"
+    },
+    {
+      "test": "tests/test_connected_sessions_claude_terminal.py",
+      "case": "test_sign_in_needs_the_pc_owner",
+      "contracts": [
+        "sessions.api.authority"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.serve_connected_get",
+        "grant_agent.connected_sessions.api.respond_connected_command"
+      ],
+      "procedure": "http-account-status-owner-gate"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_long_poll_returns_events_as_they_arrive",
+      "contracts": [
+        "sessions.api.poll",
+        "sessions.events.subscription"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.handle_connected_command",
+        "grant_agent.proofs_a_sessions.check_poll",
+        "grant_agent.connected_sessions.broker.subscription",
+        "grant_agent.proofs_a_sessions.check_subscription"
+      ],
+      "procedure": "http-sse-poll-replay-resync-and-subscription"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_long_poll_resyncs_and_caps_the_wait",
+      "contracts": [
+        "sessions.api.poll"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.handle_connected_command",
+        "grant_agent.proofs_a_sessions.check_poll"
+      ],
+      "procedure": "http-sse-poll-replay-resync-and-subscription"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_stream_delivers_a_turn_as_it_happens",
+      "contracts": [
+        "sessions.api.sse",
+        "sessions.events.subscription"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_events",
+        "grant_agent.proofs_a_sessions.check_sse",
+        "grant_agent.connected_sessions.broker.subscription",
+        "grant_agent.proofs_a_sessions.check_subscription"
+      ],
+      "procedure": "http-sse-poll-replay-resync-and-subscription"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_stream_starts_from_the_cursor_and_prefers_last_event_id",
+      "contracts": [
+        "sessions.api.sse"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_events",
+        "grant_agent.proofs_a_sessions.check_sse"
+      ],
+      "procedure": "http-sse-poll-replay-resync-and-subscription"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_stream_says_resync_when_the_cursor_is_older_than_the_buffer",
+      "contracts": [
+        "sessions.api.sse"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_events",
+        "grant_agent.proofs_a_sessions.check_sse"
+      ],
+      "procedure": "http-sse-poll-replay-resync-and-subscription"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_too_many_streams_are_refused",
+      "contracts": [
+        "sessions.events.subscription"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.subscription",
+        "grant_agent.proofs_a_sessions.check_subscription"
+      ],
+      "procedure": "http-sse-poll-replay-resync-and-subscription"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_closing_the_broker_ends_open_streams",
+      "contracts": [
+        "sessions.api.sse",
+        "sessions.events.subscription"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_events",
+        "grant_agent.proofs_a_sessions.check_sse",
+        "grant_agent.connected_sessions.broker.subscription",
+        "grant_agent.proofs_a_sessions.check_subscription"
+      ],
+      "procedure": "http-sse-poll-replay-resync-and-subscription"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_subscriber_limit",
+      "contracts": [
+        "sessions.events.subscription"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.subscription",
+        "grant_agent.proofs_a_sessions.check_subscription"
+      ],
+      "procedure": "http-sse-poll-replay-resync-and-subscription"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_origin_classification_is_one_function",
+      "contracts": [
+        "sessions.codex.origin"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.classify_origin",
+        "grant_agent.proofs_a_sessions.check_origin"
+      ],
+      "procedure": "codex-bounded-persisted-rollout-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_rollout_tail_is_bounded_and_finds_open_turns",
+      "contracts": [
+        "sessions.codex.rollout"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.read_tail_rows",
+        "grant_agent.connected_sessions.codex_items.rollout_activity",
+        "grant_agent.proofs_a_sessions.check_tail_read",
+        "grant_agent.proofs_a_sessions.check_rollout_activity"
+      ],
+      "procedure": "codex-bounded-persisted-rollout-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_codex.py",
+      "case": "MappingTests.test_rollout_markers",
+      "contracts": [
+        "sessions.codex.rollout"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.codex_items.read_tail_rows",
+        "grant_agent.connected_sessions.codex_items.rollout_activity",
+        "grant_agent.proofs_a_sessions.check_tail_read",
+        "grant_agent.proofs_a_sessions.check_rollout_activity"
+      ],
+      "procedure": "codex-bounded-persisted-rollout-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_read_maps_turns_to_items",
+      "contracts": [
+        "sessions.neyvia.items",
+        "sessions.neyvia.tools",
+        "sessions.neyvia.page"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia_items.turn_items",
+        "grant_agent.connected_sessions.neyvia_items.activity_segments",
+        "grant_agent.proofs_a_sessions.check_native_turn",
+        "grant_agent.proofs_a_sessions.check_native_segments",
+        "grant_agent.connected_sessions.neyvia_items.tool_category",
+        "grant_agent.connected_sessions.neyvia_items.tool_item",
+        "grant_agent.proofs_a_sessions.check_native_tool_category",
+        "grant_agent.proofs_a_sessions.check_native_tool",
+        "grant_agent.connected_sessions.neyvia.read",
+        "grant_agent.proofs_a_sessions.check_native_page"
+      ],
+      "procedure": "native-conversation-observer-full-transcript-and-tools"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_a_turn_with_more_activity_than_slots_keeps_order_and_says_so",
+      "contracts": [
+        "sessions.neyvia.items",
+        "sessions.neyvia.page"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia_items.turn_items",
+        "grant_agent.connected_sessions.neyvia_items.activity_segments",
+        "grant_agent.proofs_a_sessions.check_native_turn",
+        "grant_agent.proofs_a_sessions.check_native_segments",
+        "grant_agent.connected_sessions.neyvia.read",
+        "grant_agent.proofs_a_sessions.check_native_page"
+      ],
+      "procedure": "native-conversation-observer-full-transcript-and-tools"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_tool_results_show_what_a_person_reads",
+      "contracts": [
+        "sessions.neyvia.tools"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia_items.tool_category",
+        "grant_agent.connected_sessions.neyvia_items.tool_item",
+        "grant_agent.proofs_a_sessions.check_native_tool_category",
+        "grant_agent.proofs_a_sessions.check_native_tool"
+      ],
+      "procedure": "native-conversation-observer-full-transcript-and-tools"
+    },
+    {
+      "test": "tests/test_connected_sessions_neyvia.py",
+      "case": "test_tool_categories",
+      "contracts": [
+        "sessions.neyvia.tools"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.neyvia_items.tool_category",
+        "grant_agent.connected_sessions.neyvia_items.tool_item",
+        "grant_agent.proofs_a_sessions.check_native_tool_category",
+        "grant_agent.proofs_a_sessions.check_native_tool"
+      ],
+      "procedure": "native-conversation-observer-full-transcript-and-tools"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_list_merges_adapters_newest_first_and_filters",
+      "contracts": [
+        "sessions.broker.catalogue",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list"
+      ],
+      "procedure": "broker-catalogue-live-ownership-cache-and-failure-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_list_is_cached_for_a_few_seconds",
+      "contracts": [
+        "sessions.broker.catalogue",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list"
+      ],
+      "procedure": "broker-catalogue-live-ownership-cache-and-failure-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_run_state_overlays_the_session_status",
+      "contracts": [
+        "sessions.broker.catalogue",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list"
+      ],
+      "procedure": "broker-catalogue-live-ownership-cache-and-failure-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_a_failing_adapter_does_not_take_the_others_down",
+      "contracts": [
+        "sessions.broker.catalogue",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list"
+      ],
+      "procedure": "broker-catalogue-live-ownership-cache-and-failure-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_unavailable_adapter_reports_its_reason",
+      "contracts": [
+        "sessions.broker.catalogue",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list"
+      ],
+      "procedure": "broker-catalogue-live-ownership-cache-and-failure-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_live_status_polling_only_while_someone_listens",
+      "contracts": [
+        "sessions.broker.catalogue",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list"
+      ],
+      "procedure": "broker-catalogue-live-ownership-cache-and-failure-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_unread_follows_activity_after_the_last_seen_mark",
+      "contracts": [
+        "sessions.broker.unread",
+        "sessions.broker.catalogue"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list",
+        "grant_agent.connected_sessions.seen.SeenStore.unread",
+        "grant_agent.proofs_a_sessions.check_unread"
+      ],
+      "procedure": "broker-persisted-seen-and-unread-observer"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_goal_compact_and_options_use_adapter_hooks_or_refuse",
+      "contracts": [
+        "sessions.broker.controls",
+        "sessions.broker.refusals",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection",
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "procedure": "broker-control-hooks-owner-refusals-answer-retry-and-steering"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_answer_after_a_stop_is_refused_and_a_failed_answer_can_be_retried",
+      "contracts": [
+        "sessions.broker.controls",
+        "sessions.broker.refusals",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection",
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "procedure": "broker-control-hooks-owner-refusals-answer-retry-and-steering"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_coded_adapter_errors_pass_through_the_control_calls",
+      "contracts": [
+        "sessions.broker.controls",
+        "sessions.broker.refusals",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection",
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "procedure": "broker-control-hooks-owner-refusals-answer-retry-and-steering"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_check_send_refusals_keep_their_code_and_owner",
+      "contracts": [
+        "sessions.broker.controls",
+        "sessions.broker.refusals",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection",
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "procedure": "broker-control-hooks-owner-refusals-answer-retry-and-steering"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_preflight_hook_and_owner_details",
+      "contracts": [
+        "sessions.broker.controls",
+        "sessions.broker.refusals",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection",
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "procedure": "broker-control-hooks-owner-refusals-answer-retry-and-steering"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_event_sink_and_close_are_wired_to_adapters_that_have_them",
+      "contracts": [
+        "sessions.broker.controls",
+        "sessions.broker.refusals",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection",
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "procedure": "broker-control-hooks-owner-refusals-answer-retry-and-steering"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_steer_reaches_a_running_turn_only_when_the_app_allows_it",
+      "contracts": [
+        "sessions.broker.controls",
+        "sessions.broker.refusals",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection",
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "procedure": "broker-control-hooks-owner-refusals-answer-retry-and-steering"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_missing_and_broken_adapters_become_unavailable_sources",
+      "contracts": [
+        "sessions.broker.registry",
+        "sessions.broker.catalogue"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list",
+        "grant_agent.connected_sessions.registry.Registry._check",
+        "grant_agent.proofs_a_sessions.check_registry_adapter"
+      ],
+      "procedure": "broker-finite-module-and-factory-transport-loading"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_adapter_registry_hands_the_backend_to_factories",
+      "contracts": [
+        "sessions.broker.registry",
+        "sessions.broker.catalogue"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list",
+        "grant_agent.connected_sessions.registry.Registry._check",
+        "grant_agent.proofs_a_sessions.check_registry_adapter"
+      ],
+      "procedure": "broker-finite-module-and-factory-transport-loading"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_process_wide_factory_and_lazy_modules_receive_the_right_argument",
+      "contracts": [
+        "sessions.broker.registry",
+        "sessions.broker.catalogue"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list",
+        "grant_agent.connected_sessions.registry.Registry._check",
+        "grant_agent.proofs_a_sessions.check_registry_adapter"
+      ],
+      "procedure": "broker-finite-module-and-factory-transport-loading"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_idle_watchdog_stops_a_silent_turn_but_not_a_waiting_one",
+      "contracts": [
+        "sessions.run.watchdog",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker._watchdog",
+        "grant_agent.proofs_a_sessions.check_watchdog_selection"
+      ],
+      "procedure": "broker-silent-and-waiting-approval-watchdog"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_default_watchdog_is_at_least_thirty_minutes",
+      "contracts": [
+        "sessions.run.watchdog",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker._watchdog",
+        "grant_agent.proofs_a_sessions.check_watchdog_selection"
+      ],
+      "procedure": "broker-silent-and-waiting-approval-watchdog"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_run_owned_by_a_live_process_is_left_alone",
+      "contracts": [
+        "sessions.run.recovery",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.recover",
+        "grant_agent.proofs_a_sessions.check_recovered_runs"
+      ],
+      "procedure": "broker-owned-child-process-and-durable-restart"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_restart_in_the_same_process_interrupts_runs_of_the_old_broker",
+      "contracts": [
+        "sessions.run.recovery",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.recover",
+        "grant_agent.proofs_a_sessions.check_recovered_runs"
+      ],
+      "procedure": "broker-owned-child-process-and-durable-restart"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_desktop_bridge_shares_the_service_broker",
+      "contracts": [
+        "sessions.api.forward",
+        "sessions.api.state_root",
+        "sessions.api.response"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response",
+        "grant_agent.connected_sessions.api._check_state_root",
+        "grant_agent.connected_sessions.forward.forward_connected_command",
+        "grant_agent.proofs_a_sessions.check_forward_request",
+        "grant_agent.proofs_a_sessions.check_forward_result"
+      ],
+      "procedure": "actual-loopback-desktop-forward-and-hidden-tauri-process"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_desktop_bridge_returns_refusals_as_data_with_their_code",
+      "contracts": [
+        "sessions.api.forward",
+        "sessions.api.state_root",
+        "sessions.api.response"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response",
+        "grant_agent.connected_sessions.api._check_state_root",
+        "grant_agent.connected_sessions.forward.forward_connected_command",
+        "grant_agent.proofs_a_sessions.check_forward_request",
+        "grant_agent.proofs_a_sessions.check_forward_result"
+      ],
+      "procedure": "actual-loopback-desktop-forward-and-hidden-tauri-process"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_desktop_bridge_reports_an_offline_service",
+      "contracts": [
+        "sessions.api.forward",
+        "sessions.api.state_root",
+        "sessions.api.response"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response",
+        "grant_agent.connected_sessions.api._check_state_root",
+        "grant_agent.connected_sessions.forward.forward_connected_command",
+        "grant_agent.proofs_a_sessions.check_forward_request",
+        "grant_agent.proofs_a_sessions.check_forward_result"
+      ],
+      "procedure": "actual-loopback-desktop-forward-and-hidden-tauri-process"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_desktop_bridge_process_speaks_the_tauri_envelope",
+      "contracts": [
+        "sessions.api.forward",
+        "sessions.api.state_root",
+        "sessions.api.response"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response",
+        "grant_agent.connected_sessions.api._check_state_root",
+        "grant_agent.connected_sessions.forward.forward_connected_command",
+        "grant_agent.proofs_a_sessions.check_forward_request",
+        "grant_agent.proofs_a_sessions.check_forward_result"
+      ],
+      "procedure": "actual-loopback-desktop-forward-and-hidden-tauri-process"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_refusals_carry_a_code_and_the_right_status",
+      "contracts": [
+        "sessions.api.response",
+        "sessions.broker.refusals"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response",
+        "grant_agent.connected_sessions.registry.as_connected",
+        "grant_agent.proofs_a_sessions.check_adapter_refusal"
+      ],
+      "procedure": "native-http-send-control-refusals-with-code-and-status"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_the_desktop_app_reads_an_image_through_a_command",
+      "contracts": [
+        "sessions.api.media",
+        "sessions.api.forward",
+        "sessions.broker.read"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_media",
+        "grant_agent.connected_sessions.broker.read",
+        "grant_agent.connected_sessions.broker.tool_output",
+        "grant_agent.connected_sessions.broker._tidy_item",
+        "grant_agent.proofs_a_sessions.check_tidy_item",
+        "grant_agent.proofs_a_sessions.check_full_output",
+        "grant_agent.proofs_a_sessions.check_broker_page",
+        "grant_agent.connected_sessions.forward.forward_connected_command",
+        "grant_agent.proofs_a_sessions.check_forward_request",
+        "grant_agent.proofs_a_sessions.check_forward_result"
+      ],
+      "procedure": "native-http-media-chip-url-auth-mime-and-desktop-byte-receipt"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_media_is_served_through_an_authenticated_route",
+      "contracts": [
+        "sessions.api.media",
+        "sessions.api.forward",
+        "sessions.broker.read"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_media",
+        "grant_agent.connected_sessions.broker.read",
+        "grant_agent.connected_sessions.broker.tool_output",
+        "grant_agent.connected_sessions.broker._tidy_item",
+        "grant_agent.proofs_a_sessions.check_tidy_item",
+        "grant_agent.proofs_a_sessions.check_full_output",
+        "grant_agent.proofs_a_sessions.check_broker_page",
+        "grant_agent.connected_sessions.forward.forward_connected_command",
+        "grant_agent.proofs_a_sessions.check_forward_request",
+        "grant_agent.proofs_a_sessions.check_forward_result"
+      ],
+      "procedure": "native-http-media-chip-url-auth-mime-and-desktop-byte-receipt"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_a_dropped_stream_frees_its_thread_and_subscriber",
+      "contracts": [
+        "sessions.api.sse",
+        "sessions.events.subscription"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_events",
+        "grant_agent.proofs_a_sessions.check_sse",
+        "grant_agent.connected_sessions.broker.subscription",
+        "grant_agent.proofs_a_sessions.check_subscription"
+      ],
+      "procedure": "native-four-stream-and-vanished-socket-disposal"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_a_client_that_vanishes_mid_event_is_cleaned_up_too",
+      "contracts": [
+        "sessions.api.sse",
+        "sessions.events.subscription"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api._serve_events",
+        "grant_agent.proofs_a_sessions.check_sse",
+        "grant_agent.connected_sessions.broker.subscription",
+        "grant_agent.proofs_a_sessions.check_subscription"
+      ],
+      "procedure": "native-four-stream-and-vanished-socket-disposal"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_desktop_commands_are_allowlisted",
+      "contracts": [
+        "sessions.api.allowlist"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.api.handle_connected_command",
+        "grant_agent.proofs_a_sessions.check_connected_allowlist"
+      ],
+      "procedure": "current-connected-desktop-command-eligibility"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_stream_media_and_commands_require_a_session",
+      "contracts": [
+        "sessions.api.authority"
+      ],
+      "checkedAt": [
+        "grant_agent.web_backend.FluxioWebBackend.dispatch",
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response"
+      ],
+      "procedure": "native-http-anonymous-forged-token-and-owner-authority"
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_existing_commands_still_work_beside_the_connected_ones",
+      "contracts": [
+        "sessions.api.response"
+      ],
+      "checkedAt": [
+        "grant_agent.web_backend.FluxioWebBackend.dispatch",
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response"
+      ],
+      "procedure": "native-host-facade-approval-and-connected-dispatch"
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_run_of_a_dead_owner_becomes_interrupted_and_is_not_resent",
+      "contracts": [
+        "sessions.run.recovery",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.broker.recover",
+        "grant_agent.proofs_a_sessions.check_recovered_runs"
+      ],
+      "procedure": "broker-owned-child-process-and-durable-restart",
+      "migrationNote": "The original fixture inserted SHA256(send NUL session NUL message), which predates current JSON fingerprint including normalized TurnOptions. The procedure inserts the exact production fingerprint and preserves every protected outcome: interrupted/no-resend/canStop false, exactly one recovery event, idempotent replay with zero adapter sends, and free session for a fresh request."
+    },
+    {
+      "test": "tests/test_connected_sessions_broker.py",
+      "case": "test_opencode_adapter_is_read_only_with_a_truthful_reason",
+      "contracts": [
+        "sessions.opencode.inventory",
+        "sessions.broker.catalogue"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.list_sessions",
+        "grant_agent.proofs_a_sessions.check_broker_list",
+        "grant_agent.connected_sessions.opencode.OpenCodeAdapter.capabilities",
+        "grant_agent.connected_sessions.opencode.OpenCodeAdapter.read",
+        "grant_agent.proofs_a_sessions.check_opencode_capabilities",
+        "grant_agent.proofs_a_sessions.check_opencode_page"
+      ],
+      "procedure": "real-opencode-sqlite-local-history-and-finite-cli-presence",
+      "migrationNote": "Current capabilities include billing=OpenCode configured provider and enable native ACP when its command is present. The original unconditional Capabilities(reason=REASON) assertion is replaced with both observed readiness branches, using only disposable presence markers and no provider execution. Current native history adds not_reported reasoning notices before the two assistant messages: exact sequences are 1..6 rather than 1..4, cursor is 6, and two-item paging counts displayed notices. All four original message texts, order, local title/project, exclusive before/cursor behavior, missing-history refusal and absent-CLI send/new refusals remain checked."
+    },
+    {
+      "test": "tests/test_connected_sessions_api.py",
+      "case": "test_every_contract_command_is_dispatched_and_shaped",
+      "contracts": [
+        "sessions.api.response",
+        "sessions.api.allowlist",
+        "sessions.broker.controls",
+        "sessions.run.lifecycle"
+      ],
+      "checkedAt": [
+        "grant_agent.connected_sessions.broker.ConnectedBroker._set_state",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.get_run",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.answer",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.stop",
+        "grant_agent.proofs_a_sessions.check_state_transition",
+        "grant_agent.proofs_a_sessions.check_run_record",
+        "grant_agent.connected_sessions.api.respond_connected_command",
+        "grant_agent.proofs_a_sessions.check_http_response",
+        "grant_agent.connected_sessions.api.handle_connected_command",
+        "grant_agent.proofs_a_sessions.check_connected_allowlist",
+        "grant_agent.connected_sessions.broker.goal",
+        "grant_agent.connected_sessions.broker.provider_options",
+        "grant_agent.connected_sessions.broker.compact",
+        "grant_agent.connected_sessions.broker.answer",
+        "grant_agent.connected_sessions.broker.stop",
+        "grant_agent.connected_sessions.broker.steer",
+        "grant_agent.proofs_a_sessions.check_control_projection"
+      ],
+      "procedure": "actual-http-current-command-envelope-and-original-action-surface",
+      "migrationNote": "Current RunRecord adds usage/model/effort/permissionMode/promptCharacters/impact to the original ten fields; the procedure asserts the exact current sixteen fields and retains page identity/current-run, send/new/terminal-stop, goal/options/seen, workspace, diff/confirm/compact and missing-auth-hook outcomes. The old hardcoded command list excludes newer media/sign-in-code/limits/conductor commands; current CONNECTED_COMMANDS is checked against the real desktop allowlist on every action. New command eligibility is not a claim of external account execution."
+    }
+  ],
+  "frontier": [
+    "Only the two named positive/failed Git push cases in pending remain unmapped in the original broker/API/workspace share.",
+    "No live provider/account execution, actual product cookie issuance or external GitHub authority is claimed by finite protocol, account-status, CLI-loading and cookie transport boundaries."
+  ],
+  "pending": [
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_push_sets_the_upstream_once_and_then_pushes_normally",
+      "reason": "User explicitly forbids any Git push; positive upstream setup and second successful push cannot be executed in this task. All authorized local Git state/commit/worktree and pre-dispatch push refusals remain proven."
+    },
+    {
+      "test": "tests/test_connected_sessions_workspace.py",
+      "case": "test_push_failure_returns_the_real_error",
+      "reason": "User explicitly forbids Git push including failed dispatch; production error projection is guarded but an actual push failure cannot be attempted within the authorized scope."
+    }
+  ]
+}

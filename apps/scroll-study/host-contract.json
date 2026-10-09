@@ -1,0 +1,86 @@
+{
+  "version": "1.1",
+  "initial": {
+    "index": 0,
+    "done": 0,
+    "goal": 20
+  },
+  "invariants": [
+    "Only exposed concepts are graded",
+    "First test lag >= 8 in same session",
+    "Mastery requires three recall sessions on two days"
+  ],
+  "goal": "app.state().ended and app.state().done >= app.state().goal and app.checks().G1 and app.checks().G2 and app.checks().G3 and app.checks().G4 and app.checks().G5 and app.checks().G6 and app.checks().G7 and app.checks().G8 and app.checks().G9 and app.checks().G10 and app.checks().G11",
+  "checks": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8",
+    "G9",
+    "G10",
+    "G11"
+  ],
+  "journey": [
+    {
+      "via": "api",
+      "action": "restart"
+    },
+    {
+      "via": "ui",
+      "action": "next"
+    },
+    {
+      "via": "ui",
+      "action": "seeNow"
+    },
+    {
+      "via": "api",
+      "action": "next"
+    },
+    {
+      "via": "ui",
+      "action": "answer",
+      "arguments": {
+        "value": "correct"
+      }
+    },
+    {
+      "via": "reload",
+      "expect": "ledger and FSRS state retained"
+    }
+  ],
+  "actions": {
+    "next": {
+      "post": "app.state().index >= before.index"
+    },
+    "prev": {
+      "post": "app.state().index <= before.index"
+    },
+    "seeNow": {
+      "post": "teaching exposure updates shared ledger"
+    },
+    "answer": {
+      "post": "rendered verdict, correct answer, reason and source agree with shared state"
+    },
+    "finish": {
+      "post": "feed ends without autoplay"
+    }
+  },
+  "impact": {
+    "resources": [
+      "shared-state",
+      "rendered-controls",
+      "persistent-storage"
+    ],
+    "undo": "import saved progress"
+  },
+  "procedure": {
+    "name": "app.scroll.study",
+    "steps": "journey",
+    "goal": "all G1-G11 goal checks pass in rendered app"
+  }
+}

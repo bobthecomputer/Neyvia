@@ -1,0 +1,35 @@
+{
+  "schema": "neyvia.details.v1",
+  "version": 1,
+  "about": "Neyvia's details library (plan 17 A2). Neyvia itself imports nxDetails.jsx; a generated web/PWA app gets the framework-free kit copied by the App SDK generator. Sources, licences and credits: docs/design/details-library.md. Manual: manuals/design.manual.json chapter 'details'. Proof: python scripts/prove_details.py --url <dev UI origin>.",
+  "react": {
+    "module": "web/src/neyvia/next/details/nxDetails.jsx",
+    "needs": ["web/src/neyvia/next/nxPrimitives.jsx", "web/src/neyvia/next/nxAnnounce.js", "web/src/neyvia/next/nxTokens.css", "lucide-react"],
+    "exports": ["RollingNumber", "Meter", "ConfirmInPlace", "Strike", "CopyButton", "useCopy", "EmptyState", "useCalmLoading", "haptic", "PRESS"]
+  },
+  "kit": {
+    "platforms": ["web", "pwa"],
+    "copy": [
+      { "from": "web/src/neyvia/next/details/nxDetailsModel.js", "to": "details/model.js" },
+      { "from": "web/src/neyvia/next/details/kit/details.js", "to": "details/details.js" },
+      { "from": "web/src/neyvia/next/details/kit/details.css", "to": "details/details.css" }
+    ],
+    "include": {
+      "html": "<link rel=\"stylesheet\" href=\"details/details.css\">",
+      "js": "import { rollingNumber, meter, confirmInPlace, copyButton, strike, emptyState, calmLoading, haptic, announce } from './details/details.js';"
+    },
+    "credit": "Made with Neyvia. Some details were inspired by Rare UI (https://rareui.com) and NumberFlow; see Neyvia's docs/design/details-library.md.",
+    "example": "web/src/neyvia/next/details/kit/demo.html"
+  },
+  "details": [
+    { "id": "rolling-number", "react": "RollingNumber", "kit": "rollingNumber", "manualCheck": "details-roll", "specimen": "details-numbers", "usedIn": ["NxChecklist.jsx (done count)", "NxIndicators.jsx (Night Shift count)"], "inspiredBy": ["rare-ui/animated-counter", "barvian/number-flow"], "template": true },
+    { "id": "meter", "react": "Meter", "kit": "meter", "manualCheck": "details-meter", "specimen": "details-numbers", "usedIn": ["NxIndicators.jsx (Night Shift and usage bars)"], "inspiredBy": ["rare-ui/grid-reveal (hold short of the end)"], "template": true },
+    { "id": "confirm-in-place", "react": "ConfirmInPlace", "kit": "confirmInPlace", "manualCheck": "details-confirm", "specimen": "details-actions", "usedIn": ["NxArrange.jsx (delete a saved scene)"], "inspiredBy": ["rare-ui/delete-button"], "template": true },
+    { "id": "strike", "react": "Strike", "kit": "strike", "manualCheck": "details-strike", "specimen": "details-states", "usedIn": ["NxChecklist.jsx (finished steps)"], "inspiredBy": ["rare-ui/task-list"], "template": true },
+    { "id": "copy", "react": "CopyButton", "kit": "copyButton", "manualCheck": "details-copy", "specimen": "details-actions", "usedIn": ["NxThread.jsx (tool output and diff copy)", "NxFilesApp.jsx (copy path)"], "inspiredBy": [], "template": true },
+    { "id": "empty-state", "react": "EmptyState", "kit": "emptyState", "manualCheck": "details-empty", "specimen": "details-states", "usedIn": ["NxThread.jsx (a chat with no messages)"], "inspiredBy": ["jakubkrehel/better-writing (empty states point forward)"], "template": true },
+    { "id": "calm-loading", "react": "useCalmLoading", "kit": "calmLoading", "manualCheck": "details-calm", "specimen": "details-states", "usedIn": ["NxThread.jsx (chat skeleton)"], "inspiredBy": [], "template": true },
+    { "id": "press", "react": "PRESS", "kit": ".nxd-press", "manualCheck": "details-press", "specimen": "details-actions", "usedIn": ["every details button"], "inspiredBy": ["emilkowalski/skills (scale 0.97 on press)"], "template": true },
+    { "id": "haptic", "react": "haptic", "kit": "haptic", "manualCheck": "details-haptic", "specimen": "details-actions", "usedIn": ["ConfirmInPlace (confirm)", "CopyButton (tick)"], "inspiredBy": [], "template": true }
+  ]
+}

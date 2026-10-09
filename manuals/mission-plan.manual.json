@@ -1,0 +1,967 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "mission-plan",
+  "kind": "workflow",
+  "proofs": {
+    "area": "proofs-c-missions, proofs-e-frontend",
+    "manifests": [
+      "config/proofs/proofs-c-missions.json",
+      "config/proofs/proofs-e-frontend.json",
+      "config/proofs/proofs-e-models.json"
+    ],
+    "startup": {
+      "procedures": [
+        "receipt persistence/concurrency",
+        "artifact confinement",
+        "executor/verifier context boundaries",
+        "phase lifecycle/bounded repair",
+        "simulated acceptance harness repeated with isolated durable operation identities",
+        "continuity concurrency/corruption recovery",
+        "GPU cost/duration/idle policy",
+        "security scope/coverage/route separation",
+        "CLI durable orchestration",
+        "real local producer output and dialogue provenance",
+        "missing/read-only/concrete transcript priority",
+        "local durable read-model and flight recorder",
+        "hard/planned artifact repair with unrelated-failure rejection",
+        "fresh saved public-launch repair packet",
+        "saved measured-capacity admission",
+        "explicit native/POSIX path parsing",
+        "mission.shared-live-reset-and-artifact"
+      ],
+      "runner": "grant_agent.proof_verifier.run_verification",
+      "scratchRootRequired": true
+    },
+    "contracts": [
+      {
+        "checkedAt": [
+          "mission_receipts.validate_mission_receipt -> proofs_c_missions.check_receipt",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Receipts use known schemas, producer phases, parseable timestamps, required fields and verification decisions; invalid input is rejected before append.",
+        "id": "proofs-c.missions.receipt-schema",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_receipts.append_mission_receipt -> proofs_c_missions.check_receipt_write (inside file lock)",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Locked appends persist the exact serialized stream tail, preserve concurrent receipts and bound retention; invalid input creates no stream.",
+        "id": "proofs-c.missions.receipt-durable",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_receipts.load_mission_receipts -> proofs_c_missions.check_receipt_read",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Receipt reads skip malformed rows, filter by mission before limiting and preserve durable stream order.",
+        "id": "proofs-c.missions.receipt-filter",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_receipts.validate_mission_receipt / mission_phase_runner -> proofs_c_missions.check_default_factories",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Mutable dataclass factories produce distinct containers; receipt validation and phase control reject shared default factories.",
+        "id": "proofs-c.missions.default-isolation",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_artifacts.build_mission_run_artifact_layout -> proofs_c_missions.check_layout",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "File-safe mission IDs confine all layout paths to their canonical mission root; create builds the directories and create=false does not write.",
+        "id": "proofs-c.missions.artifact-layout",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_phase_inputs.build_executor_phase_input -> proofs_c_missions.check_capsule",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Executor handoff contains bounded goal/compact plan/selected skill IDs/file scope; wrong schemas and planner-only raw context are excluded.",
+        "id": "proofs-c.missions.executor-boundary",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_phase_inputs.build_verifier_phase_input -> proofs_c_missions.check_capsule",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Verifier handoff contains compact goal/plan/execution and ordered deduplicated changed files/artifacts; runtime metadata is excluded.",
+        "id": "proofs-c.missions.verifier-boundary",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_phase_inputs.check_selected_skill_relevance -> proofs_c_missions.check_relevance",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Empty skill selection blocks and irrelevant selected skills need review; counts exactly reflect inspected selection.",
+        "id": "proofs-c.missions.skill-relevance",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_phase_runner.start_current_phase/complete_current_phase -> proofs_c_missions.check_run",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Mission envelopes preserve lifecycle vocabulary, known schema, parseable timestamps and independently owned mutable state.",
+        "id": "proofs-c.missions.run-envelope",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_phase_runner.complete_current_phase -> proofs_c_missions.check_transition",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Phase control follows accepted successors/status, preserves receipt references, bounds repair loops, blocks exhausted repair and refuses terminal/completed restarts.",
+        "id": "proofs-c.missions.phase-transition",
+        "impact": [
+          "mission handoff",
+          "durable receipts",
+          "operator status"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_acceptance_harness.MissionAcceptanceHarness.run -> proofs_c_missions.check_acceptance",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "The five simulated local harness journeys produce exact durable summaries and distinct attempt receipts; receipt flags clearly exclude real external/model execution.",
+        "id": "proofs-c.missions.acceptance-receipt",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "continuity_policy.MissionContinuityStore._create_or_update_unlocked/load -> proofs_c_missions.check_continuity_write/check_continuity_recovery",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Continuity writes under the mission lock increment the current revision once, persist exact facts and preserve the preceding valid snapshot; corrupt state recovers previous facts without inventing progress.",
+        "id": "proofs-c.missions.continuity-durable",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "continuity_policy.MissionContinuityStore.evaluate_gpu_action -> proofs_c_missions.check_gpu",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "GPU decisions preserve estimated session cost, policy blockers, and duration/idle release requirements.",
+        "id": "proofs-c.missions.gpu-policy",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "security_runtime_policy.evaluate_security_action/build_purple_team_plan -> proofs_c_missions.check_security/check_security_plan",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Active security decisions require authorized owner/target/action scope and action-time approval where required; invalid budgets normalize safely and purple-team phases keep auditor/red/blue/defender separation.",
+        "id": "proofs-c.missions.security-scope",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "security_runtime_policy.audit_security_tool_coverage -> proofs_c_missions.check_security_coverage",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Security phase readiness exactly matches executable candidates; planned/unavailable tools never satisfy missing defensive coverage.",
+        "id": "proofs-c.missions.security-coverage",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.apply_agent_turn_mode_to_launch -> proofs_c_missions.check_turn_mode",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Turn modes preserve the goal and checks: plan adds the written-plan gate, fast lowers effort and caps a selected budget, max-context raises effort and Deep Run budget, standard preserves semantics.",
+        "id": "proofs-c.missions.turn-mode",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._write_json_if_changed -> proofs_c_missions.check_control_write",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Successful control-room JSON writes equal the durable normalized payload before returning.",
+        "id": "proofs-c.missions.control-durable",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "cli.cmd_mission_orchestration -> proofs_c_missions.check_orchestration",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "CLI orchestration returns only when the saved mission, runtime autonomy and receipt agree on concurrency/observation/merge/awareness policy.",
+        "id": "proofs-c.missions.orchestration-durable",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "fluxio_harness.infer_task_route_profile -> proofs_c_missions.check_security_route",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Matched red-team tasks use adversarial verification intent; matched blue-team tasks use defensive detection intent, with distinct mission types.",
+        "id": "proofs-c.missions.security-route",
+        "impact": [
+          "mission runtime",
+          "durable receipts",
+          "authority admission"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.mission_runtime_dialogue_turns -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Dialogue contains only eligible captured output or durable runtime-output text, preserving runtime/model/source/capture provenance and excluding control events.",
+        "id": "proofs-c.missions.local-dialogue",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._mission_runtime_transcript_payload -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Transcript attachment requires concrete output or artifact evidence, retains rejected-session evidence, prefers the latest concrete session, and exposes missing evidence without synthetic messages.",
+        "id": "proofs-c.missions.local-transcript",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._mission_agent_messages_payload -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Agent-message projection preserves dialogue receipts and marks control-room planning, actions, heartbeats and integrity notes as trace-only bookkeeping.",
+        "id": "proofs-c.missions.local-messages",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._mission_run_read_model_payload -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Mission read models preserve identity, lifecycle and filtered ordered receipts without changing missions.json; foreign snapshots never replace the current mission.",
+        "id": "proofs-c.missions.local-read-model",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.ControlRoomStore._compact_flight_recorder_payload -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Flight-recorder projection preserves written phase, process IDs and bounded event history; absent or invalid snapshots never invent events.",
+        "id": "proofs-c.missions.local-flight",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control.mission_hard_artifact_gate -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Hard artifact completion requires both meaningful runtime output and concrete artifact evidence; either missing boundary stays failed.",
+        "id": "proofs-c.missions.local-artifact-gate",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._complete_repaired_hard_artifact_gate_from_detail -> proofs_c_missions.check_local_projection",
+          "mission_control._complete_repaired_planned_scope_artifact_gate_from_detail -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Artifact repair completes only after the failed gate is actually ready and no unrelated failures remain; rejected repairs preserve mission state and successful repair is durable.",
+        "id": "proofs-c.missions.local-artifact-repair",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._public_launch_readiness_digest -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Public-launch digest selects the freshest saved evidence and preserves operator repair/publication fields; missing receipts cannot claim readiness.",
+        "id": "proofs-c.missions.local-public-launch",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "cli._mission_storage_pressure_blocker -> proofs_c_missions.check_local_projection",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Storage launch admission blocks only from saved measured-capacity evidence; unknown or failed probe states never invent disk pressure.",
+        "id": "proofs-c.missions.local-storage",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "mission_control._platform_path_for_windows_drive -> proofs_c_missions.check_platform_path",
+          "proofs_c_missions.self_check"
+        ],
+        "claim": "Explicit platform parsing preserves Windows drive and tail when converting to POSIX mount form and preserves native paths; parsing does not probe or launch WSL.",
+        "id": "proofs-c.missions.local-platform",
+        "impact": [
+          "mission evidence projection",
+          "truthful completion",
+          "operator repair"
+        ],
+        "phase": "invariant"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxMissionsModel.js:shapeMission -> checkedProofsEModel"
+        ],
+        "claim": "Mission observers retain tasks, normalize unknown states, compute prerequisite levels and progress, and preserve draft/paused/stopped phases",
+        "id": "missions.shapeMission",
+        "impact": [
+          "missions frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxMissionsModel.js:draftProblems -> checkedProofsEModel"
+        ],
+        "claim": "Mission drafts need a goal, folder, task prompts, acceptance and a positive optional budget",
+        "id": "missions.draftProblems",
+        "impact": [
+          "missions frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxMissionsModel.js:createRequest -> checkedProofsEModel"
+        ],
+        "claim": "Creation trims fields, preserves harness/model routing and removes self/missing prerequisites; optional positive budget is rounded",
+        "id": "missions.createRequest",
+        "impact": [
+          "missions frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/next/nxMissionsModel.js:planPrompt -> checkedProofsEModel"
+        ],
+        "claim": "Planning asks for the real mission.create tool and explicitly leaves starting to the person",
+        "id": "missions.planPrompt",
+        "impact": [
+          "missions frontend model consumers"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/neyviaMissionProjection.js:projectAgentLiveView -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.live",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.live",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.live"
+        ],
+        "claim": "Builder and Agent Live share mission evidence; only executing statuses are live, rotated logs discard old events and artifact endpoints remain bound.",
+        "id": "mission.live",
+        "impact": [
+          "neyviaMissionProjection"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/neyviaMissionProjection.js:applyMissionEventDelta -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.delta",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.delta",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.delta"
+        ],
+        "claim": "Builder and Agent Live share mission evidence; only executing statuses are live, rotated logs discard old events and artifact endpoints remain bound.",
+        "id": "mission.delta",
+        "impact": [
+          "neyviaMissionProjection"
+        ],
+        "phase": "post"
+      },
+      {
+        "checkedAt": [
+          "web/src/neyvia/neyviaMissionProjection.js:mergeMissionArtifacts -> checkedFrontendAction",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.artifacts",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.artifacts",
+          "web/src/neyvia/neyviaFrontendContracts.js:FRONTEND_CONTRACTS.mission.artifacts"
+        ],
+        "claim": "Builder and Agent Live share mission evidence; only executing statuses are live, rotated logs discard old events and artifact endpoints remain bound.",
+        "id": "mission.artifacts",
+        "impact": [
+          "neyviaMissionProjection"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.mission.control": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "start",
+            "pause",
+            "stop",
+            "redirect"
+          ]
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "effort": {
+          "type": "string"
+        },
+        "permissionMode": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "action"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mission.from_plan": {
+      "type": "object",
+      "properties": {
+        "planPath": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "folders": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "builder": {
+          "type": "object"
+        },
+        "verifier": {
+          "type": "object"
+        },
+        "holdAtPlanPercent": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100
+        },
+        "budget": {
+          "type": "object"
+        },
+        "acceptanceChecks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "planPath",
+        "folder",
+        "acceptanceChecks"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "planPath": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "folder": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "neyvia.mission.list": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "proofs-e-models.status": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "chapters": {
+    "fixcl3-local": {
+      "title": "Exact retained local admission and supervision",
+      "state": {},
+      "actions": {
+        "neyvia.mission.from_plan": {
+          "effect": "Exact retained mission.from_plan",
+          "pre": "Saved disposable/local subject; explicit owner approval for arming or creation; never active provider control",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mission.from_plan",
+          "tool": "neyvia.mission.from_plan"
+        },
+        "neyvia.mission.control": {
+          "effect": "Exact retained mission.control",
+          "pre": "Saved disposable/local subject; explicit owner approval for arming or creation; never active provider control",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mission.control",
+          "tool": "neyvia.mission.control"
+        }
+      },
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Fresh owner state differs from this action subject",
+          "recovery": "Reconcile the specific retained effect; never replay an uncertain launch."
+        }
+      ],
+      "frontier": [
+        "Admission, arming and local starter bytes do not prove provider execution, rendered preview, device build or installation. Active provider controls require a terminal provider witness."
+      ],
+      "guidance": [
+        "CL completion re-reads the owner and compares the exact task graph, source hash, retained control or starter bytes."
+      ]
+    },
+    "orchestration": {
+      "title": "Plan sections with Claude builders and Codex verification",
+      "state": {
+        "missions": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object"
+          },
+          "tool": "neyvia.mission.list"
+        }
+      },
+      "actions": {
+        "neyvia.mission.from_plan": {
+          "effect": "Store dormant section tasks",
+          "pre": "Existing distinct worktrees and assigned unique ports; exact launch intent requires owner approval",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mission.from_plan",
+          "tool": "neyvia.mission.from_plan"
+        },
+        "neyvia.mission.control": {
+          "effect": "Read or supervise mission tasks",
+          "pre": "Existing distinct worktrees and assigned unique ports; exact launch intent requires owner approval",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mission.control",
+          "tool": "neyvia.mission.control"
+        },
+        "neyvia.mission.list": {
+          "effect": "Read or supervise mission tasks",
+          "pre": "Existing distinct worktrees and assigned unique ports; exact launch intent requires owner approval",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mission.list",
+          "tool": "neyvia.mission.list"
+        }
+      },
+      "checks": {},
+      "procedures": {},
+      "judge": {
+        "review": {
+          "constraints": "Use mission.control only after review; completed runs do not imply verifier PASS.",
+          "options": [
+            "approve",
+            "stop"
+          ],
+          "question": "Do the stored prompts, routes, worktrees, ports and acceptance checks match the approved scope?"
+        }
+      },
+      "pitfalls": [
+        {
+          "failure": "Unsupported model or verification reports a failure",
+          "recovery": "Preserve failed run evidence; repair in scope and rerun verification; never silently change providers."
+        }
+      ],
+      "frontier": [
+        "Table allocations guide harness prompts; they do not enforce operating-system port bindings."
+      ],
+      "guidance": [
+        "Use ## Â§0 shared rules and ## Â§1 track: title sections plus a Track/Worktree/Backend/Vite table.",
+        "One Codex integration verifier needs every Claude build; import remains dormant; verifier stays waiting until all builds are done.",
+        "holdAtPlanPercent defaults to 70 and independently paces each app; unknown usage remains unknown."
+      ]
+    },
+    "proofs-c-missions": {
+      "title": "PROOFS-c mission lifecycle contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A receipt or phase contract fails",
+          "recovery": "Preserve evidence and repair its owner; phase-only receipts do not prove model execution."
+        }
+      ],
+      "frontier": [
+        "Supervisor peer coordination remains outside authorized scope; its orchestration test remains.",
+        "Installed security audit requires honest execution/delegation observations; no fake connected-provider fixture is claimed.",
+        "Mission-control cases outside turn-mode mapping are owned by separate control workers."
+      ],
+      "guidance": [
+        "These contracts execute inside production Python mission actions; neyvia verify runs their disposable startup journey.",
+        "Acceptance harness intentionally runs stub MCP adapters: its receipts say simulated=true and do not prove external model/provider execution.",
+        "proofs-c.missions.receipt-schema: Receipts use known schemas, producer phases, parseable timestamps, required fields and verification decisions; invalid input is rejected before append.",
+        "proofs-c.missions.receipt-durable: Locked appends persist the exact serialized stream tail, preserve concurrent receipts and bound retention; invalid input creates no stream.",
+        "proofs-c.missions.receipt-filter: Receipt reads skip malformed rows, filter by mission before limiting and preserve durable stream order.",
+        "proofs-c.missions.default-isolation: Mutable dataclass factories produce distinct containers; receipt validation and phase control reject shared default factories.",
+        "proofs-c.missions.artifact-layout: File-safe mission IDs confine all layout paths to their canonical mission root; create builds the directories and create=false does not write.",
+        "proofs-c.missions.executor-boundary: Executor handoff contains bounded goal/compact plan/selected skill IDs/file scope; wrong schemas and planner-only raw context are excluded.",
+        "proofs-c.missions.verifier-boundary: Verifier handoff contains compact goal/plan/execution and ordered deduplicated changed files/artifacts; runtime metadata is excluded.",
+        "proofs-c.missions.skill-relevance: Empty skill selection blocks and irrelevant selected skills need review; counts exactly reflect inspected selection.",
+        "proofs-c.missions.run-envelope: Mission envelopes preserve lifecycle vocabulary, known schema, parseable timestamps and independently owned mutable state.",
+        "proofs-c.missions.phase-transition: Phase control follows accepted successors/status, preserves receipt references, bounds repair loops, blocks exhausted repair and refuses terminal/completed restarts.",
+        "proofs-c.missions.acceptance-receipt: The five simulated local harness journeys produce exact durable summaries and distinct attempt receipts; receipt flags clearly exclude real external/model execution.",
+        "proofs-c.missions.continuity-durable: Continuity writes under the mission lock increment the current revision once, persist exact facts and preserve the preceding valid snapshot; corrupt state recovers previous facts without inventing progress.",
+        "proofs-c.missions.gpu-policy: GPU decisions preserve estimated session cost, policy blockers, and duration/idle release requirements.",
+        "proofs-c.missions.security-scope: Active security decisions require authorized owner/target/action scope and action-time approval where required; invalid budgets normalize safely and purple-team phases keep auditor/red/blue/defender separation.",
+        "proofs-c.missions.security-coverage: Security phase readiness exactly matches executable candidates; planned/unavailable tools never satisfy missing defensive coverage.",
+        "proofs-c.missions.turn-mode: Turn modes preserve the goal and checks: plan adds the written-plan gate, fast lowers effort and caps a selected budget, max-context raises effort and Deep Run budget, standard preserves semantics.",
+        "proofs-c.missions.control-durable: Successful control-room JSON writes equal the durable normalized payload before returning.",
+        "proofs-c.missions.orchestration-durable: CLI orchestration returns only when the saved mission, runtime autonomy and receipt agree on concurrency/observation/merge/awareness policy.",
+        "proofs-c.missions.security-route: Matched red-team tasks use adversarial verification intent; matched blue-team tasks use defensive detection intent, with distinct mission types."
+      ]
+    },
+    "proofs-c-missions-local-02": {
+      "title": "PROOFS-c local mission evidence and admission contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Saved projection data is mistaken for external runtime execution",
+          "recovery": "Inspect producer/source/capture evidence; this self-check runs a local Python producer and never claims a model/provider or WSL session."
+        }
+      ],
+      "frontier": [
+        "Local transcript/read-model/flight/artifact-repair self-checks prove helper boundaries only; aggregate snapshot/detail tests remain until their collector-dependent assertions can be executed within authorization.",
+        "Saved storage fixtures exercise admission logic without probing a NAS or claiming actual disk capacity."
+      ],
+      "guidance": [
+        "proofs-c.missions.local-dialogue: Dialogue contains only eligible captured output or durable runtime-output text, preserving runtime/model/source/capture provenance and excluding control events.",
+        "proofs-c.missions.local-transcript: Transcript attachment requires concrete output or artifact evidence, retains rejected-session evidence, prefers the latest concrete session, and exposes missing evidence without synthetic messages.",
+        "proofs-c.missions.local-messages: Agent-message projection preserves dialogue receipts and marks control-room planning, actions, heartbeats and integrity notes as trace-only bookkeeping.",
+        "proofs-c.missions.local-read-model: Mission read models preserve identity, lifecycle and filtered ordered receipts without changing missions.json; foreign snapshots never replace the current mission.",
+        "proofs-c.missions.local-flight: Flight-recorder projection preserves written phase, process IDs and bounded event history; absent or invalid snapshots never invent events.",
+        "proofs-c.missions.local-artifact-gate: Hard artifact completion requires both meaningful runtime output and concrete artifact evidence; either missing boundary stays failed.",
+        "proofs-c.missions.local-artifact-repair: Artifact repair completes only after the failed gate is actually ready and no unrelated failures remain; rejected repairs preserve mission state and successful repair is durable.",
+        "proofs-c.missions.local-public-launch: Public-launch digest selects the freshest saved evidence and preserves operator repair/publication fields; missing receipts cannot claim readiness.",
+        "proofs-c.missions.local-storage: Storage launch admission blocks only from saved measured-capacity evidence; unknown or failed probe states never invent disk pressure.",
+        "proofs-c.missions.local-platform: Explicit platform parsing preserves Windows drive and tail when converting to POSIX mount form and preserves native paths; parsing does not probe or launch WSL."
+      ]
+    },
+    "proofs-e-frontend": {
+      "title": "PROOFS-e frontend action contracts",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Host/backend or rendered behavior has not been inspected.",
+          "recovery": "Run the matching feature proof before claiming that boundary; frontend helper receipts prove only the called production helpers."
+        }
+      ],
+      "frontier": [
+        "Covered helper receipts enforce only the production actions declared by these contracts. UI geometry, browser authority, service-worker lifecycle, backend dispatch and mutation are retained case by case until their own real action contracts and receipts exist."
+      ],
+      "guidance": [
+        "mission.live: Builder and Agent Live share mission evidence; only executing statuses are live, rotated logs discard old events and artifact endpoints remain bound.",
+        "mission.delta: Builder and Agent Live share mission evidence; only executing statuses are live, rotated logs discard old events and artifact endpoints remain bound.",
+        "mission.artifacts: Builder and Agent Live share mission evidence; only executing statuses are live, rotated logs discard old events and artifact endpoints remain bound.",
+        "Self-check: node scripts/proofs-e-frontend.mjs --root <scratch directory> --json",
+        "Startup procedures: mission.shared-live-reset-and-artifact"
+      ]
+    },
+    "proofs-e-models": {
+      "title": "PROOFS-e: production model contracts",
+      "state": {
+        "receipt": {
+          "args": {},
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ]
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "actions": {
+        "status": {
+          "effect": "Read the most recent verification receipt without invoking production actions again",
+          "pre": "Selected local workspace; read only",
+          "returns": {
+            "type": "object",
+            "required": [
+              "ok",
+              "available",
+              "complete"
+            ]
+          },
+          "reversible": true,
+          "schema": "proofs-e-models.status",
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "checks": {
+        "observed": {
+          "args": {},
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.verify.status"
+        }
+      },
+      "procedures": {
+        "read-model-proof-receipt": {
+          "goal": "Read the latest receipt after the production model self-check runner",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          },
+          "steps": [
+            {
+              "action": "status",
+              "args": {},
+              "check": "observed",
+              "save": "receipt"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Model transforms are reported as proof of a native app/provider/device effect",
+          "recovery": "Use the real owning feature procedure and its observed runtime"
+        }
+      ],
+      "frontier": [
+        "Rendered browser/desktop journeys are separate from pure model proof",
+        "Remote device, game editor and provider behavior require their real runtimes"
+      ],
+      "guidance": [
+        "missions.shapeMission: Mission observers retain tasks, normalize unknown states, compute prerequisite levels and progress, and preserve draft/paused/stopped phases",
+        "missions.draftProblems: Mission drafts need a goal, folder, task prompts, acceptance and a positive optional budget",
+        "missions.createRequest: Creation trims fields, preserves harness/model routing and removes self/missing prerequisites; optional positive budget is rounded",
+        "missions.planPrompt: Planning asks for the real mission.create tool and explicitly leaves starting to the person",
+        "Startup runner: scripts/proofs-e-models.mjs --root <owned-scratch>; area proofs-e-models checks real model actions and corrupted output refusals"
+      ]
+    }
+  }
+}

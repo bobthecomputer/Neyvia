@@ -1,0 +1,222 @@
+{
+  "area": "a-livecontrol",
+  "manual": "agents",
+  "module": "grant_agent.proofs_a_livecontrol",
+  "self_check": "self_check",
+  "contracts": [
+    {
+      "id": "livecontrol.builder-url",
+      "phase": "post",
+      "claim": "Live Builder URLs retain origin and mission parameters, force Builder mode, remove fixture/preview flags and discard fragments.",
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_builder_url",
+        "grant_agent.proofs_a_livecontrol"
+      ],
+      "impact": [
+        "authenticated proof report truth",
+        "diagnostic credential boundary"
+      ]
+    },
+    {
+      "id": "livecontrol.redaction",
+      "phase": "post",
+      "claim": "Every emitted diagnostic removes explicit and labeled credentials, collapses whitespace and bounds text to 1200 characters.",
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_redact_text",
+        "grant_agent.proofs_a_livecontrol"
+      ],
+      "impact": [
+        "authenticated proof report truth",
+        "diagnostic credential boundary"
+      ]
+    },
+    {
+      "id": "livecontrol.report-truth",
+      "phase": "invariant",
+      "claim": "Report status and counters equal measured, failed and skipped observations; missing or duplicate browser claim identities are refused.",
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_assemble_report",
+        "grant_agent.proofs_a_livecontrol"
+      ],
+      "impact": [
+        "authenticated proof report truth",
+        "diagnostic credential boundary"
+      ]
+    },
+    {
+      "id": "livecontrol.api-not-dom",
+      "phase": "invariant",
+      "claim": "API-only reports emit every DOM claim as skipped, unmeasured and without a pass; they never claim complete browser proof.",
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:build_report",
+        "grant_agent.proofs_a_livecontrol"
+      ],
+      "impact": [
+        "authenticated proof report truth",
+        "diagnostic credential boundary"
+      ]
+    },
+    {
+      "id": "livecontrol.provider-dom",
+      "phase": "post",
+      "claim": "Every provider DOM measurement distinguishes visible admission/quota semantics and explicit admitted/blocked lanes from explanatory prose.",
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_measure_provider_admission",
+        "grant_agent.proofs_a_livecontrol"
+      ],
+      "impact": [
+        "rendered verifier classification",
+        "no synthetic provider proof"
+      ]
+    },
+    {
+      "id": "livecontrol.hermes-dom",
+      "phase": "post",
+      "claim": "Every Hermes DOM measurement requires a visible strip, literal verified marker and explicit proven receipt text; pending or absent strips never pass.",
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_measure_hermes_runtime_proof",
+        "grant_agent.proofs_a_livecontrol"
+      ],
+      "impact": [
+        "rendered verifier classification",
+        "no synthetic provider proof"
+      ]
+    },
+    {
+      "id": "livecontrol.cli-browser-option",
+      "phase": "goal",
+      "claim": "The production CLI parses and exposes an explicit --with-browser option and Neyvia browser transport with an owner-selected backend and tab; DOM classification uses actual native Neyvia observations, while unmeasured action journeys remain skipped.",
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:main",
+        "grant_agent.proofs_a_livecontrol.self_check"
+      ],
+      "impact": [
+        "verifier executable interface"
+      ]
+    },
+    {
+      "id": "livecontrol.browser-failure-truth",
+      "phase": "invariant",
+      "claim": "A failed browser measurement preserves completed login observations and leaves all unobserved DOM claims skipped; partial screenshots never become positive DOM proof.",
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_run_browser_checks",
+        "grant_agent.proofs_a_livecontrol.check_browser_failure"
+      ],
+      "impact": [
+        "truthful partial browser evidence",
+        "retention of completed authentication observations"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "tests/test_authenticated_live_control_verifier.py",
+      "case": "AuthenticatedLiveControlVerifierTests.test_api_only_dom_claims_are_explicitly_skipped_and_never_pass",
+      "contracts": [
+        "livecontrol.report-truth",
+        "livecontrol.api-not-dom"
+      ],
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_assemble_report",
+        "grant_agent.proofs_a_livecontrol",
+        "scripts/verify_authenticated_live_control.py:build_report"
+      ],
+      "case_id": "tests/test_authenticated_live_control_verifier.py::AuthenticatedLiveControlVerifierTests.test_api_only_dom_claims_are_explicitly_skipped_and_never_pass"
+    },
+    {
+      "test": "tests/test_authenticated_live_control_verifier.py",
+      "case": "AuthenticatedLiveControlVerifierTests.test_secret_redaction_covers_explicit_and_labeled_credentials",
+      "contracts": [
+        "livecontrol.redaction"
+      ],
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_redact_text",
+        "grant_agent.proofs_a_livecontrol"
+      ],
+      "case_id": "tests/test_authenticated_live_control_verifier.py::AuthenticatedLiveControlVerifierTests.test_secret_redaction_covers_explicit_and_labeled_credentials"
+    },
+    {
+      "test": "tests/test_authenticated_live_control_verifier.py",
+      "case": "AuthenticatedLiveControlVerifierTests.test_builder_url_forces_live_builder_and_removes_fixture_flags",
+      "contracts": [
+        "livecontrol.builder-url"
+      ],
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_builder_url",
+        "grant_agent.proofs_a_livecontrol"
+      ],
+      "case_id": "tests/test_authenticated_live_control_verifier.py::AuthenticatedLiveControlVerifierTests.test_builder_url_forces_live_builder_and_removes_fixture_flags"
+    },
+    {
+      "test": "tests/test_authenticated_live_control_verifier.py",
+      "case": "AuthenticatedLiveControlVerifierTests.test_real_playwright_dom_measurements_prove_hermes_and_minimax_truth",
+      "case_id": "tests/test_authenticated_live_control_verifier.py::AuthenticatedLiveControlVerifierTests.test_real_playwright_dom_measurements_prove_hermes_and_minimax_truth",
+      "contracts": [
+        "livecontrol.provider-dom",
+        "livecontrol.hermes-dom"
+      ],
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_measure_provider_admission",
+        "scripts/verify_authenticated_live_control.py:_measure_hermes_runtime_proof"
+      ],
+      "procedure": "rendered-verifier-classification"
+    },
+    {
+      "test": "tests/test_authenticated_live_control_verifier.py",
+      "case": "AuthenticatedLiveControlVerifierTests.test_pending_hermes_and_unclassified_minimax_do_not_become_proof",
+      "case_id": "tests/test_authenticated_live_control_verifier.py::AuthenticatedLiveControlVerifierTests.test_pending_hermes_and_unclassified_minimax_do_not_become_proof",
+      "contracts": [
+        "livecontrol.provider-dom",
+        "livecontrol.hermes-dom"
+      ],
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_measure_provider_admission",
+        "scripts/verify_authenticated_live_control.py:_measure_hermes_runtime_proof"
+      ],
+      "procedure": "rendered-verifier-classification"
+    },
+    {
+      "test": "tests/test_authenticated_live_control_verifier.py",
+      "case": "AuthenticatedLiveControlVerifierTests.test_requested_browser_results_replace_api_only_skips",
+      "case_id": "tests/test_authenticated_live_control_verifier.py::AuthenticatedLiveControlVerifierTests.test_requested_browser_results_replace_api_only_skips",
+      "contracts": [
+        "livecontrol.report-truth"
+      ],
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_assemble_report",
+        "grant_agent.proofs_a_livecontrol"
+      ]
+    },
+    {
+      "test": "tests/test_authenticated_live_control_verifier.py",
+      "case": "AuthenticatedLiveControlVerifierTests.test_source_contains_real_browser_flow_not_synthetic_dom_passes",
+      "case_id": "tests/test_authenticated_live_control_verifier.py::AuthenticatedLiveControlVerifierTests.test_source_contains_real_browser_flow_not_synthetic_dom_passes",
+      "contracts": [
+        "livecontrol.cli-browser-option",
+        "livecontrol.provider-dom",
+        "livecontrol.hermes-dom"
+      ],
+      "checkedAt": [
+        "scripts/verify_authenticated_live_control.py:_measure_provider_admission",
+        "grant_agent.proofs_a_livecontrol",
+        "scripts/verify_authenticated_live_control.py:_measure_hermes_runtime_proof",
+        "grant_agent.proofs_a_livecontrol",
+        "scripts/verify_authenticated_live_control.py:main",
+        "grant_agent.proofs_a_livecontrol.self_check"
+      ],
+      "migrationNote": "Source-string presence checks replaced by actual CLI parser execution and installed Chromium DOM classification; these do not prove a live provider or the full Builder journey."
+    }
+  ],
+  "frontier": [
+    "One original case remains: full authenticated Builder browser navigation/actions/screenshot journey. Chrome connector has no enabled browser surfaces; retained test and explicit frontier. Controlled composition/DOM classification never proves live provider execution."
+  ],
+  "pending": [
+    {
+      "test": "tests/test_authenticated_live_control_verifier.py",
+      "case": "AuthenticatedLiveControlVerifierTests.test_with_browser_flow_authenticates_and_measures_real_page_dom",
+      "reason": "Owned guarded backend and installed Chromium authenticate successfully. Earlier guarded capture showed Start an orchestration; the final host capture timed out at Opening your workspace. Timeline/actions remain unmeasured (9 failed, 44 skipped checks); no hand-built HTML fixture substitutes for the actual positive product journey."
+    }
+  ]
+,
+  "portRoles": [48467, 48466]
+}

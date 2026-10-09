@@ -1,0 +1,52 @@
+{
+  "area": "capability-config-journey",
+  "module": "grant_agent.proofs_capability_config_journey",
+  "self_check": "self_check",
+  "manuals": [
+    "tools-depth"
+  ],
+  "contracts": [
+    {
+      "id": "p22.capability-config.search-plan",
+      "phase": "post",
+      "claim": "A changed capability description is interpreted by real search, describe and planning: its unique term discovers the configured capability, the persisted plan selects that capability, and removing the term followed by registry reload removes the search result.",
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.reload",
+        "grant_agent.capability_catalog.CapabilityRegistry.search",
+        "grant_agent.capability_catalog.CapabilityRegistry.describe",
+        "grant_agent.capability_catalog.CapabilityPlanner.plan",
+        "grant_agent.capability_service.CapabilityService.search",
+        "grant_agent.capability_service.CapabilityService.describe",
+        "grant_agent.capability_service.CapabilityService.plan",
+        "grant_agent.capability_service.CapabilityService.get_plan",
+        "grant_agent.proofs_capability_config_journey._search_plan_case",
+        "grant_agent.proofs_capability_config_journey.self_check"
+      ],
+      "impact": [
+        "User and agent capability discovery",
+        "Capability description and persisted plan selection"
+      ]
+    },
+    {
+      "id": "p22.capability-config.adapter-refusal",
+      "phase": "invariant",
+      "claim": "A capability configured with an unregistered adapter is described as unavailable and remains adapter_required in the persisted plan; it cannot be executed immediately and the journey never calls an adapter.",
+      "checkedAt": [
+        "grant_agent.capability_catalog.CapabilityRegistry.describe",
+        "grant_agent.capability_catalog.CapabilityPlanner.plan",
+        "grant_agent.capability_service.CapabilityService.describe",
+        "grant_agent.capability_service.CapabilityService.plan",
+        "grant_agent.capability_service.CapabilityService.get_plan",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.descriptor",
+        "grant_agent.capability_adapters.CapabilityAdapterRegistry.available",
+        "grant_agent.proofs_capability_config_journey._adapter_refusal_case",
+        "grant_agent.proofs_capability_config_journey.self_check"
+      ],
+      "impact": [
+        "Truthful adapter availability",
+        "Capability plan readiness and execution refusal"
+      ]
+    }
+  ],
+  "networkContracts": []
+}

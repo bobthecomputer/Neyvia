@@ -1,0 +1,48 @@
+{
+  "area": "scene-outcomes",
+  "module": "grant_agent.proofs_scene_outcomes",
+  "self_check": "self_check",
+  "portRoles": [
+    48461,
+    48462
+  ],
+  "networkContracts": [
+    "core.sdk-seam",
+    "video.outcome-contracts"
+  ],
+  "contracts": [
+    {
+      "checkedAt": [
+        "grant_agent.scene_core.normalize",
+        "grant_agent.scene_core.check_predicates",
+        "grant_agent.scene_core.judge"
+      ],
+      "claim": "An out-of-repo caller judges its own raw scene with its own predicates through the shared judge; predicates are validated data and never executed.",
+      "id": "core.sdk-seam",
+      "impact": [
+        "src/grant_agent/scene_core/__init__.py",
+        "src/grant_agent/neyvia_laya_capabilities.py",
+        "src/neyvia_sdk/client.py",
+        "packages/neyvia-sdk/index.js"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.video_contracts.proof",
+        "grant_agent.laya_video.observe_file",
+        "grant_agent.scene_core.judge"
+      ],
+      "claim": "A rendered fixture shows each fast outcome contract (render, duration/frames, black, frozen, clipping, caption safe area) catching its defect and passing the clean section.",
+      "id": "video.outcome-contracts",
+      "impact": [
+        "src/grant_agent/video_contracts.py",
+        "src/grant_agent/laya_video.py",
+        "src/grant_agent/video_hyperframes.py",
+        "manuals/cl/video.cl"
+      ],
+      "phase": "invariant"
+    }
+  ],
+  "asyncioLoops": 4
+}

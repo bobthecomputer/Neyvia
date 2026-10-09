@@ -1,0 +1,45 @@
+/* Floating chats (NxBubbles). The ring is the agent's state: amber turning =
+   running, sunset orange breathing = needs you. Transform and opacity only. */
+
+.nx .nx-bubbles { position: fixed; inset: 0; z-index: 66; pointer-events: none; }
+.nx .nx-bubble-float {
+  position: absolute; top: 0; left: 0; width: 52px; height: 52px; border-radius: 50%; pointer-events: auto;
+  display: grid; place-items: center; background: var(--nx-raised); box-shadow: var(--nx-shadow-pop); cursor: grab; touch-action: none;
+  transition: transform var(--nx-settle) var(--nx-spring-settle), box-shadow var(--nx-fast) var(--nx-ease);
+}
+.nx .nx-bubble-float.is-dragging { transition: none; cursor: grabbing; box-shadow: var(--nx-shadow-pop), var(--nx-lift-3); }
+.nx .nx-bubble-float.is-open { box-shadow: var(--nx-shadow-pop), 0 0 0 var(--nx-stroke-strong) var(--nx-accent-hi); }
+.nx .nx-bubble-ring { position: absolute; inset: -3px; border-radius: 50%; box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--nx-line-strong); pointer-events: none; }
+.nx .nx-bubble-float.is-running .nx-bubble-ring {
+  box-shadow: none; background: conic-gradient(from 0deg, transparent 0 55%, var(--nx-amber) 92%, transparent 100%);
+  -webkit-mask: radial-gradient(circle, transparent 0 26px, var(--nx-bg) 26.5px); mask: radial-gradient(circle, transparent 0 26px, var(--nx-bg) 26.5px);
+}
+.nx .nx-bubble-float.is-needs .nx-bubble-ring { box-shadow: inset 0 0 0 var(--nx-stroke-strong) var(--nx-gold), 0 0 0 var(--nx-halo) var(--nx-gold-soft); }
+@media (prefers-reduced-motion: no-preference) {
+  .nx .nx-bubble-float.is-running .nx-bubble-ring { animation: nx-bubble-turn var(--nx-pulse) linear infinite; }
+  .nx .nx-bubble-float.is-needs .nx-bubble-ring { animation: nx-bubble-breathe var(--nx-pulse) var(--nx-ease-loop) infinite; }
+}
+@keyframes nx-bubble-turn { to { transform: rotate(1turn); } }
+@keyframes nx-bubble-breathe { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
+.nx .nx-bubble-unread { position: absolute; top: 4px; right: 4px; width: 9px; height: 9px; border-radius: 50%; background: var(--nx-accent-hi); box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-raised); }
+.nx .nx-bubble-badge { position: absolute; bottom: 0; right: 0; display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--nx-raised); }
+
+.nx .nx-mini {
+  position: fixed; z-index: 67; width: min(340px, calc(100vw - 100px)); max-height: 460px; display: flex; flex-direction: column; pointer-events: auto;
+  border-radius: var(--nx-r-lg); background: color-mix(in srgb, var(--nx-raised) 94%, transparent); backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: var(--nx-shadow-pop); transform-origin: 100% 20%;
+  animation: nx-mini-in var(--nx-settle) var(--nx-spring-settle) both;
+}
+.nx .nx-mini.is-left { transform-origin: 0% 20%; }
+@keyframes nx-mini-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+.nx .nx-mini-head { display: flex; align-items: center; gap: var(--nx-space-8); padding: var(--nx-space-10) var(--nx-space-8) var(--nx-space-8) var(--nx-space-12); border-bottom: 1px solid var(--nx-line); }
+.nx .nx-mini-head strong { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--nx-fs); font-weight: 600; }
+.nx .nx-mini-body { flex: 1 1 auto; min-height: 80px; display: flex; flex-direction: column; gap: var(--nx-space-8); padding: var(--nx-space-10) var(--nx-space-12); }
+.nx .nx-mini-line { margin: 0; font-size: var(--nx-fs-sm); line-height: 1.5; color: var(--nx-text-2); white-space: pre-wrap; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.nx .nx-mini-line.is-user { align-self: flex-end; max-width: 85%; padding: var(--nx-space-6) var(--nx-space-10); border-radius: var(--nx-r) var(--nx-r) var(--nx-r-xs) var(--nx-r); background: var(--nx-accent-soft); color: var(--nx-text); }
+.nx .nx-mini-empty { margin: auto; color: var(--nx-muted); font-size: var(--nx-fs-sm); }
+.nx .nx-mini-working { display: flex; align-items: center; gap: var(--nx-space-8); font-size: var(--nx-fs-xs); color: var(--nx-muted); }
+.nx .nx-mini-reply { display: flex; align-items: center; gap: var(--nx-space-6); padding: var(--nx-space-8) var(--nx-space-8) var(--nx-space-8) var(--nx-space-12); border-top: 1px solid var(--nx-line); }
+.nx .nx-mini-reply input { flex: 1 1 auto; min-width: 0; height: 30px; font-size: var(--nx-fs); }
+.nx .nx-mini-error { margin: 0 var(--nx-space-12) var(--nx-space-10); font-size: var(--nx-fs-xs); color: var(--nx-state-error); }

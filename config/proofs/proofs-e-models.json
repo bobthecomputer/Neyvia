@@ -1,0 +1,6603 @@
+{
+  "schema": "neyvia.proofs.frontend.v1",
+  "area": "proofs-e-models",
+  "runner": "scripts/proofs-e-models.mjs",
+  "state": {
+    "observers": "Production UI model results and per-chat attachment drafts"
+  },
+  "actions": [
+    "autopilot.scopeTools",
+    "autopilot.scopeOf",
+    "autopilot.attributeCalls",
+    "autopilot.shapeRun",
+    "autopilot.checkLine",
+    "cua.toCapture",
+    "cua.keyToInput",
+    "cua.wheelToScroll",
+    "cua.elementAt",
+    "cua.pickSession",
+    "cua.mergeLog",
+    "outputs.perceptionTarget",
+    "outputs.parsePerceptionTarget",
+    "outputs.outsideDock",
+    "outputs.dropSpot",
+    "devices.dropIntent",
+    "devices.sendTarget",
+    "devices.transferFraction",
+    "devices.pcTarget",
+    "devices.parsePcTarget",
+    "devices.transferLine",
+    "composer.admitImages",
+    "composer.planImageReads",
+    "composer.base64Chars",
+    "composer.stripDataUrl",
+    "composer.imageBlocker",
+    "composer.sendIdentity",
+    "composer.toolMutates",
+    "composer.argumentSkeleton",
+    "composer.parseArguments",
+    "composer.filterTools",
+    "composer.toolScope",
+    "composer.draftUpdate",
+    "composer.attachResult",
+    "conductor.turnKind",
+    "conductor.mergeJobs",
+    "conductor.planProblems",
+    "conductor.shapeJob",
+    "gamedev.keepSelection",
+    "gamedev.tabForStage",
+    "gamedev.visibleFields",
+    "gamedev.initialValues",
+    "gamedev.buildArgs",
+    "missions.shapeMission",
+    "missions.draftProblems",
+    "missions.createRequest",
+    "missions.planPrompt",
+    "nightshift.shapeBoard",
+    "nightshift.startable",
+    "nightshift.evidenceView",
+    "nightshift.morning",
+    "nightshift.quietNow",
+    "nightshift.treeLayout",
+    "nightshift.policyForm",
+    "nightshift.policyPatch",
+    "layout.normalizeLayout",
+    "layout.moveRegion",
+    "layout.nudgeRegion",
+    "layout.setWidth",
+    "layout.keyWidth",
+    "layout.sideOf",
+    "layout.fitLayout",
+    "layout.moveWidget",
+    "layout.nudgeWidget",
+    "layout.cycleWidgetSize",
+    "layout.removeWidget",
+    "layout.addWidget",
+    "layout.hiddenWidgets",
+    "onboarding.interestsFor",
+    "onboarding.recommend",
+    "onboarding.timeline",
+    "onboarding.locate",
+    "onboarding.downloadView",
+    "onboarding.packView",
+    "onboarding.plainMissing",
+    "onboarding.runtimeHeadline",
+    "plan.applyPlanOp",
+    "plan.planOf",
+    "plan.planProgress",
+    "plan.showChecklist",
+    "plan.planFromPage",
+    "dashboard.resetsIn",
+    "dashboard.limitTone",
+    "dashboard.mergePages",
+    "replay.buildTimeline",
+    "replay.visibleCount",
+    "replay.recordedAt",
+    "replay.playbackMs",
+    "replay.timelineMarks",
+    "replay.formatSpan",
+    "runtime.mergeRuntimes",
+    "runtime.runtimeSummary",
+    "gamedev.actionFields",
+    "placement.windowKey",
+    "placement.placeWindow",
+    "placement.restoreWindow",
+    "placement.openWindow",
+    "placement.closeWindow",
+    "placement.moveBubble",
+    "placement.peekBubble",
+    "placement.syncStage",
+    "placement.rememberPlacement",
+    "placement.normalizePrefs",
+    "placement.dropZone",
+    "placement.orderWithPanel",
+    "appskin.skinFor",
+    "appskin.skinPalette",
+    "appskin.skinTokens"
+  ],
+  "contracts": [
+    {
+      "id": "autopilot.scopeTools",
+      "phase": "post",
+      "claim": "Unknown scopes are read-only; edit adds only workspace.write",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:scopeTools -> checkedProofsEModel"
+      ],
+      "impact": [
+        "autopilot frontend model consumers"
+      ]
+    },
+    {
+      "id": "autopilot.scopeOf",
+      "phase": "post",
+      "claim": "Only a named CAS workspace.write grants edit scope",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:scopeOf -> checkedProofsEModel"
+      ],
+      "impact": [
+        "autopilot frontend model consumers"
+      ]
+    },
+    {
+      "id": "autopilot.attributeCalls",
+      "phase": "post",
+      "claim": "Every observed model call stays visible once, with its measured tokens, and judgement/frontier calls follow item order",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:attributeCalls -> checkedProofsEModel"
+      ],
+      "impact": [
+        "autopilot frontend model consumers"
+      ]
+    },
+    {
+      "id": "autopilot.shapeRun",
+      "phase": "post",
+      "claim": "Item routes preserve receipts; completed manual/script counts and total tokens come only from durable observations",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:shapeRun -> checkedProofsEModel"
+      ],
+      "impact": [
+        "autopilot frontend model consumers"
+      ]
+    },
+    {
+      "id": "autopilot.checkLine",
+      "phase": "post",
+      "claim": "Final verification text names the real tool, target, observed path and exact operation/value",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:checkLine -> checkedProofsEModel"
+      ],
+      "impact": [
+        "autopilot frontend model consumers"
+      ]
+    },
+    {
+      "id": "cua.toCapture",
+      "phase": "post",
+      "claim": "Frame clicks map from shown pixels to capture pixels and outside/empty frames are refused",
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:toCapture -> checkedProofsEModel"
+      ],
+      "impact": [
+        "cua frontend model consumers"
+      ]
+    },
+    {
+      "id": "cua.keyToInput",
+      "phase": "post",
+      "claim": "Characters, named keys and chords retain exact modifiers; dead/modifier keys never send input",
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:keyToInput -> checkedProofsEModel"
+      ],
+      "impact": [
+        "cua frontend model consumers"
+      ]
+    },
+    {
+      "id": "cua.wheelToScroll",
+      "phase": "post",
+      "claim": "Dominant axis determines direction; gesture amount is 1â€“10 lines with pixel/line/page conversion",
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:wheelToScroll -> checkedProofsEModel"
+      ],
+      "impact": [
+        "cua frontend model consumers"
+      ]
+    },
+    {
+      "id": "cua.elementAt",
+      "phase": "post",
+      "claim": "Choose the smallest containing observed element, preserve first match on equal area",
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:elementAt -> checkedProofsEModel"
+      ],
+      "impact": [
+        "cua frontend model consumers"
+      ]
+    },
+    {
+      "id": "cua.pickSession",
+      "phase": "post",
+      "claim": "Named sessions must exist; otherwise the most recent live session wins, with ended fallback",
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:pickSession -> checkedProofsEModel"
+      ],
+      "impact": [
+        "cua frontend model consumers"
+      ]
+    },
+    {
+      "id": "cua.mergeLog",
+      "phase": "post",
+      "claim": "Updates preserve entry identity and data; new rows are sequence sorted and bounded",
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:mergeLog -> checkedProofsEModel"
+      ],
+      "impact": [
+        "cua frontend model consumers"
+      ]
+    },
+    {
+      "id": "outputs.perceptionTarget",
+      "phase": "post",
+      "claim": "Typed pane target preserves the caller's full path/session identifier",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOutputsModel.js:perceptionTarget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "outputs frontend model consumers"
+      ]
+    },
+    {
+      "id": "outputs.parsePerceptionTarget",
+      "phase": "post",
+      "claim": "Only image/file paths, HTTP(S) URLs and integer window targets are accepted; delimiters in paths/session ids survive",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOutputsModel.js:parsePerceptionTarget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "outputs frontend model consumers"
+      ]
+    },
+    {
+      "id": "outputs.outsideDock",
+      "phase": "post",
+      "claim": "Undocking requires crossing a known dock boundary by the requested margin",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOutputsModel.js:outsideDock -> checkedProofsEModel"
+      ],
+      "impact": [
+        "outputs frontend model consumers"
+      ]
+    },
+    {
+      "id": "outputs.dropSpot",
+      "phase": "post",
+      "claim": "Floating drops choose nearest side and a clamped vertical fraction",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOutputsModel.js:dropSpot -> checkedProofsEModel"
+      ],
+      "impact": [
+        "outputs frontend model consumers"
+      ]
+    },
+    {
+      "id": "devices.dropIntent",
+      "phase": "post",
+      "claim": "Only local move, remote take and local-to-remote send are offered; remote-to-remote is refused",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:dropIntent -> checkedProofsEModel"
+      ],
+      "impact": [
+        "devices frontend model consumers"
+      ]
+    },
+    {
+      "id": "devices.sendTarget",
+      "phase": "post",
+      "claim": "Remote writes require inbox, writable share or explicit write-anywhere permission",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:sendTarget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "devices frontend model consumers"
+      ]
+    },
+    {
+      "id": "devices.transferFraction",
+      "phase": "post",
+      "claim": "Known byte progress clamps to 0..1; unknown sizes stay unknown except completed transfers",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:transferFraction -> checkedProofsEModel"
+      ],
+      "impact": [
+        "devices frontend model consumers"
+      ]
+    },
+    {
+      "id": "devices.pcTarget",
+      "phase": "post",
+      "claim": "Other-PC navigation preserves path delimiters",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:pcTarget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "devices frontend model consumers"
+      ]
+    },
+    {
+      "id": "devices.parsePcTarget",
+      "phase": "post",
+      "claim": "Only pc: identifiers are decoded, splitting device once and preserving all path bars",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:parsePcTarget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "devices frontend model consumers"
+      ]
+    },
+    {
+      "id": "devices.transferLine",
+      "phase": "post",
+      "claim": "Transfer labels preserve bytes, file counts, failure reason, measured speed and rounded remaining time",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:transferLine -> checkedProofsEModel"
+      ],
+      "impact": [
+        "devices frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.admitImages",
+      "phase": "post",
+      "claim": "Before adding bytes, each image has a supported MIME, fits six-count/per-file/aggregate limits, and every refusal explains the gate",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:admitImages -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.planImageReads",
+      "phase": "post",
+      "claim": "Unsupported, oversized and over-count metadata never reaches FileReader; estimated base64 totals obey limits",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:planImageReads -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.base64Chars",
+      "phase": "post",
+      "claim": "Metadata byte counts become rounded base64 quadruplets",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:base64Chars -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.stripDataUrl",
+      "phase": "post",
+      "claim": "Only bytes following the first data URL comma are kept",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:stripDataUrl -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.imageBlocker",
+      "phase": "post",
+      "claim": "Only image-capable apps and models admit images on either route; blocked choices explain the app/model",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:imageBlocker -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.sendIdentity",
+      "phase": "post",
+      "claim": "Retry identity includes canonical options and every image's byte digest, MIME/name/size; no image bytes are retained",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:sendIdentity -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.toolMutates",
+      "phase": "post",
+      "claim": "Only read mutability is presented as non-mutating",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:toolMutates -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.argumentSkeleton",
+      "phase": "post",
+      "claim": "Argument examples contain exactly required fields with enum/default/type initial values",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:argumentSkeleton -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.parseArguments",
+      "phase": "post",
+      "claim": "Tools receive JSON objects only; malformed JSON has an explicit error and empty input means an empty object",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:parseArguments -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.filterTools",
+      "phase": "post",
+      "claim": "Every query term must match catalog text; available tools lead and names break ties",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:filterTools -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.toolScope",
+      "phase": "post",
+      "claim": "UI tools and desktop calls disclose their own state folder; ordinary workspace tools report the chat root",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:toolScope -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.draftUpdate",
+      "phase": "post",
+      "claim": "A draft write changes its named chat only and keeps one stable empty value for subscriptions",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:createDraftStore.update -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "composer.attachResult",
+      "phase": "post",
+      "claim": "Committed attachment bytes pass the second admission gate and origin drafts stay within limits",
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:attachToDraft -> checkedProofsEModel"
+      ],
+      "impact": [
+        "composer frontend model consumers"
+      ]
+    },
+    {
+      "id": "conductor.turnKind",
+      "phase": "post",
+      "claim": "Only classify/plan suffixes identify planning turns; acceptance verifier remains a task",
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:turnKind -> checkedProofsEModel"
+      ],
+      "impact": [
+        "conductor frontend model consumers"
+      ]
+    },
+    {
+      "id": "conductor.mergeJobs",
+      "phase": "post",
+      "claim": "Job paging upserts by id with later data and keeps newest-created first",
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:mergeJobs -> checkedProofsEModel"
+      ],
+      "impact": [
+        "conductor frontend model consumers"
+      ]
+    },
+    {
+      "id": "conductor.planProblems",
+      "phase": "post",
+      "claim": "Goal, folder, acceptance checks and all required planner/executor/verifier routes are required",
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:planProblems -> checkedProofsEModel"
+      ],
+      "impact": [
+        "conductor frontend model consumers"
+      ]
+    },
+    {
+      "id": "conductor.shapeJob",
+      "phase": "post",
+      "claim": "Worker terminal status overrides saved phase; dependency levels, totals, unknown usage and one-time start/pause/resume controls remain honest",
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:shapeJob -> checkedProofsEModel"
+      ],
+      "impact": [
+        "conductor frontend model consumers"
+      ]
+    },
+    {
+      "id": "gamedev.keepSelection",
+      "phase": "post",
+      "claim": "Native selection never changes implicitly; browser reload affinity follows only one same-project/context replacement",
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:keepSelection -> checkedProofsEModel"
+      ],
+      "impact": [
+        "gamedev frontend model consumers"
+      ]
+    },
+    {
+      "id": "gamedev.tabForStage",
+      "phase": "post",
+      "claim": "Explicit known tabs win, then launcher app aliases, then embedded Browser 3D",
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:tabForStage -> checkedProofsEModel"
+      ],
+      "impact": [
+        "gamedev frontend model consumers"
+      ]
+    },
+    {
+      "id": "gamedev.visibleFields",
+      "phase": "post",
+      "claim": "Conditional controls show exactly fields whose predicates hold",
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:visibleFields -> checkedProofsEModel"
+      ],
+      "impact": [
+        "gamedev frontend model consumers"
+      ]
+    },
+    {
+      "id": "gamedev.initialValues",
+      "phase": "post",
+      "claim": "Form defaults resolve duplicate keys according to their condition",
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:initialValues -> checkedProofsEModel"
+      ],
+      "impact": [
+        "gamedev frontend model consumers"
+      ]
+    },
+    {
+      "id": "gamedev.buildArgs",
+      "phase": "post",
+      "claim": "Visible fields become exact bridge args; vectors/numbers are finite, JSON text must parse as an object and wildcard fields are flattened",
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:buildArgs -> checkedProofsEModel"
+      ],
+      "impact": [
+        "gamedev frontend model consumers"
+      ]
+    },
+    {
+      "id": "missions.shapeMission",
+      "phase": "post",
+      "claim": "Mission observers retain tasks, normalize unknown states, compute prerequisite levels and progress, and preserve draft/paused/stopped phases",
+      "checkedAt": [
+        "web/src/neyvia/next/nxMissionsModel.js:shapeMission -> checkedProofsEModel"
+      ],
+      "impact": [
+        "missions frontend model consumers"
+      ]
+    },
+    {
+      "id": "missions.draftProblems",
+      "phase": "post",
+      "claim": "Mission drafts need a goal, folder, task prompts, acceptance and a positive optional budget",
+      "checkedAt": [
+        "web/src/neyvia/next/nxMissionsModel.js:draftProblems -> checkedProofsEModel"
+      ],
+      "impact": [
+        "missions frontend model consumers"
+      ]
+    },
+    {
+      "id": "missions.createRequest",
+      "phase": "post",
+      "claim": "Creation trims fields, preserves harness/model routing and removes self/missing prerequisites; optional positive budget is rounded",
+      "checkedAt": [
+        "web/src/neyvia/next/nxMissionsModel.js:createRequest -> checkedProofsEModel"
+      ],
+      "impact": [
+        "missions frontend model consumers"
+      ]
+    },
+    {
+      "id": "missions.planPrompt",
+      "phase": "post",
+      "claim": "Planning asks for the real mission.create tool and explicitly leaves starting to the person",
+      "checkedAt": [
+        "web/src/neyvia/next/nxMissionsModel.js:planPrompt -> checkedProofsEModel"
+      ],
+      "impact": [
+        "missions frontend model consumers"
+      ]
+    },
+    {
+      "id": "nightshift.shapeBoard",
+      "phase": "post",
+      "claim": "Board excludes missions by default, retains dependency/missing/open/dependent edges and exact state counts",
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:shapeBoard -> checkedProofsEModel"
+      ],
+      "impact": [
+        "nightshift frontend model consumers"
+      ]
+    },
+    {
+      "id": "nightshift.startable",
+      "phase": "post",
+      "claim": "Only waiting, unarmed agent tasks can be armed; Paul's tasks are always excluded",
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:startable -> checkedProofsEModel"
+      ],
+      "impact": [
+        "nightshift frontend model consumers"
+      ]
+    },
+    {
+      "id": "nightshift.evidenceView",
+      "phase": "post",
+      "claim": "Evidence retains its actual path, commit, run ids or owner-only command; labels disclose opening meaning",
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:evidenceView -> checkedProofsEModel"
+      ],
+      "impact": [
+        "nightshift frontend model consumers"
+      ]
+    },
+    {
+      "id": "nightshift.morning",
+      "phase": "post",
+      "claim": "Morning summary counts only completed unreported runs and non-mission tasks; actual evidence links take precedence",
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:morning -> checkedProofsEModel"
+      ],
+      "impact": [
+        "nightshift frontend model consumers"
+      ]
+    },
+    {
+      "id": "nightshift.quietNow",
+      "phase": "post",
+      "claim": "Quiet windows are start-inclusive/end-exclusive in selected local/UTC clock; midnight wraps and equal endpoints mean all day",
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:quietNow -> checkedProofsEModel"
+      ],
+      "impact": [
+        "nightshift frontend model consumers"
+      ]
+    },
+    {
+      "id": "nightshift.treeLayout",
+      "phase": "post",
+      "claim": "Every board task gets one measured leaf on its prerequisite branch with exact geometry and alternate sides without invented tasks",
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:treeLayout -> checkedProofsEModel"
+      ],
+      "impact": [
+        "nightshift frontend model consumers"
+      ]
+    },
+    {
+      "id": "nightshift.policyForm",
+      "phase": "post",
+      "claim": "Saved policy fields convert measured seconds to one-decimal hours/minutes; toggles retain quiet/GPU/plan hold state and harness budgets",
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:policyForm -> checkedProofsEModel"
+      ],
+      "impact": [
+        "nightshift frontend model consumers"
+      ]
+    },
+    {
+      "id": "nightshift.policyPatch",
+      "phase": "post",
+      "claim": "Budget patches convert valid fields to positive integer units and report every invalid count/time/OpenCode token budget",
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:policyPatch -> checkedProofsEModel"
+      ],
+      "impact": [
+        "nightshift frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.normalizeLayout",
+      "phase": "post",
+      "claim": "Stored junk cannot remove regions or add unknown widths/widgets; modes/defaults are normalized and duplicate widgets disappear",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:normalizeLayout -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.moveRegion",
+      "phase": "post",
+      "claim": "Region movement preserves all other layout fields and clamps target order",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:moveRegion -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.nudgeRegion",
+      "phase": "post",
+      "claim": "Region movement preserves all other layout fields and clamps target order",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:nudgeRegion -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.setWidth",
+      "phase": "post",
+      "claim": "Pointer widths clamp to the selected region and leave all others intact",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:setWidth -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.keyWidth",
+      "phase": "post",
+      "claim": "Keyboard resizing uses 16px or shifted 48px, with Home/End bounds and no action for unknown keys",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:keyWidth -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.sideOf",
+      "phase": "post",
+      "claim": "Splitter sides follow region position relative to the conversation",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:sideOf -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.fitLayout",
+      "phase": "post",
+      "claim": "Resize preserves saved values, gives proportional slack before dropping Canopy, keeps conversation comfort/minimum, then floats panel",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:fitLayout -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.moveWidget",
+      "phase": "post",
+      "claim": "Widget edits preserve layout, prevent duplicates, obey each widget's sizes and move only the requested item",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:moveWidget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.nudgeWidget",
+      "phase": "post",
+      "claim": "Widget edits preserve layout, prevent duplicates, obey each widget's sizes and move only the requested item",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:nudgeWidget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.cycleWidgetSize",
+      "phase": "post",
+      "claim": "Widget edits preserve layout, prevent duplicates, obey each widget's sizes and move only the requested item",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:cycleWidgetSize -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.removeWidget",
+      "phase": "post",
+      "claim": "Widget edits preserve layout, prevent duplicates, obey each widget's sizes and move only the requested item",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:removeWidget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.addWidget",
+      "phase": "post",
+      "claim": "Widget edits preserve layout, prevent duplicates, obey each widget's sizes and move only the requested item",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:addWidget -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "layout.hiddenWidgets",
+      "phase": "post",
+      "claim": "Add list names exactly known widgets absent from layout",
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:hiddenWidgets -> checkedProofsEModel"
+      ],
+      "impact": [
+        "layout frontend model consumers"
+      ]
+    },
+    {
+      "id": "onboarding.interestsFor",
+      "phase": "post",
+      "claim": "Direct interests win over tiers; unknown/missing tiers select nothing",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:interestsFor -> checkedProofsEModel"
+      ],
+      "impact": [
+        "onboarding frontend model consumers"
+      ]
+    },
+    {
+      "id": "onboarding.recommend",
+      "phase": "post",
+      "claim": "Recommendations union selected interest resources in catalog order and preserve unconditional tour chapters",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:recommend -> checkedProofsEModel"
+      ],
+      "impact": [
+        "onboarding frontend model consumers"
+      ]
+    },
+    {
+      "id": "onboarding.timeline",
+      "phase": "post",
+      "claim": "Tour duration is 60â€“90 seconds when nonempty, proportional chapters are contiguous and last chapter consumes rounding remainder",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:timeline -> checkedProofsEModel"
+      ],
+      "impact": [
+        "onboarding frontend model consumers"
+      ]
+    },
+    {
+      "id": "onboarding.locate",
+      "phase": "post",
+      "claim": "Every playhead maps to its containing chapter with clamped progress; empty tours have no chapter",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:locate -> checkedProofsEModel"
+      ],
+      "impact": [
+        "onboarding frontend model consumers"
+      ]
+    },
+    {
+      "id": "onboarding.downloadView",
+      "phase": "post",
+      "claim": "Download percent uses measured bytes; busy/end/error words reflect state and measured ETA",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:downloadView -> checkedProofsEModel"
+      ],
+      "impact": [
+        "onboarding frontend model consumers"
+      ]
+    },
+    {
+      "id": "onboarding.packView",
+      "phase": "post",
+      "claim": "Pack installation controls reflect actual availability and copying state; receipt detail names verified file count/bytes",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:packView -> checkedProofsEModel"
+      ],
+      "impact": [
+        "onboarding frontend model consumers"
+      ]
+    },
+    {
+      "id": "onboarding.plainMissing",
+      "phase": "post",
+      "claim": "Catalog gaps use plain tool names without hiding unavailable payloads",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:plainMissing -> checkedProofsEModel"
+      ],
+      "impact": [
+        "onboarding frontend model consumers"
+      ]
+    },
+    {
+      "id": "onboarding.runtimeHeadline",
+      "phase": "post",
+      "claim": "Only observed found runtimes produce set-to-start wording and names; no result stays checking",
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:runtimeHeadline -> checkedProofsEModel"
+      ],
+      "impact": [
+        "onboarding frontend model consumers"
+      ]
+    },
+    {
+      "id": "plan.applyPlanOp",
+      "phase": "post",
+      "claim": "Plan replacement clears empty lists, add upserts by id/source, update preserves unknown ids, delete clears the last item",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlanModel.js:applyPlanOp -> checkedProofsEModel"
+      ],
+      "impact": [
+        "plan frontend model consumers"
+      ]
+    },
+    {
+      "id": "plan.planOf",
+      "phase": "post",
+      "claim": "Only nonoptimistic live operations beyond the saved sequence fold onto the saved plan",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlanModel.js:planOf -> checkedProofsEModel"
+      ],
+      "impact": [
+        "plan frontend model consumers"
+      ]
+    },
+    {
+      "id": "plan.planProgress",
+      "phase": "post",
+      "claim": "Checklist progress normalizes states, counts completed items, chooses first active/next pending and recognizes nonempty completion",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlanModel.js:planProgress -> checkedProofsEModel"
+      ],
+      "impact": [
+        "plan frontend model consumers"
+      ]
+    },
+    {
+      "id": "plan.showChecklist",
+      "phase": "post",
+      "claim": "Unfinished checklists stay visible; complete lists remain only while agent works; empty lists hide",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlanModel.js:showChecklist -> checkedProofsEModel"
+      ],
+      "impact": [
+        "plan frontend model consumers"
+      ]
+    },
+    {
+      "id": "plan.planFromPage",
+      "phase": "post",
+      "claim": "Absent plan fields preserve shown plan; explicit clears advance sequence to the read's last item",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlanModel.js:planFromPage -> checkedProofsEModel"
+      ],
+      "impact": [
+        "plan frontend model consumers"
+      ]
+    },
+    {
+      "id": "dashboard.resetsIn",
+      "phase": "post",
+      "claim": "Reset words reflect measured rounded minutes/hours/days; missing reset is blank and elapsed reset is now",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDashboardModel.js:resetsIn -> checkedProofsEModel"
+      ],
+      "impact": [
+        "dashboard frontend model consumers"
+      ]
+    },
+    {
+      "id": "dashboard.limitTone",
+      "phase": "post",
+      "claim": "Provider warnings/rejections outrank percent; stale/unavailable/unknown limits never show reassuring green",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDashboardModel.js:limitTone -> checkedProofsEModel"
+      ],
+      "impact": [
+        "dashboard frontend model consumers"
+      ]
+    },
+    {
+      "id": "dashboard.mergePages",
+      "phase": "post",
+      "claim": "Moving dashboard rows appear once in first-seen order; final page controls paging, first page keeps limits",
+      "checkedAt": [
+        "web/src/neyvia/next/nxDashboardModel.js:mergePages -> checkedProofsEModel"
+      ],
+      "impact": [
+        "dashboard frontend model consumers"
+      ]
+    },
+    {
+      "id": "replay.buildTimeline",
+      "phase": "post",
+      "claim": "Replay preserves sequence and real recorded span, excludes optimistic items, caps idle gaps and fills missing stamps without jumps",
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:buildTimeline -> checkedProofsEModel"
+      ],
+      "impact": [
+        "replay frontend model consumers"
+      ]
+    },
+    {
+      "id": "replay.visibleCount",
+      "phase": "post",
+      "claim": "Exactly entries at or before the replay playhead are visible",
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:visibleCount -> checkedProofsEModel"
+      ],
+      "impact": [
+        "replay frontend model consumers"
+      ]
+    },
+    {
+      "id": "replay.recordedAt",
+      "phase": "post",
+      "claim": "Recorded clock follows the last visible entry and stays at start before the first",
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:recordedAt -> checkedProofsEModel"
+      ],
+      "impact": [
+        "replay frontend model consumers"
+      ]
+    },
+    {
+      "id": "replay.playbackMs",
+      "phase": "post",
+      "claim": "Playback wall time is replay time divided by at least 1x, rounded upward",
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:playbackMs -> checkedProofsEModel"
+      ],
+      "impact": [
+        "replay frontend model consumers"
+      ]
+    },
+    {
+      "id": "replay.timelineMarks",
+      "phase": "post",
+      "claim": "Scrubber marks retain meaningful item identity/order, normalize position and distinguish tool errors",
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:timelineMarks -> checkedProofsEModel"
+      ],
+      "impact": [
+        "replay frontend model consumers"
+      ]
+    },
+    {
+      "id": "replay.formatSpan",
+      "phase": "post",
+      "claim": "Measured spans round to seconds, then zero-padded minutes and hours",
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:formatSpan -> checkedProofsEModel"
+      ],
+      "impact": [
+        "replay frontend model consumers"
+      ]
+    },
+    {
+      "id": "runtime.mergeRuntimes",
+      "phase": "post",
+      "claim": "Catalog aliases join live rows once; readiness/capabilities/auth/model/owner policy are observed from their authoritative source",
+      "checkedAt": [
+        "web/src/neyvia/next/nxRuntimeModel.js:mergeRuntimes -> checkedProofsEModel"
+      ],
+      "impact": [
+        "runtime frontend model consumers"
+      ]
+    },
+    {
+      "id": "runtime.runtimeSummary",
+      "phase": "post",
+      "claim": "Ready and installed counts come from rendered runtime rows without inventing detection",
+      "checkedAt": [
+        "web/src/neyvia/next/nxRuntimeModel.js:runtimeSummary -> checkedProofsEModel"
+      ],
+      "impact": [
+        "runtime frontend model consumers"
+      ]
+    },
+    {
+      "id": "gamedev.actionFields",
+      "phase": "post",
+      "claim": "Godot edit/interact and Unity test forms retain their typed bridge fields/defaults; other actions return valid field arrays",
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:actionFields -> checkedProofsEModel"
+      ],
+      "impact": [
+        "Game Dev typed action forms and engine bridge args"
+      ]
+    },
+    {
+      "id": "placement.windowKey",
+      "phase": "post",
+      "claim": "An app is one window whatever it shows; a pane is one per kind and target; nothing else opens",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:windowKey -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.placeWindow",
+      "phase": "post",
+      "claim": "A move puts the window in its place, swaps or bubbles the occupant, closes nothing and keeps every description",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:placeWindow -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.restoreWindow",
+      "phase": "post",
+      "claim": "Full screen and bubbles go back where they came from; other windows stay put",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:restoreWindow -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.openWindow",
+      "phase": "post",
+      "claim": "Opening shows the window with its new description; an open one stays where the user put it; a new one replaces only its own place",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:openWindow -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.closeWindow",
+      "phase": "post",
+      "claim": "Closing removes exactly that window",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:closeWindow -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.moveBubble",
+      "phase": "post",
+      "claim": "A bubble moves within the window; nothing else changes",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:moveBubble -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.peekBubble",
+      "phase": "post",
+      "claim": "At most one bubble peeks; places and descriptions never change",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:peekBubble -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.syncStage",
+      "phase": "post",
+      "claim": "A stage set directly opens its window; a cleared stage closes the window beside the chat, else the full-screen one",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:syncStage -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.rememberPlacement",
+      "phase": "post",
+      "claim": "Only beside-the-chat and side are remembered homes, per app or pane kind",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:rememberPlacement -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.normalizePrefs",
+      "phase": "post",
+      "claim": "Stored placement homes keep only app/pane keys with main or side",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:normalizePrefs -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.dropZone",
+      "phase": "post",
+      "claim": "Outer fifths dock left or right, the top band is full screen, the bottom band a bubble, the rest beside the chat",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:dropZone -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "placement.orderWithPanel",
+      "phase": "post",
+      "claim": "The side panel moves next to the conversation on the asked side; no region is lost or duplicated",
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlacementModel.js:orderWithPanel -> checkedProofsEModel"
+      ],
+      "impact": [
+        "placement frontend model consumers (NxPlacement, nxOsStore windows)"
+      ]
+    },
+    {
+      "id": "appskin.skinFor",
+      "phase": "post",
+      "claim": "Each app and app pane wears its own skin (terminal code, PDF reader, notes notebook, files finder, 3D graphite, images darkroom, factory studio, research scholar, agents monitor); the shell's own panes wear none",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAppSkinModel.js:skinFor -> checkedProofsEModel"
+      ],
+      "impact": [
+        "App windows (NxPlacement) and every app drawn inside them: Terminal, PDF, Notes, Files, Browser, previews, App Factory, Mobile Studio, 3D Studio, Image Studio, CiteCraft, LAYA"
+      ]
+    },
+    {
+      "id": "appskin.skinPalette",
+      "phase": "post",
+      "claim": "A skin's text reads at 4.5:1 on every surface and hover, its accent text on every surface, its on-accent ink on the accent; dark skins are dark, Morning's are light, and no surface or accent is green",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAppSkinModel.js:skinPalette -> checkedProofsEModel"
+      ],
+      "impact": [
+        "App windows (NxPlacement) and every app drawn inside them: Terminal, PDF, Notes, Files, Browser, previews, App Factory, Mobile Studio, 3D Studio, Image Studio, CiteCraft, LAYA"
+      ]
+    },
+    {
+      "id": "appskin.skinTokens",
+      "phase": "post",
+      "claim": "A window's custom properties are its skin's palette, with the 16 terminal colours readable on the code surface; an unknown skin sets nothing",
+      "checkedAt": [
+        "web/src/neyvia/next/nxAppSkinModel.js:skinTokens -> checkedProofsEModel"
+      ],
+      "impact": [
+        "App windows (NxPlacement) and every app drawn inside them: Terminal, PDF, Notes, Files, Browser, previews, App Factory, Mobile Studio, 3D Studio, Image Studio, CiteCraft, LAYA"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "autopilot.model-procedure",
+      "actions": [
+        {
+          "module": "autopilot",
+          "function": "scopeTools",
+          "args": [
+            "edit"
+          ],
+          "saveAs": "edit"
+        },
+        {
+          "module": "autopilot",
+          "function": "scopeTools",
+          "args": [
+            "unknown"
+          ]
+        },
+        {
+          "module": "autopilot",
+          "function": "scopeOf",
+          "args": [
+            {
+              "$ref": "edit"
+            }
+          ]
+        },
+        {
+          "module": "autopilot",
+          "function": "attributeCalls",
+          "args": [
+            {
+              "status": "completed",
+              "items": [
+                {
+                  "status": "completed",
+                  "route": "script"
+                },
+                {
+                  "status": "completed",
+                  "route": "manual",
+                  "modelReasons": [
+                    "coverage"
+                  ]
+                },
+                {
+                  "status": "completed",
+                  "route": "manual",
+                  "modelReasons": [
+                    "match"
+                  ],
+                  "frontier": [
+                    {
+                      "reason": "gap"
+                    }
+                  ]
+                }
+              ],
+              "models": [
+                {
+                  "reason": "intent checklist",
+                  "tokens": {
+                    "total": 120
+                  }
+                },
+                {
+                  "reason": "judgement: coverage",
+                  "tokens": {
+                    "total": 30
+                  }
+                },
+                {
+                  "reason": "disagreement: coverage",
+                  "tokens": {
+                    "total": 10
+                  }
+                },
+                {
+                  "reason": "judgement: match",
+                  "tokens": {
+                    "total": 25
+                  }
+                },
+                {
+                  "reason": "frontier: gap",
+                  "tokens": {
+                    "total": 45
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "autopilot",
+          "function": "attributeCalls",
+          "args": [
+            {
+              "items": [
+                {
+                  "modelReasons": []
+                }
+              ],
+              "models": [
+                {
+                  "reason": "judgement: pending",
+                  "tokens": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "autopilot",
+          "function": "shapeRun",
+          "args": [
+            {
+              "status": "completed",
+              "items": [
+                {
+                  "status": "completed",
+                  "route": "script"
+                },
+                {
+                  "status": "completed",
+                  "route": "manual",
+                  "modelReasons": [
+                    "coverage"
+                  ]
+                },
+                {
+                  "status": "completed",
+                  "route": "manual",
+                  "modelReasons": [
+                    "match"
+                  ],
+                  "frontier": [
+                    {
+                      "reason": "gap"
+                    }
+                  ]
+                }
+              ],
+              "models": [
+                {
+                  "reason": "intent checklist",
+                  "tokens": {
+                    "total": 120
+                  }
+                },
+                {
+                  "reason": "judgement: coverage",
+                  "tokens": {
+                    "total": 30
+                  }
+                },
+                {
+                  "reason": "disagreement: coverage",
+                  "tokens": {
+                    "total": 10
+                  }
+                },
+                {
+                  "reason": "judgement: match",
+                  "tokens": {
+                    "total": 25
+                  }
+                },
+                {
+                  "reason": "frontier: gap",
+                  "tokens": {
+                    "total": 45
+                  }
+                }
+              ]
+            }
+          ],
+          "goals": [
+            {
+              "path": "totalTokens",
+              "value": 230
+            },
+            {
+              "path": "noModel",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "module": "autopilot",
+          "function": "checkLine",
+          "args": [
+            {
+              "tool": "workspace.read",
+              "args": {
+                "path": "proof.txt"
+              },
+              "expect": {
+                "path": "content",
+                "op": "contains",
+                "value": "orchard"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "composer.model-procedure",
+      "actions": [
+        {
+          "module": "composer",
+          "function": "stripDataUrl",
+          "args": [
+            "data:image/png;base64,QUJD"
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "base64Chars",
+          "args": [
+            4
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "admitImages",
+          "args": [
+            [],
+            [
+              {
+                "$image": 3
+              },
+              {
+                "$image": 1,
+                "mime": "text/plain"
+              },
+              {
+                "$image": 12582913
+              }
+            ]
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "admitImages",
+          "args": [
+            {
+              "$repeat": {
+                "$image": 12582911
+              },
+              "count": 2
+            },
+            [
+              {
+                "$image": 12582911
+              }
+            ]
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "admitImages",
+          "args": [
+            {
+              "$repeat": {
+                "$image": 1
+              },
+              "count": 6
+            },
+            [
+              {
+                "$image": 1
+              }
+            ]
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "planImageReads",
+          "args": [
+            [],
+            [
+              {
+                "name": "skip.pdf",
+                "size": 1,
+                "type": "application/pdf"
+              },
+              {
+                "name": "big.png",
+                "size": 524288000,
+                "type": "image/png"
+              },
+              {
+                "name": "ok.png",
+                "size": 5,
+                "type": "image/png"
+              }
+            ]
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "planImageReads",
+          "args": [
+            [],
+            [
+              {
+                "name": "a",
+                "size": 9437184,
+                "type": "image/png"
+              },
+              {
+                "name": "b",
+                "size": 9437184,
+                "type": "image/png"
+              },
+              {
+                "name": "c",
+                "size": 9437184,
+                "type": "image/png"
+              }
+            ]
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "imageBlocker",
+          "args": [
+            {
+              "app": "claude-code",
+              "transport": "terminal",
+              "capabilities": {
+                "images": true
+              }
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "imageBlocker",
+          "args": [
+            {
+              "app": "codex",
+              "capabilities": {
+                "images": true
+              },
+              "model": {
+                "id": "text",
+                "images": false
+              }
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "imageBlocker",
+          "args": [
+            {
+              "appName": "OpenCode",
+              "capabilities": {}
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "sendIdentity",
+          "args": [
+            "chat",
+            "hello",
+            {
+              "effort": "high",
+              "images": [
+                {
+                  "$image": 100
+                }
+              ]
+            }
+          ],
+          "saveAs": "key"
+        },
+        {
+          "module": "composer",
+          "function": "sendIdentity",
+          "args": [
+            "chat",
+            "hello",
+            {
+              "images": [
+                {
+                  "$image": 100
+                }
+              ],
+              "effort": "high"
+            }
+          ],
+          "goals": [
+            {
+              "value": {
+                "$ref": "key"
+              }
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "sendIdentity",
+          "args": [
+            "chat",
+            "hello",
+            {
+              "effort": "low",
+              "images": [
+                {
+                  "$image": 100
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "toolMutates",
+          "args": [
+            {
+              "mutability_class": "none"
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "argumentSkeleton",
+          "args": [
+            {
+              "required": [
+                "path",
+                "count"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "parseArguments",
+          "args": [
+            "[1]"
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "parseArguments",
+          "args": [
+            "{"
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "parseArguments",
+          "args": [
+            ""
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "filterTools",
+          "args": [
+            [
+              {
+                "name": "z.read",
+                "available": false
+              },
+              {
+                "name": "a.read",
+                "available": true
+              },
+              {
+                "name": "web.fetch"
+              }
+            ],
+            "read"
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "toolScope",
+          "args": [
+            {
+              "tool": "workspace.read",
+              "cwd": "C:/work"
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "toolScope",
+          "args": [
+            {
+              "tool": "neyvia.project.create",
+              "cwd": "C:/work"
+            }
+          ]
+        },
+        {
+          "module": "composer",
+          "function": "toolScope",
+          "args": [
+            {
+              "tool": "workspace.read",
+              "desktop": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "conductor.model-procedure",
+      "actions": [
+        {
+          "module": "conductor",
+          "function": "shapeJob",
+          "args": [
+            {
+              "id": "job",
+              "status": "running",
+              "conductor": {
+                "phase": "running",
+                "tasks": [
+                  {
+                    "id": "build",
+                    "needs": [],
+                    "status": "completed"
+                  },
+                  {
+                    "id": "review",
+                    "needs": [
+                      "build"
+                    ],
+                    "status": "running"
+                  },
+                  {
+                    "id": "verify",
+                    "needs": [
+                      "review"
+                    ],
+                    "status": "waiting",
+                    "routingProfile": "verifier"
+                  }
+                ],
+                "receipts": [
+                  {
+                    "runId": "job-classify",
+                    "durationMs": 4,
+                    "usage": {
+                      "totalTokens": 30
+                    }
+                  },
+                  {
+                    "runId": "job-plan",
+                    "durationMs": 7,
+                    "usage": {
+                      "totalTokens": 50
+                    }
+                  },
+                  {
+                    "runId": "job-build",
+                    "durationMs": 9,
+                    "usage": {
+                      "totalTokens": 80
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "module": "conductor",
+          "function": "shapeJob",
+          "args": [
+            {
+              "id": "job",
+              "status": "interrupted",
+              "conductor": {
+                "phase": "running",
+                "tasks": [
+                  {
+                    "id": "build",
+                    "needs": [],
+                    "status": "completed"
+                  },
+                  {
+                    "id": "review",
+                    "needs": [
+                      "build"
+                    ],
+                    "status": "running"
+                  },
+                  {
+                    "id": "verify",
+                    "needs": [
+                      "review"
+                    ],
+                    "status": "waiting",
+                    "routingProfile": "verifier"
+                  }
+                ],
+                "receipts": [
+                  {
+                    "runId": "job-classify",
+                    "durationMs": 4,
+                    "usage": {
+                      "totalTokens": 30
+                    }
+                  },
+                  {
+                    "runId": "job-plan",
+                    "durationMs": 7,
+                    "usage": {
+                      "totalTokens": 50
+                    }
+                  },
+                  {
+                    "runId": "job-build",
+                    "durationMs": 9,
+                    "usage": {
+                      "totalTokens": 80
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "module": "conductor",
+          "function": "shapeJob",
+          "args": [
+            {
+              "id": "job",
+              "status": "completed",
+              "result": {
+                "conductor": {
+                  "phase": "completed",
+                  "receipts": [
+                    {
+                      "runId": "job-plan",
+                      "usage": null
+                    }
+                  ],
+                  "tasks": []
+                }
+              }
+            }
+          ]
+        },
+        {
+          "module": "conductor",
+          "function": "shapeJob",
+          "args": [
+            {
+              "id": "job",
+              "status": "running",
+              "conductor": {
+                "phase": "ready",
+                "tasks": [],
+                "receipts": []
+              },
+              "conductorControl": {
+                "approved": true
+              }
+            }
+          ]
+        },
+        {
+          "module": "conductor",
+          "function": "shapeJob",
+          "args": [
+            {
+              "id": "job",
+              "status": "running",
+              "conductor": {
+                "phase": "ready",
+                "tasks": [],
+                "receipts": []
+              }
+            }
+          ]
+        },
+        {
+          "module": "conductor",
+          "function": "mergeJobs",
+          "args": [
+            [
+              {
+                "id": "a",
+                "createdAt": "2"
+              },
+              {
+                "id": "b",
+                "createdAt": "1"
+              }
+            ],
+            [
+              {
+                "id": "b",
+                "createdAt": "1",
+                "status": "done"
+              },
+              {
+                "id": "c",
+                "createdAt": "3"
+              }
+            ]
+          ]
+        },
+        {
+          "module": "conductor",
+          "function": "planProblems",
+          "args": [
+            {
+              "goal": "g",
+              "folder": "f",
+              "checks": "verified"
+            },
+            {
+              "planner": {}
+            }
+          ]
+        },
+        {
+          "module": "conductor",
+          "function": "turnKind",
+          "args": [
+            "job-acceptance-verifier",
+            "job"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cua.model-procedure",
+      "actions": [
+        {
+          "module": "cua",
+          "function": "toCapture",
+          "args": [
+            300,
+            200,
+            {
+              "left": 100,
+              "top": 50,
+              "width": 400,
+              "height": 300
+            },
+            {
+              "width": 1600,
+              "height": 1200
+            }
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "toCapture",
+          "args": [
+            0,
+            0,
+            {
+              "left": 100,
+              "top": 50,
+              "width": 400,
+              "height": 300
+            },
+            {
+              "width": 1600,
+              "height": 1200
+            }
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "keyToInput",
+          "args": [
+            {
+              "key": "a"
+            }
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "keyToInput",
+          "args": [
+            {
+              "key": "ArrowLeft",
+              "shiftKey": true
+            }
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "keyToInput",
+          "args": [
+            {
+              "key": "s",
+              "ctrlKey": true
+            }
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "keyToInput",
+          "args": [
+            {
+              "key": "Dead"
+            }
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "wheelToScroll",
+          "args": [
+            0,
+            120
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "wheelToScroll",
+          "args": [
+            -200,
+            30
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "wheelToScroll",
+          "args": [
+            0,
+            9000
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "wheelToScroll",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "elementAt",
+          "args": [
+            [
+              {
+                "id": "large",
+                "screenshot_frame": {
+                  "x": 0,
+                  "y": 0,
+                  "w": 300,
+                  "h": 300
+                }
+              },
+              {
+                "id": "small",
+                "screenshot_frame": {
+                  "x": 10,
+                  "y": 10,
+                  "w": 30,
+                  "h": 30
+                }
+              }
+            ],
+            20,
+            20
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "pickSession",
+          "args": [
+            [
+              {
+                "id": "old",
+                "status": "ended",
+                "lastActionAt": "2026-10-03"
+              },
+              {
+                "id": "live",
+                "status": "active",
+                "lastActionAt": "2026-10-02"
+              }
+            ],
+            ""
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "mergeLog",
+          "args": [
+            [
+              {
+                "id": "one",
+                "seq": 1,
+                "status": "pending"
+              },
+              {
+                "id": "three",
+                "seq": 3
+              }
+            ],
+            {
+              "id": "two",
+              "seq": 2
+            }
+          ]
+        },
+        {
+          "module": "cua",
+          "function": "mergeLog",
+          "args": [
+            [
+              {
+                "id": "one",
+                "seq": 1,
+                "status": "pending"
+              },
+              {
+                "id": "two",
+                "seq": 2
+              }
+            ],
+            {
+              "id": "one",
+              "seq": 1,
+              "status": "ok"
+            },
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "devices.model-procedure",
+      "actions": [
+        {
+          "module": "devices",
+          "function": "dropIntent",
+          "args": [
+            {
+              "path": "a"
+            },
+            {
+              "path": "b"
+            }
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "dropIntent",
+          "args": [
+            {
+              "device": "remote",
+              "path": "a"
+            },
+            {
+              "path": "b"
+            }
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "dropIntent",
+          "args": [
+            {
+              "path": "a"
+            },
+            {
+              "device": "remote"
+            }
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "dropIntent",
+          "args": [
+            {
+              "device": "remote",
+              "path": "a"
+            },
+            {
+              "device": "other"
+            }
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "sendTarget",
+          "args": [
+            {
+              "theyShare": {
+                "writeAnywhere": false
+              }
+            },
+            {
+              "kind": "shared",
+              "write": false
+            },
+            "D:/work"
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "sendTarget",
+          "args": [
+            {
+              "theyShare": {
+                "writeAnywhere": false
+              }
+            },
+            {
+              "kind": "inbox"
+            },
+            "D:/inbox"
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "transferFraction",
+          "args": [
+            {
+              "size": 100,
+              "done": 150
+            }
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "transferFraction",
+          "args": [
+            {
+              "size": 0,
+              "done": 0
+            }
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "transferLine",
+          "args": [
+            {
+              "status": "running",
+              "done": 536870912,
+              "size": 1073741824,
+              "bytesPerSecond": 8388608
+            }
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "transferLine",
+          "args": [
+            {
+              "status": "failed",
+              "error": "SHA-256 mismatch"
+            }
+          ]
+        },
+        {
+          "module": "devices",
+          "function": "pcTarget",
+          "args": [
+            "remote",
+            "D:/a|b"
+          ],
+          "saveAs": "target"
+        },
+        {
+          "module": "devices",
+          "function": "parsePcTarget",
+          "args": [
+            {
+              "$ref": "target"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gamedev.model-procedure",
+      "actions": [
+        {
+          "module": "gamedev",
+          "function": "keepSelection",
+          "args": [
+            "native",
+            [
+              {
+                "sessionId": "native",
+                "environment": "native-editor",
+                "status": "disconnected"
+              },
+              {
+                "sessionId": "other",
+                "status": "connected"
+              }
+            ]
+          ]
+        },
+        {
+          "module": "gamedev",
+          "function": "keepSelection",
+          "args": [
+            "old",
+            [
+              {
+                "sessionId": "old",
+                "environment": "browser-webgl",
+                "status": "disconnected",
+                "projectPath": "p",
+                "context": "Edit"
+              },
+              {
+                "sessionId": "new",
+                "environment": "browser-webgl",
+                "status": "connected",
+                "projectPath": "p",
+                "context": "Edit"
+              }
+            ]
+          ]
+        },
+        {
+          "module": "gamedev",
+          "function": "keepSelection",
+          "args": [
+            "old",
+            [
+              {
+                "sessionId": "old",
+                "environment": "browser-null",
+                "status": "disconnected",
+                "projectPath": "p",
+                "context": "Edit"
+              },
+              {
+                "sessionId": "new",
+                "environment": "browser-null",
+                "status": "connected",
+                "projectPath": "p",
+                "context": "Edit"
+              }
+            ]
+          ],
+          "goals": [
+            {
+              "path": "",
+              "value": "new"
+            }
+          ]
+        },
+        {
+          "module": "gamedev",
+          "function": "tabForStage",
+          "args": [
+            "asset-checks"
+          ]
+        },
+        {
+          "module": "gamedev",
+          "function": "actionFields",
+          "args": [
+            "godot",
+            "edit"
+          ],
+          "saveAs": "fields",
+          "goals": [
+            {
+              "path": "length",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "module": "gamedev",
+          "function": "initialValues",
+          "args": [
+            {
+              "$ref": "fields"
+            }
+          ],
+          "saveAs": "defaults"
+        },
+        {
+          "module": "gamedev",
+          "function": "visibleFields",
+          "args": [
+            {
+              "$ref": "fields"
+            },
+            {
+              "property": "visible"
+            }
+          ]
+        },
+        {
+          "module": "gamedev",
+          "function": "buildArgs",
+          "args": [
+            {
+              "$ref": "fields"
+            },
+            {
+              "node": "Player",
+              "property": "position",
+              "value": [
+                "1.5",
+                "0",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "module": "gamedev",
+          "function": "buildArgs",
+          "args": [
+            {
+              "$ref": "fields"
+            },
+            {
+              "node": "Player",
+              "property": "position",
+              "value": [
+                "x",
+                0,
+                0
+              ]
+            }
+          ],
+          "refuses": "three numbers"
+        },
+        {
+          "module": "gamedev",
+          "function": "buildArgs",
+          "args": [
+            [
+              {
+                "key": "*",
+                "label": "Arguments",
+                "kind": "json"
+              }
+            ],
+            {
+              "*": "{\"mode\":\"EditMode\"}"
+            }
+          ]
+        },
+        {
+          "module": "gamedev",
+          "function": "buildArgs",
+          "args": [
+            [
+              {
+                "key": "input",
+                "kind": "json",
+                "label": "Input"
+              }
+            ],
+            {
+              "input": "[1]"
+            }
+          ],
+          "refuses": "written as"
+        }
+      ]
+    },
+    {
+      "id": "layout.model-procedure",
+      "actions": [
+        {
+          "module": "layout",
+          "function": "normalizeLayout",
+          "args": [
+            {
+              "order": [
+                "panel",
+                "bogus",
+                "panel",
+                "main"
+              ],
+              "widths": {
+                "sidebar": 9000,
+                "panel": "abc"
+              },
+              "widgets": [
+                {
+                  "id": "usage",
+                  "size": "xl"
+                },
+                {
+                  "id": "usage"
+                },
+                null
+              ]
+            }
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "normalizeLayout",
+          "args": [
+            null
+          ],
+          "saveAs": "layout"
+        },
+        {
+          "module": "layout",
+          "function": "moveRegion",
+          "args": [
+            {
+              "$ref": "layout"
+            },
+            "sidebar",
+            3
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "nudgeRegion",
+          "args": [
+            {
+              "$ref": "layout"
+            },
+            "canopy",
+            -1
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "sideOf",
+          "args": [
+            [
+              "main",
+              "sidebar"
+            ],
+            "sidebar"
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "setWidth",
+          "args": [
+            {
+              "$ref": "layout"
+            },
+            "panel",
+            560
+          ],
+          "saveAs": "wide"
+        },
+        {
+          "module": "layout",
+          "function": "keyWidth",
+          "args": [
+            "sidebar",
+            276,
+            "ArrowLeft",
+            true
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "fitLayout",
+          "args": [
+            {
+              "$ref": "wide"
+            },
+            {
+              "viewport": 1900,
+              "present": {
+                "sidebar": true,
+                "panel": true,
+                "canopy": true
+              },
+              "defaults": {
+                "sidebar": 276,
+                "panel": 400,
+                "canopy": 292,
+                "dock": 380
+              }
+            }
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "fitLayout",
+          "args": [
+            {
+              "$ref": "wide"
+            },
+            {
+              "viewport": 1480,
+              "present": {
+                "sidebar": true,
+                "panel": true,
+                "canopy": true
+              },
+              "defaults": {
+                "sidebar": 276,
+                "panel": 400,
+                "canopy": 292,
+                "dock": 380
+              }
+            }
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "fitLayout",
+          "args": [
+            {
+              "$ref": "wide"
+            },
+            {
+              "viewport": 1180,
+              "present": {
+                "sidebar": true,
+                "panel": true,
+                "canopy": true
+              },
+              "defaults": {
+                "sidebar": 276,
+                "panel": 400,
+                "canopy": 292,
+                "dock": 380
+              }
+            }
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "fitLayout",
+          "args": [
+            {
+              "$ref": "wide"
+            },
+            {
+              "viewport": 900,
+              "present": {
+                "sidebar": true,
+                "panel": true,
+                "canopy": true
+              },
+              "defaults": {
+                "sidebar": 276,
+                "panel": 400,
+                "canopy": 292,
+                "dock": 380
+              }
+            }
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "moveWidget",
+          "args": [
+            {
+              "$ref": "layout"
+            },
+            "usage",
+            "continue"
+          ],
+          "saveAs": "moved"
+        },
+        {
+          "module": "layout",
+          "function": "nudgeWidget",
+          "args": [
+            {
+              "$ref": "moved"
+            },
+            "usage",
+            1
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "cycleWidgetSize",
+          "args": [
+            {
+              "$ref": "layout"
+            },
+            "nightshift"
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "removeWidget",
+          "args": [
+            {
+              "$ref": "layout"
+            },
+            "projects"
+          ],
+          "saveAs": "removed"
+        },
+        {
+          "module": "layout",
+          "function": "hiddenWidgets",
+          "args": [
+            {
+              "$ref": "removed"
+            }
+          ]
+        },
+        {
+          "module": "layout",
+          "function": "addWidget",
+          "args": [
+            {
+              "$ref": "removed"
+            },
+            "projects"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missions.model-procedure",
+      "actions": [
+        {
+          "module": "missions",
+          "function": "shapeMission",
+          "args": [
+            {
+              "id": "m",
+              "status": "running",
+              "executionStatus": "running",
+              "tasks": [
+                {
+                  "id": "m:a",
+                  "status": "done",
+                  "needs": []
+                },
+                {
+                  "id": "m:b",
+                  "status": "running",
+                  "needs": [
+                    "m:a"
+                  ]
+                },
+                {
+                  "id": "m:c",
+                  "status": "weird",
+                  "needs": [
+                    "m:a",
+                    "m:b"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "missions",
+          "function": "shapeMission",
+          "args": [
+            {
+              "id": "m",
+              "tasks": [
+                {
+                  "id": "m:a",
+                  "needs": [
+                    "m:b"
+                  ]
+                },
+                {
+                  "id": "m:b",
+                  "needs": [
+                    "m:a"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "missions",
+          "function": "draftProblems",
+          "args": [
+            {
+              "goal": "",
+              "folder": "",
+              "acceptance": "",
+              "maxTokens": "1000",
+              "tasks": [
+                {
+                  "prompt": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "missions",
+          "function": "draftProblems",
+          "args": [
+            {
+              "goal": " Ship proof ",
+              "folder": " C:/scratch ",
+              "acceptance": "works\n\n verified ",
+              "maxTokens": "abc",
+              "tasks": [
+                {
+                  "id": "t1",
+                  "title": "",
+                  "prompt": " Build ",
+                  "harness": "codex",
+                  "model": "",
+                  "needs": [
+                    "t1",
+                    "missing"
+                  ]
+                },
+                {
+                  "id": "t2",
+                  "title": "Review",
+                  "prompt": " Inspect ",
+                  "harness": "claude-code",
+                  "model": "opus",
+                  "needs": [
+                    "t1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "missions",
+          "function": "createRequest",
+          "args": [
+            {
+              "goal": " Ship proof ",
+              "folder": " C:/scratch ",
+              "acceptance": "works\n\n verified ",
+              "maxTokens": "1000",
+              "tasks": [
+                {
+                  "id": "t1",
+                  "title": "",
+                  "prompt": " Build ",
+                  "harness": "codex",
+                  "model": "",
+                  "needs": [
+                    "t1",
+                    "missing"
+                  ]
+                },
+                {
+                  "id": "t2",
+                  "title": "Review",
+                  "prompt": " Inspect ",
+                  "harness": "claude-code",
+                  "model": "opus",
+                  "needs": [
+                    "t1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "missions",
+          "function": "planPrompt",
+          "args": [
+            "Ship proof",
+            "C:/scratch"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nightshift.model-procedure",
+      "actions": [
+        {
+          "module": "nightshift",
+          "function": "shapeBoard",
+          "args": [
+            [
+              {
+                "id": "done",
+                "owner": "Codex",
+                "status": "done",
+                "needs": [],
+                "armed": true,
+                "evidence": {
+                  "type": "file",
+                  "path": "C:/scratch/proof.md"
+                }
+              },
+              {
+                "id": "running",
+                "owner": "Codex",
+                "status": "running",
+                "needs": [
+                  "done"
+                ],
+                "armed": true
+              },
+              {
+                "id": "ready",
+                "owner": "Codex",
+                "status": "waiting",
+                "needs": [
+                  "running",
+                  "missing"
+                ],
+                "armed": false
+              },
+              {
+                "id": "paul",
+                "owner": "Paul",
+                "status": "waiting",
+                "needs": [
+                  "ready"
+                ],
+                "armed": false
+              },
+              {
+                "id": "mission",
+                "missionId": "m",
+                "status": "waiting",
+                "needs": []
+              }
+            ]
+          ],
+          "saveAs": "board"
+        },
+        {
+          "module": "nightshift",
+          "function": "shapeBoard",
+          "args": [
+            [
+              {
+                "id": "done",
+                "owner": "Codex",
+                "status": "done",
+                "needs": [],
+                "armed": true,
+                "evidence": {
+                  "type": "file",
+                  "path": "C:/scratch/proof.md"
+                }
+              },
+              {
+                "id": "running",
+                "owner": "Codex",
+                "status": "running",
+                "needs": [
+                  "done"
+                ],
+                "armed": true
+              },
+              {
+                "id": "ready",
+                "owner": "Codex",
+                "status": "waiting",
+                "needs": [
+                  "running",
+                  "missing"
+                ],
+                "armed": false
+              },
+              {
+                "id": "paul",
+                "owner": "Paul",
+                "status": "waiting",
+                "needs": [
+                  "ready"
+                ],
+                "armed": false
+              },
+              {
+                "id": "mission",
+                "missionId": "m",
+                "status": "waiting",
+                "needs": []
+              }
+            ],
+            {
+              "includeMissions": true
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "startable",
+          "args": [
+            {
+              "$ref": "board",
+              "path": "tasks"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "evidenceView",
+          "args": [
+            {
+              "type": "file",
+              "path": "C:/scratch/proof.md",
+              "sha256": "abc"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "evidenceView",
+          "args": [
+            {
+              "type": "commit",
+              "hash": "1426582abcdef"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "evidenceView",
+          "args": [
+            {
+              "type": "run",
+              "runId": "r",
+              "sessionId": "s"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "evidenceView",
+          "args": [
+            {
+              "type": "command",
+              "command": "node check",
+              "exitCode": 0,
+              "output": "done"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "policyForm",
+          "args": [
+            {
+              "paused": true,
+              "maxConcurrent": 2,
+              "maxNightSeconds": 7200,
+              "maxTaskSeconds": 600,
+              "maxTaskTokens": 5000,
+              "holdAtPlanPercent": 80,
+              "gpuReservedFor": null,
+              "quietGpuHours": {
+                "start": "22:00",
+                "end": "07:00",
+                "timeZone": "UTC"
+              },
+              "perHarnessBudgets": {
+                "claude-code": {
+                  "maxTokens": 9,
+                  "maxSeconds": 3600
+                }
+              }
+            }
+          ],
+          "saveAs": "form"
+        },
+        {
+          "module": "nightshift",
+          "function": "policyPatch",
+          "args": [
+            {
+              "$ref": "form"
+            }
+          ],
+          "goals": [
+            {
+              "path": "problems",
+              "value": []
+            },
+            {
+              "path": "patch",
+              "value": {
+                "paused": true,
+                "maxConcurrent": 2,
+                "maxNightSeconds": 7200,
+                "maxTaskSeconds": 600,
+                "maxTaskTokens": 5000,
+                "holdAtPlanPercent": 80,
+                "gpuReservedFor": null,
+                "quietGpuHours": {
+                  "start": "22:00",
+                  "end": "07:00",
+                  "timeZone": "UTC"
+                },
+                "perHarnessBudgets": {
+                  "claude-code": {
+                    "maxTokens": 9,
+                    "maxSeconds": 3600
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "policyPatch",
+          "args": [
+            {
+              "maxNightHours": "6",
+              "maxTaskMinutes": "30",
+              "maxTaskTokens": "200,000",
+              "holdOn": true,
+              "holdAt": "70",
+              "gpuForAsr": true,
+              "budgets": {
+                "codex": {
+                  "tokens": "1000000",
+                  "hours": "2.5"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "policyPatch",
+          "args": [
+            {
+              "holdOn": true,
+              "holdAt": "150",
+              "quietOn": true,
+              "quietStart": "25:00",
+              "maxConcurrent": "1.5",
+              "budgets": {
+                "opencode": {
+                  "tokens": "500"
+                }
+              }
+            }
+          ],
+          "goals": [
+            {
+              "path": "problems.length",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "quietNow",
+          "args": [
+            {
+              "start": "22:00",
+              "end": "07:00",
+              "timeZone": "UTC"
+            },
+            {
+              "$date": "2026-10-03T23:00:00Z"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "quietNow",
+          "args": [
+            {
+              "start": "22:00",
+              "end": "07:00",
+              "timeZone": "UTC"
+            },
+            {
+              "$date": "2026-10-03T06:59:00Z"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "quietNow",
+          "args": [
+            {
+              "start": "22:00",
+              "end": "07:00",
+              "timeZone": "UTC"
+            },
+            {
+              "$date": "2026-10-03T07:00:00Z"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "quietNow",
+          "args": [
+            {
+              "start": "09:00",
+              "end": "09:00",
+              "timeZone": "UTC"
+            },
+            {
+              "$date": "2026-10-03T15:00:00Z"
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "morning",
+          "args": [
+            {
+              "tasks": [
+                {
+                  "id": "done",
+                  "owner": "Codex",
+                  "status": "done",
+                  "needs": [],
+                  "armed": true,
+                  "evidence": {
+                    "type": "file",
+                    "path": "C:/scratch/proof.md"
+                  }
+                },
+                {
+                  "id": "running",
+                  "owner": "Codex",
+                  "status": "running",
+                  "needs": [
+                    "done"
+                  ],
+                  "armed": true
+                },
+                {
+                  "id": "ready",
+                  "owner": "Codex",
+                  "status": "waiting",
+                  "needs": [
+                    "running",
+                    "missing"
+                  ],
+                  "armed": false
+                },
+                {
+                  "id": "paul",
+                  "owner": "Paul",
+                  "status": "waiting",
+                  "needs": [
+                    "ready"
+                  ],
+                  "armed": false
+                },
+                {
+                  "id": "mission",
+                  "missionId": "m",
+                  "status": "waiting",
+                  "needs": []
+                }
+              ],
+              "blocked": [],
+              "waitingOnPaul": [
+                {
+                  "id": "paul",
+                  "owner": "Paul",
+                  "status": "waiting",
+                  "needs": [
+                    "ready"
+                  ],
+                  "armed": false
+                }
+              ],
+              "evidenceLinks": [
+                {
+                  "taskId": "done",
+                  "type": "file",
+                  "path": "proof"
+                }
+              ],
+              "usage": {
+                "reportedTokens": 12,
+                "unknownRuns": 2
+              },
+              "perHarness": {
+                "codex": {
+                  "unknownCompletedRuns": 1,
+                  "knownRuns": 1
+                }
+              },
+              "night": {
+                "elapsedSeconds": 60
+              }
+            }
+          ]
+        },
+        {
+          "module": "nightshift",
+          "function": "treeLayout",
+          "args": [
+            {
+              "$ref": "board"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "onboarding.model-procedure",
+      "actions": [
+        {
+          "module": "onboarding",
+          "function": "interestsFor",
+          "args": [
+            {
+              "$catalog": "onboarding"
+            },
+            {
+              "tier": "beginner"
+            }
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "interestsFor",
+          "args": [
+            {
+              "$catalog": "onboarding"
+            },
+            {
+              "interests": [
+                "design"
+              ],
+              "tier": "advanced"
+            }
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "recommend",
+          "args": [
+            {
+              "$catalog": "onboarding"
+            },
+            [
+              "studying"
+            ]
+          ],
+          "saveAs": "recommend"
+        },
+        {
+          "module": "onboarding",
+          "function": "timeline",
+          "args": [
+            {
+              "$ref": "recommend",
+              "path": "chapters"
+            }
+          ],
+          "saveAs": "tour"
+        },
+        {
+          "module": "onboarding",
+          "function": "locate",
+          "args": [
+            {
+              "$ref": "tour"
+            },
+            0
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "locate",
+          "args": [
+            {
+              "$ref": "tour"
+            },
+            90000
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "downloadView",
+          "args": [
+            {
+              "state": "running",
+              "doneBytes": 524288,
+              "totalBytes": 1048576,
+              "bytesPerSecond": 262144
+            }
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "downloadView",
+          "args": [
+            {
+              "state": "failed",
+              "error": "checksum failed"
+            }
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "runtimeHeadline",
+          "args": [
+            {
+              "runtimes": [
+                {
+                  "label": "Codex",
+                  "found": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "packView",
+          "args": [
+            {
+              "id": "pack.x",
+              "ready": true,
+              "resourceClass": "medium"
+            },
+            {
+              "state": "installing",
+              "doneBytes": 50,
+              "totalBytes": 200
+            }
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "packView",
+          "args": [
+            {
+              "id": "pack.x",
+              "ready": true
+            },
+            {
+              "state": "installed",
+              "totalBytes": 2048,
+              "files": {
+                "done": 3,
+                "total": 3
+              }
+            }
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "packView",
+          "args": [
+            {
+              "id": "pack.x",
+              "ready": false
+            }
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "plainMissing",
+          "args": [
+            "No scoped redistributable runtime payload for tool.docker-engine (x)"
+          ]
+        },
+        {
+          "module": "onboarding",
+          "function": "plainMissing",
+          "args": [
+            "External payloads not included: tool.cosign, tool.wasmtime."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "outputs.model-procedure",
+      "actions": [
+        {
+          "module": "outputs",
+          "function": "perceptionTarget",
+          "args": [
+            "image",
+            "C:/out/chart.png"
+          ],
+          "saveAs": "target"
+        },
+        {
+          "module": "outputs",
+          "function": "parsePerceptionTarget",
+          "args": [
+            {
+              "$ref": "target"
+            }
+          ]
+        },
+        {
+          "module": "outputs",
+          "function": "parsePerceptionTarget",
+          "args": [
+            "window:external:codex:abc:42"
+          ]
+        },
+        {
+          "module": "outputs",
+          "function": "parsePerceptionTarget",
+          "args": [
+            "browser:file:///C:/scratch.html"
+          ]
+        },
+        {
+          "module": "outputs",
+          "function": "outsideDock",
+          "args": [
+            {
+              "x": 985,
+              "y": 300
+            },
+            {
+              "left": 1000,
+              "right": 1400,
+              "top": 0,
+              "bottom": 900
+            }
+          ]
+        },
+        {
+          "module": "outputs",
+          "function": "outsideDock",
+          "args": [
+            {
+              "x": 600,
+              "y": 300
+            },
+            {
+              "left": 1000,
+              "right": 1400,
+              "top": 0,
+              "bottom": 900
+            }
+          ]
+        },
+        {
+          "module": "outputs",
+          "function": "dropSpot",
+          "args": [
+            {
+              "x": 1300,
+              "y": 2000
+            },
+            1440,
+            900
+          ]
+        }
+      ]
+    },
+    {
+      "id": "plan.model-procedure",
+      "actions": [
+        {
+          "module": "plan",
+          "function": "planFromPage",
+          "args": [
+            {
+              "plan": {
+                "items": [
+                  {
+                    "id": "1",
+                    "text": "Read",
+                    "status": "pending"
+                  }
+                ],
+                "source": "claude-tasks",
+                "throughSeq": 1
+              },
+              "items": [
+                {
+                  "seq": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "plan",
+          "function": "planFromPage",
+          "args": [
+            {
+              "items": []
+            },
+            {
+              "plan": {
+                "items": [
+                  {
+                    "id": "1",
+                    "text": "Read",
+                    "status": "pending"
+                  }
+                ],
+                "source": "claude-tasks",
+                "throughSeq": 1
+              },
+              "planSeq": 1
+            }
+          ]
+        },
+        {
+          "module": "plan",
+          "function": "applyPlanOp",
+          "args": [
+            {
+              "items": [
+                {
+                  "id": "1",
+                  "text": "Read",
+                  "status": "pending"
+                }
+              ],
+              "source": "claude-tasks",
+              "throughSeq": 1
+            },
+            {
+              "op": "replace",
+              "items": [],
+              "source": "codex"
+            }
+          ]
+        },
+        {
+          "module": "plan",
+          "function": "planOf",
+          "args": [
+            {
+              "plan": {
+                "items": [
+                  {
+                    "id": "1",
+                    "text": "Read",
+                    "status": "pending"
+                  }
+                ],
+                "source": "claude-tasks",
+                "throughSeq": 1
+              },
+              "planSeq": 1,
+              "items": [
+                {
+                  "seq": 1,
+                  "data": {
+                    "plan": {
+                      "op": "add",
+                      "source": "claude-tasks",
+                      "item": {
+                        "id": "1",
+                        "text": "Read"
+                      }
+                    }
+                  }
+                },
+                {
+                  "seq": 2,
+                  "data": {
+                    "plan": {
+                      "op": "update",
+                      "id": "1",
+                      "status": "completed"
+                    }
+                  }
+                },
+                {
+                  "seq": 3,
+                  "data": {
+                    "plan": {
+                      "op": "add",
+                      "source": "claude-tasks",
+                      "item": {
+                        "id": "2",
+                        "text": "Build",
+                        "status": "in_progress"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "saveAs": "plan"
+        },
+        {
+          "module": "plan",
+          "function": "planProgress",
+          "args": [
+            {
+              "$ref": "plan"
+            }
+          ]
+        },
+        {
+          "module": "plan",
+          "function": "showChecklist",
+          "args": [
+            {
+              "$ref": "plan"
+            },
+            false
+          ]
+        },
+        {
+          "module": "plan",
+          "function": "showChecklist",
+          "args": [
+            {
+              "items": [
+                {
+                  "id": "1",
+                  "status": "completed"
+                }
+              ]
+            },
+            false
+          ]
+        },
+        {
+          "module": "dashboard",
+          "function": "resetsIn",
+          "args": [
+            "2026-10-05T14:00:00Z",
+            1791021600000
+          ]
+        },
+        {
+          "module": "dashboard",
+          "function": "limitTone",
+          "args": [
+            {
+              "usedPercent": 48
+            }
+          ]
+        },
+        {
+          "module": "dashboard",
+          "function": "limitTone",
+          "args": [
+            {
+              "usedPercent": 50,
+              "status": "allowed_warning"
+            }
+          ]
+        },
+        {
+          "module": "dashboard",
+          "function": "limitTone",
+          "args": [
+            {
+              "usedPercent": 92
+            }
+          ]
+        },
+        {
+          "module": "dashboard",
+          "function": "limitTone",
+          "args": [
+            {
+              "status": "rejected"
+            }
+          ]
+        },
+        {
+          "module": "dashboard",
+          "function": "limitTone",
+          "args": [
+            {
+              "stale": true,
+              "usedPercent": 20
+            }
+          ]
+        },
+        {
+          "module": "dashboard",
+          "function": "limitTone",
+          "args": [
+            {}
+          ]
+        },
+        {
+          "module": "dashboard",
+          "function": "mergePages",
+          "args": [
+            [
+              {
+                "sessions": [
+                  {
+                    "id": "a"
+                  },
+                  {
+                    "id": "b"
+                  }
+                ],
+                "total": 5,
+                "nextOffset": 2,
+                "limits": [
+                  1
+                ]
+              },
+              {
+                "sessions": [
+                  {
+                    "id": "b"
+                  },
+                  {
+                    "id": "c"
+                  }
+                ],
+                "total": 5,
+                "nextOffset": 4,
+                "hasMore": true
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "replay.model-procedure",
+      "actions": [
+        {
+          "module": "replay",
+          "function": "buildTimeline",
+          "args": [
+            [
+              {
+                "id": "u",
+                "seq": 1,
+                "kind": "user",
+                "at": 1791021600000
+              },
+              {
+                "id": "t",
+                "seq": 2,
+                "kind": "tool",
+                "at": 1791021602000,
+                "data": {
+                  "status": "ok"
+                }
+              },
+              {
+                "id": "error",
+                "seq": 3,
+                "kind": "tool",
+                "at": 1791021605000,
+                "data": {
+                  "status": "error"
+                }
+              },
+              {
+                "id": "a",
+                "seq": 4,
+                "kind": "assistant",
+                "at": 1791025200000
+              },
+              {
+                "id": "unstamped",
+                "seq": 5,
+                "kind": "assistant"
+              },
+              {
+                "id": "optimistic",
+                "seq": 6,
+                "kind": "user",
+                "optimistic": true,
+                "at": 1791025300000
+              }
+            ],
+            {
+              "idleCap": 4000
+            }
+          ],
+          "saveAs": "timeline"
+        },
+        {
+          "module": "replay",
+          "function": "visibleCount",
+          "args": [
+            {
+              "$ref": "timeline"
+            },
+            5000
+          ]
+        },
+        {
+          "module": "replay",
+          "function": "recordedAt",
+          "args": [
+            {
+              "$ref": "timeline"
+            },
+            5000
+          ]
+        },
+        {
+          "module": "replay",
+          "function": "playbackMs",
+          "args": [
+            {
+              "$ref": "timeline"
+            },
+            60
+          ]
+        },
+        {
+          "module": "replay",
+          "function": "timelineMarks",
+          "args": [
+            {
+              "$ref": "timeline"
+            }
+          ]
+        },
+        {
+          "module": "replay",
+          "function": "formatSpan",
+          "args": [
+            12000
+          ]
+        },
+        {
+          "module": "replay",
+          "function": "formatSpan",
+          "args": [
+            185000
+          ]
+        },
+        {
+          "module": "replay",
+          "function": "formatSpan",
+          "args": [
+            8040000
+          ]
+        }
+      ]
+    },
+    {
+      "id": "runtime.model-procedure",
+      "actions": [
+        {
+          "module": "runtime",
+          "function": "mergeRuntimes",
+          "args": [
+            {
+              "harnesses": [
+                {
+                  "harnessId": "neyvia-agent",
+                  "label": "Neyvia Native",
+                  "installed": true,
+                  "readiness": "ready"
+                },
+                {
+                  "harnessId": "kimi-code",
+                  "label": "Kimi Code",
+                  "installed": false
+                },
+                {
+                  "harnessId": "codex",
+                  "label": "Codex CLI",
+                  "installed": true,
+                  "authState": "authenticated-live",
+                  "version": "1"
+                }
+              ]
+            },
+            {
+              "runtimes": [
+                {
+                  "id": "neyvia",
+                  "kind": "native",
+                  "connected": true,
+                  "capabilities": {
+                    "start": true
+                  },
+                  "options": {
+                    "models": [
+                      {
+                        "id": "default",
+                        "default": true
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "codex",
+                  "kind": "connected",
+                  "connected": true,
+                  "capabilities": {
+                    "continue": true
+                  }
+                },
+                {
+                  "id": "kimi",
+                  "kind": "wrapped",
+                  "connected": false
+                }
+              ],
+              "policies": {
+                "codex": {
+                  "permissionCeiling": "workspace",
+                  "allowedModels": [
+                    "gpt-5.6-sol"
+                  ]
+                }
+              }
+            }
+          ],
+          "saveAs": "runtimes"
+        },
+        {
+          "module": "runtime",
+          "function": "runtimeSummary",
+          "args": [
+            {
+              "$ref": "runtimes"
+            }
+          ]
+        },
+        {
+          "module": "runtime",
+          "function": "mergeRuntimes",
+          "args": [
+            null,
+            {
+              "runtimes": [
+                {
+                  "id": "opencode",
+                  "kind": "connected",
+                  "connected": true,
+                  "version": "1.18"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "module": "runtime",
+          "function": "mergeRuntimes",
+          "args": [
+            {
+              "harnesses": [
+                {
+                  "harnessId": "pi",
+                  "label": "Pi"
+                }
+              ]
+            },
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "placement.model-procedure",
+      "actions": [
+        {
+          "module": "placement",
+          "function": "windowKey",
+          "args": [
+            {
+              "type": "app",
+              "app": "notes",
+              "suite": "documents",
+              "target": "b.md"
+            }
+          ],
+          "goals": [
+            {
+              "value": "app:notes"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "windowKey",
+          "args": [
+            {
+              "type": "pane",
+              "kind": "terminal",
+              "target": ""
+            }
+          ],
+          "goals": [
+            {
+              "value": "pane:terminal:"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "openWindow",
+          "args": [
+            [],
+            {
+              "type": "app",
+              "app": "3d-studio",
+              "suite": "studio",
+              "target": null
+            }
+          ],
+          "saveAs": "w1",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "main"
+            },
+            {
+              "path": "0.id",
+              "value": "app:3d-studio"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "placeWindow",
+          "args": [
+            {
+              "$ref": "w1"
+            },
+            "app:3d-studio",
+            "side"
+          ],
+          "saveAs": "w2",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "side"
+            },
+            {
+              "path": "0.desc.app",
+              "value": "3d-studio"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "placeWindow",
+          "args": [
+            {
+              "$ref": "w2"
+            },
+            "app:3d-studio",
+            "full"
+          ],
+          "saveAs": "w3",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "full"
+            },
+            {
+              "path": "0.back",
+              "value": "side"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "restoreWindow",
+          "args": [
+            {
+              "$ref": "w3"
+            },
+            "app:3d-studio"
+          ],
+          "saveAs": "w4",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "side"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "placeWindow",
+          "args": [
+            {
+              "$ref": "w4"
+            },
+            "app:3d-studio",
+            "bubble"
+          ],
+          "saveAs": "w5",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "bubble"
+            },
+            {
+              "path": "0.back",
+              "value": "side"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "restoreWindow",
+          "args": [
+            {
+              "$ref": "w5"
+            },
+            "app:3d-studio"
+          ],
+          "saveAs": "w6",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "side"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "openWindow",
+          "args": [
+            {
+              "$ref": "w6"
+            },
+            {
+              "type": "app",
+              "app": "notes",
+              "suite": "documents",
+              "target": "a.md"
+            }
+          ],
+          "saveAs": "w7",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "side"
+            },
+            {
+              "path": "1.placement",
+              "value": "main"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "placeWindow",
+          "args": [
+            {
+              "$ref": "w7"
+            },
+            "app:notes",
+            "side"
+          ],
+          "saveAs": "w8",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "main"
+            },
+            {
+              "path": "1.placement",
+              "value": "side"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "placeWindow",
+          "args": [
+            {
+              "$ref": "w8"
+            },
+            "app:notes",
+            "full"
+          ],
+          "saveAs": "w9",
+          "goals": [
+            {
+              "path": "1.placement",
+              "value": "full"
+            },
+            {
+              "path": "1.back",
+              "value": "side"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "placeWindow",
+          "args": [
+            {
+              "$ref": "w9"
+            },
+            "app:notes",
+            "main"
+          ],
+          "saveAs": "w10",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "bubble"
+            },
+            {
+              "path": "0.back",
+              "value": "main"
+            },
+            {
+              "path": "1.placement",
+              "value": "main"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "openWindow",
+          "args": [
+            {
+              "$ref": "w10"
+            },
+            {
+              "type": "app",
+              "app": "3d-studio",
+              "suite": "studio",
+              "target": "babylon"
+            }
+          ],
+          "saveAs": "w11",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "bubble"
+            },
+            {
+              "path": "0.peek",
+              "value": true
+            },
+            {
+              "path": "0.desc.target",
+              "value": "babylon"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "peekBubble",
+          "args": [
+            {
+              "$ref": "w11"
+            },
+            "app:3d-studio",
+            false
+          ],
+          "saveAs": "w12",
+          "goals": [
+            {
+              "path": "0.peek",
+              "value": false
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "moveBubble",
+          "args": [
+            {
+              "$ref": "w12"
+            },
+            "app:3d-studio",
+            -3,
+            9
+          ],
+          "saveAs": "w13",
+          "goals": [
+            {
+              "path": "0.x",
+              "value": 0
+            },
+            {
+              "path": "0.y",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "openWindow",
+          "args": [
+            {
+              "$ref": "w13"
+            },
+            {
+              "type": "pane",
+              "kind": "terminal",
+              "target": ""
+            }
+          ],
+          "saveAs": "w14",
+          "goals": [
+            {
+              "path": "1.id",
+              "value": "pane:terminal:"
+            },
+            {
+              "path": "1.placement",
+              "value": "main"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "syncStage",
+          "args": [
+            {
+              "$ref": "w14"
+            },
+            {
+              "$ref": "w14",
+              "path": "1.desc"
+            },
+            null
+          ],
+          "saveAs": "w15",
+          "goals": [
+            {
+              "path": "length",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "syncStage",
+          "args": [
+            [],
+            null,
+            {
+              "type": "pane",
+              "kind": "terminal",
+              "target": ""
+            },
+            {
+              "prefs": {
+                "pane:terminal": "side"
+              }
+            }
+          ],
+          "saveAs": "w16",
+          "goals": [
+            {
+              "path": "0.placement",
+              "value": "side"
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "closeWindow",
+          "args": [
+            {
+              "$ref": "w13"
+            },
+            "app:notes"
+          ],
+          "saveAs": "w17",
+          "goals": [
+            {
+              "path": "length",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "placeWindow",
+          "args": [
+            [],
+            "x",
+            "corner"
+          ],
+          "refuses": "Unknown placement"
+        },
+        {
+          "module": "placement",
+          "function": "openWindow",
+          "args": [
+            [],
+            {}
+          ],
+          "refuses": "Nothing to open"
+        },
+        {
+          "module": "placement",
+          "function": "rememberPlacement",
+          "args": [
+            {},
+            {
+              "type": "app",
+              "app": "3d-studio",
+              "suite": "studio",
+              "target": null
+            },
+            "full"
+          ],
+          "saveAs": "p0",
+          "goals": [
+            {
+              "value": {}
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "rememberPlacement",
+          "args": [
+            {},
+            {
+              "type": "app",
+              "app": "3d-studio",
+              "suite": "studio",
+              "target": null
+            },
+            "side"
+          ],
+          "saveAs": "p1",
+          "goals": [
+            {
+              "value": {
+                "app:3d-studio": "side"
+              }
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "normalizePrefs",
+          "args": [
+            {
+              "app:x": "side",
+              "pane:y": "full",
+              "junk": "main",
+              "app:z": 3
+            }
+          ],
+          "goals": [
+            {
+              "value": {
+                "app:x": "side"
+              }
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "dropZone",
+          "args": [
+            {
+              "x": 720,
+              "y": 40
+            },
+            1440,
+            900
+          ],
+          "goals": [
+            {
+              "value": {
+                "placement": "full",
+                "side": null
+              }
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "dropZone",
+          "args": [
+            {
+              "x": 720,
+              "y": 880
+            },
+            1440,
+            900
+          ],
+          "goals": [
+            {
+              "value": {
+                "placement": "bubble",
+                "side": null
+              }
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "dropZone",
+          "args": [
+            {
+              "x": 1400,
+              "y": 400
+            },
+            1440,
+            900
+          ],
+          "goals": [
+            {
+              "value": {
+                "placement": "side",
+                "side": "right"
+              }
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "dropZone",
+          "args": [
+            {
+              "x": 50,
+              "y": 400
+            },
+            1440,
+            900
+          ],
+          "goals": [
+            {
+              "value": {
+                "placement": "side",
+                "side": "left"
+              }
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "orderWithPanel",
+          "args": [
+            [
+              "sidebar",
+              "panel",
+              "main",
+              "canopy"
+            ],
+            "right"
+          ],
+          "goals": [
+            {
+              "value": [
+                "sidebar",
+                "main",
+                "panel",
+                "canopy"
+              ]
+            }
+          ]
+        },
+        {
+          "module": "placement",
+          "function": "orderWithPanel",
+          "args": [
+            [
+              "sidebar",
+              "main",
+              "panel",
+              "canopy"
+            ],
+            "left"
+          ],
+          "goals": [
+            {
+              "value": [
+                "sidebar",
+                "panel",
+                "main",
+                "canopy"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "appskin.model-procedure",
+      "actions": [
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "pane",
+              "kind": "terminal",
+              "target": ""
+            }
+          ],
+          "goals": [
+            {
+              "value": "code"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "app",
+              "app": "pdf",
+              "suite": "documents",
+              "target": null
+            }
+          ],
+          "goals": [
+            {
+              "value": "reader"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "app",
+              "app": "notes",
+              "suite": "documents",
+              "target": null
+            }
+          ],
+          "goals": [
+            {
+              "value": "notebook"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "app",
+              "app": "3d-studio",
+              "suite": "studio",
+              "target": null
+            }
+          ],
+          "goals": [
+            {
+              "value": "graphite"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "app",
+              "app": "image-studio",
+              "suite": "studio",
+              "target": null
+            }
+          ],
+          "goals": [
+            {
+              "value": "darkroom"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "app",
+              "app": "app-factory",
+              "suite": "workshop",
+              "target": null
+            }
+          ],
+          "goals": [
+            {
+              "value": "studio"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "app",
+              "app": "research",
+              "suite": "workshop",
+              "target": null
+            }
+          ],
+          "goals": [
+            {
+              "value": "scholar"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "pane",
+              "kind": "settings",
+              "target": ""
+            }
+          ],
+          "goals": [
+            {
+              "value": null
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinFor",
+          "args": [
+            {
+              "type": "pane",
+              "kind": "preview",
+              "target": "remote:pc"
+            }
+          ],
+          "goals": [
+            {
+              "value": null
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "code",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "code",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "code",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "code",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "reader",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "reader",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "reader",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "reader",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "notebook",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "notebook",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "notebook",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "notebook",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "finder",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "finder",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "finder",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "finder",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "web",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "web",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "web",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "web",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "monitor",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "monitor",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "monitor",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "monitor",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "studio",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "studio",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "studio",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "studio",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "graphite",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "graphite",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "graphite",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "graphite",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "darkroom",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "darkroom",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "darkroom",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "darkroom",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "scholar",
+            "dark"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "scholar",
+            "light"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "light"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "scholar",
+            "sunset"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinPalette",
+          "args": [
+            "scholar",
+            "night"
+          ],
+          "goals": [
+            {
+              "path": "tone",
+              "value": "dark"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "allSkins",
+          "args": [],
+          "saveAs": "all",
+          "goals": [
+            {
+              "path": "length",
+              "value": {
+                "$appSkinCount": true
+              }
+            },
+            {
+              "path": "0.tokens.--nx-ansi-cyan",
+              "match": "^#[0-9a-f]{6}$"
+            }
+          ]
+        },
+        {
+          "module": "appskin",
+          "function": "skinTokens",
+          "args": [
+            "unknown",
+            "dark"
+          ],
+          "goals": [
+            {
+              "value": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "test": "web/src/neyvia/next/nxAutopilotModel.test.js",
+      "case": "model calls land on the item that needed them, in run order",
+      "case_id": "web/src/neyvia/next/nxAutopilotModel.test.js::model calls land on the item that needed them, in run order",
+      "contracts": [
+        "autopilot.attributeCalls",
+        "autopilot.shapeRun"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:attributeCalls -> checkedProofsEModel",
+        "web/src/neyvia/next/nxAutopilotModel.js:shapeRun -> checkedProofsEModel"
+      ],
+      "procedure": "autopilot.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxAutopilotModel.test.js",
+      "case": "a call that cannot be placed stays visible at run level",
+      "case_id": "web/src/neyvia/next/nxAutopilotModel.test.js::a call that cannot be placed stays visible at run level",
+      "contracts": [
+        "autopilot.attributeCalls"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:attributeCalls -> checkedProofsEModel"
+      ],
+      "procedure": "autopilot.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxAutopilotModel.test.js",
+      "case": "scope round-trips and edit adds only the CAS write",
+      "case_id": "web/src/neyvia/next/nxAutopilotModel.test.js::scope round-trips and edit adds only the CAS write",
+      "contracts": [
+        "autopilot.scopeTools",
+        "autopilot.scopeOf"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:scopeTools -> checkedProofsEModel",
+        "web/src/neyvia/next/nxAutopilotModel.js:scopeOf -> checkedProofsEModel"
+      ],
+      "procedure": "autopilot.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxAutopilotModel.test.js",
+      "case": "the final check reads as one line",
+      "case_id": "web/src/neyvia/next/nxAutopilotModel.test.js::the final check reads as one line",
+      "contracts": [
+        "autopilot.checkLine"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxAutopilotModel.js:checkLine -> checkedProofsEModel"
+      ],
+      "procedure": "autopilot.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxComposerModel.test.js",
+      "case": "images keep base64 only, and over-limit images are refused with a reason",
+      "case_id": "web/src/neyvia/next/nxComposerModel.test.js::images keep base64 only, and over-limit images are refused with a reason",
+      "contracts": [
+        "composer.stripDataUrl",
+        "composer.admitImages"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:stripDataUrl -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:admitImages -> checkedProofsEModel"
+      ],
+      "procedure": "composer.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxComposerModel.test.js",
+      "case": "images are allowed on both Claude routes and refused where the app or model can't take them",
+      "case_id": "web/src/neyvia/next/nxComposerModel.test.js::images are allowed on both Claude routes and refused where the app or model can't take them",
+      "contracts": [
+        "composer.imageBlocker"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:imageBlocker -> checkedProofsEModel"
+      ],
+      "procedure": "composer.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxComposerModel.test.js",
+      "case": "an exact retry keeps its identity; changed options or images do not",
+      "case_id": "web/src/neyvia/next/nxComposerModel.test.js::an exact retry keeps its identity; changed options or images do not",
+      "contracts": [
+        "composer.sendIdentity"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:sendIdentity -> checkedProofsEModel"
+      ],
+      "procedure": "composer.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxComposerModel.test.js",
+      "case": "tool helpers: mutation, skeleton, arguments, filter and honest scope",
+      "case_id": "web/src/neyvia/next/nxComposerModel.test.js::tool helpers: mutation, skeleton, arguments, filter and honest scope",
+      "contracts": [
+        "composer.toolMutates",
+        "composer.argumentSkeleton",
+        "composer.parseArguments",
+        "composer.filterTools",
+        "composer.toolScope"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:toolMutates -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:argumentSkeleton -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:parseArguments -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:filterTools -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:toolScope -> checkedProofsEModel"
+      ],
+      "procedure": "composer.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxComposerModel.test.js",
+      "case": "metadata gate: unsupported, oversized and over-count files are refused before any read",
+      "case_id": "web/src/neyvia/next/nxComposerModel.test.js::metadata gate: unsupported, oversized and over-count files are refused before any read",
+      "contracts": [
+        "composer.planImageReads",
+        "composer.base64Chars"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:planImageReads -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:base64Chars -> checkedProofsEModel"
+      ],
+      "procedure": "composer.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxComposerModel.test.js",
+      "case": "attachToDraft reads only admitted files and still checks the real bytes",
+      "case_id": "web/src/neyvia/next/nxComposerModel.test.js::attachToDraft reads only admitted files and still checks the real bytes",
+      "contracts": [
+        "composer.planImageReads",
+        "composer.admitImages",
+        "composer.attachResult"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:planImageReads -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:admitImages -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:attachToDraft -> checkedProofsEModel"
+      ],
+      "procedure": "composer.draft-lifecycle",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxComposerModel.test.js",
+      "case": "a slow read lands in the chat it came from, and sending clears only that chat",
+      "case_id": "web/src/neyvia/next/nxComposerModel.test.js::a slow read lands in the chat it came from, and sending clears only that chat",
+      "contracts": [
+        "composer.draftUpdate",
+        "composer.attachResult"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxComposerModel.js:createDraftStore.update -> checkedProofsEModel",
+        "web/src/neyvia/next/nxComposerModel.js:attachToDraft -> checkedProofsEModel"
+      ],
+      "procedure": "composer.draft-lifecycle",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxConductorModel.test.js",
+      "case": "tasks fall into dependency levels and receipts add up",
+      "case_id": "web/src/neyvia/next/nxConductorModel.test.js::tasks fall into dependency levels and receipts add up",
+      "contracts": [
+        "conductor.shapeJob",
+        "conductor.turnKind"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:shapeJob -> checkedProofsEModel",
+        "web/src/neyvia/next/nxConductorModel.js:turnKind -> checkedProofsEModel"
+      ],
+      "procedure": "conductor.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxConductorModel.test.js",
+      "case": "a dead worker reads as interrupted, never as still running",
+      "case_id": "web/src/neyvia/next/nxConductorModel.test.js::a dead worker reads as interrupted, never as still running",
+      "contracts": [
+        "conductor.shapeJob"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:shapeJob -> checkedProofsEModel"
+      ],
+      "procedure": "conductor.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxConductorModel.test.js",
+      "case": "a finished job reads its state from the result and counts unknown tokens honestly",
+      "case_id": "web/src/neyvia/next/nxConductorModel.test.js::a finished job reads its state from the result and counts unknown tokens honestly",
+      "contracts": [
+        "conductor.shapeJob"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:shapeJob -> checkedProofsEModel"
+      ],
+      "procedure": "conductor.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxConductorModel.test.js",
+      "case": "start is offered once, on a ready plan that isn't approved yet",
+      "case_id": "web/src/neyvia/next/nxConductorModel.test.js::start is offered once, on a ready plan that isn't approved yet",
+      "contracts": [
+        "conductor.shapeJob"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:shapeJob -> checkedProofsEModel"
+      ],
+      "procedure": "conductor.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxConductorModel.test.js",
+      "case": "paging merges by id so a moving row never shows twice",
+      "case_id": "web/src/neyvia/next/nxConductorModel.test.js::paging merges by id so a moving row never shows twice",
+      "contracts": [
+        "conductor.mergeJobs"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:mergeJobs -> checkedProofsEModel"
+      ],
+      "procedure": "conductor.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxConductorModel.test.js",
+      "case": "plan problems name the missing routes",
+      "case_id": "web/src/neyvia/next/nxConductorModel.test.js::plan problems name the missing routes",
+      "contracts": [
+        "conductor.planProblems",
+        "conductor.turnKind"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxConductorModel.js:planProblems -> checkedProofsEModel",
+        "web/src/neyvia/next/nxConductorModel.js:turnKind -> checkedProofsEModel"
+      ],
+      "procedure": "conductor.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxCuaModel.test.js",
+      "case": "maps a pointer on a scaled frame to capture pixels and rejects outside points",
+      "case_id": "web/src/neyvia/next/nxCuaModel.test.js::maps a pointer on a scaled frame to capture pixels and rejects outside points",
+      "contracts": [
+        "cua.toCapture"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:toCapture -> checkedProofsEModel"
+      ],
+      "procedure": "cua.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxCuaModel.test.js",
+      "case": "keys become text, press_key or hotkey in cua-driver's names",
+      "case_id": "web/src/neyvia/next/nxCuaModel.test.js::keys become text, press_key or hotkey in cua-driver's names",
+      "contracts": [
+        "cua.keyToInput"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:keyToInput -> checkedProofsEModel"
+      ],
+      "procedure": "cua.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxCuaModel.test.js",
+      "case": "wheel deltas become one scroll on the dominant axis, 1 to 10 lines",
+      "case_id": "web/src/neyvia/next/nxCuaModel.test.js::wheel deltas become one scroll on the dominant axis, 1 to 10 lines",
+      "contracts": [
+        "cua.wheelToScroll"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:wheelToScroll -> checkedProofsEModel"
+      ],
+      "procedure": "cua.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxCuaModel.test.js",
+      "case": "the element under a point is the smallest box that contains it",
+      "case_id": "web/src/neyvia/next/nxCuaModel.test.js::the element under a point is the smallest box that contains it",
+      "contracts": [
+        "cua.elementAt"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:elementAt -> checkedProofsEModel"
+      ],
+      "procedure": "cua.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxCuaModel.test.js",
+      "case": "the newest live session wins when none is named; a named one must exist",
+      "case_id": "web/src/neyvia/next/nxCuaModel.test.js::the newest live session wins when none is named; a named one must exist",
+      "contracts": [
+        "cua.pickSession"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:pickSession -> checkedProofsEModel"
+      ],
+      "procedure": "cua.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxCuaModel.test.js",
+      "case": "log entries update in place by id and stay in seq order",
+      "case_id": "web/src/neyvia/next/nxCuaModel.test.js::log entries update in place by id and stay in seq order",
+      "contracts": [
+        "cua.mergeLog"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxCuaModel.js:mergeLog -> checkedProofsEModel"
+      ],
+      "procedure": "cua.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDevicesModel.test.js",
+      "case": "a drop moves, takes or sends depending on which PC each side is on",
+      "case_id": "web/src/neyvia/next/nxDevicesModel.test.js::a drop moves, takes or sends depending on which PC each side is on",
+      "contracts": [
+        "devices.dropIntent"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:dropIntent -> checkedProofsEModel"
+      ],
+      "procedure": "devices.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDevicesModel.test.js",
+      "case": "a send lands in the folder only where that PC allows saving, else its inbox",
+      "case_id": "web/src/neyvia/next/nxDevicesModel.test.js::a send lands in the folder only where that PC allows saving, else its inbox",
+      "contracts": [
+        "devices.sendTarget"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:sendTarget -> checkedProofsEModel"
+      ],
+      "procedure": "devices.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDevicesModel.test.js",
+      "case": "progress text and fraction stay sane at the edges",
+      "case_id": "web/src/neyvia/next/nxDevicesModel.test.js::progress text and fraction stay sane at the edges",
+      "contracts": [
+        "devices.transferFraction",
+        "devices.transferLine"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:transferFraction -> checkedProofsEModel",
+        "web/src/neyvia/next/nxDevicesModel.js:transferLine -> checkedProofsEModel"
+      ],
+      "procedure": "devices.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxDevicesModel.test.js",
+      "case": "Files targets for another PC round-trip, paths with | included",
+      "case_id": "web/src/neyvia/next/nxDevicesModel.test.js::Files targets for another PC round-trip, paths with | included",
+      "contracts": [
+        "devices.pcTarget",
+        "devices.parsePcTarget"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDevicesModel.js:pcTarget -> checkedProofsEModel",
+        "web/src/neyvia/next/nxDevicesModel.js:parsePcTarget -> checkedProofsEModel"
+      ],
+      "procedure": "devices.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxGameDevModel.test.js",
+      "case": "session affinity: a native pick never moves by itself",
+      "case_id": "web/src/neyvia/next/nxGameDevModel.test.js::session affinity: a native pick never moves by itself",
+      "contracts": [
+        "gamedev.keepSelection"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:keepSelection -> checkedProofsEModel"
+      ],
+      "procedure": "gamedev.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxGameDevModel.test.js",
+      "case": "action forms build the bridge's typed args and refuse bad entries",
+      "case_id": "web/src/neyvia/next/nxGameDevModel.test.js::action forms build the bridge's typed args and refuse bad entries",
+      "contracts": [
+        "gamedev.tabForStage",
+        "gamedev.visibleFields",
+        "gamedev.initialValues",
+        "gamedev.buildArgs",
+        "gamedev.actionFields"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxGameDevModel.js:tabForStage -> checkedProofsEModel",
+        "web/src/neyvia/next/nxGameDevModel.js:visibleFields -> checkedProofsEModel",
+        "web/src/neyvia/next/nxGameDevModel.js:initialValues -> checkedProofsEModel",
+        "web/src/neyvia/next/nxGameDevModel.js:buildArgs -> checkedProofsEModel",
+        "web/src/neyvia/next/nxGameDevModel.js:actionFields -> checkedProofsEModel"
+      ],
+      "procedure": "gamedev.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "storage junk becomes a usable layout; every region survives, duplicates and unknowns go",
+      "case_id": "web/src/neyvia/next/nxLayoutModel.test.js::storage junk becomes a usable layout; every region survives, duplicates and unknowns go",
+      "contracts": [
+        "layout.normalizeLayout"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:normalizeLayout -> checkedProofsEModel"
+      ],
+      "procedure": "layout.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "regions move by drag target or one step, and know which side of the chat they sit on",
+      "case_id": "web/src/neyvia/next/nxLayoutModel.test.js::regions move by drag target or one step, and know which side of the chat they sit on",
+      "contracts": [
+        "layout.moveRegion",
+        "layout.nudgeRegion",
+        "layout.sideOf"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:moveRegion -> checkedProofsEModel",
+        "web/src/neyvia/next/nxLayoutModel.js:nudgeRegion -> checkedProofsEModel",
+        "web/src/neyvia/next/nxLayoutModel.js:sideOf -> checkedProofsEModel"
+      ],
+      "procedure": "layout.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "widths clamp to each region's limits, by pointer or keyboard",
+      "case_id": "web/src/neyvia/next/nxLayoutModel.test.js::widths clamp to each region's limits, by pointer or keyboard",
+      "contracts": [
+        "layout.setWidth",
+        "layout.keyWidth"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:setWidth -> checkedProofsEModel",
+        "web/src/neyvia/next/nxLayoutModel.js:keyWidth -> checkedProofsEModel"
+      ],
+      "procedure": "layout.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "a wide window keeps the saved layout exactly",
+      "case_id": "web/src/neyvia/next/nxLayoutModel.test.js::a wide window keeps the saved layout exactly",
+      "contracts": [
+        "layout.fitLayout"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:fitLayout -> checkedProofsEModel"
+      ],
+      "procedure": "layout.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "a narrower window shrinks regions first, then Canopy goes, then the panel floats; the saved layout is untouched",
+      "case_id": "web/src/neyvia/next/nxLayoutModel.test.js::a narrower window shrinks regions first, then Canopy goes, then the panel floats; the saved layout is untouched",
+      "contracts": [
+        "layout.fitLayout"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:fitLayout -> checkedProofsEModel"
+      ],
+      "procedure": "layout.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxLayoutModel.test.js",
+      "case": "home widgets reorder, resize through their own sizes, and come back from the add list",
+      "case_id": "web/src/neyvia/next/nxLayoutModel.test.js::home widgets reorder, resize through their own sizes, and come back from the add list",
+      "contracts": [
+        "layout.moveWidget",
+        "layout.nudgeWidget",
+        "layout.cycleWidgetSize",
+        "layout.removeWidget",
+        "layout.addWidget",
+        "layout.hiddenWidgets"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxLayoutModel.js:moveWidget -> checkedProofsEModel",
+        "web/src/neyvia/next/nxLayoutModel.js:nudgeWidget -> checkedProofsEModel",
+        "web/src/neyvia/next/nxLayoutModel.js:cycleWidgetSize -> checkedProofsEModel",
+        "web/src/neyvia/next/nxLayoutModel.js:removeWidget -> checkedProofsEModel",
+        "web/src/neyvia/next/nxLayoutModel.js:addWidget -> checkedProofsEModel",
+        "web/src/neyvia/next/nxLayoutModel.js:hiddenWidgets -> checkedProofsEModel"
+      ],
+      "procedure": "layout.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxMissionsModel.test.js",
+      "case": "tasks fall into levels by their prerequisites, with local ids and counts",
+      "case_id": "web/src/neyvia/next/nxMissionsModel.test.js::tasks fall into levels by their prerequisites, with local ids and counts",
+      "contracts": [
+        "missions.shapeMission"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxMissionsModel.js:shapeMission -> checkedProofsEModel"
+      ],
+      "procedure": "missions.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxMissionsModel.test.js",
+      "case": "a cycle in stored data can't hang the screen",
+      "case_id": "web/src/neyvia/next/nxMissionsModel.test.js::a cycle in stored data can't hang the screen",
+      "contracts": [
+        "missions.shapeMission"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxMissionsModel.js:shapeMission -> checkedProofsEModel"
+      ],
+      "procedure": "missions.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxMissionsModel.test.js",
+      "case": "a draft explains what is missing, then becomes a clean create request",
+      "case_id": "web/src/neyvia/next/nxMissionsModel.test.js::a draft explains what is missing, then becomes a clean create request",
+      "contracts": [
+        "missions.draftProblems",
+        "missions.createRequest"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxMissionsModel.js:draftProblems -> checkedProofsEModel",
+        "web/src/neyvia/next/nxMissionsModel.js:createRequest -> checkedProofsEModel"
+      ],
+      "procedure": "missions.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxMissionsModel.test.js",
+      "case": "planning with Neyvia asks for the mission tool and leaves the start to the person",
+      "case_id": "web/src/neyvia/next/nxMissionsModel.test.js::planning with Neyvia asks for the mission tool and leaves the start to the person",
+      "contracts": [
+        "missions.planPrompt"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxMissionsModel.js:planPrompt -> checkedProofsEModel"
+      ],
+      "procedure": "missions.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "board levels follow prerequisites, flags missing ones and hides mission tasks",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::board levels follow prerequisites, flags missing ones and hides mission tasks",
+      "contracts": [
+        "nightshift.shapeBoard"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:shapeBoard -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "only unarmed, unfinished agent tasks can be started; Paul's never",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::only unarmed, unfinished agent tasks can be started; Paul's never",
+      "contracts": [
+        "nightshift.startable"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:startable -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "evidence reads as a short label with what opening it means",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::evidence reads as a short label with what opening it means",
+      "contracts": [
+        "nightshift.evidenceView"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:evidenceView -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "budget form converts hours and minutes to seconds and empty fields to no limit",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::budget form converts hours and minutes to seconds and empty fields to no limit",
+      "contracts": [
+        "nightshift.policyForm",
+        "nightshift.policyPatch"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:policyForm -> checkedProofsEModel",
+        "web/src/neyvia/next/nxNightShiftModel.js:policyPatch -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "budget form refuses what the backend would refuse",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::budget form refuses what the backend would refuse",
+      "contracts": [
+        "nightshift.policyPatch"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:policyPatch -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "a saved policy round-trips through the form",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::a saved policy round-trips through the form",
+      "contracts": [
+        "nightshift.policyForm",
+        "nightshift.policyPatch"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:policyForm -> checkedProofsEModel",
+        "web/src/neyvia/next/nxNightShiftModel.js:policyPatch -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "quiet hours cross midnight and equal ends mean all day",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::quiet hours cross midnight and equal ends mean all day",
+      "contracts": [
+        "nightshift.quietNow"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:quietNow -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "morning card counts only finished runs that never reported",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::morning card counts only finished runs that never reported",
+      "contracts": [
+        "nightshift.morning"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:morning -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxNightShiftModel.test.js",
+      "case": "the tree puts one leaf per task, alternating sides up the trunk",
+      "case_id": "web/src/neyvia/next/nxNightShiftModel.test.js::the tree puts one leaf per task, alternating sides up the trunk",
+      "contracts": [
+        "nightshift.treeLayout"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxNightShiftModel.js:treeLayout -> checkedProofsEModel"
+      ],
+      "procedure": "nightshift.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOnboardingModel.test.js",
+      "case": "a tier preselects interests only when none are chosen",
+      "case_id": "web/src/neyvia/next/nxOnboardingModel.test.js::a tier preselects interests only when none are chosen",
+      "contracts": [
+        "onboarding.interestsFor"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:interestsFor -> checkedProofsEModel"
+      ],
+      "procedure": "onboarding.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOnboardingModel.test.js",
+      "case": "recommendations filter the tour but keep its fixed chapters",
+      "case_id": "web/src/neyvia/next/nxOnboardingModel.test.js::recommendations filter the tour but keep its fixed chapters",
+      "contracts": [
+        "onboarding.recommend"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:recommend -> checkedProofsEModel"
+      ],
+      "procedure": "onboarding.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOnboardingModel.test.js",
+      "case": "the tour always lasts 60 to 90 seconds and every moment maps to a chapter",
+      "case_id": "web/src/neyvia/next/nxOnboardingModel.test.js::the tour always lasts 60 to 90 seconds and every moment maps to a chapter",
+      "contracts": [
+        "onboarding.timeline",
+        "onboarding.locate"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:timeline -> checkedProofsEModel",
+        "web/src/neyvia/next/nxOnboardingModel.js:locate -> checkedProofsEModel"
+      ],
+      "procedure": "onboarding.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOnboardingModel.test.js",
+      "case": "download and runtime wording",
+      "case_id": "web/src/neyvia/next/nxOnboardingModel.test.js::download and runtime wording",
+      "contracts": [
+        "onboarding.downloadView",
+        "onboarding.runtimeHeadline"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:downloadView -> checkedProofsEModel",
+        "web/src/neyvia/next/nxOnboardingModel.js:runtimeHeadline -> checkedProofsEModel"
+      ],
+      "procedure": "onboarding.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOnboardingModel.test.js",
+      "case": "a pack row offers install only when it can be installed, and shows progress and the receipt line",
+      "case_id": "web/src/neyvia/next/nxOnboardingModel.test.js::a pack row offers install only when it can be installed, and shows progress and the receipt line",
+      "contracts": [
+        "onboarding.packView"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:packView -> checkedProofsEModel"
+      ],
+      "procedure": "onboarding.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOnboardingModel.test.js",
+      "case": "catalog gap notes read as plain words",
+      "case_id": "web/src/neyvia/next/nxOnboardingModel.test.js::catalog gap notes read as plain words",
+      "contracts": [
+        "onboarding.plainMissing"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOnboardingModel.js:plainMissing -> checkedProofsEModel"
+      ],
+      "procedure": "onboarding.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOutputsModel.test.js",
+      "case": "perception targets round-trip, including Windows paths and session ids with colons",
+      "case_id": "web/src/neyvia/next/nxOutputsModel.test.js::perception targets round-trip, including Windows paths and session ids with colons",
+      "contracts": [
+        "outputs.perceptionTarget",
+        "outputs.parsePerceptionTarget"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOutputsModel.js:perceptionTarget -> checkedProofsEModel",
+        "web/src/neyvia/next/nxOutputsModel.js:parsePerceptionTarget -> checkedProofsEModel"
+      ],
+      "procedure": "outputs.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxOutputsModel.test.js",
+      "case": "a docked chat floats only when dropped clearly outside the dock",
+      "case_id": "web/src/neyvia/next/nxOutputsModel.test.js::a docked chat floats only when dropped clearly outside the dock",
+      "contracts": [
+        "outputs.outsideDock",
+        "outputs.dropSpot"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxOutputsModel.js:outsideDock -> checkedProofsEModel",
+        "web/src/neyvia/next/nxOutputsModel.js:dropSpot -> checkedProofsEModel"
+      ],
+      "procedure": "outputs.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxPlanModel.test.js",
+      "case": "live task calls fold onto the plan the read returned, once each",
+      "case_id": "web/src/neyvia/next/nxPlanModel.test.js::live task calls fold onto the plan the read returned, once each",
+      "contracts": [
+        "plan.planFromPage",
+        "plan.planOf",
+        "plan.applyPlanOp",
+        "plan.planProgress"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlanModel.js:planFromPage -> checkedProofsEModel",
+        "web/src/neyvia/next/nxPlanModel.js:planOf -> checkedProofsEModel",
+        "web/src/neyvia/next/nxPlanModel.js:applyPlanOp -> checkedProofsEModel",
+        "web/src/neyvia/next/nxPlanModel.js:planProgress -> checkedProofsEModel"
+      ],
+      "procedure": "plan.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxPlanModel.test.js",
+      "case": "a replace clears or swaps the list; a read without a plan keeps the one already shown",
+      "case_id": "web/src/neyvia/next/nxPlanModel.test.js::a replace clears or swaps the list; a read without a plan keeps the one already shown",
+      "contracts": [
+        "plan.applyPlanOp",
+        "plan.planFromPage"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlanModel.js:applyPlanOp -> checkedProofsEModel",
+        "web/src/neyvia/next/nxPlanModel.js:planFromPage -> checkedProofsEModel"
+      ],
+      "procedure": "plan.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxPlanModel.test.js",
+      "case": "the checklist stays while work is left, and a finished one only while the agent works",
+      "case_id": "web/src/neyvia/next/nxPlanModel.test.js::the checklist stays while work is left, and a finished one only while the agent works",
+      "contracts": [
+        "plan.showChecklist"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxPlanModel.js:showChecklist -> checkedProofsEModel"
+      ],
+      "procedure": "plan.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxPlanModel.test.js",
+      "case": "limits read as the app reported them",
+      "case_id": "web/src/neyvia/next/nxPlanModel.test.js::limits read as the app reported them",
+      "contracts": [
+        "dashboard.resetsIn",
+        "dashboard.limitTone"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDashboardModel.js:resetsIn -> checkedProofsEModel",
+        "web/src/neyvia/next/nxDashboardModel.js:limitTone -> checkedProofsEModel"
+      ],
+      "procedure": "plan.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxPlanModel.test.js",
+      "case": "dashboard pages merge without showing a moved chat twice",
+      "case_id": "web/src/neyvia/next/nxPlanModel.test.js::dashboard pages merge without showing a moved chat twice",
+      "contracts": [
+        "dashboard.mergePages"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxDashboardModel.js:mergePages -> checkedProofsEModel"
+      ],
+      "procedure": "plan.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxReplayModel.test.js",
+      "case": "the timeline keeps order, squeezes long silences and never jumps on a missing stamp",
+      "case_id": "web/src/neyvia/next/nxReplayModel.test.js::the timeline keeps order, squeezes long silences and never jumps on a missing stamp",
+      "contracts": [
+        "replay.buildTimeline"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:buildTimeline -> checkedProofsEModel"
+      ],
+      "procedure": "replay.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxReplayModel.test.js",
+      "case": "visible items and the recorded clock follow the playhead",
+      "case_id": "web/src/neyvia/next/nxReplayModel.test.js::visible items and the recorded clock follow the playhead",
+      "contracts": [
+        "replay.visibleCount",
+        "replay.recordedAt",
+        "replay.playbackMs"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:visibleCount -> checkedProofsEModel",
+        "web/src/neyvia/next/nxReplayModel.js:recordedAt -> checkedProofsEModel",
+        "web/src/neyvia/next/nxReplayModel.js:playbackMs -> checkedProofsEModel"
+      ],
+      "procedure": "replay.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxReplayModel.test.js",
+      "case": "scrubber marks carry their kind and errors stand out",
+      "case_id": "web/src/neyvia/next/nxReplayModel.test.js::scrubber marks carry their kind and errors stand out",
+      "contracts": [
+        "replay.timelineMarks"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:timelineMarks -> checkedProofsEModel"
+      ],
+      "procedure": "replay.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxReplayModel.test.js",
+      "case": "spans read like a person would say them",
+      "case_id": "web/src/neyvia/next/nxReplayModel.test.js::spans read like a person would say them",
+      "contracts": [
+        "replay.formatSpan",
+        "replay.buildTimeline"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxReplayModel.js:formatSpan -> checkedProofsEModel",
+        "web/src/neyvia/next/nxReplayModel.js:buildTimeline -> checkedProofsEModel"
+      ],
+      "procedure": "replay.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxRuntimeModel.test.js",
+      "case": "joins catalog and matrix rows across their different ids",
+      "case_id": "web/src/neyvia/next/nxRuntimeModel.test.js::joins catalog and matrix rows across their different ids",
+      "contracts": [
+        "runtime.mergeRuntimes",
+        "runtime.runtimeSummary"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxRuntimeModel.js:mergeRuntimes -> checkedProofsEModel",
+        "web/src/neyvia/next/nxRuntimeModel.js:runtimeSummary -> checkedProofsEModel"
+      ],
+      "procedure": "runtime.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    },
+    {
+      "test": "web/src/neyvia/next/nxRuntimeModel.test.js",
+      "case": "works with only one source while the other is still loading",
+      "case_id": "web/src/neyvia/next/nxRuntimeModel.test.js::works with only one source while the other is still loading",
+      "contracts": [
+        "runtime.mergeRuntimes"
+      ],
+      "checkedAt": [
+        "web/src/neyvia/next/nxRuntimeModel.js:mergeRuntimes -> checkedProofsEModel"
+      ],
+      "procedure": "runtime.model-procedure",
+      "classification": "real-current",
+      "assertionsPreserved": true
+    }
+  ],
+  "sourceHashes": {
+    "web/src/neyvia/next/nxAutopilotModel.test.js": "6508d30c1f32887f09204a0bb2f24ded7307dc9e3e273abe4afb0aa2c64e1ea9",
+    "web/src/neyvia/next/nxComposerModel.test.js": "a9f89dc5f37388f0400057ac3c52b89931a5a6583ddf36e72c55e14b5b304db1",
+    "web/src/neyvia/next/nxConductorModel.test.js": "a0fe5f31427c151030f5e059b4cd37b73d15b118fa674744e6798e012536591c",
+    "web/src/neyvia/next/nxCuaModel.test.js": "371d3d643ff9b8936c95a34b8608784e1d3e7db67370b109b3fb203577cd7ffa",
+    "web/src/neyvia/next/nxDevicesModel.test.js": "f8d1aa37fdf5450805ac7c27c17e754b580c7e254de0a71914cee6c6e0d60586",
+    "web/src/neyvia/next/nxGameDevModel.test.js": "3377cfc638a43e0c99837cb932dfbdd2bdbc051a86cab17a9ba89548cc0f410c",
+    "web/src/neyvia/next/nxLayoutModel.test.js": "caefa4d3b2a54e123cfe5f579ee152967a8a7df33795c508f3a51d03f34df1ca",
+    "web/src/neyvia/next/nxMissionsModel.test.js": "a3b5a3a87968ca06b44b93802f158d0948a0b69d887802c94cfa823c0ca64501",
+    "web/src/neyvia/next/nxNightShiftModel.test.js": "7ba81a8c1edee969cb05ab016c38f0141ca453573cdde7ce9e7c779d1cc38745",
+    "web/src/neyvia/next/nxOnboardingModel.test.js": "f9de5f4c1b442bd74dfa221337b23b36ae03d0555afb3f32bad9e5c7a5d292f5",
+    "web/src/neyvia/next/nxOutputsModel.test.js": "74d12ab7a1e0c815d8cc28e7effb309a18ebcfe3d152953e2584dbb1627c383d",
+    "web/src/neyvia/next/nxPlanModel.test.js": "5502b8af800172cabb504c9feb8751e9504534ac83d33c42d700507b6f7fb213",
+    "web/src/neyvia/next/nxReplayModel.test.js": "2f1b702d59b8d7bf7744facf2dc6bf8fe06feeeb49f576530d0d99e3aaef8550",
+    "web/src/neyvia/next/nxRuntimeModel.test.js": "3bf4711c2476314b81134ffde6fe70b34201c2923520851f2ca0e175b7df45c7"
+  },
+  "frontier": [
+    "Rendered browser/desktop journeys are separate from pure model proof",
+    "Remote device, game editor and provider behavior require their real runtimes"
+  ],
+  "sourceFiles": [
+    "config/neyvia_onboarding.json"
+  ],
+  "portRoles": [],
+  "traceMode": "parent"
+}

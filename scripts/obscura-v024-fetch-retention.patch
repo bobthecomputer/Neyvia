@@ -1,0 +1,51 @@
+diff --git a/crates/obscura-browser/src/page.rs b/crates/obscura-browser/src/page.rs
+index fbdc129b..8d1878f0 100644
+--- a/crates/obscura-browser/src/page.rs
++++ b/crates/obscura-browser/src/page.rs
+@@ -2456,21 +2456,34 @@ impl Page {
+         // 16 is well above the per-host pool ceiling most browsers use
+         // and matches what real Chrome does for a given origin.
+         use futures::StreamExt as _;
++        let fetch_results = {
+         let fetch_stream = futures::stream::iter(fetch_futures).buffer_unordered(16);
+-        let fetch_results = match tokio::time::timeout_at(
+-            script_deadline,
+-            fetch_stream.collect::<Vec<_>>(),
+-        )
+-        .await
+-        {
+-            Ok(results) => results,
+-            Err(_) => {
+-                tracing::warn!(
+-                    "execute_scripts: fetch deadline reached, some scripts may not have loaded"
+-                );
+-                Vec::new()
++        futures::pin_mut!(fetch_stream);
++        // Keep the original end-to-end deadline. Reserve part of that budget
++        // for execution instead of letting one stalled optional script discard
++        // every completed dependency and consume all execution time.
++        let execution_reserve_ms = (script_deadline_ms / 3).min(5000);
++        let fetch_deadline = script_deadline
++            - tokio::time::Duration::from_millis(execution_reserve_ms);
++        let mut fetch_results = Vec::new();
++        loop {
++            match tokio::time::timeout_at(fetch_deadline, fetch_stream.next()).await {
++                Ok(Some(result)) => fetch_results.push(result),
++                Ok(None) => break,
++                Err(_) => {
++                    tracing::warn!(
++                        completed = fetch_results.len(),
++                        execution_reserve_ms,
++                        "execute_scripts: fetch budget reached; retaining completed scripts, unfinished fetches canceled"
++                    );
++                    break;
++                }
+             }
++        }
++        fetch_results
+         };
++        // Drop the stream and its unfinished requests before executing scripts;
++        // completed scripts are still executed in original document order.
+ 
+         let mut fetched: std::collections::HashMap<usize, (String, String, obscura_net::Response)> =
+             std::collections::HashMap::new();

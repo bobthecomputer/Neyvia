@@ -1,0 +1,55 @@
+{
+  "requires": {"neyviaApi": ">=1.0 <2", "sdk": ">=1 <2"},
+  "sdk": 1,
+  "standard": "CL-1.1",
+  "instance": "hyperframes-studio",
+  "kind": "hosted",
+  "name": "HyperFrames Studio",
+  "summary": "HeyGen's open-source HTML video editor (timeline, code and live preview), hosted inside Neyvia; the side panel reads the timeline, renders a draft and runs the outcome contracts through neyvia.video.*. Apache-2.0.",
+  "services": [
+    "tools"
+  ],
+  "dependencies": [
+    "hyperframes"
+  ],
+  "sourceRepository": "https://github.com/heygen-com/hyperframes",
+  "upstream": {
+    "repository": "https://github.com/heygen-com/hyperframes",
+    "license": "Apache-2.0",
+    "version": "0.8.138",
+    "package": "@hyperframes/studio via the hyperframes CLI preview server"
+  },
+  "permissions": [
+    "Starts the HyperFrames Studio preview server on 127.0.0.1:49165 for a project folder you choose (no browser window opens)",
+    "Reads and writes that project folder",
+    "No network access beyond loopback; telemetry off"
+  ],
+  "webRoot": "www",
+  "manual": "manual.cl",
+  "contract": "host-contract.json",
+  "icon": "www/icon.svg",
+  "credit": "HyperFrames and @hyperframes/studio by HeyGen (Apache-2.0), unmodified. App page by the Neyvia video tracks (track/laya-video app.js, track/video store entry), reconciled on 7 Oct.",
+  "license": "Apache-2.0",
+  "actions": [
+    {
+      "name": "open",
+      "description": "Serve Studio for a video project on 127.0.0.1:49165-49167 and show it here.",
+      "mutability": "external_action"
+    },
+    {
+      "name": "timeline",
+      "description": "Read the project's timeline as a CL Scene and its pre-render findings (neyvia.video.timeline).",
+      "mutability": "read"
+    },
+    {
+      "name": "render",
+      "description": "Render a draft MP4 headless and run the outcome contracts on it.",
+      "mutability": "external_action"
+    },
+    {
+      "name": "stop",
+      "description": "Stop the Studio server.",
+      "mutability": "external_action"
+    }
+  ]
+}

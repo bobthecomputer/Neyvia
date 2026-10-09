@@ -1,0 +1,187 @@
+{
+  "area": "parallel-outcomes",
+  "module": "grant_agent.proofs_parallel_outcomes",
+  "self_check": "self_check",
+  "networkContracts": [],
+  "contracts": [
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.start",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "claim": "Reject dirty checkout, invalid routes, duplicate tracks and tracks outside 1..8",
+      "id": "parallel.clean-start",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ],
+      "phase": "pre"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.start",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "claim": "Every main/worker branch and session has its own owned worktree from base; original checkout unchanged",
+      "id": "parallel.separate-worktrees",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.action",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "claim": "Questions and answers retain identity and delivery receipts through existing mid-turn inbox or resumed session",
+      "id": "parallel.question-answer",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.action",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "claim": "Done refuses dirty trees, absent commits and unanswered questions",
+      "id": "parallel.committed-done",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.merge",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "claim": "Track order is preserved; conflict records files, both sides and summaries and pauses subsequent merges",
+      "id": "parallel.ordered-conflict",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ],
+      "phase": "invariant"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.action",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "claim": "Resolved refuses unmerged index and markers, commits merge then continues; checks determine readiness",
+      "id": "parallel.resolution",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ],
+      "phase": "post"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.action",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "claim": "Finish requires passing checks, allowFinish and clean original base; diverged base refuses ff-only",
+      "id": "parallel.finish-authority",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ],
+      "phase": "pre"
+    },
+    {
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.action",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "claim": "Only owned sessions stop; initialized valid trees are checked clean, owned orphans and interrupted initial checkouts are recoverable, reparse points unlinked without traversal, git list verified; committed unmerged branches retained",
+      "id": "parallel.safe-settle",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ],
+      "phase": "post"
+    },
+    {
+      "id": "parallel.orphan-settle",
+      "claim": "Missing linked Git metadata or an orphaned owned folder is safely removed after unlinking reparse points; prune verifies absence; every main and worker track has a durable cleanup receipt; retry is idempotent",
+      "checkedAt": [
+        "grant_agent.neyvia_parallel_git.worktree_status",
+        "grant_agent.neyvia_parallel_git.remove_worktree",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "phase": "post",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ]
+    },
+    {
+      "id": "parallel.failed-start-settle",
+      "claim": "A partial start retains a saved failed run; settle removes initialized and never-initialized owned worktrees and branches still at base, preserving committed unmerged work",
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.start",
+        "grant_agent.neyvia_parallel.action",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "phase": "post",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ]
+    },
+    {
+      "id": "parallel.availability-retry",
+      "claim": "Explicit Claude starts allow two availability attempts of at most 45 seconds each on timeout, bypass cached failed discovery, and never retry session creation",
+      "checkedAt": [
+        "grant_agent.connected_sessions.registry.Registry.availability",
+        "grant_agent.connected_sessions.broker.ConnectedBroker.new"
+      ],
+      "phase": "post",
+      "impact": [
+        "parallel state",
+        "Git history",
+        "connected sessions"
+      ]
+    },
+    {
+      "id": "parallel.mod-worker-done",
+      "phase": "invariant",
+      "claim": "The native Claude mod Parallel call executes the server-supplied observer-bound CL recovery within the mod catalog and existing owner grants; done still requires a clean committed branch and answered questions.",
+      "checkedAt": [
+        "grant_agent.claude_code_host.call_tool",
+        "grant_agent.cl.parallel_effects.verify"
+      ],
+      "impact": [
+        "Launch film behavior"
+      ]
+    },
+    {
+      "id": "parallel.pending-question-retry",
+      "phase": "invariant",
+      "claim": "Repeating an identical unanswered worker ask reuses the saved question without a second delivery; an answer resolves identical historical pending duplicates, preserving unrelated questions.",
+      "checkedAt": [
+        "grant_agent.neyvia_parallel.action"
+      ],
+      "impact": [
+        "Launch film behavior"
+      ]
+    }
+  ]
+}

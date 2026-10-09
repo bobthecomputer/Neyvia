@@ -1,0 +1,468 @@
+/* App Factory as a studio (NeyviaAppFactory + NeyviaAppFactoryCanvas): the app being made sits in
+   the middle on a dot-grid canvas, in a frame that fits its target, with the build flowing under
+   it; the brief is on the left and the receipts on the right. Colours come from the window's
+   studio skin (--nx-*, nxAppSkinModel) and fall back to the same studio palette outside the shell. */
+
+.neyvia-app-factory.af, .neyvia-app-preview {
+  --af-bg: var(--nx-bg, #141519);
+  --af-side: var(--nx-sidebar, #111216);
+  --af-panel: var(--nx-panel, #18191e);
+  --af-raised: var(--nx-raised, #1e2026);
+  --af-raised-2: var(--nx-raised-2, #25272e);
+  --af-line: var(--nx-line, rgba(238, 240, 244, 0.09));
+  --af-line-strong: var(--nx-line-strong, rgba(238, 240, 244, 0.16));
+  --af-hover: var(--nx-hover, rgba(238, 240, 244, 0.055));
+  --af-text: var(--nx-text, #eef0f4);
+  --af-text-2: var(--nx-text-2, #cfd2db);
+  --af-muted: var(--nx-muted, #a6aab7);
+  --af-accent: var(--nx-accent, #7c83ff);
+  --af-accent-hi: var(--nx-accent-hi, #949aff);
+  --af-accent-text: var(--nx-accent-text, #b2b6ff);
+  --af-on-accent: var(--nx-on-accent, #0b0d33);
+  --af-accent-soft: var(--nx-accent-soft, rgba(124, 131, 255, 0.16));
+  --af-ok: var(--nx-green, #7fd6a4);
+  --af-run: var(--nx-state-running, #f4b847);
+  --af-bad: var(--nx-red, #f48a7a);
+  --af-card: var(--nx-card-shadow, 0 0 0 1px rgba(238, 240, 244, 0.09), 6px 14px 30px -20px rgba(0, 0, 0, 0.8));
+  --af-pop: var(--nx-shadow-pop, 0 0 0 1px rgba(238, 240, 244, 0.16), 8px 18px 48px -12px rgba(0, 0, 0, 0.75));
+  --af-settle: var(--nx-spring-settle, cubic-bezier(0.22, 1, 0.36, 1));
+  --af-snappy: var(--nx-spring-snappy, cubic-bezier(0.22, 1, 0.36, 1));
+  --af-display: var(--nx-display, Georgia, serif);
+}
+.neyvia-app-factory.af {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  min-width: 0;
+  color: var(--af-text);
+  background: var(--af-bg);
+  font-family: var(--nx-font, "Segoe UI", system-ui, sans-serif);
+  font-size: var(--nx-fs);
+}
+.af *, .af *::before, .af *::after { box-sizing: border-box; }
+.af :is(h1, h2, h3, p, ol, dl, dd, fieldset) { margin: 0; }
+.af button, .af input, .af select, .af textarea { font: inherit; color: inherit; }
+.af :is(button, input, select, textarea, a):focus-visible { outline: 2px solid var(--af-accent-hi); outline-offset: 2px; box-shadow: none; }
+
+.af-eyebrow { color: var(--af-accent-text); font-size: var(--nx-fs-2xs); font-weight: 700; letter-spacing: 0.14em; }
+
+/* ---------- head ---------- */
+.af-head {
+  flex: none; display: flex; align-items: center; gap: var(--nx-space-10); min-height: 56px; padding: var(--nx-space-8) var(--nx-space-14);
+  border-bottom: 1px solid var(--af-line); background: var(--af-side);
+}
+.af-iconbtn {
+  display: grid; place-items: center; width: 30px; height: 30px; flex: none; border: 0; border-radius: var(--nx-r-sm); cursor: pointer;
+  background: transparent; color: var(--af-muted); transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease);
+}
+.af-iconbtn:hover:not(:disabled) { background: var(--af-hover); color: var(--af-text); }
+.af-mark {
+  display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: var(--nx-r); color: var(--af-accent-text);
+  background: linear-gradient(150deg, color-mix(in srgb, var(--af-accent) 32%, transparent), color-mix(in srgb, var(--af-accent) 8%, transparent));
+  box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--af-accent) 34%, transparent);
+}
+.af-title { display: grid; gap: var(--nx-space-1); min-width: 0; flex: 1 1 auto; }
+.af-title h1 {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--af-text);
+  font: var(--nx-display-weight, 500) var(--nx-fs-xl)/1.15 var(--af-display); letter-spacing: var(--nx-display-tracking, -0.01em);
+}
+.af-head-tools { display: flex; align-items: center; gap: var(--nx-space-8); flex: none; }
+.af-seg { display: inline-flex; padding: var(--nx-space-2); border-radius: var(--nx-r); background: color-mix(in srgb, var(--af-text) 6%, transparent); box-shadow: inset 0 0 0 var(--nx-stroke) var(--af-line); }
+.af-seg button {
+  height: 26px; padding: 0 var(--nx-space-10); border: 0; border-radius: var(--nx-r-sm); cursor: pointer; background: transparent; color: var(--af-muted);
+  font-size: var(--nx-fs-sm); font-weight: 600; transition: background var(--nx-med) var(--af-snappy), color var(--nx-fast) var(--nx-ease), box-shadow var(--nx-med) var(--nx-ease);
+}
+.af-seg button:hover { color: var(--af-text); }
+.af-seg button.is-on { background: var(--af-raised-2); color: var(--af-text); box-shadow: 0 0 0 var(--nx-stroke) var(--af-line-strong), var(--nx-stroke) var(--nx-stroke-strong) var(--nx-halo) calc(-1 * var(--nx-stroke)) var(--nx-scrim); }
+
+.af-button {
+  display: inline-flex; align-items: center; gap: var(--nx-space-6); height: 30px; padding: 0 var(--nx-space-11); flex: none; border: 0; border-radius: var(--nx-r-sm); cursor: pointer;
+  background: var(--af-raised); color: var(--af-text-2); box-shadow: inset 0 0 0 var(--nx-stroke) var(--af-line-strong);
+  font-size: var(--nx-fs-sm); font-weight: 600; white-space: nowrap; transition: background var(--nx-fast) var(--nx-ease), color var(--nx-fast) var(--nx-ease), transform var(--nx-med) var(--af-snappy);
+}
+.af-button:hover:not(:disabled) { background: var(--af-raised-2); color: var(--af-text); }
+.af-button:active:not(:disabled) { transform: scale(0.97); }
+.af-button:disabled { opacity: 0.5; cursor: default; }
+.af-button.is-accent { background: var(--af-accent); color: var(--af-on-accent); box-shadow: none; }
+.af-button.is-accent:hover:not(:disabled) { background: var(--nx-accent-hover); color: var(--af-on-accent); }
+
+/* ---------- body: brief | canvas | receipts ---------- */
+.af-body {
+  flex: 1 1 auto; min-height: 0; display: grid;
+  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) minmax(260px, 300px);
+  grid-template-areas: "brief canvas inspector";
+}
+.af-brief, .af-inspector {
+  min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: var(--nx-space-12); padding: var(--nx-space-16) var(--nx-space-14) var(--nx-space-24);
+  background: var(--af-panel); scrollbar-width: thin; scrollbar-color: var(--af-line-strong) transparent;
+}
+.af-brief { grid-area: brief; border-right: 1px solid var(--af-line); }
+.af-inspector { grid-area: inspector; border-left: 1px solid var(--af-line); }
+.af-canvas {
+  grid-area: canvas; position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: var(--nx-space-12); padding: var(--nx-space-20) var(--nx-space-20) var(--nx-space-14);
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--af-text) 9%, transparent) 1px, transparent 1.4px) 0 0 / 18px 18px,
+    radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--af-accent) 8%, transparent), transparent 62%),
+    var(--af-bg);
+}
+.af-stage { position: relative; flex: 1 1 auto; min-height: 280px; display: flex; }
+.af-frame-space { flex: 1 1 auto; min-width: 0; min-height: 0; display: grid; place-items: center; }
+.af-under { flex: none; display: grid; gap: var(--nx-space-10); }
+
+/* Wide but not that wide: the receipts go under the canvas. */
+@container (max-width: 1180px) {
+  .af-body { grid-template-columns: minmax(250px, 280px) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "brief canvas" "brief inspector"; }
+  .af-inspector { border-left: 0; border-top: 1px solid var(--af-line); max-height: 34cqh; background: var(--af-panel); }
+  .af-inspector .af-receipts { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+}
+/* Narrow (the side panel, a bubble, a phone): one column read from the window's own width, the app
+   first, then Brief and Build behind tabs. */
+.af-tabs { display: none; }
+@container (max-width: 759px) {
+  .af-head { flex-wrap: wrap; }
+  .af-head-tools { width: 100%; justify-content: space-between; }
+  .af-mark { display: none; }
+  .af-body { display: flex; flex-direction: column; overflow: auto; }
+  .af-canvas { order: 1; flex: none; padding: var(--nx-space-18) var(--nx-space-12) var(--nx-space-12); }
+  .af-stage { flex: none; height: clamp(250px, 50vh, 460px); min-height: 0; }
+  .af-tabs { order: 2; display: flex; }
+  .af-brief, .af-inspector { order: 3; flex: none; overflow: visible; max-height: none; border: 0; padding: var(--nx-space-12); }
+  .af[data-af-pane="brief"] .af-inspector, .af[data-af-pane="build"] .af-brief { display: none; }
+  .af-receipts { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .af-caption-actions { justify-content: flex-start; }
+}
+.af-tabs { order: 2; }
+.af[data-af-compact] .af-brief, .af[data-af-compact] .af-inspector { order: 3; overflow: visible; max-height: none; border: 0; padding: var(--nx-space-12); }
+.af[data-af-pane="brief"] .af-inspector, .af[data-af-pane="build"] .af-brief { display: none; }
+.af[data-af-compact] .af-receipts { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.af[data-af-compact] .af-caption-actions { justify-content: flex-start; }
+.af-tabs {
+  flex: none; gap: var(--nx-space-4); padding: var(--nx-space-6) var(--nx-space-12); border-top: 1px solid var(--af-line); border-bottom: 1px solid var(--af-line);
+  background: var(--af-panel); position: sticky; top: 0; z-index: 2;
+}
+.af-tabs button {
+  flex: 1; height: 30px; border: 0; border-radius: var(--nx-r-sm); cursor: pointer; background: transparent; color: var(--af-muted); font-weight: 600;
+  transition: background var(--nx-med) var(--af-snappy), color var(--nx-fast) var(--nx-ease);
+}
+.af-tabs button.is-on { background: var(--af-accent-soft); color: var(--af-accent-text); }
+
+/* ---------- the frames ---------- */
+.af-window {
+  position: relative; display: flex; flex-direction: column; overflow: visible; border-radius: var(--nx-r);
+  box-shadow: var(--nx-lift-3);
+  transition: width var(--nx-settle) var(--af-settle), height var(--nx-settle) var(--af-settle);
+}
+.af-window-page { position: relative; overflow: hidden; border-radius: 0 0 var(--nx-r) var(--nx-r); background: var(--nx-raised); }
+.af-window-scaled { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.af-chrome { flex: none; display: flex; align-items: center; gap: var(--nx-space-10); padding: 0 var(--nx-space-10); border-radius: var(--nx-r) var(--nx-r) 0 0; font-size: var(--nx-fs-sm); user-select: none; }
+.af-chrome.is-window { justify-content: space-between; background: var(--nx-bg); color: var(--nx-text); }
+.af-chrome-app { display: inline-flex; align-items: center; gap: var(--nx-space-8); min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.af-chrome-app i { width: 14px; height: 14px; flex: none; border-radius: var(--nx-r-xs); background: linear-gradient(140deg, var(--af-accent-hi), var(--af-accent)); }
+.af-chrome-controls { display: inline-flex; align-items: center; gap: var(--nx-space-18); padding-right: var(--nx-space-4); color: var(--nx-text-2); }
+.af-chrome.is-browser { background: var(--nx-bg); color: var(--nx-text); }
+.af-chrome-nav { display: inline-flex; align-items: center; gap: var(--nx-space-10); color: var(--nx-text-2); }
+.af-chrome-address {
+  flex: 1 1 auto; min-width: 0; display: inline-flex; align-items: center; gap: var(--nx-space-6); height: 26px; padding: 0 var(--nx-space-12); border-radius: var(--nx-r-pill);
+  background: var(--nx-bg); color: var(--nx-text); font-size: var(--nx-fs-sm);
+}
+.af-chrome-address span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.af-chrome-address svg { flex: none; color: var(--nx-text-2); }
+[data-nx-skin-tone="light"] .af-chrome.is-window { background: var(--nx-raised); color: var(--nx-muted); }
+[data-nx-skin-tone="light"] .af-chrome-controls { color: var(--nx-muted); }
+[data-nx-skin-tone="light"] .af-chrome.is-browser { background: var(--nx-raised); color: var(--nx-muted); }
+[data-nx-skin-tone="light"] .af-chrome-nav { color: var(--nx-muted); }
+[data-nx-skin-tone="light"] .af-chrome-address { background: var(--nx-raised); color: var(--nx-muted); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-scrim); }
+[data-nx-skin-tone="light"] .af-window { box-shadow: var(--nx-lift-3); }
+
+.af-device { position: relative; flex: none; transition: width var(--nx-settle) var(--af-settle), height var(--nx-settle) var(--af-settle); }
+.af-device-body {
+  position: absolute; top: 0; left: 0; transform-origin: 0 0;
+  background: var(--nx-device-metal);
+  box-shadow: var(--nx-lift-3);
+}
+.af-device.is-android .af-device-body { background: var(--nx-device-metal-android); }
+.af-device-screen { position: relative; overflow: hidden; isolation: isolate; background: var(--nx-device-screen); }
+.af-device-content { position: absolute; left: 0; right: 0; overflow: hidden; }
+.af-device-content .af-crossfade, .af-device-content .af-live, .af-device-content .af-sketch { height: 100%; }
+.af-device-island { position: absolute; z-index: 3; top: 11px; left: 50%; width: 124px; height: 36px; transform: translateX(-50%); border-radius: var(--nx-r-xl); background: var(--nx-device-black); }
+.af-device-punch { position: absolute; z-index: 3; top: 13px; left: 50%; width: 14px; height: 14px; transform: translateX(-50%); border-radius: 50%; background: var(--nx-bg); box-shadow: 0 0 0 var(--nx-stroke-strong) var(--nx-line-strong); }
+.af-device-home { position: absolute; z-index: 3; bottom: 9px; left: 50%; width: 134px; height: 5px; transform: translateX(-50%); border-radius: var(--nx-r-xxs); background: var(--nx-device-indicator); }
+.af-device-home.is-light { background: var(--nx-device-indicator-light); }
+.af-phone-status {
+  position: absolute; z-index: 2; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: center; justify-content: space-between;
+  padding: var(--nx-space-4) var(--nx-space-32) 0; color: var(--nx-device-indicator); font: 600 var(--nx-fs-lg)/1 -apple-system, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", sans-serif; font-variant-numeric: tabular-nums;
+}
+.af-phone-status.is-android { height: 40px; padding: 0 var(--nx-space-20); font-size: var(--nx-fs); font-weight: 500; }
+.af-phone-status > span:last-child { display: inline-flex; gap: var(--nx-space-5); align-items: center; }
+.af-phone-status.is-light { color: var(--nx-device-indicator-light); }
+
+/* The badge on the frame: what you are looking at, always in words. */
+.af-badge {
+  position: absolute; z-index: 4; top: -11px; right: 18px; display: inline-flex; align-items: center; gap: var(--nx-space-7); height: 24px; padding: 0 var(--nx-space-11);
+  border-radius: var(--nx-r-pill); background: var(--af-raised-2); color: var(--af-text); box-shadow: var(--af-pop); font-size: var(--nx-fs-xs); font-weight: 650; white-space: nowrap;
+}
+.af-badge i { width: 7px; height: 7px; border-radius: 50%; background: var(--af-muted); }
+.af-badge[data-tone="live"] i { background: var(--af-ok); box-shadow: 0 0 0 var(--nx-ring) color-mix(in srgb, var(--af-ok) 22%, transparent); }
+.af-badge[data-tone="sketch"] i { background: var(--af-accent-hi); }
+.af-badge[data-tone="danger"] i { background: var(--af-bad); }
+.af-device .af-badge { top: 18px; right: auto; left: 50%; transform: translate(-50%, -100%) translateY(-14px); }
+
+/* Content changes crossfade; a build in progress shimmers over the frame, quietly. */
+.af-crossfade { position: relative; width: 100%; height: 100%; animation: af-fade-in var(--nx-settle) var(--af-settle) both; }
+@keyframes af-fade-in { from { opacity: 0; filter: blur(2px); } to { opacity: 1; filter: none; } }
+.af-window.is-working .af-window-page::after, .af-device.is-working .af-device-screen::after {
+  content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, color-mix(in srgb, var(--af-accent-hi) 16%, transparent) 50%, transparent 70%) 0 0 / 260% 100%;
+  animation: af-sweep var(--nx-pulse) var(--nx-ease-loop) infinite;
+}
+@keyframes af-sweep { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+
+/* The live app: frames stacked, a new one fades in only once it has painted. */
+.af-live { position: relative; width: 100%; height: 100%; background: transparent; }
+.af-live iframe { position: absolute; top: 0; left: 0; display: block; border: 0; background: transparent; opacity: 0; transition: opacity var(--nx-settle) var(--af-settle); }
+.af-live iframe.is-ready { opacity: 1; }
+.af-live-loading { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; gap: var(--nx-space-10); justify-items: center; color: var(--nx-text-2); font-size: var(--nx-fs-md); }
+
+.af-shimmer, .af-loading .af-shimmer {
+  display: block; width: 120px; height: 8px; border-radius: var(--nx-r-xs);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--af-text) 7%, transparent) 25%, color-mix(in srgb, var(--af-text) 16%, transparent) 50%, color-mix(in srgb, var(--af-text) 7%, transparent) 75%) 0 0 / 300% 100%;
+  animation: af-shimmer var(--nx-pulse) var(--nx-ease-loop) infinite;
+}
+@keyframes af-shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.af-loading { display: grid; gap: var(--nx-space-8); color: var(--af-muted); }
+
+/* ---------- the build rail ---------- */
+.af-rail { list-style: none; padding: 0; display: flex; align-items: flex-start; gap: 0; overflow-x: auto; scrollbar-width: none; }
+.af-rail li { position: relative; flex: 1 1 0; min-width: 74px; display: grid; justify-items: center; gap: var(--nx-space-5); text-align: center; }
+.af-rail li::before, .af-rail li::after { content: ""; position: absolute; top: 10px; height: 2px; background: var(--af-line-strong); }
+.af-rail li::before { left: 0; right: 50%; margin-right: var(--nx-space-12); }
+.af-rail li::after { left: 50%; right: 0; margin-left: var(--nx-space-12); }
+.af-rail li:first-child::before, .af-rail li:last-child::after { display: none; }
+.af-rail li:is([data-state="completed"], [data-state="running"])::before, .af-rail li[data-state="completed"]::after { background: var(--af-accent); }
+.af-rail li[data-state="running"]::before {
+  background: linear-gradient(90deg, var(--af-accent) 0%, var(--af-accent-hi) 50%, var(--af-accent) 100%) 0 0 / 200% 100%; animation: af-flow var(--nx-pulse) linear infinite;
+}
+@keyframes af-flow { from { background-position: 200% 0; } to { background-position: 0 0; } }
+.af-rail-dot {
+  position: relative; z-index: 1; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--af-raised); color: var(--af-muted); box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--af-line-strong);
+  transition: background var(--nx-settle) var(--af-settle), box-shadow var(--nx-settle) var(--af-settle), transform var(--nx-settle) var(--af-settle);
+}
+.af-rail li[data-state="completed"] .af-rail-dot { background: var(--af-accent); color: var(--af-on-accent); box-shadow: none; }
+.af-rail li[data-state="running"] .af-rail-dot { background: var(--af-raised-2); box-shadow: inset 0 0 0 var(--nx-stroke-strong) var(--af-accent-hi); transform: scale(1.08); }
+.af-rail li[data-state="failed"] .af-rail-dot { background: color-mix(in srgb, var(--af-bad) 20%, var(--af-raised)); color: var(--af-bad); box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--af-bad); }
+.af-rail-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--af-accent-hi); animation: af-pulse var(--nx-pulse) var(--nx-ease-loop) infinite; }
+@keyframes af-pulse { 50% { transform: scale(0.6); opacity: 0.55; } }
+.af-rail-label { font-size: var(--nx-fs-xs); font-weight: 600; color: var(--af-muted); white-space: nowrap; }
+.af-rail li[data-state="completed"] .af-rail-label, .af-rail li[data-state="running"] .af-rail-label { color: var(--af-text-2); }
+.af-rail small { font-size: var(--nx-fs-2xs); color: var(--af-muted); font-variant-numeric: tabular-nums; }
+
+.af-caption { display: flex; align-items: center; gap: var(--nx-space-12); flex-wrap: wrap; justify-content: space-between; }
+.af-caption p { flex: 1 1 260px; min-width: 0; color: var(--af-muted); font-size: var(--nx-fs-sm); line-height: 1.5; }
+.af-caption-actions { display: flex; flex-wrap: wrap; gap: var(--nx-space-6); justify-content: flex-end; }
+.af-message {
+  flex: none; display: flex; align-items: flex-start; gap: var(--nx-space-8); padding: var(--nx-space-9) var(--nx-space-12); border-radius: var(--nx-r); font-size: var(--nx-fs-sm); line-height: 1.45;
+  background: var(--af-raised); box-shadow: var(--af-card); color: var(--af-text-2); animation: af-fade-in var(--nx-settle) var(--af-settle) both;
+}
+.af-message svg { flex: none; margin-top: var(--nx-space-1); }
+.af-message[data-tone="danger"] svg { color: var(--af-bad); }
+.af-message[data-tone="ready"] svg { color: var(--af-ok); }
+
+/* ---------- the brief ---------- */
+.af-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nx-space-12); }
+.af-form label, .af-tones-label { display: grid; gap: var(--nx-space-6); min-width: 0; color: var(--af-text-2); font-size: var(--nx-fs-sm); font-weight: 600; }
+.af-form label small { color: var(--af-muted); font-weight: 500; }
+.af-form :is(input:not([type="radio"]):not([type="checkbox"]), select, textarea) {
+  width: 100%; max-width: 100%; min-width: 0; min-height: 34px; padding: var(--nx-space-7) var(--nx-space-10); border: 1px solid var(--af-line-strong); border-radius: var(--nx-r); resize: vertical;
+  background: var(--af-bg); color: var(--af-text); font-size: var(--nx-fs); font-weight: 400; white-space: normal;
+  transition: border-color var(--nx-fast) var(--nx-ease), box-shadow var(--nx-fast) var(--nx-ease);
+}
+/* A brief is prose: it wraps at the field edge and keeps the line breaks typed into it. */
+.af-form textarea { white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; overflow-x: hidden; }
+.af-form textarea::placeholder { white-space: pre-wrap; }
+.af-form :is(input, select, textarea):focus { outline: none; border-color: var(--af-accent-hi); box-shadow: 0 0 0 var(--nx-ring) var(--af-accent-soft); }
+.af-form :is(input, textarea)::placeholder { color: var(--af-muted); }
+.af-form select option { background: var(--af-raised); color: var(--af-text); }
+.af-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--nx-space-10); }
+.af-tones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--nx-space-6); min-width: 0; }
+.af-tones-label { grid-column: 1 / -1; }
+.af-tones label {
+  position: relative; display: flex; align-items: center; gap: var(--nx-space-6); min-width: 0; height: 30px; padding: 0 var(--nx-space-8) 0 var(--nx-space-6); border-radius: var(--nx-r-pill); cursor: pointer; overflow: hidden; white-space: nowrap;
+  background: var(--af-bg); border: 1px solid var(--af-line-strong); font-weight: 600; font-size: var(--nx-fs-xs); transition: border-color var(--nx-med) var(--nx-ease), background var(--nx-med) var(--nx-ease);
+}
+.af-tones input { position: absolute; opacity: 0; pointer-events: none; }
+.af-tones label:has(input:focus-visible) { outline: 2px solid var(--af-accent-hi); outline-offset: 2px; }
+.af-tones label.is-on { background: var(--af-accent-soft); border-color: var(--af-accent-hi); color: var(--af-text); }
+.af-tones i { flex: none; width: 15px; height: 15px; border-radius: 50%; box-shadow: inset 0 0 0 var(--nx-stroke) color-mix(in srgb, var(--nx-line) 18%, transparent); }
+.af-tones [data-tone-swatch="midnight"] i { background: linear-gradient(135deg, var(--nx-sample-midnight) 50%, var(--nx-sample-midnight-accent) 50%); }
+.af-tones [data-tone-swatch="paper"] i { background: linear-gradient(135deg, var(--nx-sample-paper) 50%, var(--nx-sample-paper-accent) 50%); box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-sample-paper); }
+.af-tones [data-tone-swatch="warm"] i { background: linear-gradient(135deg, var(--nx-sample-warm) 50%, var(--nx-sample-warm-accent) 50%); }
+.af-note, .af-confirm { display: flex; align-items: flex-start; gap: var(--nx-space-8); padding: var(--nx-space-8) var(--nx-space-10); border-radius: var(--nx-r); background: color-mix(in srgb, var(--af-text) 4%, transparent); color: var(--af-muted); font-size: var(--nx-fs-sm); line-height: 1.45; }
+.af-note svg { flex: none; margin-top: var(--nx-space-1); color: var(--af-accent-text); }
+.af-note[data-ready="false"] svg { color: var(--af-muted); }
+.af-confirm { display: flex !important; grid-template-columns: none; font-weight: 500 !important; }
+.af-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--nx-space-8); height: 40px; padding: 0 var(--nx-space-16); border: 0; border-radius: var(--nx-r); cursor: pointer;
+  background: var(--af-accent); color: var(--af-on-accent); font-size: var(--nx-fs-md); font-weight: 700;
+  box-shadow: var(--nx-lift-2);
+  transition: background var(--nx-fast) var(--nx-ease), transform var(--nx-snappy) var(--af-snappy), box-shadow var(--nx-snappy) var(--nx-ease);
+}
+.af-primary:hover:not(:disabled) { background: var(--nx-accent-hover); transform: translateY(-1px); }
+.af-primary:active:not(:disabled) { transform: scale(0.98); }
+.af-primary:disabled { opacity: 0.55; cursor: default; }
+
+.af-card { display: grid; gap: var(--nx-space-10); padding: var(--nx-space-12); border-radius: var(--nx-r); background: var(--af-raised); box-shadow: var(--af-card); }
+.af-card > p, .af-card p { color: var(--af-muted); font-size: var(--nx-fs-sm); line-height: 1.5; }
+.af-card > header { display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-10); }
+.af-card > header > div { display: grid; gap: var(--nx-space-3); }
+.af-card > header strong { color: var(--af-text); font-size: var(--nx-fs); }
+.af-card > header em { font-style: normal; color: var(--af-muted); font-size: var(--nx-fs-xs); white-space: nowrap; }
+.af-list { display: grid; gap: var(--nx-space-2); }
+.af-list button {
+  display: flex; align-items: center; gap: var(--nx-space-10); width: 100%; padding: var(--nx-space-8) var(--nx-space-9); border: 0; border-radius: var(--nx-r-sm); cursor: pointer; text-align: left;
+  background: transparent; color: var(--af-text-2); transition: background var(--nx-fast) var(--nx-ease);
+}
+.af-list button:hover { background: var(--af-hover); }
+.af-list button.is-on { background: var(--af-accent-soft); color: var(--af-text); }
+.af-list button > span { display: grid; gap: var(--nx-space-2); flex: 1 1 auto; min-width: 0; }
+.af-list strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--nx-fs); color: var(--af-text); }
+.af-list small { color: var(--af-muted); font-size: var(--nx-fs-xs); }
+.af-list em { font-style: normal; color: var(--af-muted); font-size: var(--nx-fs-xs); font-variant-numeric: tabular-nums; }
+.af-list button[data-job-tone="ready"] em { color: var(--af-accent-text); }
+.af-list button[data-job-tone="danger"] em { color: var(--af-bad); }
+.af-selection { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--nx-space-8); }
+.af-selection span { display: grid; gap: var(--nx-space-1); }
+.af-selection small { color: var(--af-muted); font-family: var(--nx-mono, monospace); font-size: var(--nx-fs-xs); }
+.af-selection p { grid-column: 1 / -1; }
+.af-workspace { padding: 0 var(--nx-space-4); color: var(--af-muted); font-size: var(--nx-fs-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.af-workspace strong { color: var(--af-text-2); font-weight: 600; }
+
+.af-jobcard h2 { font: var(--nx-display-weight, 500) var(--nx-fs-xl)/1.2 var(--af-display); color: var(--af-text); }
+.af-jobcard p { color: var(--af-text-2) !important; font-size: var(--nx-fs) !important; }
+.af-progress { display: grid; gap: var(--nx-space-6); }
+.af-progress i { display: block; height: 6px; border-radius: var(--nx-r-xs); background: color-mix(in srgb, var(--af-text) 8%, transparent); overflow: hidden; }
+.af-progress b { display: block; height: 100%; border-radius: inherit; background: var(--af-accent); transition: width var(--nx-settle) var(--af-settle); }
+.af-progress span { color: var(--af-muted); font-size: var(--nx-fs-xs); font-variant-numeric: tabular-nums; }
+
+/* ---------- the receipts ---------- */
+.af-receipts { display: grid; gap: var(--nx-space-8); }
+.af-receipts .neyvia-factory-receipt {
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--nx-space-3) var(--nx-space-9); padding: var(--nx-space-10) var(--nx-space-11); border: 0; border-radius: var(--nx-r); min-height: 0;
+  background: var(--af-raised); box-shadow: var(--af-card); color: var(--af-text-2);
+}
+.af-receipts .neyvia-factory-receipt > svg { grid-row: span 2; color: var(--af-muted); }
+.af-receipts .neyvia-factory-receipt[data-tone="ready"] > svg { color: var(--af-accent-text); }
+.af-receipts .neyvia-factory-receipt[data-tone="danger"] > svg { color: var(--af-bad); }
+.af-receipts .neyvia-factory-receipt[data-tone="working"] > svg { color: var(--af-run); }
+.af-receipts .neyvia-factory-receipt > span { color: var(--af-muted); font-size: var(--nx-fs-xs); }
+.af-receipts .neyvia-factory-receipt > strong { color: var(--af-text); font-size: var(--nx-fs); text-transform: capitalize; overflow-wrap: anywhere; }
+.af-receipts .neyvia-factory-receipt > p { grid-column: 1 / -1; margin: var(--nx-space-4) 0 0; color: var(--af-muted); font-size: var(--nx-fs-xs); line-height: 1.45; overflow-wrap: anywhere; }
+.af-actions { display: flex; flex-wrap: wrap; gap: var(--nx-space-6); }
+.af-foot { display: grid; gap: var(--nx-space-4); color: var(--af-muted); font-size: var(--nx-fs-xs); }
+.af-foot span { display: flex; align-items: center; gap: var(--nx-space-6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.af-foot code { font-family: var(--nx-mono, monospace); }
+.af-lineage header { display: flex; align-items: center; gap: var(--nx-space-8); }
+.af-lineage header span { display: grid; gap: var(--nx-space-2); }
+.af-lineage em { font-style: normal; color: var(--af-muted); font-size: var(--nx-fs-xs); }
+.af-lineage dl { display: grid; grid-template-columns: auto 1fr; gap: var(--nx-space-4) var(--nx-space-10); font-size: var(--nx-fs-sm); }
+.af-lineage dt { color: var(--af-muted); }
+.af-lineage dd { color: var(--af-text-2); overflow-wrap: anywhere; }
+.af-howto ol { display: grid; gap: var(--nx-space-12); padding: 0; list-style: none; counter-reset: af-step; }
+.af-howto li { position: relative; padding-left: var(--nx-space-28); color: var(--af-muted); font-size: var(--nx-fs-sm); line-height: 1.5; counter-increment: af-step; }
+.af-howto li::before {
+  content: counter(af-step); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--af-accent-soft); color: var(--af-accent-text); font-size: var(--nx-fs-xs); font-weight: 700;
+}
+.af-howto li strong { color: var(--af-text); }
+.af-mobile-route { display: grid; grid-template-columns: auto 1fr; gap: var(--nx-space-8); align-items: start; padding-top: var(--nx-space-10); border-top: 1px solid var(--af-line); color: var(--af-muted); font-size: var(--nx-fs-sm); line-height: 1.45; }
+.af-mobile-route svg { color: var(--af-accent-text); margin-top: var(--nx-space-1); }
+.af-mobile-route strong { color: var(--af-text); }
+.af-mobile-route .af-button { grid-column: 1 / -1; justify-self: start; }
+
+/* ---------- the sketch: the generated app's own layout and colours ---------- */
+.af-sketch {
+  width: 100%; height: 100%; overflow: hidden; color: var(--sk-ink);
+  background-color: var(--sk-page); background-image: radial-gradient(circle at 82% 0%, var(--sk-glow), transparent 34rem);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: var(--nx-fs-prose);
+  transition: background-color var(--nx-settle) var(--nx-ease), color var(--nx-settle) var(--nx-ease);
+}
+.af-sk-shell { width: min(900px, calc(100% - 64px)); margin: 0 auto; padding: var(--nx-space-48) 0 var(--nx-space-28); }
+.af-sk-intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--nx-space-28); margin-bottom: var(--nx-space-28); }
+.af-sk-eyebrow, .af-sk-workhead span { color: var(--sk-accent); font-size: var(--nx-fs-xs); font-weight: 800; letter-spacing: 0.17em; }
+.af-sketch.af-sketch.af-sketch.af-sketch h1 {
+  margin: var(--nx-space-12) 0 var(--nx-space-10); max-width: 700px; color: var(--sk-strong); font-size: var(--nx-fs-display-xl); line-height: 0.95; letter-spacing: -0.06em; font-weight: 750;
+  overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.af-sk-intro p { max-width: 620px; color: var(--sk-muted); font-size: var(--nx-fs-lg); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.af-sk-local { display: inline-flex; align-items: center; gap: var(--nx-space-8); color: var(--sk-muted); font-size: var(--nx-fs-sm); font-weight: 700; white-space: nowrap; }
+.af-sk-local i { width: 8px; height: 8px; border-radius: 50%; background: var(--sk-accent); box-shadow: 0 0 0 var(--nx-space-5) var(--sk-ring); }
+.af-sk-work { padding: var(--nx-space-32); border: 1px solid var(--sk-line); border-radius: var(--nx-r-2xl); background: var(--sk-panel); box-shadow: var(--nx-lift-3); }
+.af-sk-workhead { display: flex; align-items: end; justify-content: space-between; gap: var(--nx-space-20); padding-bottom: var(--nx-space-20); border-bottom: 1px solid var(--sk-line); }
+.af-sketch.af-sketch.af-sketch.af-sketch .af-sk-workhead h2 { margin: var(--nx-space-6) 0 0; color: var(--sk-strong); font-size: var(--nx-fs-title); letter-spacing: -0.035em; }
+.af-sk-workhead strong { color: var(--sk-muted); font-size: var(--nx-fs-sm); }
+.af-sk-capture { margin-top: var(--nx-space-24); }
+.af-sk-capture .af-sk-label { display: block; margin-bottom: var(--nx-space-8); color: var(--sk-muted); font-size: var(--nx-fs-sm); font-weight: 750; }
+.af-sk-capture > div, .af-sk-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--nx-space-10); }
+.af-sk-toolbar { margin-top: var(--nx-space-16); }
+.af-sk-input {
+  display: flex; align-items: center; min-height: 46px; padding: 0 var(--nx-space-14); border: 1px solid var(--sk-line); border-radius: var(--nx-r-lg);
+  color: var(--sk-hint); background: var(--sk-field); white-space: nowrap; overflow: hidden;
+}
+.af-sk-button { display: inline-flex; align-items: center; min-height: 46px; padding: 0 var(--nx-space-18); border-radius: var(--nx-r-lg); color: var(--sk-accent-ink); background: var(--sk-accent); font-weight: 800; white-space: nowrap; }
+.af-sk-button.is-secondary { border: 1px solid var(--sk-line); color: var(--sk-ink); background: transparent; }
+.af-sk-list { display: grid; gap: var(--nx-space-10); margin: var(--nx-space-20) 0 0; padding: 0; list-style: none; }
+.af-sk-list li {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--nx-space-12); padding: var(--nx-space-12) var(--nx-space-14); border: 1px solid var(--sk-line); border-radius: var(--nx-r-lg);
+  background: var(--sk-row); animation: af-fade-in var(--nx-settle) var(--nx-ease) both;
+}
+.af-sk-list li:nth-child(2) { animation-delay: var(--nx-stagger); }
+.af-sk-list li:nth-child(3) { animation-delay: var(--nx-delay); }
+.af-sk-list li > i { width: 18px; height: 18px; border-radius: var(--nx-r-xs); box-shadow: inset 0 0 0 var(--nx-stroke-icon) var(--sk-line); }
+.af-sk-list li > i.is-done { background: var(--sk-accent); box-shadow: none; }
+.af-sk-list li:not(:has(i)) { grid-template-columns: minmax(0, 1fr) auto; }
+.af-sk-list small { color: var(--sk-muted); font-size: var(--nx-fs-sm); }
+.af-sk-empty { margin-top: var(--nx-space-20); padding: var(--nx-space-32) var(--nx-space-20); border: 1px dashed var(--sk-line); border-radius: var(--nx-r-lg); text-align: center; }
+.af-sketch.af-sketch.af-sketch.af-sketch .af-sk-empty strong { color: var(--sk-strong); }
+.af-sk-empty p { max-width: 440px; margin: var(--nx-space-8) auto 0; color: var(--sk-muted); line-height: 1.5; }
+.af-sk-foot { display: flex; justify-content: space-between; gap: var(--nx-space-16); margin-top: var(--nx-space-20); color: var(--sk-muted); font-size: var(--nx-fs-sm); }
+.af-sk-foot code { font-family: ui-monospace, monospace; }
+/* On a phone the generated app stacks, as its own CSS does under 720px. */
+.af-sketch.is-narrow .af-sk-shell { width: calc(100% - 32px); padding: var(--nx-space-18) 0 var(--nx-space-20); }
+.af-sketch.is-narrow .af-sk-intro { grid-template-columns: 1fr; gap: var(--nx-space-12); margin-bottom: var(--nx-space-18); }
+.af-sketch.af-sketch.af-sketch.af-sketch.is-narrow h1 { font-size: var(--nx-fs-display); }
+.af-sketch.is-narrow .af-sk-intro p { font-size: var(--nx-fs-prose); }
+.af-sketch.is-narrow .af-sk-work { padding: var(--nx-space-18); border-radius: var(--nx-r-xl); }
+.af-sketch.af-sketch.af-sketch.af-sketch.is-narrow .af-sk-workhead h2 { font-size: var(--nx-fs-xl); }
+.af-sketch.is-narrow .af-sk-capture > div { grid-template-columns: 1fr; }
+.af-sketch.is-narrow .af-sk-foot { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .af *, .af *::before, .af *::after { animation-duration: var(--nx-reduced) !important; animation-iteration-count: 1 !important; transition-duration: var(--nx-reduced) !important; }
+}
+.nx[data-nx-motion="reduce"] .af *, .nx[data-nx-motion="reduce"] .af *::before, .nx[data-nx-motion="reduce"] .af *::after {
+  animation-duration: var(--nx-reduced) !important; animation-iteration-count: 1 !important; transition-duration: var(--nx-reduced) !important;
+}
+
+/* ---------- Roomy: full-screen App Factory gives the brief and the receipts real columns ---------- */
+@container (min-width: 1500px) {
+  .af-body { grid-template-columns: minmax(340px, 400px) minmax(0, 1fr) minmax(320px, 380px); }
+  .af-brief, .af-inspector { gap: var(--nx-space-16); padding: var(--nx-space-20) var(--nx-space-20) var(--nx-space-28); font-size: var(--nx-fs-md); }
+  .af-brief label, .af-brief .af-field > span, .af-brief legend { font-size: var(--nx-fs-md); }
+  .af-brief input, .af-brief select, .af-brief textarea { font-size: var(--nx-fs-md); min-height: 40px; }
+  .af-brief .af-button, .af-inspector .af-button { min-height: 40px; font-size: var(--nx-fs-md); }
+  .af-brief p, .af-inspector p, .af-inspector li, .af-brief li { font-size: var(--nx-fs-md); line-height: 1.5; }
+  .af-canvas { padding: var(--nx-space-24) var(--nx-space-28) var(--nx-space-18); }
+}
+
+/* In a pane wide enough for the three columns, the brief and the receipts are both shown whatever tab the narrow layout last chose. */
+@container (min-width: 760px) {
+  .af:not([data-af-compact])[data-af-pane] .af-brief, .af:not([data-af-compact])[data-af-pane] .af-inspector { display: flex; }
+}
+.af-mobile-route .af-button { padding: 0 var(--nx-space-14); min-height: 36px; justify-self: start; margin-top: var(--nx-space-4); }
+
+/* --nx-space-11 does not exist, so buttons lost their side padding: give them real ones. */
+.af-button { padding: 0 var(--nx-space-12); min-height: 32px; }
+.af-actions { gap: var(--nx-space-8); }
+.af-inspector .af-actions .af-button { flex: 0 1 auto; white-space: normal; text-align: left; }

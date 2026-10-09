@@ -1,0 +1,190 @@
+.neyvia-taste-review {
+  display: grid;
+  gap: var(--nx-space-12);
+  padding: var(--nx-space-14) var(--nx-space-16);
+  border-radius: var(--nx-r-lg);
+  background: var(--nx-panel);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line);
+  color: var(--nx-text);
+}
+.neyvia-taste-review > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nx-space-12);
+}
+.neyvia-taste-review > header > div {
+  display: grid;
+  gap: var(--nx-space-2);
+  min-width: 0;
+}
+.neyvia-taste-review > header strong {
+  font-size: var(--nx-fs);
+  font-weight: 620;
+}
+.neyvia-taste-review > header span,
+.neyvia-taste-note {
+  color: var(--nx-muted);
+  font-size: var(--nx-fs-sm);
+  line-height: 1.45;
+}
+.neyvia-taste-note { margin: 0; }
+.neyvia-taste-goal { display: grid; gap: var(--nx-space-5); }
+.neyvia-taste-goal > span { color: var(--nx-faint); font-size: var(--nx-fs-xs); font-weight: 600; }
+.neyvia-taste-goal textarea {
+  width: 100%; min-width: 0; min-height: 48px; box-sizing: border-box; resize: vertical;
+  padding: var(--nx-space-8) var(--nx-space-10); border: 1px solid var(--nx-line-strong);
+  border-radius: var(--nx-r-sm); background: var(--nx-hover);
+  color: var(--nx-text); font: inherit; font-size: var(--nx-fs-sm);
+}
+.neyvia-taste-goal textarea:focus-visible { outline: 2px solid var(--nx-accent); outline-offset: 2px; }
+.neyvia-taste-goal textarea::placeholder { color: var(--nx-faint); }
+.neyvia-taste-scope { display: flex; flex-wrap: wrap; gap: var(--nx-space-5) var(--nx-space-14); color: var(--nx-muted); font-size: var(--nx-fs-xs); }
+.neyvia-taste-review > header button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--nx-space-7);
+  height: 32px;
+  padding: 0 var(--nx-space-14);
+  border: 0;
+  border-radius: var(--nx-r-pill);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--nx-accent) 82%, var(--nx-raised)), var(--nx-accent));
+  box-shadow: var(--nx-lift-2);
+  color: var(--nx-on-accent);
+  font: inherit;
+  font-size: var(--nx-fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter var(--nx-fast) var(--nx-ease), transform var(--nx-fast) cubic-bezier(.34, 1.45, .64, 1);
+}
+.neyvia-taste-review > header button:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.neyvia-taste-review > header button:disabled { opacity: .55; cursor: default; }
+.neyvia-taste-spin { animation: neyvia-taste-spin var(--nx-spin) linear infinite; }
+@keyframes neyvia-taste-spin { to { transform: rotate(1turn); } }
+
+.neyvia-taste-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--nx-space-8) var(--nx-space-12);
+  color: var(--nx-muted);
+  font-size: var(--nx-fs-sm);
+}
+.neyvia-taste-gate {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-6);
+  height: 26px;
+  padding: 0 var(--nx-space-10);
+  border-radius: var(--nx-r-pill);
+  font-weight: 600;
+}
+.neyvia-taste-gate[data-gate="clear"] {
+  background: color-mix(in srgb, var(--nx-green) 14%, transparent);
+  color: var(--nx-green);
+}
+.neyvia-taste-gate[data-gate="blocked"] {
+  background: color-mix(in srgb, var(--nx-red) 14%, transparent);
+  color: var(--nx-red);
+}
+
+.neyvia-taste-captures > summary {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  gap: var(--nx-space-8);
+  color: var(--nx-text-2);
+  font-size: var(--nx-fs-sm);
+  font-weight: 580;
+  cursor: pointer;
+}
+.neyvia-taste-captures > summary span {
+  color: var(--nx-faint);
+  font-variant-numeric: tabular-nums;
+}
+.neyvia-taste-captures > summary:focus-visible {
+  outline: 2px solid var(--nx-accent);
+  outline-offset: 4px;
+  border-radius: var(--nx-r-xxs);
+}
+
+.neyvia-taste-shots {
+  display: grid;
+  grid-template-columns: minmax(0, 3.7fr) minmax(0, 1fr);
+  gap: var(--nx-space-10);
+  align-items: start;
+  margin-top: var(--nx-space-10);
+}
+.neyvia-taste-shots a {
+  display: grid;
+  gap: var(--nx-space-6);
+  color: var(--nx-faint);
+  font-size: var(--nx-fs-xs);
+  text-decoration: none;
+  text-transform: capitalize;
+}
+.neyvia-taste-shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--nx-r);
+  box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong);
+  transition: box-shadow var(--nx-fast) var(--nx-ease), transform var(--nx-snappy) cubic-bezier(.22, 1, .36, 1);
+}
+.neyvia-taste-shots a:hover img {
+  box-shadow: var(--nx-lift-2);
+  transform: translateY(-1px);
+}
+
+.neyvia-taste-findings {
+  display: grid;
+  gap: var(--nx-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.neyvia-taste-findings li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: var(--nx-space-10);
+  padding: var(--nx-space-9) var(--nx-space-10);
+  border-radius: var(--nx-r);
+  animation: neyvia-taste-in var(--nx-settle) cubic-bezier(.22, 1, .36, 1) both;
+}
+.neyvia-taste-findings li:nth-child(2) { animation-delay: var(--nx-stagger); }
+.neyvia-taste-findings li:nth-child(3) { animation-delay: var(--nx-stagger); }
+.neyvia-taste-findings li:nth-child(n + 4) { animation-delay: var(--nx-feedback-delay); }
+.neyvia-taste-findings li:hover { background: var(--nx-hover); }
+.neyvia-taste-findings li > svg { margin-top: var(--nx-space-2); }
+.neyvia-taste-findings li[data-severity="block"] > svg { color: var(--nx-red); }
+.neyvia-taste-findings li[data-severity="warn"] > svg { color: var(--nx-state-caution); }
+.neyvia-taste-findings li[data-severity="note"] > svg { color: var(--nx-muted); }
+.neyvia-taste-findings strong {
+  display: block;
+  font-size: var(--nx-fs);
+  font-weight: 580;
+}
+.neyvia-taste-findings small {
+  display: block;
+  margin-top: var(--nx-space-1);
+  color: var(--nx-faint);
+  font-size: var(--nx-fs-xs);
+}
+.neyvia-taste-findings p {
+  margin: var(--nx-space-4) 0 0;
+  color: var(--nx-text-2);
+  font-size: var(--nx-fs-sm);
+  line-height: 1.45;
+}
+@keyframes neyvia-taste-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .neyvia-taste-findings li, .neyvia-taste-spin { animation: none; }
+}
+@media (max-width: 600px) {
+  .neyvia-taste-review > header { flex-wrap: wrap; }
+  .neyvia-taste-shots { grid-template-columns: minmax(0, 1fr); }
+}

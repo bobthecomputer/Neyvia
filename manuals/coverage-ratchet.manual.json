@@ -1,0 +1,71 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "coverage-ratchet",
+  "kind": "environment",
+  "proofs": {
+    "area": "coverage-ratchet, static-web-reach, build-cache",
+    "manifests": [
+      "config/proofs/coverage-ratchet.json",
+      "config/proofs/static-web-reach.json",
+      "config/proofs/build-cache.json"
+    ],
+    "contracts": [
+      {
+        "id": "p22.coverage-ratchet.monotonic",
+        "phase": "post",
+        "claim": "A committed source-bound coverage baseline admits existing debt only: new paths, restored retired debt, expanded baselines, failed or stale outcomes and missing runners refuse release; the original coverage reference cannot change.",
+        "checkedAt": [
+          "grant_agent.contract_ratchet.evaluate",
+          "grant_agent.contract_ratchet.validate_baseline",
+          "grant_agent.contract_gate.baseline_bindings",
+          "grant_agent.proofs_ratchet.self_check"
+        ],
+        "impact": [
+          "Release admission and published coverage debt"
+        ]
+      },
+      {
+        "id": "p22.static-web-reach",
+        "phase": "post",
+        "claim": "Only passing source-bound UI journeys seed a static import graph: disconnected files earn no credit, failed or stale journeys fail closed, and edits or newly resolved imports invalidate reuse. This weaker evidence stays separate from execution coverage.",
+        "checkedAt": [
+          "grant_agent.contract_web_reach.analyze",
+          "grant_agent.contract_web_reach.is_fresh",
+          "grant_agent.proofs_web_reach.self_check",
+          "scripts/p22_js_imports.cjs"
+        ],
+        "impact": [
+          "Static web reachability from observed UI outcome entries"
+        ]
+      },
+      {
+        "id": "p22.build-cache.source-and-artifacts",
+        "phase": "post",
+        "claim": "A successful source-stable Vite receipt may be reused only while every declared source input and every emitted artifact remains exact; additions, deletions, edits, failed builds and altered receipts invalidate reuse.",
+        "checkedAt": [
+          "grant_agent.contract_build_cache.save",
+          "grant_agent.contract_build_cache.load",
+          "grant_agent.contract_build_cache.source_paths",
+          "grant_agent.proofs_build_cache.self_check"
+        ],
+        "impact": [
+          "Incremental release build admission"
+        ]
+      }
+    ]
+  },
+  "schemas": {},
+  "chapters": {
+    "overview": {
+      "title": "Monotonic release coverage and separate static web reachability",
+      "state": {},
+      "actions": {},
+      "checks": {},
+      "procedures": {},
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [],
+      "guidance": []
+    }
+  }
+}

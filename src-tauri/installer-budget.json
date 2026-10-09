@@ -1,0 +1,62 @@
+{
+  "$comment": [
+    "Size budget for the Neyvia core installer, enforced by scripts/check_installer_size.mjs.",
+    "The core installer must stay thin: optional CLIs, models, GPU libraries, FFmpeg,",
+    "and marketplace applications are downloaded on demand and must never be bundled.",
+    "Budgets sit roughly 50% above the measured baseline so ordinary growth is fine",
+    "and an accidental heavy dependency fails the build loudly.",
+    "When a budget is raised, record why in this file's history — an unexplained",
+    "raise is how a thin installer quietly stops being thin."
+  ],
+  "measuredBaseline": {
+    "recordedAt": "2026-07-25",
+    "commit": "4cf02e7",
+    "msiBytes": 9347552,
+    "nsisBytes": 6437501,
+    "stagedResourceBytes": 8388608,
+    "note": "First build that bundles the Python backend (grant_agent + runtime scripts)."
+  },
+  "history": [
+    {
+      "recordedAt": "2026-09-24",
+      "nsisBytes": 13468155,
+      "stagedResourceBytes": 11631361,
+      "reason": "The desktop NSIS installer now includes the Python backend and its static configuration required for native chat. The prior resource-free installer could launch its web UI but left backend commands on an older per-user install. The 14 MiB NSIS limit covers this measured 12.84 MiB candidate with modest growth room; optional runtimes and models remain excluded."
+    }
+  ],
+  "budgets": {
+    "msi": { "maxBytes": 14680064, "label": "Windows MSI installer" },
+    "nsis": { "maxBytes": 14680064, "label": "Windows NSIS setup" },
+    "stagedResources": { "maxBytes": 12582912, "label": "Staged backend resources" }
+  },
+  "forbiddenContent": [
+    {
+      "pattern": "(^|/)node_modules/",
+      "reason": "Node dependencies belong to the build, not the installed core."
+    },
+    {
+      "pattern": "ffmpeg|ffprobe",
+      "reason": "FFmpeg is an optional media dependency, installed with the video module."
+    },
+    {
+      "pattern": "\\.(onnx|safetensors|gguf|pt|pth|bin)$",
+      "reason": "Model weights must never ship in the core installer."
+    },
+    {
+      "pattern": "(^|/)(cuda|cudnn|torch|tensorflow)",
+      "reason": "GPU and ML runtimes are optional and installed on demand."
+    },
+    {
+      "pattern": "(^|/)__pycache__/",
+      "reason": "Build detritus; purged by scripts/prepare_backend_bundle.mjs."
+    },
+    {
+      "pattern": "(^|/)\\.agent_(control|runs)/",
+      "reason": "Mutable runtime state belongs in the per-user workspace, never in immutable installer resources."
+    },
+    {
+      "pattern": "(^|/)(playwright|puppeteer)/",
+      "reason": "Browser automation packages are optional; connected Chrome drives the installed browser."
+    }
+  ]
+}

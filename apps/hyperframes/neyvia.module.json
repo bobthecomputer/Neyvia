@@ -1,0 +1,242 @@
+{
+  "requires": {"neyviaApi": ">=1.0 <2"},
+ "schema": "neyvia.module.v1",
+ "id": "hyperframes",
+ "name": "HyperFrames",
+ "purpose": "Agent-usable HyperFrames (HeyGen, Apache-2.0): lint, observe the timeline, render headless to MP4 with outcome contracts, snapshot frames and run the Studio privately.",
+ "files": [
+  "apps/hyperframes/hyperframes_mod.py",
+  "apps/hyperframes/manual.cl",
+  "apps/hyperframes/host-contract.json"
+ ],
+ "manual": "hyperframes",
+ "sourceManual": "manual.cl",
+ "contract": "host-contract.json",
+ "ownerSurface": "Marketplace / Mods",
+ "settings": [
+  "enabled"
+ ],
+ "events": [],
+ "dependencies": [],
+ "permissions": [
+  "Runs the pinned hyperframes CLI and a local headless Chromium with a throwaway profile (no window)",
+  "Reads and writes the project folder you name",
+  "Telemetry, skill installs and cloud describers are switched off; no network beyond loopback"
+ ],
+ "actions": [
+  {
+   "name": "neyvia.mod.hyperframes.lint",
+   "description": "Lint a HyperFrames composition folder; returns the upstream findings.",
+   "file": "apps/hyperframes/hyperframes_mod.py",
+   "function": "lint",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "project"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.hyperframes.timeline",
+   "description": "Observe a composition's tracks and clips as a CL Scene.",
+   "file": "apps/hyperframes/hyperframes_mod.py",
+   "function": "timeline",
+   "mutability": "read",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     }
+    },
+    "required": [
+     "project"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.hyperframes.render",
+   "description": "Render a composition headless to MP4 and check duration, frame count, black/frozen frames and audio clipping on the file.",
+   "file": "apps/hyperframes/hyperframes_mod.py",
+   "function": "render",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "fps": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 120
+     },
+     "quality": {
+      "type": "string",
+      "maxLength": 4000,
+      "enum": [
+       "draft",
+       "standard",
+       "high"
+      ]
+     },
+     "expectedS": {
+      "type": "number"
+     },
+     "workers": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 8
+     }
+    },
+    "required": [
+     "project"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.hyperframes.edit",
+   "description": "One upstream timeline edit (move, trim, split, delete, set, duplicate) on a clip ref, then re-observe the timeline.",
+   "file": "apps/hyperframes/hyperframes_mod.py",
+   "function": "edit",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "op": {
+      "type": "string",
+      "maxLength": 4000,
+      "enum": [
+       "move",
+       "trim",
+       "split",
+       "delete",
+       "set",
+       "duplicate"
+      ]
+     },
+     "ref": {
+      "type": "string",
+      "maxLength": 200
+     },
+     "time": {
+      "type": "number"
+     },
+     "options": {
+      "type": "object"
+     }
+    },
+    "required": [
+     "project",
+     "op",
+     "ref"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.hyperframes.snapshot",
+   "description": "Capture exact frames as PNG at given times.",
+   "file": "apps/hyperframes/hyperframes_mod.py",
+   "function": "snapshot",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "out": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "at": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      }
+     },
+     "frames": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 30
+     }
+    },
+    "required": [
+     "project"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.hyperframes.studio",
+   "description": "Start, stop or read the HyperFrames Studio preview server for a project (127.0.0.1:49165, no browser window).",
+   "file": "apps/hyperframes/hyperframes_mod.py",
+   "function": "studio",
+   "mutability": "external_action",
+   "inputSchema": {
+    "type": "object",
+    "properties": {
+     "project": {
+      "type": "string",
+      "maxLength": 4000
+     },
+     "action": {
+      "type": "string",
+      "maxLength": 4000,
+      "enum": [
+       "start",
+       "stop",
+       "status"
+      ]
+     }
+    },
+    "required": [
+     "project",
+     "action"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "neyvia.mod.hyperframes.verify",
+   "description": "Real round trip on a two-clip composition: render headless, then the outcome contracts.",
+   "file": "apps/hyperframes/hyperframes_mod.py",
+   "function": "verify",
+   "mutability": "artifact_write",
+   "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+   }
+  }
+ ],
+ "upstream": {
+  "repository": "https://github.com/heygen-com/hyperframes",
+  "license": "Apache-2.0",
+  "version": "0.8.138"
+ },
+ "sourceRepository": "https://github.com/heygen-com/hyperframes"
+}

@@ -1,0 +1,395 @@
+/* One identity per theme (plan 29 THEMES2, spec plans/29-theme-identities.md).
+   Each theme has one idea, and it shows in three places:
+     ambient layer  barely visible, drawn once, then compositor transform/opacity only (NxKomorebi, NxThemeAmbient, this file);
+                    paused while the page is hidden (data-paused), still under reduced motion (OS setting and Settings > Motion > Reduce),
+                    never moving under text in a way that changes its contrast
+     working light  how a working session, sidebar row, task card or checklist looks: always the brand coin's orange (--nx-sunlit),
+                    only the way the light arrives changes
+     motion         how things enter, tick and open: 160-420 ms, ease-out, no overshoot
+   Hard bans: no neon, no multi-hue gradients, no glassmorphism, no added particles, no italics.
+   Forest's own rules (canopy, sprout, sweep, part) stay in nxThemes.css and nxMotion.css; Morning shares its canopy.
+
+   Selector groups used below (the same set Forest's working light uses):
+     work   a working Sessions tile, a running Night Shift / Canopy / conductor / mission card
+     row    the working sidebar row            strip  the composer's Working strip        live  the live checklist
+     coin   the working sidebar light          item   what enters a list              panel  what opens beside the chat */
+
+/* ---------- stagger: shared by every identity theme (Paper sets --nx-stagger to 0) ---------- */
+.nx :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(2) { --i: 1; }
+.nx :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(3) { --i: 2; }
+.nx :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(4) { --i: 3; }
+.nx :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(5) { --i: 4; }
+.nx :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(6) { --i: 5; }
+.nx :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(7) { --i: 6; }
+.nx :is(.nx-ss-tile, .nx-side .nx-leaf):nth-child(8) { --i: 7; }
+
+/* Ambient layers that are not canvases of NxKomorebi. */
+.nx .nx-themeambient { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.nx .nx-themeambient > * { position: absolute; inset: 0; }
+.nx .nx-themeambient i { position: absolute; display: block; font-style: normal; }
+.nx .nx-themeambient[data-paused] * { animation-play-state: paused !important; }
+.nx[data-nx-motion="reduce"] .nx-themeambient * { animation: none !important; transition: none !important; }
+
+/* ======================================================================
+   MORNING: the same forest at first light.
+   Leaf shadows (NxKomorebi, shadows only) drift over warm paper. Working: a warm sunbeam edge. Motion: light rising.
+   ====================================================================== */
+.nx[data-nx-theme="light"] {
+  --nx-canopy-shade: #1b2d1a;
+  --nx-sun-patch: #ffc27a;
+  --nx-sunlit: #f08a1c;
+  --nx-sunlit-soft: rgba(255, 176, 64, 0.3);
+  --nx-sunlit-rim: rgba(240, 138, 28, 0.85);
+  --nx-ease: cubic-bezier(0.2, 0.7, 0.25, 1);
+  --nx-rise: 360ms;
+  --nx-warm: 520ms;
+  --nx-canopy-far: 36s;
+  --nx-canopy-near: 13s;
+  --nx-canopy-light: 8s;
+}
+.nx[data-nx-theme="light"] .nx-komorebi-far { opacity: 0.13; }
+.nx[data-nx-theme="light"] .nx-komorebi-near { opacity: 0.17; }
+.nx[data-nx-theme="light"] .nx-komorebi-flecks { display: none; }
+.nx.is-phone[data-nx-theme="light"] .nx-komorebi-far { opacity: 0.09; }
+.nx.is-phone[data-nx-theme="light"] .nx-komorebi-near { opacity: 0.12; }
+/* Warm patches where sun lands while an agent works: multiplied onto paper, so they only warm it. */
+.nx[data-nx-theme="light"] .nx-komorebi-sun { mix-blend-mode: multiply; }
+.nx[data-nx-ambient="active"][data-nx-theme="light"] .nx-komorebi-sun { opacity: 0.34; }
+.nx[data-nx-theme="light"] .nx-ambient::after { display: none; }
+.nx[data-nx-theme="light"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working) {
+  background-image: linear-gradient(90deg, var(--nx-sunlit-soft), rgba(255, 200, 110, 0.1) 40%, transparent 72%);
+  box-shadow: inset 3px 0 0 var(--nx-sunlit-rim), 0 0 0 var(--nx-stroke) rgba(240, 138, 28, 0.3), 14px 0 36px -22px rgba(255, 170, 60, 0.7), var(--nx-card-shadow);
+}
+.nx[data-nx-theme="light"] .nx-leaf.is-running > .nx-leaf-head > .nx-row {
+  background-image: linear-gradient(90deg, rgba(255, 176, 64, 0.32), transparent 76%);
+  box-shadow: inset 3px 0 0 var(--nx-sunlit-rim);
+}
+.nx[data-nx-theme="light"] .nx-runstrip:not(.is-gold) {
+  background-image: linear-gradient(90deg, rgba(255, 176, 64, 0.3), transparent 70%);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 3px 0 0 var(--nx-sunlit-rim);
+}
+.nx[data-nx-theme="light"] .nx-checklist.is-live { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 3px 0 0 var(--nx-sunlit-rim), 10px 0 30px -22px rgba(255, 170, 60, 0.8); }
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-theme="light"] :is(.nx-checklist-item, .nx-ss-tile, .nx-ns-card, .nx-canopy-card, .nx-side .nx-leaf:nth-child(-n+8)) {
+    animation: nx-light-rise var(--nx-rise) var(--nx-ease) both; animation-delay: calc(var(--i, 0) * var(--nx-stagger));
+  }
+  .nx[data-nx-theme="light"] .nx-checklist .nx-checklist-item.is-done { animation: nx-light-rise var(--nx-rise) var(--nx-ease) both, nx-warm-tick var(--nx-warm) var(--nx-ease) both; }
+  .nx[data-nx-theme="light"] :is(.nx-stage-body, .nx-ns-side, .nx-panel-overlay) { animation: nx-light-rise var(--nx-rise) var(--nx-ease) backwards; }
+}
+@keyframes nx-light-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+/* A tick warms the step, then it settles. */
+@keyframes nx-warm-tick { from { background-color: rgba(255, 176, 64, 0.38); } to { background-color: transparent; } }
+
+/* ======================================================================
+   SUNSET: horizon. The band along the bottom follows the real local time (NxThemeAmbient / nxSunModel.horizonAt).
+   Working: the item glows like the sun on the horizon, light from below. Motion: slides settle down, panels rise from the horizon.
+   ====================================================================== */
+.nx[data-nx-theme="sunset"] {
+  --nx-sunlit: #ff8a3d;
+  --nx-sunlit-soft: rgba(255, 138, 61, 0.24);
+  --nx-sunlit-rim: rgba(255, 170, 90, 0.85);
+  --nx-ease: cubic-bezier(0.22, 0.7, 0.25, 1);
+  --nx-settle-down: 340ms;
+  --nx-horizon-rise: 380ms;
+}
+.nx .nx-horizon { --nx-horizon-h: 0.14; --nx-horizon-glow: 0.5; }
+.nx .nx-horizon-band {
+  inset: auto 0 0 0; height: 100%; transform-origin: 50% 100%; will-change: transform;
+  transform: scaleY(var(--nx-horizon-h));
+  opacity: calc(0.45 + 0.55 * var(--nx-horizon-glow));
+  background: linear-gradient(0deg, rgba(255, 138, 61, 0.3) 0%, rgba(255, 138, 61, 0.16) 38%, rgba(255, 138, 61, 0.06) 74%, rgba(255, 138, 61, 0) 100%);
+  transition: transform 1800ms var(--nx-ease), opacity 1800ms var(--nx-ease);
+}
+/* The sun's last edge on the horizon line itself. */
+.nx .nx-horizon-line {
+  left: 6%; right: 6%; bottom: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 190, 120, 0.9) 50%, transparent);
+  opacity: calc(0.25 + 0.5 * var(--nx-horizon-glow));
+}
+.nx[data-nx-theme="sunset"] .nx-ambient::after { display: none; }
+/* Let the horizon through: the chat column was an opaque sheet over the ambient layer (the other themes already release it). */
+.nx[data-nx-theme="sunset"] .nx-work-chat,
+.nx[data-nx-theme="night"] .nx-work-chat { background: transparent; }
+.nx[data-nx-theme="sunset"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working) {
+  background-image: radial-gradient(130% 95% at 50% 128%, var(--nx-sunlit-soft), transparent 58%);
+  box-shadow: 0 0 0 var(--nx-stroke) rgba(255, 138, 61, 0.34), inset 0 -3px 0 var(--nx-sunlit-rim), 0 20px 40px -22px rgba(255, 138, 61, 0.7), var(--nx-card-shadow);
+}
+.nx[data-nx-theme="sunset"] .nx-leaf.is-running > .nx-leaf-head > .nx-row {
+  background-image: linear-gradient(0deg, rgba(255, 138, 61, 0.26), transparent 68%);
+  box-shadow: inset 0 -2px 0 var(--nx-sunlit-rim);
+}
+.nx[data-nx-theme="sunset"] .nx-runstrip:not(.is-gold) {
+  background-image: linear-gradient(0deg, rgba(255, 138, 61, 0.24), transparent 70%);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 0 -2px 0 var(--nx-sunlit-rim);
+}
+.nx[data-nx-theme="sunset"] .nx-checklist.is-live { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 0 -2px 0 var(--nx-sunlit-rim), 0 18px 36px -24px rgba(255, 138, 61, 0.8); }
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-theme="sunset"] :is(.nx-checklist-item, .nx-ss-tile, .nx-ns-card, .nx-canopy-card, .nx-side .nx-leaf:nth-child(-n+8)) {
+    animation: nx-sun-settle var(--nx-settle-down) var(--nx-ease) both; animation-delay: calc(var(--i, 0) * var(--nx-stagger));
+  }
+  .nx[data-nx-theme="sunset"] :is(.nx-stage-body, .nx-ns-side, .nx-panel-overlay) { transform-origin: 50% 100%; animation: nx-horizon-rise var(--nx-horizon-rise) var(--nx-ease) backwards; }
+}
+@keyframes nx-sun-settle { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes nx-horizon-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.nx[data-nx-motion="reduce"] .nx-horizon-band { transition: none; }
+@media (prefers-reduced-motion: reduce) { .nx .nx-horizon-band { transition: none; } }
+
+/* ======================================================================
+   NIGHT GREEN: dark water.
+   One small canvas of caustics and a faint moon path (NxThemeAmbient). Working: one soft ring spreads from the coin like a drop,
+   then a steady warm reflection holds beneath the item. Motion: things glide in like a boat; a tick sends one small ripple.
+   ====================================================================== */
+.nx[data-nx-theme="night"] {
+  --nx-sunlit: #f5a23a;
+  --nx-sunlit-soft: rgba(245, 162, 58, 0.2);
+  --nx-sunlit-rim: rgba(245, 162, 58, 0.7);
+  --nx-ease: cubic-bezier(0.18, 0.8, 0.25, 1);
+  --nx-glide: 400ms;
+  --nx-drop: 420ms;
+}
+.nx[data-nx-theme="night"] .nx-ambient::after { display: none; }
+.nx .nx-water { overflow: hidden; }
+/* The caustics are kept thin under the reading column and fuller in the margins. */
+.nx .nx-water-drift {
+  position: absolute; inset: -6%; opacity: 0.32;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.3) 30%, rgba(0, 0, 0, 0.3) 70%, #000 100%);
+  mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.3) 30%, rgba(0, 0, 0, 0.3) 70%, #000 100%);
+  will-change: transform;
+}
+.nx .nx-water-caustics { display: block; width: 100%; height: 100%; will-change: transform; }
+/* The moon path: a column of short glints on the right, strongest low down, breathing in opacity. */
+.nx .nx-moonpath {
+  left: 80%; width: 9%; top: 0; bottom: 6%; right: auto; opacity: 0.5;
+  background: repeating-linear-gradient(180deg, rgba(190, 240, 235, 0.55) 0 1.5px, transparent 1.5px 9px);
+  -webkit-mask-image: radial-gradient(60% 90% at 50% 70%, #000, transparent 76%);
+  mask-image: radial-gradient(60% 90% at 50% 70%, #000, transparent 76%);
+  will-change: opacity, transform;
+}
+/* On a phone the whole screen is the reading column: no moon path, thinner caustics. */
+.nx.is-phone .nx-moonpath { display: none; }
+.nx.is-phone .nx-water-drift { opacity: 0.18; }
+@media (prefers-reduced-motion: no-preference) {
+  .nx .nx-water-drift { animation: nx-water-drift 41s var(--nx-ease-loop) infinite alternate; }
+  .nx .nx-water-caustics { animation: nx-water-sway 23s var(--nx-ease-loop) infinite alternate; }
+  .nx .nx-moonpath { animation: nx-moon 9s var(--nx-ease-loop) infinite alternate; }
+}
+@keyframes nx-water-drift { from { transform: translate3d(-1.5%, 0, 0); } to { transform: translate3d(1.5%, 0.8%, 0); } }
+@keyframes nx-water-sway { from { transform: scale(1) rotate(0deg); } to { transform: scale(1.06) rotate(0.5deg); } }
+@keyframes nx-moon { from { opacity: 0.32; transform: translate3d(0, 0, 0); } to { opacity: 0.62; transform: translate3d(0.5%, 0.5%, 0); } }
+.nx[data-nx-theme="night"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working) {
+  position: relative;
+  background-image: linear-gradient(0deg, var(--nx-sunlit-soft), transparent 52%);
+  box-shadow: 0 0 0 var(--nx-stroke) rgba(245, 162, 58, 0.32), inset 0 -2px 0 rgba(245, 162, 58, 0.55), 0 16px 26px -20px rgba(245, 162, 58, 0.6), var(--nx-card-shadow);
+}
+.nx[data-nx-theme="night"] .nx-leaf.is-running > .nx-leaf-head > .nx-row {
+  background-image: linear-gradient(0deg, rgba(245, 162, 58, 0.2), transparent 70%);
+  box-shadow: inset 0 -2px 0 rgba(245, 162, 58, 0.55);
+}
+.nx[data-nx-theme="night"] .nx-runstrip:not(.is-gold) {
+  background-image: linear-gradient(0deg, rgba(245, 162, 58, 0.2), transparent 70%);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 0 -2px 0 rgba(245, 162, 58, 0.55);
+}
+.nx[data-nx-theme="night"] .nx-checklist.is-live { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 0 -2px 0 rgba(245, 162, 58, 0.5), 0 16px 30px -24px rgba(245, 162, 58, 0.7); }
+/* The drop: one ring from the working coin (sidebar), and from the corner of a working card, once; the reflection above stays. */
+.nx[data-nx-theme="night"] .nx-leaf.is-running .nx-leaf-light { background: var(--nx-sunlit); }
+.nx[data-nx-theme="night"] .nx-leaf.is-running .nx-leaf-light::after,
+.nx[data-nx-theme="night"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working)::after {
+  content: ""; position: absolute; pointer-events: none; border-radius: 50%; border: 1.5px solid rgba(245, 162, 58, 0.75); opacity: 0;
+}
+.nx[data-nx-theme="night"] .nx-leaf.is-running .nx-leaf-light::after { inset: -2px; }
+.nx[data-nx-theme="night"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working)::after { left: 12px; top: 12px; width: 12px; height: 12px; }
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-theme="night"] .nx-leaf.is-running .nx-leaf-light::after,
+  .nx[data-nx-theme="night"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working)::after { animation: nx-drop var(--nx-drop) var(--nx-ease) both; }
+  .nx[data-nx-theme="night"] :is(.nx-checklist-item, .nx-ss-tile, .nx-ns-card, .nx-canopy-card, .nx-side .nx-leaf:nth-child(-n+8)) {
+    animation: nx-glide var(--nx-glide) var(--nx-ease) both; animation-delay: calc(var(--i, 0) * var(--nx-stagger));
+  }
+  .nx[data-nx-theme="night"] .nx-checklist-item.is-done { position: relative; }
+  .nx[data-nx-theme="night"] .nx-checklist-item.is-done::after {
+    content: ""; position: absolute; left: 6px; top: 8px; width: 12px; height: 12px; border-radius: 50%; pointer-events: none;
+    border: 1.5px solid color-mix(in srgb, var(--nx-green) 70%, transparent); opacity: 0; animation: nx-ripple var(--nx-drop) var(--nx-ease) both;
+  }
+  .nx[data-nx-theme="night"] :is(.nx-stage-body, .nx-ns-side, .nx-panel-overlay) { animation: nx-glide var(--nx-glide) var(--nx-ease) backwards; }
+}
+@keyframes nx-drop { 0% { opacity: 0.9; transform: scale(0.4); } 100% { opacity: 0; transform: scale(5); } }
+@keyframes nx-ripple { 0% { opacity: 0.8; transform: scale(0.5); } 100% { opacity: 0; transform: scale(2.4); } }
+@keyframes nx-glide { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+
+/* ======================================================================
+   TERMINAL: green phosphor.
+   Ambient: faint scanlines (nxThemes.css overlay), a slow refresh band, phosphor bloom on text, and the rain (NxRain, opt-in).
+   Working: a block cursor in the coin's colour blinks on the item, working text blooms. Motion: new messages type in (capped 400 ms),
+   panels open like a CRT line expanding.
+   ====================================================================== */
+.nx[data-nx-theme="terminal"] {
+  --nx-sunlit: #ffa63a;
+  --nx-bloom: 0 0 5px rgba(70, 255, 140, 0.3);
+  --nx-bloom-work: 0 0 8px rgba(70, 255, 140, 0.75);
+  --nx-type: 380ms;
+  --nx-crt: 260ms;
+}
+.nx[data-nx-theme="terminal"] .nx-ambient::after { display: none; }
+/* Bloom: the glow of a phosphor is light around the glyph, so it adds light and never takes any from the text. */
+.nx[data-nx-theme="terminal"] :is(.nx-msg-assistant, .nx-row-title, .nx-user-text, .nx-checklist-text) { text-shadow: var(--nx-bloom); }
+.nx .nx-crt-roll {
+  left: 0; right: 0; top: 0; bottom: auto; height: 22%; will-change: transform;
+  background: linear-gradient(180deg, transparent, rgba(60, 255, 140, 0.035) 50%, transparent);
+  transform: translateY(-30%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nx .nx-crt-roll { animation: nx-crt-roll 12s linear infinite; }
+}
+@keyframes nx-crt-roll { from { transform: translateY(-30%); } to { transform: translateY(480%); } }
+.nx[data-nx-theme="terminal"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working) {
+  position: relative; text-shadow: var(--nx-bloom-work);
+  box-shadow: 0 0 0 var(--nx-stroke) var(--nx-line-strong), inset 3px 0 0 var(--nx-sunlit), 0 0 22px -10px rgba(52, 224, 122, 0.55);
+}
+.nx[data-nx-theme="terminal"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working)::after {
+  content: ""; position: absolute; right: 12px; top: 12px; width: 8px; height: 15px; background: var(--nx-sunlit); pointer-events: none;
+  animation: nx-caret 1.06s steps(1, end) infinite;
+}
+.nx[data-nx-theme="terminal"] .nx-leaf.is-running > .nx-leaf-head > .nx-row .nx-row-title,
+.nx[data-nx-theme="terminal"] .nx-runstrip:not(.is-gold),
+.nx[data-nx-theme="terminal"] .nx-checklist.is-live .nx-checklist-now { text-shadow: var(--nx-bloom-work); }
+/* The coin becomes the cursor: a block, in the coin's colour, blinking. */
+.nx[data-nx-theme="terminal"] .nx-leaf.is-running .nx-leaf-light {
+  width: 7px; height: 13px; margin-top: -6px; border-radius: 0; background: var(--nx-sunlit); box-shadow: none;
+  animation: nx-caret 1.06s steps(1, end) infinite;
+}
+.nx[data-nx-theme="terminal"] .nx-runstrip:not(.is-gold) { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong), inset 3px 0 0 var(--nx-sunlit); }
+.nx[data-nx-theme="terminal"] .nx-checklist.is-live { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line-strong), inset 3px 0 0 var(--nx-sunlit); }
+.nx[data-nx-theme="terminal"][data-nx-motion="reduce"] :is(.nx-leaf.is-running .nx-leaf-light, .nx-ss-tile.is-working::after, .nx-pl-lane.is-working::after, .nx-ns-card.is-running::after) { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .nx[data-nx-theme="terminal"] :is(.nx-leaf.is-running .nx-leaf-light, .nx-ss-tile.is-working::after, .nx-pl-lane.is-working::after, .nx-ns-card.is-running::after) { animation: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-theme="terminal"] .nx-msg-assistant:nth-last-child(-n+2) { animation: nx-type var(--nx-type) steps(16, end) both; }
+  .nx[data-nx-theme="terminal"] :is(.nx-stage-body, .nx-ns-side, .nx-panel-overlay) { transform-origin: 50% 50%; animation: nx-crt-open var(--nx-crt) steps(6, end) backwards; }
+  .nx[data-nx-theme="terminal"] :is(.nx-checklist-item, .nx-ss-tile, .nx-ns-card, .nx-canopy-card, .nx-side .nx-leaf:nth-child(-n+8)) {
+    animation: nx-cell var(--nx-crt) steps(4, end) both; animation-delay: calc(var(--i, 0) * var(--nx-stagger));
+  }
+}
+@keyframes nx-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes nx-crt-open { from { opacity: 0.4; transform: scaleY(0.02); } to { opacity: 1; transform: none; } }
+@keyframes nx-cell { from { opacity: 0; } to { opacity: 1; } }
+
+/* ======================================================================
+   PAPER: ink on paper, calm. Nothing moves in the ambient layer: a faint grain and a margin rule, both still.
+   Working: an ink-wash of warm orange under the item, like a highlighter that slowly dries.
+   Motion: ink bleeds in (blur to sharp, 200 ms), a tick lands like a stamp (1.04 to 1), panels turn like a page.
+   ====================================================================== */
+@property --nx-wash { syntax: "<number>"; inherits: false; initial-value: 0.5; }
+.nx[data-nx-theme="paper"] {
+  --nx-sunlit: #f0861a;
+  --nx-ink-bleed: 200ms;
+  --nx-stamp: 220ms;
+  --nx-page: 320ms;
+  --nx-dapple-still: 1;
+  /* Paper grain: fractal noise tinted ink-blue, tiled and static. */
+  --nx-dapple: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .1  0 0 0 0 .12  0 0 0 0 .2  0 0 0 .6 -.18'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+}
+.nx[data-nx-theme="paper"] .nx-ambient::after { inset: 0; animation: none !important; opacity: 0.32 !important; transform: none; }
+.nx[data-nx-theme="paper"] .nx-ambient::before { display: none; }
+/* The margin rule: one hairline at the left margin of the page, clear of the notices and the reading column (gone on a phone). */
+.nx[data-nx-theme="paper"] .nx-work-chat { position: relative; }
+.nx[data-nx-theme="paper"] .nx-work-chat::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 12px; width: 1px; pointer-events: none;
+  background: rgba(163, 50, 42, 0.2);
+}
+.nx[data-nx-theme="paper"].is-phone .nx-work-chat::before { display: none; }
+.nx[data-nx-theme="paper"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working) {
+  /* A tall card gets a marker stripe along its foot, not a block over its text. */
+  background-image: linear-gradient(180deg, transparent 86%, rgba(255, 172, 56, var(--nx-wash)) 86% 97%, transparent 97%);
+  animation: nx-dry 9s var(--nx-ease) both;
+}
+.nx[data-nx-theme="paper"] .nx-leaf.is-running > .nx-leaf-head > .nx-row {
+  background-image: linear-gradient(180deg, transparent 46%, rgba(255, 172, 56, var(--nx-wash)) 46% 92%, transparent 92%);
+  animation: nx-dry 9s var(--nx-ease) both;
+}
+.nx[data-nx-theme="paper"] .nx-runstrip:not(.is-gold),
+.nx[data-nx-theme="paper"] .nx-checklist.is-live > .nx-checklist-head {
+  background-image: linear-gradient(180deg, transparent 50%, rgba(255, 172, 56, var(--nx-wash)) 50% 94%, transparent 94%);
+  animation: nx-dry 9s var(--nx-ease) both;
+}
+@keyframes nx-dry { from { --nx-wash: 0.62; } to { --nx-wash: 0.28; } }
+.nx[data-nx-theme="paper"][data-nx-motion="reduce"] :is(.nx-ss-tile.is-working, .nx-pl-lane.is-working, .nx-leaf.is-running > .nx-leaf-head > .nx-row, .nx-runstrip, .nx-checklist.is-live > .nx-checklist-head) { --nx-wash: 0.3; }
+@media (prefers-reduced-motion: reduce) {
+  .nx[data-nx-theme="paper"] :is(.nx-ss-tile.is-working, .nx-pl-lane.is-working, .nx-ns-card.is-running, .nx-leaf.is-running > .nx-leaf-head > .nx-row, .nx-runstrip, .nx-checklist.is-live > .nx-checklist-head) { animation: none; --nx-wash: 0.3; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-theme="paper"] :is(.nx-checklist-item, .nx-ss-tile, .nx-ns-card, .nx-canopy-card, .nx-side .nx-leaf:nth-child(-n+8)):not(.is-working, .is-running) {
+    animation: nx-ink-bleed var(--nx-ink-bleed) var(--nx-ease) both;
+  }
+  .nx[data-nx-theme="paper"] .nx-checklist .nx-checklist-item.is-done:not(.is-working, .is-running) { transform-origin: 8px 50%; animation: nx-ink-bleed var(--nx-ink-bleed) var(--nx-ease) both, nx-stamp var(--nx-stamp) var(--nx-ease) both; }
+  .nx[data-nx-theme="paper"] :is(.nx-stage-body, .nx-ns-side, .nx-panel-overlay) { transform-origin: 0 50%; animation: nx-page var(--nx-page) var(--nx-ease) backwards; }
+}
+@keyframes nx-ink-bleed { from { opacity: 0.35; filter: blur(3px); } to { opacity: 1; filter: blur(0); } }
+@keyframes nx-stamp { from { transform: scale(1.04); } to { transform: none; } }
+@keyframes nx-page { from { opacity: 0; transform: perspective(900px) rotateY(-7deg); } to { opacity: 1; transform: none; } }
+
+/* ======================================================================
+   EMBER: coals in the dark.
+   Ambient: two glows along the bottom edge breathe out of step (opacity only); the sparks stay as they are.
+   Working: the item flares like a coal being blown on, then breathes slowly. Motion: things rise like heat; a tick flares once and cools.
+   ====================================================================== */
+.nx[data-nx-theme="ember"] {
+  --nx-sunlit: #ff8a3a;
+  --nx-sunlit-soft: rgba(255, 120, 50, 0.22);
+  --nx-heat: 380ms;
+  --nx-flare: 460ms;
+}
+.nx .nx-coals { left: 0; right: 0; bottom: 0; top: auto; height: 34%; }
+.nx .nx-coals-a, .nx .nx-coals-b { left: 0; right: 0; bottom: 0; top: auto; will-change: opacity; }
+.nx .nx-coals-a { height: 100%; background: radial-gradient(70% 100% at 50% 135%, rgba(232, 87, 61, 0.24), rgba(150, 50, 30, 0.09) 52%, transparent 76%); }
+.nx .nx-coals-b { height: 70%; background: radial-gradient(38% 100% at 28% 140%, rgba(255, 150, 60, 0.2), transparent 74%), radial-gradient(30% 100% at 76% 140%, rgba(255, 120, 50, 0.15), transparent 72%); opacity: 0.4; }
+@media (prefers-reduced-motion: no-preference) {
+  .nx .nx-coals-a { animation: nx-coal-a 7s var(--nx-ease-loop) infinite alternate; }
+  .nx .nx-coals-b { animation: nx-coal-b 11s var(--nx-ease-loop) infinite alternate; }
+}
+@keyframes nx-coal-a { from { opacity: 0.55; } to { opacity: 1; } }
+@keyframes nx-coal-b { from { opacity: 0.2; } to { opacity: 0.85; } }
+.nx[data-nx-theme="ember"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working) {
+  position: relative; isolation: isolate;
+  background-image: radial-gradient(130% 95% at 50% 130%, var(--nx-sunlit-soft), transparent 62%);
+  box-shadow: 0 0 0 var(--nx-stroke) rgba(255, 140, 70, 0.5), inset 0 -2px 0 rgba(255, 140, 70, 0.7), 0 0 30px -10px rgba(232, 87, 61, 0.75), var(--nx-card-shadow);
+}
+/* The blown coal: a second glow under the content (z-index -1 in an isolated item) that brightens and dims slowly. */
+.nx[data-nx-theme="ember"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working)::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(110% 90% at 50% 125%, rgba(255, 150, 70, 0.34), transparent 66%); opacity: 0.55;
+}
+.nx[data-nx-theme="ember"] .nx-leaf.is-running > .nx-leaf-head > .nx-row {
+  background-image: linear-gradient(0deg, rgba(255, 120, 50, 0.24), transparent 72%);
+  box-shadow: inset 0 -2px 0 rgba(255, 140, 70, 0.65), inset 3px 0 0 var(--nx-sunlit);
+}
+.nx[data-nx-theme="ember"] .nx-runstrip:not(.is-gold) {
+  background-image: linear-gradient(0deg, rgba(255, 120, 50, 0.24), transparent 72%);
+  box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 0 -2px 0 rgba(255, 140, 70, 0.7);
+}
+.nx[data-nx-theme="ember"] .nx-checklist.is-live { box-shadow: inset 0 0 0 var(--nx-stroke) var(--nx-line), inset 0 -2px 0 rgba(255, 140, 70, 0.6), 0 0 34px -16px rgba(232, 87, 61, 0.8); }
+@media (prefers-reduced-motion: no-preference) {
+  .nx[data-nx-theme="ember"] :is(.nx-ss-tile.is-working, .nx-ns-card.is-running, .nx-canopy-card.is-running, .nx-cd-task.is-running, .nx-ms-task.is-running, .nx-pl-lane.is-working)::after { animation: nx-blow 3.4s var(--nx-ease-loop) infinite alternate; }
+  .nx[data-nx-theme="ember"] :is(.nx-checklist-item, .nx-ss-tile, .nx-ns-card, .nx-canopy-card, .nx-side .nx-leaf:nth-child(-n+8)) {
+    animation: nx-heat-rise var(--nx-heat) var(--nx-ease) both; animation-delay: calc(var(--i, 0) * var(--nx-stagger));
+  }
+  .nx[data-nx-theme="ember"] .nx-checklist .nx-checklist-item.is-done { animation: nx-heat-rise var(--nx-heat) var(--nx-ease) both, nx-flare var(--nx-flare) var(--nx-ease) both; }
+  .nx[data-nx-theme="ember"] :is(.nx-stage-body, .nx-ns-side, .nx-panel-overlay) { animation: nx-heat-rise var(--nx-heat) var(--nx-ease) backwards; }
+}
+@keyframes nx-blow { from { opacity: 0.4; } to { opacity: 1; } }
+@keyframes nx-heat-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes nx-flare { 0% { background-color: rgba(255, 140, 70, 0.4); } 100% { background-color: transparent; } }
+
+/* ---------- Settings > Look: the picker's two halves, the sun and moon mark, the Follow the sun times ---------- */
+.nx .nx-themepick-half { position: absolute; inset: 0; clip-path: polygon(58% 0, 100% 0, 100% 100%, 42% 100%); }
+.nx .nx-themepick-half i { position: absolute; display: block; font-style: normal; }
+.nx .nx-themepick-name { display: flex; align-items: center; justify-content: space-between; gap: var(--nx-space-6); }
+.nx .nx-themepick-sun { display: inline-flex; gap: var(--nx-space-3); color: var(--nx-faint); }
+/* The cards are as tall as their drawing and text (the grid used to stretch each row). */
+.nx .nx-themepick { align-content: start; grid-auto-rows: min-content; }
+.nx .nx-sun-times { display: inline-flex; gap: var(--nx-space-12); align-items: center; }
+.nx .nx-sun-time { display: inline-flex; gap: var(--nx-space-6); align-items: center; color: var(--nx-text-2); font-size: var(--nx-fs-sm); }
+.nx .nx-sun-time .nx-input { width: 96px; height: 30px; }
+
+/* While Follow the sun blends two themes the canopy steps back (it is dark shade on a mid grey), and comes back after. */
+.nx[data-nx-follow="blending"] .nx-komorebi { opacity: 0.3; }
+.nx .nx-komorebi { transition: opacity var(--nx-drift) var(--nx-ease); }

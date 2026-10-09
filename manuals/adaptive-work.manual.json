@@ -1,0 +1,405 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "adaptive-work",
+  "kind": "workflow",
+  "schemas": {
+    "work.constraint": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "workId",
+        "text"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "text": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "work.focus": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "workId",
+        "text"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "text": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "work.problem": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "blocker": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "workId",
+        "text"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "text": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "work.update_problem": {
+      "type": "object",
+      "properties": {
+        "workId": {
+          "type": "string"
+        },
+        "problemId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "blocked",
+            "resolved"
+          ]
+        },
+        "need": {
+          "type": "string",
+          "enum": [
+            "inspect",
+            "generate",
+            "implement",
+            "compare",
+            "test",
+            "retrieve",
+            "reflect"
+          ]
+        }
+      },
+      "required": [
+        "workId",
+        "problemId",
+        "status",
+        "need"
+      ],
+      "allOf": [
+        {
+          "properties": {
+            "workId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            },
+            "problemId": {
+              "not": {
+                "enum": [
+                  ""
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chapters": {
+    "work": {
+      "title": "Adaptive work: focus, open problems, and protected constraints",
+      "state": {},
+      "actions": {
+        "focus": {
+          "effect": "Persist one revision and matching event for this work identity; conserve other fields",
+          "pre": "Safe work identity and exact selected input; persisted state must be intact",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "work.focus",
+          "tool": "work.focus"
+        },
+        "problem": {
+          "effect": "Persist one revision and matching event for this work identity; conserve other fields",
+          "pre": "Safe work identity and exact selected input; persisted state must be intact",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "work.problem",
+          "tool": "work.problem"
+        },
+        "constraint": {
+          "effect": "Persist one revision and matching event for this work identity; conserve other fields",
+          "pre": "Safe work identity and exact selected input; persisted state must be intact",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "work.constraint",
+          "tool": "work.constraint"
+        },
+        "update_problem": {
+          "effect": "Persist one revision and matching event for this work identity; conserve other fields",
+          "pre": "Safe work identity and exact selected input; persisted state must be intact",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": false,
+          "schema": "work.update_problem",
+          "tool": "work.update_problem"
+        }
+      },
+      "checks": {},
+      "procedures": {
+        "record-focus": {
+          "goal": "Set the current focus while preserving all earlier problems and constraints",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "workId",
+              "text"
+            ]
+          },
+          "steps": [
+            {
+              "action": "focus",
+              "args": {
+                "text": {
+                  "$input": "text"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "changed"
+            }
+          ]
+        },
+        "record-problem": {
+          "goal": "Record one unresolved problem and its blocker without claiming resolution",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "blocker": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "workId",
+              "text",
+              "blocker"
+            ]
+          },
+          "steps": [
+            {
+              "action": "problem",
+              "args": {
+                "blocker": {
+                  "$input": "blocker"
+                },
+                "text": {
+                  "$input": "text"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "changed"
+            }
+          ]
+        },
+        "record-constraint": {
+          "goal": "Preserve one explicit constraint across focus changes",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "workId",
+              "text"
+            ]
+          },
+          "steps": [
+            {
+              "action": "constraint",
+              "args": {
+                "text": {
+                  "$input": "text"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "changed"
+            }
+          ]
+        },
+        "record-update-problem": {
+          "goal": "Change the selected existing problem status and next need",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "workId": {
+                "type": "string"
+              },
+              "problemId": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "open",
+                  "blocked",
+                  "resolved"
+                ]
+              },
+              "need": {
+                "type": "string",
+                "enum": [
+                  "inspect",
+                  "generate",
+                  "implement",
+                  "compare",
+                  "test",
+                  "retrieve",
+                  "reflect"
+                ]
+              }
+            },
+            "required": [
+              "workId",
+              "problemId",
+              "status",
+              "need"
+            ]
+          },
+          "steps": [
+            {
+              "action": "update_problem",
+              "args": {
+                "need": {
+                  "$input": "need"
+                },
+                "problemId": {
+                  "$input": "problemId"
+                },
+                "status": {
+                  "$input": "status"
+                },
+                "workId": {
+                  "$input": "workId"
+                }
+              },
+              "save": "changed"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "A problem ID is absent or belongs to another work identity",
+          "recovery": "Inspect that work identity and choose an existing problem ID before updating."
+        },
+        {
+          "failure": "The saved state has an integrity mismatch",
+          "recovery": "Stop; inspect the corrupt file before any new write or recovery."
+        }
+      ],
+      "frontier": [
+        "work.state initializes an absent JSON store, so it is not a pure CL observer.",
+        "The state records reported work; a saved focus or problem does not prove task quality."
+      ],
+      "guidance": [
+        "Use the same workId for related turns. The effect check binds to its JSON revision and event.",
+        "Keep constraints even when focus changes; resolve problems only by exact problem ID."
+      ]
+    }
+  }
+}

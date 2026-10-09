@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {decide}=require('./browser_luna.cjs'),{compactInput}=require('./browser_completion.cjs');
+const out=process.argv[2];if(!out||fs.existsSync(out))throw Error('Fresh context receipt required');
+const task=require('./evidence/C2h-engine-probes.json').tasks.find(t=>t.id==='Apple--0');
+const input={mode:'judge',goal:task.goal,requirements:require('../config/browser_goal_clauses.json')[task.id],answer:task.answer,documents:task.observations.map(ref=>JSON.parse(fs.readFileSync(ref.path))),previousStages:task.cascade};
+const compact=compactInput(input),report={schema:'neyvia.C2h.context-proof@1',scope:'Same acquired Apple probe evidence judged with bounded projection; no new task pass is claimed',originalCharacters:JSON.stringify(input).length,compactCharacters:JSON.stringify(compact).length,priorTokens:task.modelReceipts[0].usage.input_tokens,sourceIndicesPreserved:compact.documents.every(d=>input.documents[d.index].url===d.url)};
+assert.ok(report.compactCharacters<report.originalCharacters/3);assert.ok(report.sourceIndicesPreserved);
+assert.ok(compactInput({current:{elements:[{id:'secret',secret:true,actions:['fill'],value:'DO_NOT_SEND'}]},documents:[]}).current.elements.length===0);
+(async()=>{try{const r=await decide(input,{directory:path.resolve('.agent_control/C2h/context-proof')});report.receipt=r.receipt;report.decision=r.decision;report.passed=r.decision.verdict&&r.receipt.usage.input_tokens<report.priorTokens/3;assert.ok(report.passed);}catch(e){report.passed=false;report.error=e.stack;process.exitCode=1;}finally{fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({passed:report.passed,originalCharacters:report.originalCharacters,compactCharacters:report.compactCharacters,priorTokens:report.priorTokens,tokens:report.receipt?.usage,error:report.error}));}})();

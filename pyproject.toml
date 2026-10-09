@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neyvia-runtime"
+version = "0.1.0"
+description = "Neyvia supervised agent runtime with native tools and proof-gated execution"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "blake3>=1.0.9,<2",
+  "comtypes==1.4.15; sys_platform == 'win32'",
+  "cryptography>=49.0.0,<51",
+  "ddgs>=9.14,<10",
+  "jsonschema>=4.23,<5",
+  "openai-agents>=0.19.4,<0.20",
+  "pillow>=11,<13",
+  "psutil>=7,<8",
+  "pywinpty>=3,<4; sys_platform == 'win32'",
+  "websockets>=16,<17",
+]
+license = { text = "MIT" }
+authors = [{ name = "Paul" }]
+
+[dependency-groups]
+dev = [
+  "playwright>=1.61,<2",
+  "pytest>=8.3,<9",
+]
+
+[project.optional-dependencies]
+cl = ["regex>=2024.11.6"]
+pdf = ["pypdfium2>=4.30,<6", "pypdf>=5,<7"]
+ci = [
+  "playwright>=1.61,<2",
+  "pytest>=8.3,<9",
+]
+
+[project.scripts]
+neyvia = "grant_agent.cli:main"
+neyvia-agent = "grant_agent.neyvia_agent_cli:main"
+neyvia-web = "grant_agent.web_backend:main"
+grant-agent = "grant_agent.cli:main"
+grant-agent-web = "grant_agent.web_backend:main"
+grand-agent-web = "grant_agent.web_backend:main"
+neyvia-codex-oauth-helper = "grant_agent.codex_local_oauth_helper:main"
+neyvia-transfer = "grant_agent.nas_transfer:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+grant_agent = ["browser_dom.js"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "src"]
+norecursedirs = [
+  ".codex-*",
+  ".git",
+  ".venv",
+  "build",
+  "dist",
+  "node_modules",
+  "output",
+  "tmp-ui-checks",
+]

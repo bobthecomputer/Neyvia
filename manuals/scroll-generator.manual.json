@@ -1,0 +1,678 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "scroll-generator",
+  "kind": "workflow",
+  "proofs": {
+    "area": "scroll-export-journey",
+    "manifests": [
+      "config/proofs/scroll-export-journey.json"
+    ],
+    "contracts": [
+      {
+        "checkedAt": [
+          "grant_agent.proofs_scroll_export_journey.self_check",
+          "grant_agent.neyvia_scroll.export",
+          "grant_agent.neyvia_scroll.download",
+          "grant_agent.scroll_pack.write_scrollpack",
+          "grant_agent.scroll_pack.read_scrollpack"
+        ],
+        "claim": "A reviewed Unicode pack exports with exact source/card semantics and sends a one-download QR SVG capability; the first route payload equals the archive and repeat/expired requests refuse with 410. The check asserts SVG path geometry only; it does not decode a QR or claim a phone/UI consumer.",
+        "id": "p22.scroll.reviewed-export-singleuse-outcome",
+        "impact": [
+          "Scroll Study reviewed export",
+          "one-use phone delivery",
+          "Unicode archive roundtrip"
+        ],
+        "phase": "post"
+      }
+    ]
+  },
+  "schemas": {
+    "neyvia.scroll.concepts": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "pack"
+      ]
+    },
+    "neyvia.scroll.generate": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "chapters": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "concepts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "pack",
+        "requestId"
+      ]
+    },
+    "neyvia.scroll.import": {
+      "type": "object",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "packId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "paths"
+      ]
+    },
+    "neyvia.scroll.job": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "requestId"
+      ]
+    },
+    "neyvia.scroll.pack": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "pack"
+      ]
+    },
+    "neyvia.scroll.preview": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        },
+        "device": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "pack"
+      ]
+    },
+    "neyvia.scroll.review": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cardId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "action": {
+                "enum": [
+                  "approve",
+                  "drop",
+                  "edit"
+                ]
+              },
+              "card": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "cardId",
+              "action"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "chapter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "const": "approve"
+        }
+      },
+      "required": [
+        "pack"
+      ]
+    },
+    "neyvia.scroll.send": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "pack"
+      ]
+    },
+    "neyvia.scroll.state": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": []
+    },
+    "neyvia.scroll.stats": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "pack"
+      ]
+    },
+    "neyvia.scroll.validate": {
+      "type": "object",
+      "properties": {
+        "pack": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "pack"
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "Scroll generator: notes to source-bound study cards",
+      "state": {
+        "pack": {
+          "args": {
+            "pack": {
+              "$input": "pack"
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "pack": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "pack"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "packs": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "ok",
+              "packs"
+            ]
+          },
+          "tool": "neyvia.scroll.state"
+        }
+      },
+      "actions": {
+        "validate": {
+          "effect": "Run schema/DAG/source/maths/card-mix checks without model calls.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.validate",
+          "tool": "neyvia.scroll.validate"
+        },
+        "stats": {
+          "effect": "Read actual generation usage, price-qualified card/hour costs and review approval rate.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.stats",
+          "tool": "neyvia.scroll.stats"
+        },
+        "import": {
+          "effect": "Hash Markdown/text study notes and create a workspace pack draft using zero-token ingest/split/candidate scripts.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.import",
+          "tool": "neyvia.scroll.import"
+        },
+        "concepts": {
+          "effect": "Confirm concepts through the validated Luna cascade; graph-sanity is the only large graph judgement.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.concepts",
+          "tool": "neyvia.scroll.concepts"
+        },
+        "generate": {
+          "effect": "Start a durable cards/answer-check job. Reuse requestId for transport retries; models cannot run arbitrary tools.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.generate",
+          "tool": "neyvia.scroll.generate"
+        },
+        "job": {
+          "effect": "Observe a persisted job and its last stage, progress and actionable failure.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.job",
+          "tool": "neyvia.scroll.job"
+        },
+        "review": {
+          "effect": "Approve, drop or edit real draft cards. Flagged answers need an explicit individual decision.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.review",
+          "tool": "neyvia.scroll.review"
+        },
+        "pack": {
+          "effect": "Validate and zip an entirely reviewed pack and its hashed source texts; pending/flagged cards block export.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.pack",
+          "tool": "neyvia.scroll.pack"
+        },
+        "preview": {
+          "effect": "Copy the approved generated pack into the real phone prototype and open Mobile Studio on the same state.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.preview",
+          "tool": "neyvia.scroll.preview"
+        },
+        "send": {
+          "effect": "Create a single-download 15-minute capability for this approved archive; requires explicit backend URL.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.send",
+          "tool": "neyvia.scroll.send"
+        },
+        "state": {
+          "effect": "Read the exact pack/graph/review/job state shown to the user.",
+          "pre": "Observe the selected workspace pack; approval is required before export",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.scroll.state",
+          "tool": "neyvia.scroll.state"
+        }
+      },
+      "checks": {
+        "valid": {
+          "args": {
+            "pack": {
+              "$input": "pack"
+            }
+          },
+          "expect": {
+            "op": "eq",
+            "path": "ok",
+            "value": true
+          },
+          "tool": "neyvia.scroll.validate"
+        }
+      },
+      "procedures": {
+        "validate-pack": {
+          "goal": "Reject invalid cards before review/export",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "pack": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "pack"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "validate",
+              "args": {
+                "pack": {
+                  "$input": "pack"
+                }
+              },
+              "check": "valid",
+              "save": "validation"
+            }
+          ]
+        },
+        "import-notes": {
+          "goal": "Import bounded study notes and verify their hashes in the durable pack",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "maxItems": 20
+              },
+              "packId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "paths",
+              "packId"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "import",
+              "args": {
+                "packId": {
+                  "$input": "packId"
+                },
+                "paths": {
+                  "$input": "paths"
+                }
+              },
+              "save": "result"
+            }
+          ]
+        },
+        "review-cards": {
+          "goal": "Apply card decisions and verify each reviewed card in the durable pack",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "pack": {
+                "type": "string",
+                "minLength": 1
+              },
+              "decisions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "cardId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "action": {
+                      "enum": [
+                        "approve",
+                        "drop",
+                        "edit"
+                      ]
+                    },
+                    "card": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "cardId",
+                    "action"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "pack",
+              "decisions"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "review",
+              "args": {
+                "decisions": {
+                  "$input": "decisions"
+                },
+                "pack": {
+                  "$input": "pack"
+                }
+              },
+              "save": "result"
+            }
+          ]
+        },
+        "export-pack": {
+          "goal": "Export a fully reviewed validated archive and verify its bytes",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "pack": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "pack"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "pack",
+              "args": {
+                "pack": {
+                  "$input": "pack"
+                }
+              },
+              "save": "result"
+            }
+          ]
+        },
+        "preview-pack": {
+          "goal": "Materialize the approved pack in Mobile Studio and verify the generated files",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "pack": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "pack"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "preview",
+              "args": {
+                "pack": {
+                  "$input": "pack"
+                }
+              },
+              "save": "result"
+            }
+          ]
+        },
+        "send-pack": {
+          "goal": "Create a one-download pack capability bound to the exported archive",
+          "inputs": {
+            "type": "object",
+            "properties": {
+              "pack": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "pack"
+            ],
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "send",
+              "args": {
+                "pack": {
+                  "$input": "pack"
+                }
+              },
+              "save": "result"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [
+        {
+          "failure": "Model unavailable or same-tier retry exhausted",
+          "recovery": "Read job error and generation receipt; restore requested gpt-6-luna route, then resume a new scoped generation request. No substituted models."
+        },
+        {
+          "failure": "Independent answer disagrees",
+          "recovery": "One answer-dispute judgement; unresolved cards stay flagged until review."
+        },
+        {
+          "failure": "Card teaches what it tests",
+          "recovery": "Separate the teach card and recall card; prerequisites must already have teaching cards."
+        },
+        {
+          "failure": "Unsupported answer or wrong MCQ",
+          "recovery": "Use the hashed source span, exact correct count and mistake reasons; never invent supporting notes."
+        },
+        {
+          "failure": "Generated variation is passed off as a course example",
+          "recovery": "Only course_example copies an exact quote and span from the imported note; adaptations identify generatedAdaptation and variantOf."
+        },
+        {
+          "failure": "A teaching card is flicked past or a question is on an untaught part",
+          "recovery": "Exposure is persisted only after completed reading or worked steps; tests require taught parts, eight cards lag, and changed wording five to ten cards after a miss."
+        }
+      ],
+      "frontier": [
+        "Markdown/text import works. PDF/OCR extraction is not attached.",
+        "Formula arithmetic comparison uses installed SymPy; unavailable symbolic checking is reported through a small independent solution.",
+        "Source numbered worked examples can be extracted; every generated procedure example is a named big judgement.",
+        "Validated packs can compile after three real grounded manual runs. Compiled validation remains input/manual/provenance-bound and rechecks current cards.",
+        "Validated packs can compile after three real grounded manual runs. Compiled validation remains input/manual/provenance-bound and rechecks current cards.",
+        "Maths/physics default to paul-seven-part.v1: FORMULA, WHEN?, WHAT DO I WRITE?, PATTERN, COURSE EXAMPLE, YOUR EXERCISE, VARIATIONS/TRAPS per actionable concept. The CL source is authoritative.",
+        "scroll.validate executes the seven-part completeness, exact quoted course span, changed exercise reference and independently checked solution gates in addition to schema/DAG/source/maths/mix.",
+        "Pattern cards teach If I see X -> try Y; pattern_drill asks recognition after the pattern is taught. Your exercises and generated variants require all supporting teaching parts and an eight-card lag.",
+        "CL pack actions require fresh source, review, validation and artifact checks; model generation still depends on the configured Luna runtime."
+      ],
+      "guidance": [
+        "R2: >=50 percent graded cards are recall (flashcard/cloze/why/order/spot/faded worked); truefalse <=20 percent. No reward cards in packs.",
+        "Fact <=60 words; explainer <=120; reading <=40 seconds. Non-recap cards have source doc/span and stage/tier/run provenance.",
+        "Every prerequisite/tested concept has a teaching card. A graded card never teaches its tested concept.",
+        "Models: gpt-6-luna through T14 for wording/concepts/re-solve; gpt-6.1-sol only graph-sanity, worked-example, answer-dispute.",
+        "R14: worked all steps -> fade1 last step blank -> fade2 later half blank -> order/full problem. Keep the original answers.",
+        "Mistake catalogue: forgetting the inner derivative; multiplying derivatives in product rule; dropping a constant; sign inversion; confusing a converse; moving a step before its prerequisite.",
+        "fact examples: 'Slope is rise over run.'; 'A derivative is the slope of the tangent.'",
+        "explainer examples: 'Secant slopes tend to the tangent slope as the interval shrinks.'; 'The product rule differentiates one factor at a time and adds both changes.'",
+        "worked examples: 'Differentiate x^3: exponent 3 comes down, lower exponent to 2, obtain 3x^2.'; 'For x^2*exp(x), find 2x and exp(x), then add 2x*exp(x)+x^2*exp(x). Why: each factor changes.'",
+        "flashcard examples: front 'What is rise over run called?' back 'Slope.'; front 'Differentiate x^3.' back '3x^2.'",
+        "cloze examples: before 'Slope is ', blank 'rise over run', after '.'; before 'd/dx x^3 = ', blank '3x^2', after '.'",
+        "why examples: front 'Why multiply by the inner derivative?' back 'It accounts for the inner function changing.'; front 'Why does the product rule have two terms?' back 'Either factor can change.'",
+        "truefalse examples: 'The derivative of x^3 is 3x^2.' true with power-rule reason; 'The derivative of f*g is fprime*gprime.' false with both correct terms.",
+        "mcq examples: differentiate x^3 -> 3x^2 correct, x^2 wrong missing coefficient, 3x^3 wrong unchanged exponent; differentiate (3x+1)^2 -> 6(3x+1) correct, 2(3x+1) wrong missing inner derivative, 6x wrong lost inner expression.",
+        "order examples: power rule -> identify exponent, multiply coefficient, lower exponent; chain rule -> identify inner function, differentiate outer, multiply inner derivative.",
+        "spot examples: lines ['n=3','derivative=x^2'], wrong 1, fix 'derivative=3x^2'; lines ['u=3x+1','derivative=2u'], wrong 1, fix 'derivative=6u'.",
+        "recap examples: 'Slope: rise/run. Derivative: tangent slope.'; 'Product: fprime*g+f*gprime. Chain: outer derivative times inner derivative.'"
+      ]
+    }
+  }
+}

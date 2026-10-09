@@ -1,0 +1,81 @@
+{
+  "schema": "neyvia.manual.v1",
+  "id": "hello-module",
+  "kind": "environment",
+  "schemas": {
+    "neyvia.mod.hello.greet": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  "chapters": {
+    "overview": {
+      "title": "A real optional personal greeting mod",
+      "state": {},
+      "actions": {
+        "mod.hello.greet": {
+          "effect": "Read a personal greeting for the supplied name.",
+          "pre": "Selected workspace; module is mapped and any optional dependencies are enabled",
+          "returns": {
+            "type": "object"
+          },
+          "reversible": true,
+          "schema": "neyvia.mod.hello.greet",
+          "tool": "neyvia.mod.hello.greet"
+        }
+      },
+      "checks": {
+        "greeting": {
+          "args": {
+            "name": "Paul"
+          },
+          "expect": {
+            "op": "eq",
+            "path": "greeting",
+            "value": "Hello, Paul!"
+          },
+          "tool": "neyvia.mod.hello.greet"
+        }
+      },
+      "procedures": {
+        "verify-greeting": {
+          "goal": "Call the installed optional mod and verify the exact personal greeting",
+          "inputs": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "steps": [
+            {
+              "action": "mod.hello.greet",
+              "args": {
+                "name": "Paul"
+              },
+              "check": "greeting",
+              "save": "greeting"
+            }
+          ]
+        }
+      },
+      "judge": {},
+      "pitfalls": [],
+      "frontier": [
+        "This example is a deterministic local action, not an AI model call."
+      ],
+      "guidance": [
+        "The example lives in apps/hello-module. Its action is registered automatically at backend startup; the existing marketplace manages apps and mods.",
+        "Run hello-module.verify-greeting(); call mod.hello.greet(name='your name') to build a personal greeting.",
+        "Install apps/hello-module through marketplace.install, then enable it with modules.set-optional(id='hello-module', enabled=true). Disable it to prove subsequent greeting calls fail."
+      ]
+    }
+  }
+}

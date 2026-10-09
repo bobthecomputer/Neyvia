@@ -1,0 +1,39 @@
+{
+  "area": "usage",
+  "module": "grant_agent.proofs_usage",
+  "self_check": "self_check",
+  "manuals": [
+    "usage"
+  ],
+  "networkContracts": [],
+  "contracts": [
+    {
+      "id": "usage.endpoint.shape",
+      "phase": "post",
+      "claim": "GET /api/ui/usage returns plan windows, one tokens-by-day entry per day of the range, a row per agent and model with input, cached, cache-write and output tokens, a cost block flagged as an estimate with the date its prices were taken, and a savings block; cached and cache-write tokens never exceed input tokens, plan percentages stay within 0 to 100, and the cost totals are the sums of the rows.",
+      "checkedAt": [
+        "grant_agent.usage_report.check_report",
+        "grant_agent.proofs_usage.self_check"
+      ],
+      "impact": [
+        "Usage pane",
+        "Settings Usage card",
+        "Agents popover Usage button"
+      ]
+    },
+    {
+      "id": "usage.plan.api-equivalent-only",
+      "phase": "post",
+      "claim": "Every row with a price on file carries an API-equivalent estimate (what the same tokens would cost at public API list prices, input, cache reads, cache writes and output priced separately). Plan and unknown-billing rows are only ever API-equivalent and never billed; only rows that went through an API key carry a billed amount, equal to their list price, and the billed total never appears without such a row. A model without a price stays unpriced, never guessed.",
+      "checkedAt": [
+        "grant_agent.usage_report.check_report",
+        "grant_agent.proofs_usage.self_check"
+      ],
+      "impact": [
+        "Usage pane API-equivalent and billed tiles",
+        "By-model table"
+      ]
+    }
+  ],
+  "portRoles": []
+}
